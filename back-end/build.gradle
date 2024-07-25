@@ -52,3 +52,11 @@ tasks.named('asciidoctor') {
     inputs.dir snippetsDir
     dependsOn test
 }
+
+tasks.bootJar {
+    archiveFileName = 'back-end.jar'  // JAR 파일 이름 설정
+}
+
+tasks.jar {
+    enabled = false  // jar 태스크 비활성화
+}

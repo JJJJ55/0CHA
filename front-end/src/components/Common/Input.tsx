@@ -28,6 +28,8 @@ interface InputProps {
   onChange: Function;
 }
 const Input = (props: InputProps): JSX.Element => {
+  // const { width, height, placeholder, type, margin, name, value, onChange } = props;
+  // return <s.input {...props} />;
   const { width, height, placeholder, type, margin, name, value, onChange } = props;
   return (
     <s.input

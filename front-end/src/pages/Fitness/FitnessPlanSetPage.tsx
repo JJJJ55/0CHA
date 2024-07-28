@@ -1,0 +1,77 @@
+import React from 'react';
+import styled from 'styled-components';
+import Header from '../../components/Common/Header';
+import { FitnessPlanData } from '../../util/TestData';
+import FitnessPlan from '../../components/Fitness/FitnessList/FitnessPlan';
+import { ReactComponent as add } from '../../asset/img/svg/add.svg';
+import IconSvg from '../../components/Common/IconSvg';
+import Button from '../../components/Common/Button';
+
+const s = {
+  Container: styled.section`
+    height: 100%;
+    background-color: ${(props) => props.theme.bgColor};
+    overflow: auto;
+    border: 3px solid yellow;
+  `,
+  DateArea: styled.div`
+    color: ${(props) => props.theme.textColor2};
+    font-size: 16px;
+    width: 200px;
+    height: 40px;
+    text-align: center;
+    line-height: 40px;
+    border: 1px solid red;
+    margin: 15px auto;
+    cursor: pointer;
+  `,
+  FitnessArea: styled.div`
+    width: 90%;
+    border: 1px solid red;
+    margin: 0 auto;
+  `,
+  FitnessAdd: styled.div`
+    width: 100px;
+    height: 60px;
+    margin: 20px auto;
+    border: 1px solid red;
+    color: ${(props) => props.theme.mainColor};
+    font-size: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+  `,
+  BtnArea: styled.div`
+    width: 90%;
+    max-width: 500px;
+    border: 1px solid red;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+  `,
+};
+
+const FitnessPlanSetPage = (): JSX.Element => {
+  return (
+    <s.Container>
+      <Header />
+      <s.DateArea>날짜를 지정해주세요.</s.DateArea>
+      <s.FitnessArea>
+        {FitnessPlanData.map((data, index) => (
+          <FitnessPlan />
+        ))}
+      </s.FitnessArea>
+      <s.FitnessAdd>
+        운동 추가
+        <IconSvg width="24" height="24" Ico={add} />
+      </s.FitnessAdd>
+      <s.BtnArea>
+        <Button width="150px" height="40px" children="저장하기" onClick={() => {}} size="14px" type="main" />
+        <Button width="150px" height="40px" children="운동시작" onClick={() => {}} size="14px" type="main" />
+      </s.BtnArea>
+    </s.Container>
+  );
+};
+
+export default FitnessPlanSetPage;

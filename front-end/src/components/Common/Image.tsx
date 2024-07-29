@@ -4,6 +4,7 @@ import styled from 'styled-components';
 const Img = styled.img<ImgProps>`
   width: ${(props) => props.width};
   height: ${(props) => props.height};
+  cursor: ${(props) => props.cursor};
 `;
 const s = {
   FeedImg: styled(Img)``,
@@ -17,19 +18,12 @@ interface ImgProps {
   height: string;
   src: string;
   type?: string;
+  cursor?: string;
+  onClick?: Function;
 }
 
 const Image = (props: ImgProps): JSX.Element => {
-  const { width, height, src, type } = props;
-  return (
-    <>
-      {type === 'rect' ? (
-        <s.FeedImg width={width} height={height} src={src} />
-      ) : (
-        <s.ProfileImg width={width} height={height} src={src} />
-      )}
-    </>
-  );
+  return <>{props.type === 'rect' ? <s.FeedImg {...props} /> : <s.ProfileImg {...props} />}</>;
 };
 
 export default Image;

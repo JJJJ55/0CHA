@@ -1,131 +1,3 @@
-// import React from 'react';
-// import styled from 'styled-components';
-// import { Line } from 'react-chartjs-2';
-// import 'chart.js/auto';
-// import { exerciseData } from '../../../util/TestData';
-
-// const s = {
-//   Container: styled.section`
-//     width: 100%;
-//     height: 300px;
-//     border: 1px solid orange;
-//   `,
-// };
-
-// const FitnessDetailChart = () => {
-//   const data = {
-//     labels: [['07.09'], ['07.14'], ['07.15'], ['07.21'], ['07.25'], ['07.28']],
-//     datasets: [
-//       {
-//         type: 'line',
-//         label: '운동량',
-//         backgroundColor: 'black',
-//         borderColor: '#ccff33',
-//         borderWidth: 2,
-//         data: exerciseData,
-//       },
-//     ],
-//   };
-//   const options = {
-//     maintainAspectRatio: false,
-//     spanGaps: true,
-//     maxBarThickness: 30,
-//     grouped: true,
-//     interaction: {
-//       mode: 'point',
-//     },
-
-//     plugins: {
-//       legend: {
-//         position: 'top', // 범례 위치를 상단으로 설정
-//         align: 'end', // 범례를 오른쪽 정렬
-//         labels: {
-//           usePointStyle: true,
-//           font: {
-//             family: "'Noto Sans KR', 'serif'",
-//             lineHeight: 1,
-//             size: 10,
-//           },
-//         },
-//       },
-//       tooltip: {
-//         backgroundColor: '#000',
-//         padding: 10,
-//         bodySpacing: 5,
-//         bodyFont: {
-//           font: {
-//             family: "'Noto Sans KR', sans-serif",
-//           },
-//         },
-//         usePointStyle: true,
-//         filter: (item: any) => item.parsed.y !== null,
-//         callbacks: {
-//           title: (context: any) => context[0].label,
-//           label: (context: any) => {
-//             let label = context.dataset.label + '' || '';
-
-//             return context.parsed.y !== null ? label + ': ' + context.parsed.y + '등급' : null;
-//           },
-//         },
-//         events: ['click'],
-//       },
-//     },
-//     scales: {
-//       x: {
-//         grid: {
-//           display: false,
-//           drawTicks: true,
-//           tickLength: 4,
-//           color: '#E2E2E230',
-//         },
-//         axis: 'x',
-//         position: 'bottom',
-//         ticks: {
-//           padding: 10,
-//           font: {
-//             size: 10,
-//           },
-//         },
-//       },
-//       y: {
-//         type: 'linear',
-//         reverse: true,
-//         grid: {
-//           color: '#E2E2E230',
-//         },
-//         afterDataLimits: (scale: any) => {
-//           scale.max = scale.max * 1;
-//           scale.min = scale.min * 0.1;
-//         },
-//         axis: 'y',
-//         display: true,
-//         position: 'left',
-//         min: 1,
-//         max: 9,
-//         ticks: {
-//           padding: 8,
-//           stepSize: 2,
-//           font: {
-//             size: 12,
-//             family: "'Noto Sans KR', sans-serif",
-//           },
-//         },
-//       },
-//     },
-//     elements: {
-//       point: {
-//         radius: 3, // 도형의 크기를 줄임
-//       },
-//     },
-//   };
-//   return (
-//     <s.Container>
-//       <Line type="line" data={data} options={options} />
-//     </s.Container>
-//   );
-// };
-
-// export default FitnessDetailChart;
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -135,57 +7,99 @@ import {
   Title,
   Tooltip,
   Legend,
+  ChartOptions,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
+import ChartDataLabels from 'chartjs-plugin-datalabels'; // 추가된 플러그인
 import { exerciseData } from '../../../util/TestData';
 import styled from 'styled-components';
 
 // 라이브러리 등록
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  ChartDataLabels, // 추가된 플러그인
+);
 
 const s = {
   Container: styled.section`
-    width: 100%;
-    height: 300px;
+    width: 90%;
     border: 1px solid orange;
     display: flex;
     justify-content: center;
-    margin-bottom: 80px;
+    margin: 0 auto 80px;
+    background-color: #000;
+  `,
+  Title: styled.div`
+    width: 90%;
+    margin: 10px auto;
+    text-align: left;
+    border: 1px solid red;
+    font-size: 14px;
+    color: ${(props) => props.theme.textColor2};
   `,
 };
 
-export const options = {
+export const options: ChartOptions<'line'> = {
   responsive: true,
   plugins: {
     legend: {
-      position: 'top' as const,
+      display: false,
     },
     title: {
       display: true,
-      text: 'Chart.js Line Chart',
+    },
+    tooltip: {
+      enabled: false,
+    },
+    datalabels: {
+      color: '#666666',
+      display: true,
+      anchor: 'end',
+      align: 'top',
+      formatter: (value: number) => value.toString(),
+      font: {
+        size: 14,
+      },
+    },
+  },
+  scales: {
+    y: {
+      display: false,
     },
   },
 };
 
-const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+const labels = ['07.14', '07.15', '07.16', '07.17', '07.18', '07.19'];
 
 export const data = {
   labels,
   datasets: [
     {
-      label: 'Dataset 1',
+      label: '벤치프레스',
       data: exerciseData,
-      borderColor: 'rgb(255, 99, 132)',
-      backgroundColor: 'rgba(255, 99, 132, 0.5)',
+      borderColor: '#ccff33',
+      backgroundColor: '#ccff33',
+      // 데이터 포인트 스타일
+      pointRadius: 5, // 포인트 크기
+      pointBorderWidth: 2, // 포인트 경계 두께
     },
   ],
 };
 
-const FitnessDetailChart = () => {
+const FitnessDetailChart: React.FC = () => {
   return (
-    <s.Container>
-      <Line options={options} data={data} />
-    </s.Container>
+    <>
+      <s.Title>운동이력</s.Title>
+      <s.Container>
+        <Line options={options} data={data} />
+      </s.Container>
+    </>
   );
 };
 

@@ -7,13 +7,18 @@ const s = {
     height: ${(props) => props.height};
     background-color: ${(props) => props.theme.subColor};
     color: ${(props) => props.theme.textColor};
-    font-weight: 500;
-    size: 14px;
+    font-weight: ${(props) => props.bold || '500'};
+    size: ${(props) => props.size || '14px'};
+    display: ${(props) => props.display};
+    margin: ${(props) => props.margin};
     outline: none;
     border-radius: 10px;
     border: none;
     resize: none;
     padding: 10px;
+    &::placeholder {
+      color: ${({ placeColor, theme }) => (placeColor ? theme[placeColor] : theme['textColor2'])};
+    }
   `,
 };
 
@@ -21,11 +26,17 @@ interface TextAreaProps {
   width?: string;
   height?: string;
   placeholder?: string;
+  display?: string;
+  margin?: string;
+  onclick?: Function;
+  onChange?: Function;
+  onKeyPress?: Function;
+  bold?: string;
+  placeColor?: string;
+  size?: string;
 }
 
 const TextArea = (props: TextAreaProps): JSX.Element => {
-  const { width, height, placeholder } = props;
-
-  return <s.TextArea width={width} height={height} placeholder={placeholder} />;
+  return <s.TextArea {...props} />;
 };
 export default TextArea;

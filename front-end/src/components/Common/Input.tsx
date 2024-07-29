@@ -7,11 +7,12 @@ const s = {
     height: ${(props) => props.height};
     background-color: ${(props) => props.theme.subColor};
     color: ${(props) => props.theme.textColor};
-    font-weight: 500;
-    size: 14px;
+    font-weight: ${(props) => props.bold || '500'};
+    size: ${(props) => props.size || '14px'};
+    display: ${(props) => props.display};
     margin: ${(props) => props.margin};
     &::placeholder {
-      color: ${(props) => props.theme.textColor};
+      color: ${({ placeColor, theme }) => (placeColor ? theme[placeColor] : theme['textColor2'])};
     }
   `,
 };
@@ -23,26 +24,17 @@ interface InputProps {
   margin?: string;
   size?: string;
   type?: string;
-  name: string;
-  value: string;
-  onChange: Function;
+  name?: string;
+  value?: string;
+  display?: string;
+  onChange?: Function;
+  onClick?: Function;
+  onKeyPress?: Function;
+  placeColor?: string;
+  bold?: string;
 }
 const Input = (props: InputProps): JSX.Element => {
-  // const { width, height, placeholder, type, margin, name, value, onChange } = props;
-  // return <s.input {...props} />;
-  const { width, height, placeholder, type, margin, name, value, onChange } = props;
-  return (
-    <s.input
-      type={type}
-      width={width}
-      height={height}
-      margin={margin}
-      placeholder={placeholder}
-      name={name}
-      value={value}
-      onChange={onChange}
-    />
-  );
+  return <s.input {...props} />;
 };
 
 export default Input;

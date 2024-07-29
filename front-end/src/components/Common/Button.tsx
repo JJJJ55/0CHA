@@ -29,21 +29,16 @@ interface ButtonProps {
   margin?: string;
   type?: string;
   display?: string;
-  onClick: Function;
+  onClick?: Function;
   children: React.ReactNode;
 }
 const Button = (props: ButtonProps): JSX.Element => {
-  const { width, height, size, type, children, margin, display, ...rest } = props;
   return (
     <>
-      {type === 'main' ? (
-        <s.Mainbutton width={width} height={height} size={size} margin={margin} display={display} {...rest}>
-          {children}
-        </s.Mainbutton>
+      {props.type === 'main' ? (
+        <s.Mainbutton {...props}>{props.children}</s.Mainbutton>
       ) : (
-        <s.Subbutton width={width} height={height} size={size} margin={margin} display={display} {...rest}>
-          {children}
-        </s.Subbutton>
+        <s.Subbutton {...props}>{props.children}</s.Subbutton>
       )}
     </>
   );

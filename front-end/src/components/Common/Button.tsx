@@ -4,8 +4,8 @@ import styled from 'styled-components';
 const btn = styled.button<ButtonProps>`
   width: ${(props) => props.width};
   height: ${(props) => props.height};
-  font-weight: 900;
-  size: ${(props) => props.size};
+  font-weight: ${(props) => props.bold};
+  font-size: ${(props) => props.size};
   border-radius: 10px;
   margin: ${(props) => props.margin};
   display: ${(props) => props.display};
@@ -28,6 +28,7 @@ interface ButtonProps {
   size?: string;
   margin?: string;
   type?: string;
+  bold?: string;
   display?: string;
   onClick?: Function;
   children: React.ReactNode;

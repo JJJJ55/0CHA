@@ -15,6 +15,7 @@ const GlobalStyle = createGlobalStyle`
     }
     *{
         box-sizing: border-box;
+        font-family: 'Pretendard-Regular'
         
     }
     html, body, div, span, h1, h2, h3, h4, h5, h6, p, 

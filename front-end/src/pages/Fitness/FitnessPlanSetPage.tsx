@@ -6,6 +6,7 @@ import FitnessPlan from '../../components/Fitness/FitnessList/FitnessPlan';
 import { ReactComponent as add } from '../../asset/img/svg/add.svg';
 import IconSvg from '../../components/Common/IconSvg';
 import Button from '../../components/Common/Button';
+import BottomNav from '../../components/Common/BottomNav';
 
 const s = {
   Container: styled.section`
@@ -41,12 +42,13 @@ const s = {
     flex-direction: column;
     justify-content: space-around;
     align-items: center;
+    cursor: pointer;
   `,
   BtnArea: styled.div`
     width: 90%;
     max-width: 500px;
     border: 1px solid red;
-    margin: 0 auto;
+    margin: 0 auto 90px;
     display: flex;
     justify-content: space-between;
   `,
@@ -55,21 +57,22 @@ const s = {
 const FitnessPlanSetPage = (): JSX.Element => {
   return (
     <s.Container>
-      <Header />
-      <s.DateArea>날짜를 지정해주세요.</s.DateArea>
+      <Header text="새루틴">
+        <Button width="80px" height="40px" children="불러오기" onClick={() => {}} size="14px" margin="0 20px 0 0" />
+      </Header>
+      <s.DateArea>이름과 날짜를 지정해주세요.</s.DateArea>
       <s.FitnessArea>
-        {FitnessPlanData.map((data, index) => (
-          <FitnessPlan />
-        ))}
+        <FitnessPlan exercise={FitnessPlanData.exercise} />
       </s.FitnessArea>
       <s.FitnessAdd>
         운동 추가
         <IconSvg width="24" height="24" Ico={add} />
       </s.FitnessAdd>
       <s.BtnArea>
-        <Button width="150px" height="40px" children="저장하기" onClick={() => {}} size="14px" type="main" />
-        <Button width="150px" height="40px" children="운동시작" onClick={() => {}} size="14px" type="main" />
+        <Button width="150px" height="40px" children="저장하기" onClick={() => {}} bold="900" size="14px" type="main" />
+        <Button width="150px" height="40px" children="운동시작" onClick={() => {}} bold="900" size="14px" type="main" />
       </s.BtnArea>
+      <BottomNav />
     </s.Container>
   );
 };

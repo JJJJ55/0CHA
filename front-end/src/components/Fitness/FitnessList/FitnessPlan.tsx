@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { ReactComponent as off } from '../../../asset/img/svg/pickOff.svg';
 import { ReactComponent as on } from '../../../asset/img/svg/pickOn.svg';
 import IconSvg from '../../Common/IconSvg';
+import Input from '../../Common/Input';
 
 const s = {
   Container: styled.section`
@@ -46,6 +47,17 @@ const s = {
   Td: styled.td`
     border: 1px solid red;
     vertical-align: middle;
+    width: 20%;
+  `,
+  ValueInput: styled.input`
+    width: 50px;
+    height: fit-content;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    padding: 0;
+    color: ${(props) => props.theme.textColor};
+    background-color: ${(props) => props.theme.bgColor};
   `,
 
   SetBtnArea: styled.div`
@@ -74,40 +86,69 @@ const s = {
     margin: 30px auto;
   `,
 };
+type ExerciseType = {
+  name: string;
+  detail: ExerciseDetailType[];
+};
 
-const FitnessPlan = (): JSX.Element => {
+type ExerciseDetailType = {
+  id: number;
+  set: number;
+  weight: number;
+  count: number;
+  is_complete: boolean;
+};
+interface FitnessDataProps {
+  exercise: ExerciseType[];
+}
+
+const FitnessPlan = (props: FitnessDataProps): JSX.Element => {
   return (
-    <s.Container>
-      <s.PlanHeaderArea>
-        벤치프레스
-        <s.DeleteText>운동 삭제</s.DeleteText>
-      </s.PlanHeaderArea>
-      <s.PlanTable>
-        <s.TableHead>
-          <s.Tr>
-            <s.Th>세트</s.Th>
-            <s.Th>무게</s.Th>
-            <s.Th>횟수</s.Th>
-            <s.Th>완료</s.Th>
-          </s.Tr>
-        </s.TableHead>
-        <s.TableBody>
-          <s.Tr>
-            <s.Td>1</s.Td>
-            <s.Td>50</s.Td>
-            <s.Td>10</s.Td>
-            <s.Td>
-              <IconSvg width="24" height="24" Ico={off} />
-            </s.Td>
-          </s.Tr>
-        </s.TableBody>
-      </s.PlanTable>
-      <s.SetBtnArea>
-        <s.PlanSetBtn>세트 삭제</s.PlanSetBtn>
-        <s.PlanSetBtn>세트 추가</s.PlanSetBtn>
-      </s.SetBtnArea>
-      <s.ListLine />
-    </s.Container>
+    <>
+      {props.exercise.map((data, index) => (
+        <s.Container key={index}>
+          <s.PlanHeaderArea>
+            {data.name}
+            <s.DeleteText>운동 삭제</s.DeleteText>
+          </s.PlanHeaderArea>
+          <s.PlanTable>
+            <s.TableHead>
+              <s.Tr>
+                <s.Th>세트</s.Th>
+                <s.Th>무게</s.Th>
+                <s.Th>횟수</s.Th>
+                <s.Th>완료</s.Th>
+              </s.Tr>
+            </s.TableHead>
+            <s.TableBody>
+              {data.detail.map((detail, index) => (
+                <s.Tr key={index}>
+                  <s.Td>{detail.set}</s.Td>
+                  <s.Td>
+                    <s.ValueInput value={detail.weight} />
+                  </s.Td>
+                  <s.Td>
+                    <s.ValueInput value={detail.count} />
+                  </s.Td>
+                  <s.Td>
+                    {detail.is_complete ? (
+                      <IconSvg width="40" height="40" Ico={on} cursor="pointer" />
+                    ) : (
+                      <IconSvg width="40" height="40" Ico={off} cursor="pointer" />
+                    )}
+                  </s.Td>
+                </s.Tr>
+              ))}
+            </s.TableBody>
+          </s.PlanTable>
+          <s.SetBtnArea>
+            <s.PlanSetBtn>세트 삭제</s.PlanSetBtn>
+            <s.PlanSetBtn>세트 추가</s.PlanSetBtn>
+          </s.SetBtnArea>
+          <s.ListLine />
+        </s.Container>
+      ))}
+    </>
   );
 };
 

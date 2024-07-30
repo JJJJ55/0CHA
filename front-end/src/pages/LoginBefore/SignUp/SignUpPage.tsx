@@ -4,6 +4,7 @@ import Input from '../../../components/Common/Input';
 import Button from '../../../components/Common/Button';
 import Text from '../../../components/Common/Text';
 import { ReactComponent as Logo } from '../../../asset/img/svg/0CHA.svg';
+import Header from '../../../components/Common/Header';
 
 // 할 일
 // 비밀번호(조건, 확인 등) 로직 작성
@@ -31,7 +32,7 @@ const s = {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin-bottom: 60px;
+    padding: 60px 0 80px;
   `,
   EmailArea: styled.div`
     width: 80%;
@@ -74,11 +75,11 @@ const s = {
     flex: 1;
     margin-right: 10px;
   `,
-  InputButton: styled.div`
+  InputBtn: styled.div`
     flex-shrink: 0;
   `,
   LoginCheckInput: styled.input`
-    accent-color: '#ccff33';
+    accent-color: ${(props) => props.theme.mainColor};
   `,
   LoginLabel: styled.label`
     font-size: 14px;
@@ -91,10 +92,6 @@ const s = {
     display: flex;
     justify-content: space-around;
     margin-bottom: 50px;
-  `,
-  SnsText: styled.span`
-    color: #666666;
-    font-size: 14px;
   `,
   SelectBox: styled.select`
     width: 30%;
@@ -121,7 +118,7 @@ const s = {
   PhoneNumberInput: styled(Input)`
     width: 30%;
   `,
-  SubmitButtonArea: styled.div`
+  SubBtnArea: styled.div`
     width: 80%;
     display: flex;
     justify-content: center;
@@ -243,6 +240,7 @@ const SignUpPage = (): JSX.Element => {
 
   return (
     <s.Container>
+      <Header text="회원가입" />
       <s.SignUpArea>
         <s.EmailArea>
           <s.InputHeader children="이메일" />
@@ -258,7 +256,7 @@ const SignUpPage = (): JSX.Element => {
                 onChange={handleChangeValue}
               />
             </s.InputBox>
-            <s.InputButton>
+            <s.InputBtn>
               <Button
                 width="85px"
                 height="40px"
@@ -266,7 +264,7 @@ const SignUpPage = (): JSX.Element => {
                 children="인증번호 발송"
                 onClick={handleSendVerificationCode}
               />
-            </s.InputButton>
+            </s.InputBtn>
           </s.InputArea>
           <s.InputHeader children="인증번호" />
           <s.InputArea>
@@ -281,9 +279,9 @@ const SignUpPage = (): JSX.Element => {
                 onChange={handleChangeValue}
               />
             </s.InputBox>
-            <s.InputButton>
+            <s.InputBtn>
               <Button width="85px" height="40px" type="main" children="확인" onClick={handleCheckVerificationCode} />
-            </s.InputButton>
+            </s.InputBtn>
           </s.InputArea>
         </s.EmailArea>
         <s.PasswordArea>
@@ -342,7 +340,7 @@ const SignUpPage = (): JSX.Element => {
                 onChange={handleChangeValue}
               />
             </s.InputBox>
-            <s.InputButton>
+            <s.InputBtn>
               <Button
                 width="85px"
                 height="40px"
@@ -350,7 +348,7 @@ const SignUpPage = (): JSX.Element => {
                 children="중복확인"
                 onClick={handleCheckDuplicateNickname}
               />
-            </s.InputButton>
+            </s.InputBtn>
           </s.InputArea>
           <s.InputHeader children="생년월일" />
           <s.InputArea>
@@ -393,9 +391,9 @@ const SignUpPage = (): JSX.Element => {
             />
           </s.PhoneNumberArea>
         </s.InfoArea>
-        <s.SubmitButtonArea>
+        <s.SubBtnArea>
           <Button width="200px" height="40px" type="main" children="회원가입" onClick={handleSubmit} />
-        </s.SubmitButtonArea>
+        </s.SubBtnArea>
         <s.TextBtnArea>
           <Text children="이미 회원이신가요?" type="guide" size="14px" />
           <Text type="guide" children="로그인" size="14px" onClick={() => {}} cursor="pointer" />

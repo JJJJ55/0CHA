@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import Input from '../../../components/Common/Input';
 import Button from '../../../components/Common/Button';
+import Header from '../../../components/Common/Header';
 
 // 할 일
 // 인증번호 및 이메일 한국어 입력 불가 구현하기
@@ -10,11 +11,9 @@ const s = {
   Container: styled.section`
     height: 100%;
     background-color: ${(props) => props.theme.bgColor};
-    display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 20px;
+    padding: 0 10px 0;
   `,
   FindPasswordArea: styled.div`
     width: 100%;
@@ -22,6 +21,7 @@ const s = {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    padding: 60px 0 80px;
   `,
   InfoArea: styled.div`
     width: 80%;
@@ -52,7 +52,7 @@ const s = {
     margin-bottom: 20px;
   `,
   FixedPhoneNumber: styled.div`
-    width: 20%;
+    width: 30%;
     height: 40px;
     line-height: 40px;
     text-align: center;
@@ -62,13 +62,13 @@ const s = {
     border-radius: 8px;
   `,
   PhoneNumberInput: styled(Input)`
-    width: 35%;
+    width: 30%;
   `,
   BetweenText: styled.span`
     color: ${(props) => props.theme.textColor};
     font-size: 16px;
   `,
-  ButtonArea: styled.div`
+  BtnArea: styled.div`
     width: 80%;
     display: flex;
     justify-content: space-between;
@@ -78,7 +78,7 @@ const s = {
     flex: 1;
     margin-right: 10px;
   `,
-  InputButton: styled.div`
+  InputBtn: styled.div`
     flex-shrink: 0;
   `,
 };
@@ -145,6 +145,7 @@ const FindPasswordPage = (): JSX.Element => {
 
   return (
     <s.Container>
+      <Header text="비밀번호 찾기" />
       <s.FindPasswordArea>
         <s.InfoArea>
           <s.InputHeader children="이름" />
@@ -194,7 +195,7 @@ const FindPasswordPage = (): JSX.Element => {
                 onChange={handleChangeValue}
               />
             </s.InputBox>
-            <s.InputButton>
+            <s.InputBtn>
               <Button
                 width="100px"
                 height="40px"
@@ -202,7 +203,7 @@ const FindPasswordPage = (): JSX.Element => {
                 children={verificationButtonText}
                 onClick={handleSendVerificationCode}
               />
-            </s.InputButton>
+            </s.InputBtn>
           </s.InputArea>
           <s.InputHeader children="인증번호" />
           <s.InputArea>
@@ -217,16 +218,16 @@ const FindPasswordPage = (): JSX.Element => {
                 onChange={handleChangeValue}
               />
             </s.InputBox>
-            <s.InputButton>
+            <s.InputBtn>
               <Button width="100px" height="40px" type="main" children="인증번호 확인" onClick={handleVerifyCode} />
-            </s.InputButton>
+            </s.InputBtn>
           </s.InputArea>
         </s.InfoArea>
         {isVerified && (
-          <s.ButtonArea>
+          <s.BtnArea>
             <Button width="48%" height="40px" children="이전" onClick={handlePrevious} />
             <Button width="48%" height="40px" type="main" children="비밀번호 변경" onClick={handleSubmit} />
-          </s.ButtonArea>
+          </s.BtnArea>
         )}
       </s.FindPasswordArea>
     </s.Container>

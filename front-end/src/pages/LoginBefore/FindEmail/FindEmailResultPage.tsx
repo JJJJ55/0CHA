@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Button from '../../../components/Common/Button';
+import Header from '../../../components/Common/Header';
 
 const s = {
   Container: styled.section`
@@ -34,7 +35,7 @@ const s = {
     font-weight: bold;
     margin-bottom: 40px;
   `,
-  ButtonArea: styled.div`
+  BtnArea: styled.div`
     width: 100%;
     display: flex;
     justify-content: space-between;
@@ -62,17 +63,20 @@ const FindEmailResultPage = (): JSX.Element => {
   };
 
   return (
-    <s.Container>
-      <s.ResultArea>
-        <s.Message children={`${name}님의 이메일은`} />
-        <s.Email children={email} />
-        <s.Message children="입니다." />
-        <s.ButtonArea>
-          <s.Button onClick={handleFindPassword} children="비밀번호 찾기" />
-          <s.Button type="main" onClick={handleLogin} children="로그인" />
-        </s.ButtonArea>
-      </s.ResultArea>
-    </s.Container>
+    <>
+      <Header text="이메일 찾기" />
+      <s.Container>
+        <s.ResultArea>
+          <s.Message children={`${name}님의 이메일은`} />
+          <s.Email children={email} />
+          <s.Message children="입니다." />
+          <s.BtnArea>
+            <s.Button onClick={handleFindPassword} children="비밀번호 찾기" />
+            <s.Button type="main" onClick={handleLogin} children="로그인" />
+          </s.BtnArea>
+        </s.ResultArea>
+      </s.Container>
+    </>
   );
 };
 

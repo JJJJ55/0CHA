@@ -62,14 +62,14 @@ const s = {
     margin-bottom: 30px;
   `,
   ProfileButton: styled(Button)`
-    width: 48%;
+    width: 49%;
     height: 40px;
     border-radius: 10px;
     background-color: #ccff33; /* Button color */
     color: #000; /* Text color */
   `,
   CancelButton: styled(Button)`
-    width: 48%;
+    width: 49%;
     height: 40px;
     border-radius: 10px;
     background-color: #000; /* Button color */
@@ -138,7 +138,7 @@ const ProfileUpdatePage = (): JSX.Element => {
               onChange={handleNicknameChange}
             />
           </s.InputBox>
-          <Button onClick={handleCheckDuplicate} type="main" height="40px" children="중복확인" />
+          <Button onClick={handleCheckDuplicate} type="main" width="80px" height="40px" children="중복확인" />
         </s.InputArea>
         <s.ButtonArea>
           <s.CancelButton onClick={handleCancel} children="이전" />

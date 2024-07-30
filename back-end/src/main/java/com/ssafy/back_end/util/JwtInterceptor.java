@@ -24,36 +24,26 @@ public class JwtInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String uri = request.getRequestURI();
-        System.out.println("uri:" + uri);
-
-        // 토큰 받기
-        System.out.println("preHandle 실행");
+        String requestURI = request.getRequestURI();
         // 요청이 들어오면 실행되는 메서드
         String accessToken = jwtUtil.getAccessToken(request); //헤더에서 액세스 토큰을 가져옴
-        System.out.println("Interceptor accessToken : " + accessToken); //요청 url 로깅을 위해 가져옴
-        //로깅용 URI
-        String requestURI = request.getRequestURI();
 
         // 비회원일 때(액세스 토큰이 없을 때)
         if (accessToken == null) {
             logger.debug("비회원 유저입니다 URI : {}", requestURI);
             System.out.println("비회원" + requestURI);
-            return true;
-        }
-        else {
+            return false;   //비회원이어도 false
+        } else {
             logger.debug("access 존재합니다.");
-            System.out.println("access 존재합니다.");
             // 액세스 토큰이 유효 시
-            if (jwtUtil.validateToken(accessToken)) {
+            if (jwtUtil.validateToken(accessToken, false)) {
                 logger.debug("유효한 토큰 정보입니다. URI : {}", requestURI);
                 System.out.println("유효" + requestURI);
                 return true;
-            }
-            else {
+            } else {
                 //액세스 토큰이 유효하지 않을 시
                 logger.debug("유효하지 않은 jwt 토큰입니다. uri : {}", requestURI);
-                System.out.println("유효하지 않음" + requestURI);
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return false;
             }
         }

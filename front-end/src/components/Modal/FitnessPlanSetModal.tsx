@@ -4,7 +4,7 @@ import ReactModal from 'react-modal';
 import Calendar from 'react-calendar';
 import moment from 'moment';
 import '../../styles/modal.css';
-import 'react-calendar/dist/Calendar.css';
+import '../../styles/Calendar.css';
 import Input from '../Common/Input';
 import Button from '../Common/Button';
 import Text from '../Common/Text';
@@ -19,11 +19,10 @@ const s = {
   `,
 
   CalendarArea: styled.div`
-    width: 80%;
-    height: 50%;
+    width: 90%;
+    height: auto;
     border: 1px solid red;
     margin: 0 auto;
-    background-color: red;
   `,
 };
 
@@ -57,9 +56,13 @@ const FitnessPlanSetModal = (props: FitnessPlanModalProps): JSX.Element => {
           textalian="center"
         />
         <Input placeholder={test} bold="700" size="16px" width="50%" height="40px" display="block" margin="20px auto" />
-        <s.CalendarArea>
-          <Calendar locale="ko" onChange={handleChangeDate} value={date}></Calendar>
-        </s.CalendarArea>
+        <Calendar
+          locale="ko"
+          onChange={handleChangeDate}
+          value={date}
+          formatDay={(locale, date) => moment(date).format('DD')}
+        ></Calendar>
+        <s.CalendarArea></s.CalendarArea>
         <Button
           width="200px"
           height="40px"

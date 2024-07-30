@@ -52,12 +52,14 @@ const s = {
     cursor: pointer;
   `,
   BtnArea: styled.div`
-    width: 90%;
+    width: 100%;
     max-width: 500px;
+    height: 70px;
     border: 1px solid red;
     margin: 0 auto;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+    align-items: center;
   `,
 };
 
@@ -82,27 +84,29 @@ const FitnessPlanSetPage = (): JSX.Element => {
         </s.FitnessAdd>
         <s.BtnArea>
           <Button
-            width="150px"
+            width="170px"
             height="40px"
             children="저장하기"
             onClick={() => {}}
             bold="900"
             size="14px"
             type="main"
+            margin="10px"
           />
           <Button
-            width="150px"
+            width="170px"
             height="40px"
             children="운동시작"
             onClick={() => {}}
             bold="900"
             size="14px"
             type="main"
+            margin="10px"
           />
         </s.BtnArea>
       </s.ContentArea>
       <BottomNav />
-      <FitnessPlanSetModal open={open} />
+      {/* <FitnessPlanSetModal open={open} /> */}
     </s.Container>
   );
 };

@@ -34,6 +34,18 @@ services:
       - TZ=${TZ}
     restart: always
 
+#spring:
+#    build: ../back-end
+#    container_name: spring-container
+#    environment:
+#      - TZ=${TZ}
+#    depends_on:
+#      - mysql
+#    restart: always
 
-# spring:
-#image:
+  nginx:
+    build: ./nginx
+    container_name: nginx-container
+    ports:
+      - 80:80
+    restart: always

@@ -27,6 +27,13 @@ const s = {
   `,
   ContentArea: styled.div`
     width: 100%;
+    height: 100%;
+    border: 3px solid red;
+    padding: 57px 0 80px;
+    overflow: auto;
+  `,
+  FitnessTextArea: styled.div`
+    width: 100%;
     height: 200px;
     border: 1px solid red;
     display: flex;
@@ -49,12 +56,14 @@ const FitnessDetailPage = (): JSX.Element => {
           <IconSvg width="24" height="24" Ico={jjimOn} />
         </s.IconArea>
       </Header>
-      <Image width="100%" src={test} height="50%" type="rect" />
       <s.ContentArea>
-        덤벨 프론트 레이즈는 어깨 근육, 특히 전면 삼각근을 강화하는 데 효과적인 운동입니다. 이 운동은 어깨의 크기와 힘을
-        증가시키는 데 도움이 됩니다.
+        <Image width="100%" src={test} height="50%" type="rect" />
+        <s.FitnessTextArea>
+          덤벨 프론트 레이즈는 어깨 근육, 특히 전면 삼각근을 강화하는 데 효과적인 운동입니다. 이 운동은 어깨의 크기와
+          힘을 증가시키는 데 도움이 됩니다.
+        </s.FitnessTextArea>
+        <FitnessDetailChart />
       </s.ContentArea>
-      <FitnessDetailChart />
       <BottomNav />
     </s.Container>
   );

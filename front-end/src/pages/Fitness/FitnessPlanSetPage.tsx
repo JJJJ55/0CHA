@@ -15,6 +15,12 @@ const s = {
     overflow: auto;
     border: 3px solid yellow;
   `,
+  ContentArea: styled.div`
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    padding: 57px 0 80px;
+  `,
   DateArea: styled.div`
     color: ${(props) => props.theme.textColor2};
     font-size: 16px;
@@ -48,7 +54,7 @@ const s = {
     width: 90%;
     max-width: 500px;
     border: 1px solid red;
-    margin: 0 auto 90px;
+    margin: 0 auto;
     display: flex;
     justify-content: space-between;
   `,
@@ -60,18 +66,37 @@ const FitnessPlanSetPage = (): JSX.Element => {
       <Header text="새루틴">
         <Button width="80px" height="40px" children="불러오기" onClick={() => {}} size="14px" margin="0 20px 0 0" />
       </Header>
-      <s.DateArea>이름과 날짜를 지정해주세요.</s.DateArea>
-      <s.FitnessArea>
-        <FitnessPlan exercise={FitnessPlanData.exercise} />
-      </s.FitnessArea>
-      <s.FitnessAdd>
-        운동 추가
-        <IconSvg width="24" height="24" Ico={add} />
-      </s.FitnessAdd>
-      <s.BtnArea>
-        <Button width="150px" height="40px" children="저장하기" onClick={() => {}} bold="900" size="14px" type="main" />
-        <Button width="150px" height="40px" children="운동시작" onClick={() => {}} bold="900" size="14px" type="main" />
-      </s.BtnArea>
+      <s.ContentArea>
+        <s.DateArea>이름과 날짜를 지정해주세요.</s.DateArea>
+        <s.FitnessArea>
+          <FitnessPlan exercise={FitnessPlanData.exercise} />
+        </s.FitnessArea>
+        <s.FitnessAdd>
+          운동 추가
+          <IconSvg width="24" height="24" Ico={add} />
+        </s.FitnessAdd>
+        <s.BtnArea>
+          <Button
+            width="150px"
+            height="40px"
+            children="저장하기"
+            onClick={() => {}}
+            bold="900"
+            size="14px"
+            type="main"
+          />
+          <Button
+            width="150px"
+            height="40px"
+            children="운동시작"
+            onClick={() => {}}
+            bold="900"
+            size="14px"
+            type="main"
+          />
+        </s.BtnArea>
+      </s.ContentArea>
+
       <BottomNav />
     </s.Container>
   );

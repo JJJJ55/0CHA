@@ -1,14 +1,14 @@
-version: "3"
+version: "3.7"
 
 services:
   mysql:
     image: mysql:latest
     container_name: mysql-container
     ports:
-      - ${MYSQL_BINDING_PORT}:${MYSQL_PORT}
+      - "${MYSQL_BINDING_PORT}:${MYSQL_PORT}"
     volumes:
-      - ${MYSQL_VOLUME_PATH}:/var/lib/mysql
-      - ${MYSQL_DEFAULT_CONFIG_PATH}:/etc/my.cnf
+      - "${MYSQL_VOLUME_PATH}:/var/lib/mysql"
+      - "${MYSQL_DEFAULT_CONFIG_PATH}:/etc/my.cnf"
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
       - TZ=${TZ}
@@ -16,20 +16,40 @@ services:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
     restart: always
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
+  redis:
+    build: ./redis
+    container_name: redis-container
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis/data:/data
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   jenkins:
-    image: jenkins/jenkins:lts
+    build: ./jenkins
     container_name: jenkins-container
-    privileged: true # Jenkins에서 Docker를 사용할 수 있도록 권한 부여
-    user: root # root 사용자로 실행
+    privileged: true
+    user: root
     ports:
-      - ${JENKINS_BINDING_PORT}:${JENKINS_PORT}
-      - ${JENKINS_AGENT_PORT}:50000
+      - "${JENKINS_BINDING_PORT}:${JENKINS_PORT}"
+      - "${JENKINS_AGENT_PORT}:50000"
     volumes:
-      - ${JENKINS_VOLUME_PATH}:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock # Docker 소켓 공유
-      - /usr/bin/docker:/usr/bin/docker # Docker 바이너리 공유
+      - "${JENKINS_VOLUME_PATH}:/var/jenkins_home"
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/bin/docker:/usr/bin/docker
     environment:
       - TZ=${TZ}
     restart: always
@@ -40,14 +60,22 @@ services:
     environment:
       - TZ=${TZ}
     ports:
-      - 8081:8081
+      - "8081:8081"
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nginx:
+        condition: service_started
     restart: always
 
   nginx:
     build: ./nginx
     container_name: nginx-container
     ports:
-      - 80:80
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
     restart: always
+

@@ -1,10 +1,13 @@
-package com.ssafy.back_end.user.model;
+package com.ssafy.back_end.auth.model;
 
-import lombok.Data;
+import lombok.*;
 
 import java.util.Date;
 
-@Data
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserDto {
     private int id;
     private String email;

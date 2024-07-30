@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import Header from '../../components/Common/Header';
 import { FitnessPlanData } from '../../util/TestData';
@@ -7,6 +7,7 @@ import { ReactComponent as add } from '../../asset/img/svg/add.svg';
 import IconSvg from '../../components/Common/IconSvg';
 import Button from '../../components/Common/Button';
 import BottomNav from '../../components/Common/BottomNav';
+import FitnessPlanSetModal from '../../components/Modal/FitnessPlanSetModal';
 
 const s = {
   Container: styled.section`
@@ -61,13 +62,17 @@ const s = {
 };
 
 const FitnessPlanSetPage = (): JSX.Element => {
+  const [open, setOpen] = useState(false);
+  const handleChangeOpen = (): void => {
+    setOpen(!open);
+  };
   return (
     <s.Container>
       <Header text="새루틴">
         <Button width="80px" height="40px" children="불러오기" onClick={() => {}} size="14px" margin="0 20px 0 0" />
       </Header>
       <s.ContentArea>
-        <s.DateArea>이름과 날짜를 지정해주세요.</s.DateArea>
+        <s.DateArea onClick={handleChangeOpen}>이름과 날짜를 지정해주세요.</s.DateArea>
         <s.FitnessArea>
           <FitnessPlan exercise={FitnessPlanData.exercise} />
         </s.FitnessArea>
@@ -96,8 +101,8 @@ const FitnessPlanSetPage = (): JSX.Element => {
           />
         </s.BtnArea>
       </s.ContentArea>
-
       <BottomNav />
+      <FitnessPlanSetModal open={open} />
     </s.Container>
   );
 };

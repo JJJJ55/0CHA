@@ -8,6 +8,7 @@ import { ReactComponent as comment } from '../../asset/img/svg/comment.svg'
 import IconSvg from '../Common/IconSvg';
 import Button from '../Common/Button';
 
+import { useState } from 'react';
 
 // const feed = styled.span<FeedProps>`
 //   width: ${(props) => props.width};
@@ -62,6 +63,9 @@ interface FeedProps {
 }
 
 const Feed = (props: FeedProps): JSX.Element => {
+  const test = () =>{
+    alert("클릭")
+  }
   const { width, height, src, content, like, likeCnt, commentCnt, authorName, authorProfileImage } = props;
   return (
     <>
@@ -88,7 +92,7 @@ const Feed = (props: FeedProps): JSX.Element => {
       <IconSvg width="25" height="25" color="#ffffff" Ico={likeOff} />
     )}
       <s.FeedCaption>{likeCnt}</s.FeedCaption>
-      <IconSvg width="25" height="25" color="#ffffff" Ico={comment} />
+      <IconSvg width="25" height="25" color="#ffffff" Ico={comment} onClick={test} />
       <s.FeedCaption>{commentCnt}</s.FeedCaption>
       <s.RoutineButton>
         <Button

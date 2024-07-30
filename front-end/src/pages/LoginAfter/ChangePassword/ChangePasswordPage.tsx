@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import Input from '../../../components/Common/Input';
 import Button from '../../../components/Common/Button';
+import Header from '../../../components/Common/Header';
 
 const s = {
   Container: styled.section`
@@ -11,7 +12,7 @@ const s = {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 20px;
+    padding: 0 10px 0;
   `,
   ChangePasswordArea: styled.div`
     width: 100%;
@@ -94,6 +95,7 @@ const ChangePasswordPage = (): JSX.Element => {
 
   return (
     <s.Container>
+      <Header text="비밀번호 변경" />
       <s.ChangePasswordArea>
         <s.PasswordArea>
           <s.InputHeader children="비밀번호" />

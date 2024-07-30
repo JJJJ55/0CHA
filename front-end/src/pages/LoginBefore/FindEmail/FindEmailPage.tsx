@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import Input from '../../../components/Common/Input';
 import Button from '../../../components/Common/Button';
+import Header from '../../../components/Common/Header';
 
 // 4자리 로직 작성
 
@@ -51,7 +52,7 @@ const s = {
     margin-bottom: 20px;
   `,
   FixedPhoneNumber: styled.div`
-    width: 20%;
+    width: 30%;
     height: 40px;
     line-height: 40px;
     text-align: center;
@@ -61,13 +62,13 @@ const s = {
     border-radius: 8px;
   `,
   PhoneNumberInput: styled(Input)`
-    width: 35%;
+    width: 30%;
   `,
   BetweenText: styled.span`
     color: ${(props) => props.theme.textColor};
     font-size: 16px;
   `,
-  ButtonArea: styled.div`
+  BtnArea: styled.div`
     width: 80%;
     display: flex;
     justify-content: space-between;
@@ -113,50 +114,53 @@ const FindEmailPage = (): JSX.Element => {
   };
 
   return (
-    <s.Container>
-      <s.FindEmailArea>
-        <s.InfoArea>
-          <s.InputHeader children="이름" />
-          <s.InputArea>
-            <Input
-              width="100%"
-              height="40px"
-              name="username"
-              placeholder="이름을 입력해주세요"
-              type="text"
-              value={data.username}
-              onChange={handleChangeValue}
-            />
-          </s.InputArea>
-          <s.InputHeader children="전화번호" />
-          <s.PhoneNumberArea>
-            <s.FixedPhoneNumber children="010" />
-            <s.BetweenText children="-" />
-            <s.PhoneNumberInput
-              height="40px"
-              type="text"
-              name="phonePart2"
-              placeholder="앞 4자리"
-              value={data.phonePart2}
-              onChange={handleChangeValue}
-            />
-            <s.BetweenText children="-" />
-            <s.PhoneNumberInput
-              height="40px"
-              type="text"
-              name="phonePart3"
-              placeholder="뒤 4자리"
-              value={data.phonePart3}
-              onChange={handleChangeValue}
-            />
-          </s.PhoneNumberArea>
-        </s.InfoArea>
-        <s.ButtonArea>
-          <Button width="48%" height="40px" children="이전" onClick={handlePrevious} />
-          <Button width="48%" height="40px" type="main" children="이메일 찾기" onClick={handleSubmit} />
-        </s.ButtonArea>
-      </s.FindEmailArea>
-    </s.Container>
+    <>
+      <Header text="이메일 찾기" />
+      <s.Container>
+        <s.FindEmailArea>
+          <s.InfoArea>
+            <s.InputHeader children="이름" />
+            <s.InputArea>
+              <Input
+                width="100%"
+                height="40px"
+                name="username"
+                placeholder="이름을 입력해주세요"
+                type="text"
+                value={data.username}
+                onChange={handleChangeValue}
+              />
+            </s.InputArea>
+            <s.InputHeader children="전화번호" />
+            <s.PhoneNumberArea>
+              <s.FixedPhoneNumber children="010" />
+              <s.BetweenText children="-" />
+              <s.PhoneNumberInput
+                height="40px"
+                type="text"
+                name="phonePart2"
+                placeholder="앞 4자리"
+                value={data.phonePart2}
+                onChange={handleChangeValue}
+              />
+              <s.BetweenText children="-" />
+              <s.PhoneNumberInput
+                height="40px"
+                type="text"
+                name="phonePart3"
+                placeholder="뒤 4자리"
+                value={data.phonePart3}
+                onChange={handleChangeValue}
+              />
+            </s.PhoneNumberArea>
+          </s.InfoArea>
+          <s.BtnArea>
+            <Button width="48%" height="40px" children="이전" onClick={handlePrevious} />
+            <Button width="48%" height="40px" type="main" children="이메일 찾기" onClick={handleSubmit} />
+          </s.BtnArea>
+        </s.FindEmailArea>
+      </s.Container>
+    </>
   );
 };
 

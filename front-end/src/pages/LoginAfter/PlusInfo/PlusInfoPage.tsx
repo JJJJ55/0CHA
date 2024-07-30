@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import Input from '../../../components/Common/Input';
 import Button from '../../../components/Common/Button';
 import Text from '../../../components/Common/Text';
+import TextArea from '../../../components/Common/TextArea';
 import { ReactComponent as Logo } from '../../../asset/img/svg/0CHA.svg';
 
 // 배치 구체화
@@ -14,13 +15,11 @@ const s = {
     overflow: auto;
     padding: 20px;
   `,
-  Title: styled.div`
+  InfoHeader: styled.div`
     height: 100px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 30px;
+    padding-left: 10%;
   `,
   PlusInfoArea: styled.div`
     width: 100%;
@@ -77,9 +76,10 @@ const s = {
       width: 48%;
     }
   `,
-  SubmitButtonArea: styled.div`
+  SubmitBtnArea: styled.div`
     width: 80%;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     margin-top: 20px;
   `,
@@ -374,79 +374,87 @@ const PlusInfoPage = (): JSX.Element => {
   };
 
   return (
-    <s.Container>
-      <s.Title>
-        <Text size="24px" children="회원가입 완료" />
-        <Text type="guide" size="18px" children="더 나은 서비스를 위해" />
-        <Text type="guide" size="18px" children="추가 정보를 입력해주세요." />
-      </s.Title>
-      <s.PlusInfoArea>
-        <s.GenderArea>
-          <s.GenderOption>
-            <input
-              type="radio"
-              id="male"
-              name="gender"
-              value="남성"
-              checked={data.gender === '남성'}
+    <>
+      <s.Container>
+        <s.InfoHeader>
+          <Text size="24px" color="mainColor" children="회원가입 완료" margin="5px" />
+          <Text type="guide" size="18px" children="더 나은 서비스를 위해" margin="5px" />
+          <Text type="guide" size="18px" children="추가 정보를 입력해주세요." />
+        </s.InfoHeader>
+        <s.PlusInfoArea>
+          <s.GenderArea>
+            <s.GenderOption>
+              <input
+                type="radio"
+                id="male"
+                name="gender"
+                value="남성"
+                checked={data.gender === '남성'}
+                onChange={handleChangeValue}
+              />
+              <label htmlFor="male">남성</label>
+            </s.GenderOption>
+            <s.GenderOption>
+              <input
+                type="radio"
+                id="female"
+                name="gender"
+                value="여성"
+                checked={data.gender === '여성'}
+                onChange={handleChangeValue}
+              />
+              <label htmlFor="female">여성</label>
+            </s.GenderOption>
+          </s.GenderArea>
+          <s.MeasurementArea>
+            <Input
+              type="text"
+              height="40px"
+              name="height"
+              placeholder="키"
+              value={data.height}
               onChange={handleChangeValue}
             />
-            <label htmlFor="male">남성</label>
-          </s.GenderOption>
-          <s.GenderOption>
-            <input
-              type="radio"
-              id="female"
-              name="gender"
-              value="여성"
-              checked={data.gender === '여성'}
+            <Text type="guide" children="cm" width="30px" />
+          </s.MeasurementArea>
+          <s.MeasurementArea>
+            <Input
+              type="text"
+              height="40px"
+              name="weight"
+              placeholder="체중"
+              value={data.weight}
               onChange={handleChangeValue}
             />
-            <label htmlFor="female">여성</label>
-          </s.GenderOption>
-        </s.GenderArea>
-        <s.MeasurementArea>
-          <Input
-            type="text"
-            height="40px"
-            name="height"
-            placeholder="키"
-            value={data.height}
-            onChange={handleChangeValue}
-          />
-          <Text type="guide" children="cm" width="30px" />
-        </s.MeasurementArea>
-        <s.MeasurementArea>
-          <Input
-            type="text"
-            height="40px"
-            name="weight"
-            placeholder="체중"
-            value={data.weight}
-            onChange={handleChangeValue}
-          />
-          <Text type="guide" children="kg" width="30px" />
-        </s.MeasurementArea>
-        <s.LocationArea>
-          <s.SelectBox name="location1" value={data.location1} onChange={handleChangeValue}>
-            <s.Option value="" children="시/도" />
-            {cities.map((city) => (
-              <s.Option key={city} value={city} children={city} />
-            ))}
-          </s.SelectBox>
-          <s.SelectBox name="location2" value={data.location2} onChange={handleChangeValue} disabled={!data.location1}>
-            <s.Option value="" children="시/군/구" />
-            {data.location1 &&
-              districts[data.location1]?.map((district) => (
-                <s.Option key={district} value={district} children={district} />
+            <Text type="guide" children="kg" width="30px" />
+          </s.MeasurementArea>
+          <s.LocationArea>
+            <s.SelectBox name="location1" value={data.location1} onChange={handleChangeValue}>
+              <s.Option value="" children="시/도" />
+              {cities.map((city) => (
+                <s.Option key={city} value={city} children={city} />
               ))}
-          </s.SelectBox>
-        </s.LocationArea>
-        <s.SubmitButtonArea>
-          <Button width="200px" height="50px" type="main" children="입력완료" onClick={handleSubmit} />
-        </s.SubmitButtonArea>
-      </s.PlusInfoArea>
-    </s.Container>
+            </s.SelectBox>
+            <s.SelectBox
+              name="location2"
+              value={data.location2}
+              onChange={handleChangeValue}
+              disabled={!data.location1}
+            >
+              <s.Option value="" children="시/군/구" />
+              {data.location1 &&
+                districts[data.location1]?.map((district) => (
+                  <s.Option key={district} value={district} children={district} />
+                ))}
+            </s.SelectBox>
+          </s.LocationArea>
+          <s.SubmitBtnArea>
+            <Button width="100%" height="40px" children="다음에 입력하기" onClick={handleSubmit} margin="5px 0" />
+            <Button width="100%" height="40px" type="main" children="입력완료" onClick={handleSubmit} margin="5px 0 " />
+          </s.SubmitBtnArea>
+        </s.PlusInfoArea>
+      </s.Container>
+    </>
   );
 };
 

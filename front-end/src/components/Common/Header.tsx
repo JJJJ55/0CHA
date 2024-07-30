@@ -6,12 +6,14 @@ import Button from './Button';
 
 const s = {
   Container: styled.section`
+    max-width: 800px;
     width: 100%;
     height: 57px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     background-color: ${(props) => props.theme.bgColor};
+    position: fixed;
   `,
   BasicArea: styled.div`
     width: 200px;

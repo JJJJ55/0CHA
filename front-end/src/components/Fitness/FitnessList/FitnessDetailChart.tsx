@@ -32,7 +32,7 @@ const s = {
     border: 1px solid orange;
     display: flex;
     justify-content: center;
-    margin: 0 auto 80px;
+    margin: 0 auto;
     background-color: #000;
   `,
   Title: styled.div`
@@ -75,7 +75,38 @@ export const options: ChartOptions<'line'> = {
   },
 };
 
-const labels = ['07.14', '07.15', '07.16', '07.17', '07.18', '07.19'];
+const labels = [
+  '07.14',
+  '07.15',
+  '07.16',
+  '07.17',
+  '07.18',
+  '07.19',
+  '07.14',
+  '07.15',
+  '07.16',
+  '07.17',
+  '07.18',
+  '07.19',
+  '07.14',
+  '07.15',
+  '07.16',
+  '07.17',
+  '07.18',
+  '07.19',
+  '07.14',
+  '07.15',
+  '07.16',
+  '07.17',
+  '07.18',
+  '07.19',
+  '07.14',
+  '07.15',
+  '07.16',
+  '07.17',
+  '07.18',
+  '07.19',
+];
 
 export const data = {
   labels,

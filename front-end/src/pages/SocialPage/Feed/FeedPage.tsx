@@ -9,6 +9,7 @@ import test from "../../../asset/img/testImg.png";
 import Feed from '../../../components/SNS/Feed';
 import SnsHeader from '../../../components/SNS/SnsHeader';
 import SnsNavigation from '../../../components/SNS/SnsNavigation';
+import CommentModal from '../../../components/SNS/CommentModal';
 
 const s = {
   Container: styled.section`
@@ -94,7 +95,8 @@ const LoginPage = (): JSX.Element => {
       commentCnt="30"
       content="example content test"
       />
-      <Feed 
+      <CommentModal/>
+      {/* <Feed 
       width="100vw"
       height="100vw"
       src={test}
@@ -115,7 +117,7 @@ const LoginPage = (): JSX.Element => {
       likeCnt="100"
       commentCnt="30"
       content="example content test"
-      />
+      /> */}
 
       
     </s.Container>

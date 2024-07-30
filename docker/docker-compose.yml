@@ -1,0 +1,51 @@
+version: "3"
+
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql-container
+    ports:
+      - ${MYSQL_BINDING_PORT}:${MYSQL_PORT}
+    volumes:
+      - ${MYSQL_VOLUME_PATH}:/var/lib/mysql
+      - ${MYSQL_DEFAULT_CONFIG_PATH}:/etc/my.cnf
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - TZ=${TZ}
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    restart: always
+
+
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins-container
+    privileged: true # Jenkins에서 Docker를 사용할 수 있도록 권한 부여
+    user: root # root 사용자로 실행
+    ports:
+      - ${JENKINS_BINDING_PORT}:${JENKINS_PORT}
+      - ${JENKINS_AGENT_PORT}:50000
+    volumes:
+      - ${JENKINS_VOLUME_PATH}:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock # Docker 소켓 공유
+      - /usr/bin/docker:/usr/bin/docker # Docker 바이너리 공유
+    environment:
+      - TZ=${TZ}
+    restart: always
+
+#spring:
+#    build: ../back-end
+#    container_name: spring-container
+#    environment:
+#      - TZ=${TZ}
+#    depends_on:
+#      - mysql
+#    restart: always
+
+  nginx:
+    build: ./nginx
+    container_name: nginx-container
+    ports:
+      - 80:80
+    restart: always

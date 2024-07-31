@@ -3,10 +3,8 @@ import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyle = createGlobalStyle`
 @font-face {
-    font-family: 'Pretendard-Regular';
-    src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
-    font-weight: 400;
-    font-style: normal;
+    font-family: 'Pretendard';
+    src: url('../asset/font/Pretendard-Thin.otf') format('woff');
 }
   ${reset}
   a{
@@ -15,7 +13,7 @@ const GlobalStyle = createGlobalStyle`
     }
     *{
         box-sizing: border-box;
-        font-family: 'Pretendard-Regular'
+        font-family: 'Pretendard'
         
     }
     html, body, div, span, h1, h2, h3, h4, h5, h6, p, 
@@ -24,7 +22,7 @@ const GlobalStyle = createGlobalStyle`
         padding: 0;
         border: 0;
         font-size: 20px;
-        font-family: 'Pretendard-Regular';
+        font-family: 'Pretendard';
         vertical-align: baseline;
     }
     body{

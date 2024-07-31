@@ -43,6 +43,7 @@ const FitnessListPage = (): JSX.Element => {
         height="40px"
         children="새 루틴에 추가하기"
         size="14px"
+        bold="500"
         onClick={() => {}}
         margin="10px auto"
         type="main"

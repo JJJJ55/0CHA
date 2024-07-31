@@ -45,7 +45,7 @@ const FitnessFinishPage = (): JSX.Element => {
           width="150px"
           textalian="center"
           children="운동 완료"
-          bold="900"
+          bold="800"
           size="32px"
           color="mainColor"
           display="block"
@@ -91,22 +91,13 @@ const FitnessFinishPage = (): JSX.Element => {
         </s.ContentArea>
       </s.MainArea>
       <s.BtnArea>
-        <Button
-          width="170px"
-          height="40px"
-          children="확인"
-          onClick={() => {}}
-          bold="900"
-          size="14px"
-          type=""
-          margin="10px"
-        />
+        <Button width="170px" height="40px" children="확인" onClick={() => {}} bold="500" size="14px" margin="10px" />
         <Button
           width="170px"
           height="40px"
           children="업로드"
           onClick={() => {}}
-          bold="900"
+          bold="500"
           size="14px"
           type="main"
           margin="10px"

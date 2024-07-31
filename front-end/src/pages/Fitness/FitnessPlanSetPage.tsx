@@ -86,11 +86,10 @@ const FitnessPlanSetPage = (): JSX.Element => {
           <Button
             width="170px"
             height="40px"
-            children="저장하기"
+            children="루틴 저장"
             onClick={() => {}}
-            bold="900"
+            bold="500"
             size="14px"
-            type="main"
             margin="10px"
           />
           <Button
@@ -98,7 +97,7 @@ const FitnessPlanSetPage = (): JSX.Element => {
             height="40px"
             children="운동시작"
             onClick={() => {}}
-            bold="900"
+            bold="500"
             size="14px"
             type="main"
             margin="10px"
@@ -106,7 +105,7 @@ const FitnessPlanSetPage = (): JSX.Element => {
         </s.BtnArea>
       </s.ContentArea>
       <BottomNav />
-      {/* <FitnessPlanSetModal open={open} /> */}
+      <FitnessPlanSetModal open={open} />
     </s.Container>
   );
 };

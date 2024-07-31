@@ -12,10 +12,10 @@ const s = {
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
+    z-index: 1000; // 맨 위로
   `,
   ModalContent: styled.div`
-    background: #000;
+    background: ${(props) => props.theme.bgColor};
     border-radius: 10px;
     padding: 20px;
     text-align: center;
@@ -32,10 +32,11 @@ const s = {
     margin-bottom: 20px;
     text-align: left;
   `,
-  ResultItem: styled.div<{ isError: boolean }>`
+  ResultItem: styled.div<{ $isError: boolean }>`
     margin: 5px 0;
+    /* 양호, 불량에 대한 스타일링 */
     ${(props) =>
-      props.isError
+      props.$isError
         ? css`
             color: ${(props) => props.theme.textColor};
           `
@@ -55,25 +56,19 @@ const s = {
     margin-top: 20px;
   `,
 };
+// 결과
+interface Result {
+  set: number;
+  isError: boolean;
+  message: string;
+}
 
 interface ResultModalProps {
   onClose: () => void;
+  results: Result[];
 }
 
-const ResultModal: React.FC<ResultModalProps> = ({ onClose }) => {
-  const results = [
-    { set: 1, isError: false, message: '좋은 자세입니다.' },
-    { set: 2, isError: true, message: '허리 굽힘이 발생했습니다.' },
-    { set: 3, isError: false, message: '좋은 자세입니다.' },
-    { set: 4, isError: true, message: '더 내려가야 합니다.' },
-    { set: 5, isError: false, message: '좋은 자세입니다.' },
-    { set: 6, isError: false, message: '좋은 자세입니다.' },
-    { set: 7, isError: false, message: '좋은 자세입니다.' },
-    { set: 8, isError: true, message: '더 내려가야 합니다.' },
-    { set: 9, isError: false, message: '좋은 자세입니다.' },
-    { set: 10, isError: false, message: '좋은 자세입니다.' },
-  ];
-
+const ResultModal: React.FC<ResultModalProps> = ({ onClose, results }) => {
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
       onClose();
@@ -86,7 +81,7 @@ const ResultModal: React.FC<ResultModalProps> = ({ onClose }) => {
         <s.ModalTitle children="실행 결과" />
         <s.ResultList>
           {results.map((result) => (
-            <s.ResultItem key={result.set} isError={result.isError}>
+            <s.ResultItem key={result.set} $isError={result.isError}>
               {result.set}회차 {result.isError ? 'X' : 'O'} {result.message}
             </s.ResultItem>
           ))}

@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Input from '../../../components/Common/Input';
 import Button from '../../../components/Common/Button';
 import Header from '../../../components/Common/Header';
+import PhoneNumberInput from '../../../components/LoginBefore/phoneNumberInput';
 
 // 4자리 로직 작성
 
@@ -29,7 +30,6 @@ const s = {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin-bottom: 20px;
   `,
   InputArea: styled.div`
     width: 100%;
@@ -40,32 +40,9 @@ const s = {
   `,
   InputHeader: styled.p`
     text-align: left;
-    width: 100%;
+    width: 80px;
     color: ${(props) => props.theme.textColor};
     margin-bottom: 5px;
-  `,
-  PhoneNumberArea: styled.div`
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-  `,
-  FixedPhoneNumber: styled.div`
-    width: 30%;
-    height: 40px;
-    line-height: 40px;
-    text-align: center;
-    color: ${(props) => props.theme.textColor};
-    background-color: ${(props) => props.theme.subColor};
-    border: 1px solid ${(props) => props.theme.bgColor};
-    border-radius: 8px;
-  `,
-  PhoneNumberInput: styled(Input)`
-    width: 30%;
-  `,
-  BetweenText: styled.span`
-    color: ${(props) => props.theme.textColor};
     font-size: 16px;
   `,
   BtnArea: styled.div`
@@ -73,6 +50,17 @@ const s = {
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
+  `,
+  ErrorText: styled.p`
+    color: red;
+    font-size: 12px;
+    margin-left: 10px;
+    margin-top: 5px;
+  `,
+  InfoNameBox: styled.div`
+    width: 100%;
+    display: flex;
+    justify-content: left;
   `,
 };
 
@@ -89,37 +77,81 @@ const FindEmailPage = (): JSX.Element => {
     phonePart3: '',
   });
 
+  // 유효성 검사 상태
+  const [usernameError, setUsernameError] = useState('');
+  const [phoneNumberError, setPhoneNumberError] = useState('');
+  const [isExisted, setIsExisted] = useState(true);
+
+  // 전화번호 유효성 검사
+  useEffect(() => {
+    const validatePhoneNumber = () => {
+      const { phonePart2, phonePart3 } = data;
+      if (
+        (phonePart2 && phonePart2.length !== 4) ||
+        (phonePart3 && phonePart3.length !== 4) ||
+        (!phonePart2 && phonePart3) ||
+        (phonePart2 && !phonePart3)
+      ) {
+        setPhoneNumberError('휴대전화 앞, 뒤 4자리를 정확하게 입력해 주세요.');
+      } else {
+        setPhoneNumberError('');
+      }
+    };
+
+    validatePhoneNumber();
+  }, [data.phonePart2, data.phonePart3]);
+
+  // 입력 값 변경 처리
   const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    // 전화번호 두 번째와 세 번째 필드에 대해 4자리로 제한
+
+    if (name === 'username') {
+      const usernameRegex = /^[a-zA-Z가-힣]*$/;
+      if (!usernameRegex.test(value) || value.length === 1) {
+        setUsernameError('2~20자 내 한글/영문만 입력하세요.');
+      } else {
+        setUsernameError('');
+      }
+      if (value.length > 20) {
+        return;
+      }
+    }
+
     if ((name === 'phonePart2' || name === 'phonePart3') && value.length > 4) {
       return;
     }
+
     setData({
       ...data,
       [name]: value,
     });
   };
 
+  // 제출 처리
   const handleSubmit = () => {
-    // 제출 로직 작성
     console.log('Form submitted:', data);
+    // 회원정보 탐색
+    setIsExisted(false); // 존재하지 않음
+    if (isExisted) {
+    }
     alert('이메일 찾기 요청이 제출되었습니다.');
   };
 
+  // 이전 페이지로 이동 처리
   const handlePrevious = () => {
-    // 이전 페이지로 이동하는 로직 작성
     console.log('Previous button clicked');
     alert('이전 페이지로 이동합니다.');
   };
-
   return (
     <>
       <Header text="이메일 찾기" />
       <s.Container>
         <s.FindEmailArea>
           <s.InfoArea>
-            <s.InputHeader children="이름" />
+            <s.InfoNameBox>
+              <s.InputHeader children="이름" />
+              {usernameError && <s.ErrorText>{usernameError}</s.ErrorText>}
+            </s.InfoNameBox>
             <s.InputArea>
               <Input
                 width="100%"
@@ -131,29 +163,13 @@ const FindEmailPage = (): JSX.Element => {
                 onChange={handleChangeValue}
               />
             </s.InputArea>
-            <s.InputHeader children="전화번호" />
-            <s.PhoneNumberArea>
-              <s.FixedPhoneNumber children="010" />
-              <s.BetweenText children="-" />
-              <s.PhoneNumberInput
-                height="40px"
-                type="text"
-                name="phonePart2"
-                placeholder="앞 4자리"
-                value={data.phonePart2}
-                onChange={handleChangeValue}
-              />
-              <s.BetweenText children="-" />
-              <s.PhoneNumberInput
-                height="40px"
-                type="text"
-                name="phonePart3"
-                placeholder="뒤 4자리"
-                value={data.phonePart3}
-                onChange={handleChangeValue}
-              />
-            </s.PhoneNumberArea>
+            <s.InfoNameBox>
+              <s.InputHeader children="전화번호" />
+              {phoneNumberError && <s.ErrorText>{phoneNumberError}</s.ErrorText>}
+            </s.InfoNameBox>
+            <PhoneNumberInput phonePart2={data.phonePart2} phonePart3={data.phonePart3} onChange={handleChangeValue} />
           </s.InfoArea>
+          {!isExisted && <s.ErrorText>가입된 이메일이 없습니다.</s.ErrorText>}
           <s.BtnArea>
             <Button width="48%" height="40px" children="이전" onClick={handlePrevious} />
             <Button width="48%" height="40px" type="main" children="이메일 찾기" onClick={handleSubmit} />

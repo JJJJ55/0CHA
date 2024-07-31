@@ -29,7 +29,7 @@ const s = {
   `,
   ExerciseList: styled.div`
     margin-bottom: 20px;
-    height: 120px; /* Ensure this height matches the combined height of 3 exercises */
+    height: 120px; /* 운동 목록 3개가 보이도록 가운데 상-하 1개씩 */
     display: flex;
     flex-direction: column;
     align-items: center;

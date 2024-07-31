@@ -2,16 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import Image from '../Common/Image';
-import { ReactComponent as likeOn } from '../../asset/img/svg/likeOn.svg'
-import { ReactComponent as likeOff } from '../../asset/img/svg/liekOff.svg'
-import { ReactComponent as comment } from '../../asset/img/svg/comment.svg'
-import IconSvg from '../Common/IconSvg';
-import Button from '../Common/Button';
 
-// const feed = styled.span<FeedProps>`
-//   width: ${(props) => props.width};
-//   height: ${(props) => props.height};
-// `;
 
 const s = {
   Container: styled.section`
@@ -44,8 +35,10 @@ const s = {
   CommentContent: styled.div`
     color: ${(props) => props.theme.textColor};
     font-size: 14px;
+    font-weight: 500;
   `,
 };
+
 
 interface CommentProps {
   commentProfileImage: string;
@@ -54,14 +47,15 @@ interface CommentProps {
   isUserComment: boolean;
 }
 
+
 const Comment = (props: CommentProps): JSX.Element => {
   const { commentProfileImage, commentAuthor, commentContent, isUserComment } = props;
   return (
     <s.Container>
       <Image
-      width="34px"
-      height="34px"
-      src={commentProfileImage}
+        width="34px"
+        height="34px"
+        src={commentProfileImage}
       />
       <s.CommentArea>
         <s.CommentAuthorArea>

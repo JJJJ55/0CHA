@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import Input from '../../../components/Common/Input';
-import Button from '../../../components/Common/Button';
-import Text from '../../../components/Common/Text';
-import { ReactComponent as Logo } from '../../../asset/img/svg/0CHA.svg';
-import test from "../../../asset/img/testImg.png";
 
 import Feed from '../../../components/SNS/Feed';
 import SnsHeader from '../../../components/SNS/SnsHeader';
 import SnsNavigation from '../../../components/SNS/SnsNavigation';
 import CommentModal from '../../../components/SNS/CommentModal';
+import BottomNav from '../../../components/Common/BottomNav';
+
+import test from "../../../asset/img/testImg.png";
+
 
 const s = {
   Container: styled.section`
     height: 100%;
     background-color: ${(props) => props.theme.bgColor};
     overflow: auto;
+    padding-bottom: 68px;
   `,
   Title: styled.div`
     height: 200px;
@@ -33,7 +33,6 @@ const s = {
   `,
   InputArea: styled.div`
     width: 80%;
-    /* border: 1px solid red; */
     margin: 0px auto;
   `,
   LoginCheckInput: styled.input`
@@ -47,7 +46,6 @@ const s = {
     text-align: center;
     color: ${(props) => props.theme.textColor};
     width: 230px;
-    /* border: 1px solid red; */
     display: flex;
     justify-content: space-around;
     margin-bottom: 50px;
@@ -57,33 +55,20 @@ const s = {
     font-size: 14px;
   `,
 };
+
+
 interface dataType {
   email: string;
   pw: string;
 }
 
-const LoginPage = (): JSX.Element => {
-  const [data, setData] = useState<dataType>({
-    email: '',
-    pw: '',
-  });
 
-  const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setData({
-      ...data,
-      [e.target.name]: e.target.value,
-    });
-  };
-  const handleClickLogin = () => {
-    alert(data.email + ' ' + data.pw);
-  };
-
+const FeedPage = (): JSX.Element => {
   return (
+    <>
     <s.Container>
       <SnsHeader />
-
       <SnsNavigation />
-
       <Feed 
       width="100vw"
       height="100vw"
@@ -95,33 +80,11 @@ const LoginPage = (): JSX.Element => {
       commentCnt="30"
       content="example content test"
       />
-      <CommentModal/>
-      {/* <Feed 
-      width="100vw"
-      height="100vw"
-      src={test}
-      authorName="stranger_00"
-      authorProfileImage={test}
-      like="true"
-      likeCnt="100"
-      commentCnt="30"
-      content="example content test"
-      />
-      <Feed 
-      width="100vw"
-      height="100vw"
-      src={test}
-      authorName="stranger_00"
-      authorProfileImage={test}
-      like="true"
-      likeCnt="100"
-      commentCnt="30"
-      content="example content test"
-      /> */}
-
-      
+      <CommentModal/>      
     </s.Container>
+    <BottomNav/>
+    </>
   );
 };
 
-export default LoginPage;
+export default FeedPage;

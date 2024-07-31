@@ -1,14 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
-import { ReactComponent as back } from '../../asset/img/svg/back.svg';
-import IconSvg from '../Common/IconSvg';
-import Button from '../Common/Button';
-import Input from '../Common/Input';
 
+import IconSvg from '../Common/IconSvg';
+import Input from '../Common/Input';
 import Image from '../Common/Image';
-import test from '../../asset/img/testImg.png';
 import { ReactComponent as alarm } from '../../asset/img/svg/alram.svg';
 import { ReactComponent as message } from '../../asset/img/svg/message.svg';
+
+import test from '../../asset/img/testImg.png';
 
 
 const s = {
@@ -18,23 +17,19 @@ const s = {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    /* margin: 15px 0px; */
     padding: 0px 15px;
   `,
-  
 };
 
-const SnsHeader = (): JSX.Element => {
 
+const SnsHeader = (): JSX.Element => {
   return (
     <s.Container>
-      
       <Image
-        width="8.9vw"
-        height="8.9vw"
+        width="35px"
+        height="35px"
         src={test}
       />
-        
       <Input
         width="60%"
         height="35px"

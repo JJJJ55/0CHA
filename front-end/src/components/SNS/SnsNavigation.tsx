@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import IconSvg from '../Common/IconSvg';
+
 import Button from '../Common/Button';
 
 
@@ -11,14 +11,12 @@ const s = {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    /* margin: 15px 0px; */
     padding: 0px 15px;
   `,
   NavigationSelect: styled.select`
-    /* appearance: none; */
     color: ${(props) => props.theme.textColor};
     font-size: 18px;
-    font-weight: 700;
+    font-weight: 600;
     background-color: #000000;
     border: none;
     line-height: 2;
@@ -26,24 +24,25 @@ const s = {
   NavigationOption: styled.option`
     color: ${(props) => props.theme.textColor};
     font-size: 18px;
-    font-weight: 700;
+    font-weight: 600;
   `,
 };
 
-const SnsNavigation = (): JSX.Element => {
 
+const SnsNavigation = (): JSX.Element => {
   return (
     <s.Container>
       <s.NavigationSelect>
         <s.NavigationOption>운동</s.NavigationOption>
         <s.NavigationOption>거래</s.NavigationOption>
       </s.NavigationSelect>
-
       <Button
-      width="15%"
+      width="45px"
       height="30px"
       type="main"
       children="작성"
+      bold="500"
+      size="12px"
       />
     </s.Container>
   );

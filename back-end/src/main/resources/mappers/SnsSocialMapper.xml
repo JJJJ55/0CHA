@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.back_end.sns.mapper.SnsSocialMapper">
+
+    <resultMap id="FeedResultMap" type="com.ssafy.back_end.sns.model.FeedDto">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="routineId" column="routine_id"/>
+        <result property="image" column="image"/>
+        <result property="content" column="content"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <resultMap id="FeedInteractionResultMap" type="com.ssafy.back_end.sns.model.FeedInteractionDto">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="feedId" column="feed_id"/>
+        <result property="interactionType" column="interaction_type"/>
+        <result property="comment" column="comment"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <resultMap id="FollowResultMap" type="com.ssafy.back_end.sns.model.FollowDto">
+        <result property="id" column="id"/>
+        <result property="followerId" column="follower_id"/>
+        <result property="followedId" column="followed_id"/>
+        <result property="followedAt" column="followed_at"/>
+    </resultMap>
+
+    <resultMap id="UserPageResultMap" type="com.ssafy.back_end.sns.model.UserPageDto">
+        <result property="nickname" column="nickname"/>
+        <result property="profileImage" column="profile_image"/>
+        <result property="feedCount" column="feed_count"/>
+        <result property="itemCount" column="item_count"/>
+        <result property="followedIdCount" column="followed_id_count"/>
+        <result property="followerIdCount" column="follower_id_count"/>
+    </resultMap>
+
+
+    <select id="getUserPageInfo" resultType="UserPageDto">
+        SELECT nickname,
+               profile_image,
+               (SELECT COUNT(*) FROM feeds WHERE user_id = #{userId})      AS feed_count,
+               (SELECT COUNT(*) FROM items WHERE user_id = #{userId})      AS item_count,
+               (SELECT COUNT(*) FROM followings WHERE user_id = #{userId}) AS followed_id_count,
+               (SELECT COUNT(*) FROM followers WHERE user_id = #{userId})  AS follower_id_count
+        FROM users
+        WHERE user_id = #{userId};
+    </select>
+
+    <select id="getUserPageFeeds" resultType="UserPageListDto">
+        SELECT id, image
+        FROM feeds
+        WHERE user_id = #{userId};
+    </select>
+
+    <select id="getUserPageItems" resultType="UserPageListDto">
+        SELECT id, image
+        FROM items
+        WHERE user_id = #{userId};
+    </select>
+
+</mapper>

@@ -1,6 +1,6 @@
 package com.ssafy.back_end.auth.controller;
 
-import com.ssafy.back_end.auth.model.JwtResponse;
+import com.ssafy.back_end.util.JwtResponse;
 import com.ssafy.back_end.auth.model.UserDto;
 import com.ssafy.back_end.auth.service.UserLoginService;
 import com.ssafy.back_end.util.JwtUtil;

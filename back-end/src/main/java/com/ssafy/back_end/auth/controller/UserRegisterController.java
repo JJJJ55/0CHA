@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Random;
+
 @RestController
 @RequestMapping (value = "/api/auth/register")
 public class UserRegisterController {
@@ -35,7 +37,7 @@ public class UserRegisterController {
         int result = userRegisterService.checkEmail(email);
 
         if (result <= 0) {
-            authCode = 1;   //랜덤코드
+            authCode = getRandomNumber();   //랜덤코드
             return ResponseEntity.ok("이메일로 인증코드가 전송되었습니다.");
         }
         else {
@@ -64,5 +66,10 @@ public class UserRegisterController {
         else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사용중인 닉네임입니다.");
         }
+    }
+
+    public static int getRandomNumber() {
+        Random random = new Random();
+        return 100000 + random.nextInt(900000);
     }
 }

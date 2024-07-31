@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { ReactComponent as off } from '../../../asset/img/svg/pickOff.svg';
 import { ReactComponent as on } from '../../../asset/img/svg/pickOn.svg';
 import IconSvg from '../../Common/IconSvg';
-import Input from '../../Common/Input';
 
 const s = {
   Container: styled.section`
@@ -11,7 +10,7 @@ const s = {
     border: 1px solid red;
   `,
   PlanHeaderArea: styled.div`
-    width: 90%;
+    width: 85%;
     border: 1px solid yellow;
     display: flex;
     justify-content: space-between;
@@ -48,12 +47,13 @@ const s = {
     border: 1px solid red;
     vertical-align: middle;
     width: 20%;
+    padding: 5px;
   `,
   ValueInput: styled.input`
     width: 50px;
     height: fit-content;
     font-size: 18px;
-    font-weight: bold;
+    font-weight: 700;
     text-align: center;
     padding: 0;
     color: ${(props) => props.theme.textColor};
@@ -108,7 +108,7 @@ const FitnessPlan = (props: FitnessDataProps): JSX.Element => {
       {props.exercise.map((data, index) => (
         <s.Container key={index}>
           <s.PlanHeaderArea>
-            {data.name}
+            <span style={{ fontWeight: 600 }}>{index + 1 + '. ' + data.name}</span>
             <s.DeleteText>운동 삭제</s.DeleteText>
           </s.PlanHeaderArea>
           <s.PlanTable>
@@ -132,9 +132,9 @@ const FitnessPlan = (props: FitnessDataProps): JSX.Element => {
                   </s.Td>
                   <s.Td>
                     {detail.is_complete ? (
-                      <IconSvg width="40" height="40" Ico={on} cursor="pointer" />
+                      <IconSvg width="30" height="30" Ico={on} cursor="pointer" />
                     ) : (
-                      <IconSvg width="40" height="40" Ico={off} cursor="pointer" />
+                      <IconSvg width="30" height="30" Ico={off} cursor="pointer" />
                     )}
                   </s.Td>
                 </s.Tr>
@@ -145,7 +145,7 @@ const FitnessPlan = (props: FitnessDataProps): JSX.Element => {
             <s.PlanSetBtn>세트 삭제</s.PlanSetBtn>
             <s.PlanSetBtn>세트 추가</s.PlanSetBtn>
           </s.SetBtnArea>
-          <s.ListLine />
+          {index + 1 === props.exercise?.length || <s.ListLine />}
         </s.Container>
       ))}
     </>

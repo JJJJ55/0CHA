@@ -1,6 +1,6 @@
 .react-calendar {
-  width: 90%;
-  height: auto;
+  width: 100%;
+  /* height: 400px; */
   background: #000;
   font-family: Arial, Helvetica, sans-serif;
   line-height: 1.125em;
@@ -12,6 +12,10 @@
   /* abbr {
     color: #fff;
   } */
+  border: 1px solid red;
+}
+.react-calendar__viewContainer {
+  border: 3px solid green;
 }
 
 .react-calendar--doubleView {
@@ -47,12 +51,17 @@
   cursor: pointer;
 }
 
+/* 제목 */
+.react-calendar__navigation__label__labelText--from {
+  font-size: 14px;
+}
+
 /* 네비게이션 */
 .react-calendar__navigation {
   display: flex;
   height: 60px;
   border: 1px solid red;
-  justify-content: center;
+  justify-content: space-around;
 }
 /* 네비게이션 폰트 설정 */
 .react-calendar__navigation button {
@@ -64,7 +73,11 @@
 
 /* 네비게이션이 비활성화 됐을 때 */
 .react-calendar__navigation button:disabled {
-  background-color: #f0f0f0;
+  /* background-color: #f0f0f0; */
+}
+.react-calendar__century-view__decades__decade {
+  color: #fff;
+  border: 1px solid red;
 }
 
 /* 네비게이션 버튼 컬러 */
@@ -108,7 +121,7 @@
 
 /* 일 날짜 간격 */
 .react-calendar__tile {
-  padding: 50px;
+  padding: 5px 0px 18px;
   position: relative;
 }
 
@@ -185,8 +198,8 @@
 }
 
 .react-calendar__tile:disabled {
-  background-color: #f0f0f0;
-  color: #ababab;
+  /* background-color: #f0f0f0;
+  color: #ababab; */
 }
 
 .react-calendar__month-view__days__day--neighboringMonth:disabled,
@@ -201,14 +214,22 @@
 }
 
 .react-calendar__tile--now {
-  background: none;
   abbr {
     font-size: 16px;
     font-weight: 800;
     border: 2px solid #ccff33;
     border-radius: 50%;
-    padding: 8px;
+    padding: 5px;
   }
+}
+
+/* 루틴이 있는날 css 적용 테스트 */
+.routineFinish {
+  color: #ccff33;
+}
+/* 루틴 계획이 있는날 */
+.routine {
+  color: #666666;
 }
 
 /* 오늘 */

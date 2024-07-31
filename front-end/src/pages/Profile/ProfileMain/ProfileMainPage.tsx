@@ -17,8 +17,8 @@ const s = {
     width: 100%;
     display: flex;
     align-items: center;
-    margin-top: 20px;
-    margin-bottom: 30px;
+    margin-top: 60px;
+    margin-bottom: 70px;
   `,
   ProfileImage: styled.img`
     width: 100px;
@@ -116,35 +116,37 @@ const ProfileMainPage = (): JSX.Element => {
   };
 
   return (
-    <s.Container>
-      <Header />
-      <s.ProfileArea>
-        <s.ProfileImage src={user.profileImage} alt="프로필 이미지" />
-        <s.ProfileDetails>
-          <s.Username children={user.name} />
-          <s.Nickname children={user.nickname} />
-          <s.Email children={user.email} />
-        </s.ProfileDetails>
-      </s.ProfileArea>
-      <s.ButtonArea>
-        <s.ProfileButton onClick={handleEditProfile} children="프로필 수정" />
-      </s.ButtonArea>
-      <s.InfoHeader children="내 정보 관리" />
-      <s.InfoArea>
-        <s.InfoItem onClick={handleEditInfo}>
-          <s.InfoText children="내 정보 수정" />
-          <s.Arrow>›</s.Arrow>
-        </s.InfoItem>
-        <s.InfoItem onClick={handleChangePassword}>
-          <s.InfoText children="비밀번호 변경" />
-          <s.Arrow>›</s.Arrow>
-        </s.InfoItem>
-        <s.InfoItem onClick={handleDeleteAccount}>
-          <s.InfoText children="회원 탈퇴" />
-          <s.Arrow>›</s.Arrow>
-        </s.InfoItem>
-      </s.InfoArea>
-    </s.Container>
+    <>
+      <Header text="내 프로필" />
+      <s.Container>
+        <s.ProfileArea>
+          <s.ProfileImage src={user.profileImage} alt="프로필 이미지" />
+          <s.ProfileDetails>
+            <s.Username children={user.name} />
+            <s.Nickname children={user.nickname} />
+            <s.Email children={user.email} />
+          </s.ProfileDetails>
+        </s.ProfileArea>
+        <s.ButtonArea>
+          <s.ProfileButton onClick={handleEditProfile} children="프로필 수정" />
+        </s.ButtonArea>
+        <s.InfoHeader children="내 정보 관리" />
+        <s.InfoArea>
+          <s.InfoItem onClick={handleEditInfo}>
+            <s.InfoText children="내 정보 수정" />
+            <s.Arrow>›</s.Arrow>
+          </s.InfoItem>
+          <s.InfoItem onClick={handleChangePassword}>
+            <s.InfoText children="비밀번호 변경" />
+            <s.Arrow>›</s.Arrow>
+          </s.InfoItem>
+          <s.InfoItem onClick={handleDeleteAccount}>
+            <s.InfoText children="회원 탈퇴" />
+            <s.Arrow>›</s.Arrow>
+          </s.InfoItem>
+        </s.InfoArea>
+      </s.Container>
+    </>
   );
 };
 

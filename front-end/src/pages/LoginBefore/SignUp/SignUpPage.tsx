@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Input from '../../../components/Common/Input';
 import Button from '../../../components/Common/Button';
 import Text from '../../../components/Common/Text';
-import { ReactComponent as Logo } from '../../../asset/img/svg/0CHA.svg';
+import PhoneNumberInput from '../../../components/LoginBefore/phoneNumberInput';
 import Header from '../../../components/Common/Header';
 
 // 할 일
@@ -17,7 +17,6 @@ const s = {
     height: 100%;
     background-color: ${(props) => props.theme.bgColor};
     overflow: auto;
-    padding: 20px;
   `,
   Title: styled.div`
     height: 200px;
@@ -67,9 +66,10 @@ const s = {
   `,
   InputHeader: styled.p`
     text-align: left;
-    width: 100%;
+    width: 80px;
     color: ${(props) => props.theme.textColor};
     margin-bottom: 5px;
+    font-size: 16px;
   `,
   InputBox: styled.div`
     flex: 1;
@@ -98,31 +98,22 @@ const s = {
     height: 40px;
     margin: 5px;
   `,
-  PhoneNumberArea: styled.div`
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-  `,
-  FixedPhoneNumber: styled.div`
-    width: 30%;
-    height: 40px;
-    line-height: 40px;
-    text-align: center;
-    color: ${(props) => props.theme.textColor};
-    background-color: ${(props) => props.theme.subColor};
-    border: 1px solid ${(props) => props.theme.bgColor};
-    border-radius: 8px;
-  `,
-  PhoneNumberInput: styled(Input)`
-    width: 30%;
-  `,
   SubBtnArea: styled.div`
     width: 80%;
     display: flex;
     justify-content: center;
     margin-top: 20px;
+  `,
+  ErrorText: styled.p`
+    color: red;
+    font-size: 12px;
+    margin-left: 10px;
+    margin-top: 5px;
+  `,
+  InfoNameBox: styled.div`
+    width: 100%;
+    display: flex;
+    justify-content: left;
   `,
 };
 
@@ -156,6 +147,25 @@ const SignUpPage = (): JSX.Element => {
   });
 
   const [daysInMonth, setDaysInMonth] = useState<number[]>([]);
+  const [phoneNumberError, setPhoneNumberError] = useState('');
+  // 전화번호 유효성 검사
+  useEffect(() => {
+    const validatePhoneNumber = () => {
+      const { phonePart2, phonePart3 } = data;
+      if (
+        (phonePart2 && phonePart2.length !== 4) ||
+        (phonePart3 && phonePart3.length !== 4) ||
+        (!phonePart2 && phonePart3) ||
+        (phonePart2 && !phonePart3)
+      ) {
+        setPhoneNumberError('휴대전화 앞, 뒤 4자리를 정확하게 입력해 주세요.');
+      } else {
+        setPhoneNumberError('');
+      }
+    };
+
+    validatePhoneNumber();
+  }, [data.phonePart2, data.phonePart3]);
 
   const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -243,7 +253,9 @@ const SignUpPage = (): JSX.Element => {
       <Header text="회원가입" />
       <s.SignUpArea>
         <s.EmailArea>
-          <s.InputHeader children="이메일" />
+          <s.InfoNameBox>
+            <s.InputHeader children="이메일" />
+          </s.InfoNameBox>
           <s.InputArea>
             <s.InputBox>
               <Input
@@ -266,7 +278,9 @@ const SignUpPage = (): JSX.Element => {
               />
             </s.InputBtn>
           </s.InputArea>
-          <s.InputHeader children="인증번호" />
+          <s.InfoNameBox>
+            <s.InputHeader children="인증번호" />
+          </s.InfoNameBox>
           <s.InputArea>
             <s.InputBox>
               <Input
@@ -285,7 +299,9 @@ const SignUpPage = (): JSX.Element => {
           </s.InputArea>
         </s.EmailArea>
         <s.PasswordArea>
-          <s.InputHeader children="비밀번호" />
+          <s.InfoNameBox>
+            <s.InputHeader children="비밀번호" />
+          </s.InfoNameBox>
           <s.InputArea>
             <Input
               width="100%"
@@ -298,7 +314,9 @@ const SignUpPage = (): JSX.Element => {
               onChange={handleChangeValue}
             />
           </s.InputArea>
-          <s.InputHeader children="비밀번호 확인" />
+          <s.InfoNameBox>
+            <s.InputHeader children="비밀번호 확인" />
+          </s.InfoNameBox>
           <s.InputArea>
             <Input
               width="100%"
@@ -313,7 +331,9 @@ const SignUpPage = (): JSX.Element => {
           </s.InputArea>
         </s.PasswordArea>
         <s.InfoArea>
-          <s.InputHeader children="이름" />
+          <s.InfoNameBox>
+            <s.InputHeader children="이름" />
+          </s.InfoNameBox>
           <s.InputArea>
             <Input
               width="100%"
@@ -326,7 +346,9 @@ const SignUpPage = (): JSX.Element => {
               onChange={handleChangeValue}
             />
           </s.InputArea>
-          <s.InputHeader children="닉네임" />
+          <s.InfoNameBox>
+            <s.InputHeader children="닉네임" />
+          </s.InfoNameBox>
           <s.InputArea>
             <s.InputBox>
               <Input
@@ -350,7 +372,9 @@ const SignUpPage = (): JSX.Element => {
               />
             </s.InputBtn>
           </s.InputArea>
-          <s.InputHeader children="생년월일" />
+          <s.InfoNameBox>
+            <s.InputHeader children="생년월일" />
+          </s.InfoNameBox>
           <s.InputArea>
             <s.SelectBox name="birthYear" value={data.birthYear} onChange={handleChangeValue}>
               <option value="">년</option>
@@ -368,28 +392,11 @@ const SignUpPage = (): JSX.Element => {
             </s.SelectBox>
             <Text type="guide" children="일" />
           </s.InputArea>
-          <s.InputHeader children="전화번호" />
-          <s.PhoneNumberArea>
-            <s.FixedPhoneNumber children="010" />
-            <Text type="guide" children="-" />
-            <s.PhoneNumberInput
-              width="30%"
-              height="40px"
-              type="text"
-              name="phonePart2"
-              value={data.phonePart2}
-              onChange={handleChangeValue}
-            />
-            <Text type="guide" children="-" />
-            <s.PhoneNumberInput
-              width="30%"
-              height="40px"
-              type="text"
-              name="phonePart3"
-              value={data.phonePart3}
-              onChange={handleChangeValue}
-            />
-          </s.PhoneNumberArea>
+          <s.InfoNameBox>
+            <s.InputHeader children="전화번호" />
+            {phoneNumberError && <s.ErrorText>{phoneNumberError}</s.ErrorText>}
+          </s.InfoNameBox>
+          <PhoneNumberInput phonePart2={data.phonePart2} phonePart3={data.phonePart3} onChange={handleChangeValue} />
         </s.InfoArea>
         <s.SubBtnArea>
           <Button width="200px" height="40px" type="main" children="회원가입" onClick={handleSubmit} />

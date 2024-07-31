@@ -30,7 +30,7 @@ const s = {
     margin-bottom: 20px;
   `,
   Email: styled.p`
-    color: #ccff33;
+    color: ${(props) => props.theme.mainColor};
     font-size: 18px;
     font-weight: bold;
     margin-bottom: 40px;
@@ -43,7 +43,7 @@ const s = {
   `,
   Button: styled(Button)`
     width: 48%;
-    height: 50px;
+    height: 40px;
     border-radius: 5px;
   `,
 };
@@ -71,8 +71,8 @@ const FindEmailResultPage = (): JSX.Element => {
           <s.Email children={email} />
           <s.Message children="입니다." />
           <s.BtnArea>
-            <s.Button onClick={handleFindPassword} children="비밀번호 찾기" />
-            <s.Button type="main" onClick={handleLogin} children="로그인" />
+            <Button width="48%" height="40px" onClick={handleFindPassword} children="비밀번호 찾기" />
+            <Button width="48%" height="40px" type="main" onClick={handleLogin} children="로그인" />
           </s.BtnArea>
         </s.ResultArea>
       </s.Container>

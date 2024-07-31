@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Random;
+
 @RestController
 @RequestMapping (value = "/api/auth/modify")
 public class UserModifyController {
@@ -35,7 +37,7 @@ public class UserModifyController {
         int result = userModifyService.findPassword(userDto);
 
         if (result > 0) {
-            authCode = 1;   //랜덤으로 이메일로 전송해줘야함
+            authCode = getRandomNumber();   //랜덤으로 이메일로 전송해줘야함
             return ResponseEntity.ok("이메일로 인증코드가 전송되었습니다.");
         }
         else {
@@ -45,7 +47,7 @@ public class UserModifyController {
 
     @PostMapping ("/find_password/verify")
     public ResponseEntity<?> verifyPassword(@RequestBody int code) {
-        if(code == authCode) {
+        if (code == authCode) {
             authCode = 0;   //인증코드 초기화
             return ResponseEntity.ok("성공적으로 인증되었습니다.");
         }
@@ -64,5 +66,10 @@ public class UserModifyController {
         else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("비밀번호 변경에 실패했습니다.");
         }
+    }
+
+    public static int getRandomNumber() {
+        Random random = new Random();
+        return 100000 + random.nextInt(900000);
     }
 }

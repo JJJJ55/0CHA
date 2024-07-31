@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-
 // JWT를 이용한 인터셉터 구현
 @Component
 public class JwtInterceptor implements HandlerInterceptor {

@@ -17,6 +17,7 @@ const s = {
     display: flex;
     justify-content: space-around;
     align-items: center;
+    background-color: ${(props) => props.theme.bgColor};
   `,
   IconArea: styled.div`
     width: 100%;

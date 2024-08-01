@@ -3,25 +3,33 @@ import styled, { css } from 'styled-components';
 import Header from '../../components/Common/Header';
 import ResultModal from '../../components/AI/ResultModal';
 import SettingModal from '../../components/AI/SettingModal';
+import BottomNav from '../../components/Common/BottomNav';
 
 const s = {
-  Container: styled.div`
-    padding: 60px 0 80px;
-    background-color: ${(props) => props.theme.Color};
-    height: 99vh; // 하단바로 인한 스크롤 방지 차원
+  Container: styled.section`
+    height: 100%;
+    background-color: ${(props) => props.theme.bgColor};
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly;
     align-items: center;
+  `,
+  AIArea: styled.div`
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 10px 70px;
   `,
   PageBody: styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 80%;
+    width: 90%;
   `,
   CameraBox: styled.div<{ $isError: boolean | null }>`
-    width: 80%;
+    width: 90%;
     height: 70%;
     border: 1px solid red;
     display: flex;
@@ -111,9 +119,9 @@ const AIMainPage: React.FC = () => {
   };
 
   return (
-    <>
+    <s.Container>
       <Header text="AI 트레이너" />
-      <s.Container>
+      <s.AIArea>
         <s.CameraHeader children="카메라를 사용자 기준 우측 하단에 위치해 주세요." />
         <s.CameraBox $isError={currentResult ? currentResult.isError : null}>
           {currentResult && (currentResult.isError ? 'X' : 'O')}
@@ -136,8 +144,9 @@ const AIMainPage: React.FC = () => {
             <s.SettingBtn onClick={() => setIsResultModalOpen(true)} children="결과 보기" />
           )}
         </s.PageBody>
-      </s.Container>
-    </>
+      </s.AIArea>
+      <BottomNav />
+    </s.Container>
   );
 };
 

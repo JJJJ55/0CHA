@@ -27,19 +27,18 @@ const s = {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
   `,
   InputArea: styled.div`
     width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
   `,
   InputHeader: styled.p`
     text-align: left;
-    width: 90px;
-    min-width: 60px;
+    width: 100%;
     color: ${(props) => props.theme.textColor};
     margin-bottom: 5px;
     font-size: 16px;
@@ -74,14 +73,12 @@ const s = {
 };
 
 interface dataType {
-  newPw: string;
   pw: string;
   pwCheck: string;
 }
 
-const ChangePasswordPage = (): JSX.Element => {
+const ResetPasswordPage = (): JSX.Element => {
   const [data, setData] = useState<dataType>({
-    newPw: '',
     pw: '',
     pwCheck: '',
   });
@@ -127,7 +124,7 @@ const ChangePasswordPage = (): JSX.Element => {
   };
 
   const handleSubmit = () => {
-    // 제출 로직 작성(기존 비밀번호가 맞는지 확인)
+    // 제출 로직 작성
     console.log('Form submitted:', data);
     alert('비밀번호가 변경되었습니다.');
   };
@@ -143,21 +140,6 @@ const ChangePasswordPage = (): JSX.Element => {
       <Header text="비밀번호 변경" />
       <s.ChangePasswordArea>
         <s.PasswordArea>
-          <s.InfoNameBox>
-            <s.InputHeader children="기존 비밀번호" />
-          </s.InfoNameBox>
-          <s.InputArea>
-            <Input
-              width="100%"
-              height="40px"
-              placeholder="기존 비밀번호"
-              margin="5px auto"
-              type="password"
-              name="newPw"
-              value={data.newPw}
-              onChange={handleChangeValue}
-            />
-          </s.InputArea>
           <s.InfoNameBox>
             <s.InputHeader children="비밀번호" />
             {pwError && <s.ErrorText>{pwError}</s.ErrorText>}
@@ -191,6 +173,7 @@ const ChangePasswordPage = (): JSX.Element => {
             />
           </s.InputArea>
         </s.PasswordArea>
+
         <s.ButtonArea>
           <Button width="48%" height="40px" children="이전" onClick={handlePrevious} />
           <Button width="48%" height="40px" type="main" children="비밀번호 변경" onClick={handleSubmit} />
@@ -200,4 +183,4 @@ const ChangePasswordPage = (): JSX.Element => {
   );
 };
 
-export default ChangePasswordPage;
+export default ResetPasswordPage;

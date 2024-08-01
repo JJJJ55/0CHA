@@ -9,12 +9,12 @@ const s = {
     background-color: ${(props) => props.theme.bgColor};
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    padding: 20px;
+    padding: 10px;
   `,
   ResultArea: styled.div`
-    width: 80%;
+    width: 90%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -24,16 +24,20 @@ const s = {
     border-radius: 10px;
     text-align: center;
   `,
-  Message: styled.p`
+  Message: styled.span`
     color: ${(props) => props.theme.textColor};
     font-size: 16px;
     margin-bottom: 20px;
+    width: 100%;
+    text-align: left;
   `,
-  Email: styled.p`
+  Email: styled.span`
     color: ${(props) => props.theme.mainColor};
     font-size: 18px;
     font-weight: bold;
-    margin-bottom: 40px;
+    margin-bottom: 80px;
+    width: 100%;
+    text-align: left;
   `,
   BtnArea: styled.div`
     width: 100%;
@@ -63,20 +67,20 @@ const FindEmailResultPage = (): JSX.Element => {
   };
 
   return (
-    <>
+    <s.Container>
       <Header text="이메일 찾기" />
-      <s.Container>
-        <s.ResultArea>
-          <s.Message children={`${name}님의 이메일은`} />
-          <s.Email children={email} />
+      <s.ResultArea>
+        <s.Message children={`${name}님의 이메일은`} />
+        <s.Email>
+          {email}
           <s.Message children="입니다." />
-          <s.BtnArea>
-            <Button width="48%" height="40px" onClick={handleFindPassword} children="비밀번호 찾기" />
-            <Button width="48%" height="40px" type="main" onClick={handleLogin} children="로그인" />
-          </s.BtnArea>
-        </s.ResultArea>
-      </s.Container>
-    </>
+        </s.Email>
+        <s.BtnArea>
+          <Button width="48%" height="40px" onClick={handleFindPassword} children="비밀번호 찾기" />
+          <Button width="48%" height="40px" type="main" onClick={handleLogin} children="로그인" />
+        </s.BtnArea>
+      </s.ResultArea>
+    </s.Container>
   );
 };
 

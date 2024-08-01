@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import testImage from '../../asset/img/testImg.png';
 import IconSvg from '../../components/Common/IconSvg';
 import { ReactComponent as alarm } from '../../asset/img/svg/alram.svg';
+import BottomNav from '../../components/Common/BottomNav';
+import Button from '../../components/Common/Button';
 
 const s = {
   Header: styled.header`
@@ -10,7 +12,7 @@ const s = {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px;
+    padding: 10px;
     background-color: ${(props) => props.theme.bgColor};
     color: ${(props) => props.theme.textColor};
   `,
@@ -83,7 +85,7 @@ const s = {
     justify-content: space-between;
     align-items: center;
     padding: 10px 0;
-    border-bottom: 1px solid #444;
+    border-bottom: 1px solid ${(props) => props.theme.textColor2};
   `,
   RoutineBtn: styled.button`
     background-color: transparent;
@@ -123,7 +125,7 @@ const s = {
     border-radius: 50%;
   `,
   Container: styled.div`
-    padding: 20px;
+    padding: 10px 20px 20px;
     background-color: ${(props) => props.theme.bgColor};
     height: 100vh;
     display: flex;
@@ -145,6 +147,19 @@ const s = {
     flex-direction: column;
     align-items: center;
     width: 100%;
+  `,
+  BtnArea: styled.div`
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+  `,
+  LiveBtn: styled(Button)`
+    width: 100%;
+    height: 40px;
+    border-radius: 10px;
+    background-color: ${(props) => props.theme.btnColor};
+    color: ${(props) => props.theme.btnTextColor};
   `,
 };
 
@@ -215,6 +230,10 @@ const MainPage = (): JSX.Element => {
     </s.Header>
   );
 
+  const handleLiveExercise = () => {
+    alert('진행중인 운동 페이지로 이동합니다.');
+  };
+
   const handleMoreClick = () => {
     alert('목록 페이지로 이동합니다');
     // 여기서 목록 페이지로 이동하는 로직을 추가할 수 있습니다.
@@ -225,6 +244,9 @@ const MainPage = (): JSX.Element => {
       <PageHeader />
       <s.PageBody>
         <HorizontalScroll items={items} />
+        <s.BtnArea>
+          <s.LiveBtn children="진행 중인 운동" onClick={handleLiveExercise} />
+        </s.BtnArea>
         <s.ScrollContainer>
           <s.SectionTitleContainer>
             <s.SectionTitle children="내 루틴" />
@@ -243,6 +265,7 @@ const MainPage = (): JSX.Element => {
           </s.RoutineList>
         </s.ScrollContainer>
       </s.PageBody>
+      <BottomNav />
     </s.Container>
   );
 };

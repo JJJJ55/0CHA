@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import Button from '../../../components/Common/Button';
 import test from '../../../asset/img/testImg.png';
 import Header from '../../../components/Common/Header';
+import BottomNav from '../../../components/Common/BottomNav';
 
 const s = {
   Container: styled.section`
@@ -11,18 +12,24 @@ const s = {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 20px;
   `,
   ProfileArea: styled.div`
+    width: 90%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 80px 5px 70px;
+  `,
+  ProfileImageArea: styled.div`
     width: 100%;
     display: flex;
     align-items: center;
-    margin-top: 60px;
-    margin-bottom: 70px;
+    padding-bottom: 20px;
   `,
   ProfileImage: styled.img`
-    width: 100px;
-    height: 100px;
+    width: 120px;
+    height: 120px;
     border-radius: 50%;
     margin-right: 20px;
   `,
@@ -30,12 +37,12 @@ const s = {
     display: flex;
     flex-direction: column;
   `,
-  Username: styled.p`
+  MainDetail: styled.p`
     color: ${(props) => props.theme.textColor};
     font-size: 18px;
     margin-bottom: 5px;
   `,
-  Nickname: styled.p`
+  SubDetail: styled.p`
     color: ${(props) => props.theme.textColor};
     font-size: 14px;
     margin-bottom: 5px;
@@ -49,14 +56,14 @@ const s = {
     width: 100%;
     display: flex;
     justify-content: center;
-    margin-bottom: 30px;
+    margin-bottom: 50px;
   `,
   ProfileButton: styled(Button)`
     width: 100%;
     height: 40px;
     border-radius: 10px;
-    background-color: #ccff33; /* Button color */
-    color: #000; /* Text color */
+    background-color: ${(props) => props.theme.btnColor};
+    color: ${(props) => props.theme.btnTextColor};
   `,
   InfoArea: styled.div`
     width: 100%;
@@ -66,7 +73,7 @@ const s = {
   `,
   InfoItem: styled.div`
     width: 100%;
-    padding: 15px 20px;
+    padding: 25px 10px;
     border-bottom: 1px solid ${(props) => props.theme.borderColor};
     display: flex;
     justify-content: space-between;
@@ -116,17 +123,17 @@ const ProfileMainPage = (): JSX.Element => {
   };
 
   return (
-    <>
+    <s.Container>
       <Header text="내 프로필" />
-      <s.Container>
-        <s.ProfileArea>
+      <s.ProfileArea>
+        <s.ProfileImageArea>
           <s.ProfileImage src={user.profileImage} alt="프로필 이미지" />
           <s.ProfileDetails>
-            <s.Username children={user.name} />
-            <s.Nickname children={user.nickname} />
-            <s.Email children={user.email} />
+            <s.MainDetail children={user.name} />
+            <s.SubDetail children={user.nickname} />
+            <s.SubDetail children={user.email} />
           </s.ProfileDetails>
-        </s.ProfileArea>
+        </s.ProfileImageArea>
         <s.ButtonArea>
           <s.ProfileButton onClick={handleEditProfile} children="프로필 수정" />
         </s.ButtonArea>
@@ -145,8 +152,9 @@ const ProfileMainPage = (): JSX.Element => {
             <s.Arrow>›</s.Arrow>
           </s.InfoItem>
         </s.InfoArea>
-      </s.Container>
-    </>
+      </s.ProfileArea>
+      <BottomNav />
+    </s.Container>
   );
 };
 

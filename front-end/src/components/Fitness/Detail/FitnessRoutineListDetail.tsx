@@ -94,7 +94,7 @@ interface FitnessDataProps {
   exercise: ExerciseType[];
 }
 
-const FitnessPlanDetail = (props: FitnessDataProps): JSX.Element => {
+const FitnessRoutineListDetail = (props: FitnessDataProps): JSX.Element => {
   return (
     <>
       {props.exercise.map((data, index) => (
@@ -144,4 +144,4 @@ const FitnessPlanDetail = (props: FitnessDataProps): JSX.Element => {
   );
 };
 
-export default FitnessPlanDetail;
+export default FitnessRoutineListDetail;

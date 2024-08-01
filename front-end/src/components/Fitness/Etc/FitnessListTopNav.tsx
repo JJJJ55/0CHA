@@ -24,7 +24,7 @@ const s = {
   `,
 };
 
-const TopNav = (): JSX.Element => {
+const FitnessListTopNav = (): JSX.Element => {
   return (
     <s.Container>
       <s.SelectArea>전체</s.SelectArea>
@@ -38,4 +38,4 @@ const TopNav = (): JSX.Element => {
   );
 };
 
-export default TopNav;
+export default FitnessListTopNav;

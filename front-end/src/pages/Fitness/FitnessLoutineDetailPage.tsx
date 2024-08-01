@@ -3,9 +3,9 @@ import styled from 'styled-components';
 import Header from '../../components/Common/Header';
 import Button from '../../components/Common/Button';
 import BottomNav from '../../components/Common/BottomNav';
-import FitnessPlan from '../../components/Fitness/FitnessList/FitnessPlan';
+import FitnessPlan from '../../components/Fitness/Detail/FitnessPlan';
 import { FitnessPlanData } from '../../util/TestData';
-import FitnessPlanDetail from './../../components/Fitness/FitnessList/FitnessPlanDetail';
+import FitnessRoutineListDetail from '../../components/Fitness/Detail/FitnessRoutineListDetail';
 const s = {
   Container: styled.div`
     height: 100%;
@@ -24,7 +24,7 @@ const FitnessLoutineDetatilPage = (): JSX.Element => {
         <Button width="80px" height="40px" children="불러오기" onClick={() => {}} size="14px" margin="0 20px 0 0" />
       </Header>
       <s.MainArea>
-        <FitnessPlanDetail exercise={FitnessPlanData.exercise} />
+        <FitnessRoutineListDetail exercise={FitnessPlanData.exercise} />
       </s.MainArea>
       <BottomNav />
     </s.Container>

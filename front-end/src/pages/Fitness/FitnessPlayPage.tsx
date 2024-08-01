@@ -1,11 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import BottomNav from '../../components/Common/BottomNav';
 import Header from '../../components/Common/Header';
-import FitnessPlanDetail from '../../components/Fitness/FitnessList/FitnessPlanDetail';
-import { FitnessData, FitnessPlanData } from '../../util/TestData';
-import FitnessPlan from '../../components/Fitness/FitnessList/FitnessPlan';
-import FitnessPlayBottomNav from '../../components/Fitness/FitnessList/FitnessPlayBottomNav';
+import { FitnessPlanData } from '../../util/TestData';
+import FitnessPlan from '../../components/Fitness/Detail/FitnessPlan';
+import FitnessPlayBottomNav from '../../components/Fitness/Etc/FitnessPlayBottomNav';
 
 const s = {
   Container: styled.section`

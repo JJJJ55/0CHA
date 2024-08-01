@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import Input from '../../components/Common/Input';
-import TopNav from '../../components/Fitness/FitnessList/TopNav';
-import FitnessList from '../../components/Fitness/FitnessList/FitnessList';
+import FitnessListTopNav from '../../components/Fitness/Etc/FitnessListTopNav';
+import FitnessList from '../../components/Fitness/List/FitnessList';
 import { FitnessData } from '../../util/TestData';
 import Button from '../../components/Common/Button';
 
@@ -33,7 +33,7 @@ const FitnessListPage = (): JSX.Element => {
       <s.InputArea>
         <Input width="100%" height="40px" placeholder="검색" type="text" name="" value={''} onChange={() => {}} />
       </s.InputArea>
-      <TopNav />
+      <FitnessListTopNav />
       <s.FitnessArea>
         <FitnessList text="즐겨찾기" data={FitnessData} />
         <FitnessList text="전체" data={FitnessData} />

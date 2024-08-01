@@ -9,7 +9,7 @@ import { ReactComponent as jjimOff } from '../../asset/img/svg/jjimOff.svg';
 import test from '../../asset/img/testImg.png';
 import Image from '../../components/Common/Image';
 import BottomNav from '../../components/Common/BottomNav';
-import FitnessDetailChart from '../../components/Fitness/FitnessList/FitnessDetailChart';
+import FitnessDetailChart from '../../components/Fitness/Etc/FitnessDetailChart';
 
 const s = {
   Container: styled.section`

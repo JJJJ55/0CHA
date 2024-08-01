@@ -6,6 +6,7 @@ import Input from './components/Common/Input';
 import Button from './components/Common/Button';
 import Text from './components/Common/Text';
 import LoginPage from './pages/LoginBefore/Login/LoginPage';
+import BottomNav from './components/Common/BottomNav';
 
 const s = {
   Background: styled.section`
@@ -23,7 +24,6 @@ const s = {
     margin: 0 auto;
     background-color: ${(props) => props.theme.bgColor};
     overflow: auto;
-    border: 2px solid red;
   `,
   test: styled.div`
     width: 100%;

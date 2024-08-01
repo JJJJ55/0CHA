@@ -25,36 +25,37 @@ public class SnsSocialController {
 
     @GetMapping ("/user-page/info")
     public ResponseEntity<?> getUserPageInfo(@RequestHeader ("Authorization") String token, @RequestParam ("user_id") int userId) {
-        UserPageInfoDTO userInfo = snsSocialService.getUserPageInfo(userId);
+        UserPageDto userInfo = snsSocialService.getUserPageInfo(userId);
         if (userInfo == null) {
             return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(userInfo, HttpStatus.OK);
+        return ResponseEntity.ok(userInfo);
 
     }
 
     @GetMapping ("/user-page/feeds")
     public ResponseEntity<?> getUserPageFeeds(@RequestHeader ("Authorization") String token, @RequestParam ("user_id") int userId) {
+        System.out.println(token);
         List<UserPageListDto> feedList = snsSocialService.getUserPageFeeds(userId);
-        return new ResponseEntity<>(feedList, HttpStatus.OK);
+        return ResponseEntity.ok(feedList);
     }
 
     @GetMapping ("/user-page/items")
     public ResponseEntity<?> getUserPageItems(@RequestHeader ("Authorization") String token, @RequestParam ("user_id") int userId) {
         List<UserPageListDto> itemList = snsSocialService.getUserPageItems(userId);
-        return new ResponseEntity<>(itemList, HttpStatus.OK);
+        return ResponseEntity.ok(itemList);
     }
 
     @GetMapping ("/user-page/followers")
     public ResponseEntity<?> getUserPageFollowers(@RequestHeader ("Authorization") String token, @RequestParam ("user_id") int userId) {
         List<UserPageDto> follwerList = snsSocialService.getUserPageFollowers(userId);
-        return new ResponseEntity<>(follwerList, HttpStatus.OK);
+        return ResponseEntity.ok(follwerList);
     }
 
     @GetMapping ("/user-page/followings")
     public ResponseEntity<?> getUserPageFollowings(@RequestHeader ("Authorization") String token, @RequestParam ("user_id") int userId) {
         List<UserPageDto> follwingList = snsSocialService.getUserPageFollowings(userId);
-        return new ResponseEntity<>(follwingList, HttpStatus.OK);
+        return ResponseEntity.ok(follwingList);
     }
 
     @PostMapping ("/follow")
@@ -84,6 +85,5 @@ public class SnsSocialController {
             return ResponseEntity.ok("팔로우 안되어 있음");
         }
     }
-
 }
 

@@ -13,8 +13,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 public class JwtInterceptor implements HandlerInterceptor {
     private static final Logger logger = LoggerFactory.getLogger(JwtInterceptor.class);
 
-    @Autowired
-    private JwtUtil jwtUtil; //JWT 유틸리티 객체 주입
+    private final JwtUtil jwtUtil; //JWT 유틸리티 객체 주입
 
     @Autowired
     public JwtInterceptor(JwtUtil jwtUtil) {
@@ -24,9 +23,10 @@ public class JwtInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String requestURI = request.getRequestURI();
+        System.out.println("request : " + request.getHeader("Authorization"));
         // 요청이 들어오면 실행되는 메서드
         String accessToken = jwtUtil.getAccessToken(request); //헤더에서 액세스 토큰을 가져옴
-
+        System.out.println("accessToken : " + accessToken);
         // 비회원일 때(액세스 토큰이 없을 때)
         if (accessToken == null) {
             logger.debug("비회원 유저입니다 URI : {}", requestURI);

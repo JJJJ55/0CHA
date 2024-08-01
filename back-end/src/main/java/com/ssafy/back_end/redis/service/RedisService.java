@@ -23,6 +23,6 @@ public class RedisService {
     }
 
     public boolean existsByKey(String key) {
-        return redisTemplate.hasKey(key);
+        return Boolean.TRUE.equals(redisTemplate.hasKey(key));
     }
 }

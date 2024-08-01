@@ -6,23 +6,23 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/redis")
+@RequestMapping("/api/redis")
 public class RedisController {
 
     @Autowired
     private RedisService  redisService;
 
-    @PostMapping("/save")
+    @PostMapping("/")
     public void save(@RequestParam("key") String key, @RequestBody Object value){
         redisService.save(key, value);
     }
 
-    @GetMapping("/get")
+    @GetMapping("/")
     public Object get(@RequestParam("key") String key){
         return redisService.findByKey(key);
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("/")
     public void delete(@RequestParam("key") String key){
         redisService.deleteByKey(key);
     }

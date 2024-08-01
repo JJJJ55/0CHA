@@ -15,45 +15,29 @@ const s = {
     height: 100vh;
     background-color: ${(props) => props.theme.bgColor};
     color: ${(props) => props.theme.textColor};
-    padding: 20px;
+    padding: 20px 0 20px 0;
   `,
 
-  CalendarArea: styled.div`
-    width: 90%;
-    height: auto;
-    border: 1px solid red;
-    margin: 0 auto;
-  `,
   /* 오늘 날짜에 텍스트 삽입 스타일 */
   StyledToday: styled.div`
-    font-size: x-small;
-    color: ${(props) => props.theme.mainColor};
-    font-weight: 600;
+    border: 2px solid ${(props) => props.theme.mainColor};
     position: absolute;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
     top: 50%;
     left: 50%;
-    transform: translateX(-50%);
-  `,
-
-  /* 출석한 날짜에 점 표시 스타일 */
-  StyledDot: styled.div`
-    background-color: ${(props) => props.theme.mainColor};
-    border-radius: 50%;
-    width: 0.3rem;
-    height: 0.3rem;
-    position: absolute;
-    top: 60%;
-    left: 50%;
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
   `,
 };
 
 interface FitnessPlanModalProps {
   open: boolean;
 }
-
-type ValuePiece = Date | null;
-type Value = ValuePiece | [ValuePiece, ValuePiece];
+interface FitnessRoutineProps {
+  title: string;
+  date: string;
+}
 
 const FitnessPlanSetModal = (props: FitnessPlanModalProps): JSX.Element => {
   let test = '테스트';
@@ -62,11 +46,38 @@ const FitnessPlanSetModal = (props: FitnessPlanModalProps): JSX.Element => {
   const attendDay2 = ['2024-07-31', '2024-07-16', '2024-08-13'];
 
   const [date, setDate] = useState<Date>(today);
+  const [info, setInfo] = useState<FitnessRoutineProps>({
+    title: '',
+    date: '',
+  });
+
+  const handleChangeTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInfo({
+      ...info,
+      [e.target.name]: e.target.value,
+    });
+  };
 
   const handleChangeDate = (newDate: Date) => {
     const routineDate = moment(newDate).format('YYYY-MM-DD');
-    setDate(newDate);
-    alert(routineDate);
+
+    if (attendDay.find((x) => x === routineDate)) {
+      alert('운동을 완료했습니다.');
+    } else if (attendDay2.find((x) => x === routineDate)) {
+      alert('기존 루틴이 있는 날입니다.');
+    } else {
+      setDate(newDate);
+      setInfo({ ...info, date: routineDate });
+      alert(routineDate);
+    }
+  };
+
+  const handleClickInfo = () => {
+    if (info.title === '' || info.date === '') {
+      alert('제목 및 날짜를 선택하십시오.');
+    } else {
+      alert(info.title + ' ' + info.date);
+    }
   };
 
   return (
@@ -82,24 +93,28 @@ const FitnessPlanSetModal = (props: FitnessPlanModalProps): JSX.Element => {
           display="block"
           textalian="center"
         />
-        <Input placeholder={test} bold="700" size="16px" width="50%" height="40px" display="block" margin="20px auto" />
+        <Input
+          placeholder={test}
+          bold="700"
+          size="16px"
+          width="50%"
+          height="40px"
+          display="block"
+          margin="20px auto"
+          name="title"
+          value={info.title}
+          onChange={handleChangeTitle}
+        />
         <Calendar
           locale="ko"
           onClickDay={handleChangeDate}
           value={date}
-          formatDay={(locale, date) => moment(date).format('DD')}
+          formatDay={(locale, date) => moment(date).format('D')}
           prev2Label={null}
           next2Label={null}
           calendarType="gregory"
           showNeighboringMonth={false}
           minDetail="decade"
-          tileDisabled={({ date, view }) => {
-            const currentDate = new Date();
-            // 일주일 후의 날짜를 구합니다.
-            const oneWeekLater = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 7);
-            // 일주일 후부터의 날짜를 비활성화 처리합니다.
-            return date >= oneWeekLater;
-          }}
           tileClassName={({ date, view }) => {
             if (attendDay.find((x) => x === moment(date).format('YYYY-MM-DD'))) {
               return 'routineFinish';
@@ -111,15 +126,11 @@ const FitnessPlanSetModal = (props: FitnessPlanModalProps): JSX.Element => {
           tileContent={({ date, view }) => {
             let html = [];
             if (view === 'month' && date.getMonth() === today.getMonth() && date.getDate() === today.getDate()) {
-              html.push(<s.StyledToday key={'today'}>오늘</s.StyledToday>);
-            }
-            if (attendDay.find((x) => x === moment(date).format('YYYY-MM-DD'))) {
-              html.push(<s.StyledDot key={moment(date).format('YYYY-MM-DD')} />);
+              html.push(<s.StyledToday key={'today'} />);
             }
             return <>{html}</>;
           }}
         ></Calendar>
-        <s.CalendarArea></s.CalendarArea>
         <Button
           width="200px"
           height="40px"
@@ -129,6 +140,7 @@ const FitnessPlanSetModal = (props: FitnessPlanModalProps): JSX.Element => {
           type="main"
           size="14px"
           bold="700"
+          onClick={handleClickInfo}
         />
       </s.Container>
     </ReactModal>

@@ -26,13 +26,13 @@ public class JwtUtil {
     public static final String AUTHORIZATION_HEADER = "Authorization"; //헤더 이름
 
     // Access Token 생성 메서드
-    public String createAccessToken(String email) {
+    public String createAccessToken(int userId) {
         //토큰 만료 시간 설정
         Date now = new Date();
         Date expiration = new Date(now.getTime() + ACCESS_TOKEN_VALIDATION_SECOND);
 
         return Jwts.builder()
-                .setSubject(email)
+                .setSubject(String.valueOf(userId))
                 .setIssuedAt(now)
                 .setExpiration(expiration)
                 .signWith(secretKey)
@@ -40,13 +40,13 @@ public class JwtUtil {
     }
 
     // Refresh Token 생성 메서드
-    public String createRefreshToken(String email) {
+    public String createRefreshToken(int userId) {
         //토큰 만료 시간 설정
         Date now = new Date();
         Date expiration = new Date(now.getTime() + REFRESH_TOKEN_VALIDATION_SECOND);
 
         return Jwts.builder()
-                .setSubject(email)
+                .setSubject(String.valueOf(userId))
                 .setIssuedAt(now)
                 .setExpiration(expiration)
                 .signWith(refreshKey)
@@ -59,17 +59,21 @@ public class JwtUtil {
         try {
             if (isRefreshToken) {
                 Jwts.parserBuilder().setSigningKey(refreshKey).build().parseClaimsJws(token);
-            } else {
+            }
+            else {
                 Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
             }
             return true;
-        } catch (SignatureException e) {
+        }
+        catch (SignatureException e) {
             // 서명이 옳지 않을 때
             System.out.println("잘못된 토큰 서명입니다.");
-        } catch (ExpiredJwtException e) {
+        }
+        catch (ExpiredJwtException e) {
             // 토큰이 만료됐을 때
             System.out.println("만료된 토큰입니다.");
-        } catch (IllegalArgumentException | JwtException e) {
+        }
+        catch (IllegalArgumentException | JwtException e) {
             // 토큰이 올바르게 구성되지 않았을 때 처리
             System.out.println("잘못된 토큰입니다.");
         }
@@ -77,8 +81,8 @@ public class JwtUtil {
     }
 
     // Refresh Token에서 email 추출
-    public String getEmailFromRefreshToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(refreshKey).build().parseClaimsJws(token).getBody().getSubject();
+    public int getUserIdFromRefreshToken(String token) {
+        return Integer.parseInt(Jwts.parserBuilder().setSigningKey(refreshKey).build().parseClaimsJws(token).getBody().getSubject());
     }
 
     // HttpServletRequest에서 Authorization Header를 통해 access token을 추출하는 메서드입니다.

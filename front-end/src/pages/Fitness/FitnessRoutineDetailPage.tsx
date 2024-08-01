@@ -17,7 +17,7 @@ const s = {
   `,
 };
 
-const FitnessLoutineDetatilPage = (): JSX.Element => {
+const FitnessRoutineDetatilPage = (): JSX.Element => {
   return (
     <s.Container>
       <Header text={FitnessPlanData.title}>
@@ -31,4 +31,4 @@ const FitnessLoutineDetatilPage = (): JSX.Element => {
   );
 };
 
-export default FitnessLoutineDetatilPage;
+export default FitnessRoutineDetatilPage;

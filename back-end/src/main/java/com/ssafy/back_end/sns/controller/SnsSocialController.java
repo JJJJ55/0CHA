@@ -76,12 +76,12 @@ public class SnsSocialController {
         int userId = jwtUtil.getUserIdFromRefreshToken(token);
         int isFollowing = snsSocialService.isFollowing(userId, targetId);
 
-        if (isFollowing == 0) {   //팔로우 안되어 있음
-            snsSocialService.follow(userId, targetId);
-            return ResponseEntity.ok("팔로우성공");
+        if (isFollowing == 1) {   //팔로우 되어 있음
+            snsSocialService.unfollow(userId, targetId);
+            return ResponseEntity.ok("팔로우취소 성공");
         }
         else {
-            return ResponseEntity.ok("이미 팔로우 되어 있음");
+            return ResponseEntity.ok("팔로우 안되어 있음");
         }
     }
 

@@ -3,8 +3,7 @@ import styled from 'styled-components';
 import Input from '../../../components/Common/Input';
 import Button from '../../../components/Common/Button';
 import Text from '../../../components/Common/Text';
-import TextArea from '../../../components/Common/TextArea';
-import { ReactComponent as Logo } from '../../../asset/img/svg/0CHA.svg';
+import Header from '../../../components/Common/Header';
 
 // 배치 구체화
 
@@ -13,42 +12,23 @@ const s = {
     height: 100%;
     background-color: ${(props) => props.theme.bgColor};
     overflow: auto;
-    padding: 100px 20px 20px;
   `,
   InfoHeader: styled.div`
+    height: 100px;
     display: flex;
     flex-direction: column;
-    padding-left: 10px;
-    padding-bottom: 50px;
+    padding-left: 10%;
   `,
   PlusInfoArea: styled.div`
     width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    padding: 60px 0 70px;
   `,
-  GenderArea: styled.div`
-    width: 90%;
-    display: flex;
-    justify-content: left;
-    align-items: center;
-    margin-bottom: 20px;
-  `,
-  GenderOption: styled.div`
-    display: flex;
-    align-items: center;
-    margin: 0 50px 0 10px;
-    input {
-      accent-color: ${(props) => props.theme.mainColor};
-    }
 
-    label {
-      margin-left: 5px;
-      color: ${(props) => props.theme.textColor};
-      font-size: 16px;
-    }
-  `,
   MeasurementArea: styled.div`
     width: 90%;
     display: flex;
@@ -75,8 +55,7 @@ const s = {
   SubmitBtnArea: styled.div`
     width: 90%;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
     margin-top: 20px;
   `,
   SelectBox: styled.select`
@@ -96,6 +75,21 @@ const s = {
     font-size: 14px;
     font-weight: 600;
   `,
+  InputHeader: styled.p`
+    text-align: left;
+    color: ${(props) => props.theme.textColor};
+    margin-bottom: 5px;
+    font-size: 16px;
+    border: 1px solid red;
+    display: inline-block; /* 콘텐츠 크기에 맞게 너비 조정 */
+    white-space: nowrap; /* 줄바꿈 방지 */
+  `,
+  ErrorText: styled.p`
+    color: red;
+    font-size: 12px;
+    margin-left: 10px;
+    border: 1px solid green;
+  `,
   InfoNameBox: styled.div`
     width: 90%;
     display: flex;
@@ -107,15 +101,6 @@ const s = {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 10px;
-  `,
-  InputHeader: styled.p`
-    text-align: left;
-    color: ${(props) => props.theme.textColor};
-    margin-bottom: 5px;
-    font-size: 16px;
-    border: 1px solid red;
-    display: inline-block; /* 콘텐츠 크기에 맞게 너비 조정 */
-    white-space: nowrap; /* 줄바꿈 방지 */
   `,
 };
 
@@ -361,26 +346,38 @@ const districts: Record<string, string[]> = {
 };
 
 interface dataType {
-  gender: string;
   height: string;
   weight: string;
   location1: string;
   location2: string;
 }
 
-const PlusInfoPage = (): JSX.Element => {
+interface User {
+  height: string;
+  weight: string;
+  location1: string;
+  location2: string;
+}
+
+const UpdateMyInfoPage = (): JSX.Element => {
+  const [user, setUser] = useState<User>({
+    height: '168.7',
+    weight: '60.5',
+    location1: '서울특별시',
+    location2: '중랑구',
+  });
+
   const [data, setData] = useState<dataType>({
-    gender: '',
-    height: '',
-    weight: '',
-    location1: '',
-    location2: '',
+    height: user.height,
+    weight: user.weight,
+    location1: user.location1,
+    location2: user.location2,
   });
 
   const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     // 키 - 체중 필드에 대해 제약조건 규정
-    if ((name === 'height' || name === 'weight') && !/^\d*\.?\d*$/.test(value)) {
+    if ((name === 'height' || name === 'weight') && !/^(\d{0,3})(\.\d{0,2})?$/.test(value)) {
       return;
     }
 
@@ -398,103 +395,71 @@ const PlusInfoPage = (): JSX.Element => {
     alert('정보가 제출되었습니다.');
   };
 
+  const handlePrevious = () => {
+    // 이전 이동
+    console.log('이전 페이지로 이동합니다');
+    alert('이전 페이지로 이동합니다.');
+  };
+
   return (
-    <>
-      <s.Container>
-        <s.InfoHeader>
-          <Text size="24px" color="mainColor" children="회원가입 완료" margin="5px 0 20px" />
-          <Text type="guide" size="18px" children="더 나은 서비스를 위해" margin="5px" />
-          <Text type="guide" size="18px" children="추가 정보를 입력해주세요." />
-        </s.InfoHeader>
-        <s.PlusInfoArea>
-          <s.InfoNameBox>
-            <s.InputHeader children="성별" />
-          </s.InfoNameBox>
-          <s.GenderArea>
-            <s.GenderOption>
-              <input
-                type="radio"
-                id="male"
-                name="gender"
-                value="남성"
-                checked={data.gender === '남성'}
-                onChange={handleChangeValue}
-              />
-              <label htmlFor="male">남성</label>
-            </s.GenderOption>
-            <s.GenderOption>
-              <input
-                type="radio"
-                id="female"
-                name="gender"
-                value="여성"
-                checked={data.gender === '여성'}
-                onChange={handleChangeValue}
-              />
-              <label htmlFor="female">여성</label>
-            </s.GenderOption>
-          </s.GenderArea>
-          <s.InfoNameBox>
-            <s.InputHeader children="키" />
-          </s.InfoNameBox>
-          <s.MeasurementArea>
-            <Input
-              type="text"
-              height="40px"
-              width="50%"
-              name="height"
-              placeholder="키"
-              value={data.height}
-              onChange={handleChangeValue}
-            />
-            <Text type="guide" children="cm" width="30px" />
-          </s.MeasurementArea>
-          <s.InfoNameBox>
-            <s.InputHeader children="몸무게" />
-          </s.InfoNameBox>
-          <s.MeasurementArea>
-            <Input
-              type="text"
-              height="40px"
-              width="50%"
-              name="weight"
-              placeholder="체중"
-              value={data.weight}
-              onChange={handleChangeValue}
-            />
-            <Text type="guide" children="kg" width="30px" />
-          </s.MeasurementArea>
-          <s.InfoNameBox>
-            <s.InputHeader children="거주지역" />
-          </s.InfoNameBox>
-          <s.LocationArea>
-            <s.SelectBox name="location1" value={data.location1} onChange={handleChangeValue}>
-              <s.Option value="" children="시/도" />
-              {cities.map((city) => (
-                <s.Option key={city} value={city} children={city} />
+    <s.Container>
+      <Header text="내 정보 수정" />
+      <s.PlusInfoArea>
+        <s.InfoNameBox>
+          <s.InputHeader children="키" />
+        </s.InfoNameBox>
+        <s.MeasurementArea>
+          <Input
+            type="text"
+            height="40px"
+            width="50%"
+            name="height"
+            placeholder="키"
+            value={data.height}
+            onChange={handleChangeValue}
+          />
+          <Text type="guide" children="cm" width="30px" />
+        </s.MeasurementArea>
+        <s.InfoNameBox>
+          <s.InputHeader children="몸무게" />
+        </s.InfoNameBox>
+        <s.MeasurementArea>
+          <Input
+            type="text"
+            height="40px"
+            width="50%"
+            name="weight"
+            placeholder="체중"
+            value={data.weight}
+            onChange={handleChangeValue}
+          />
+          <Text type="guide" children="kg" width="30px" />
+        </s.MeasurementArea>
+        <s.InfoNameBox>
+          <s.InputHeader children="지역" />
+        </s.InfoNameBox>
+        <s.LocationArea>
+          <s.SelectBox name="location1" value={data.location1} onChange={handleChangeValue}>
+            <s.Option value="" children="시/도" />
+            {cities.map((city) => (
+              <s.Option key={city} value={city} children={city} />
+            ))}
+          </s.SelectBox>
+          <s.SelectBox name="location2" value={data.location2} onChange={handleChangeValue} disabled={!data.location1}>
+            <s.Option value="" children="시/군/구" />
+            {data.location1 &&
+              districts[data.location1]?.map((district) => (
+                <s.Option key={district} value={district} children={district} />
               ))}
-            </s.SelectBox>
-            <s.SelectBox
-              name="location2"
-              value={data.location2}
-              onChange={handleChangeValue}
-              disabled={!data.location1}
-            >
-              <s.Option value="" children="시/군/구" />
-              {data.location1 &&
-                districts[data.location1]?.map((district) => (
-                  <s.Option key={district} value={district} children={district} />
-                ))}
-            </s.SelectBox>
-          </s.LocationArea>
-          <s.SubmitBtnArea>
-            <Button width="100%" height="40px" children="다음에 입력하기" onClick={handleSubmit} margin="5px 0" />
-            <Button width="100%" height="40px" type="main" children="입력완료" onClick={handleSubmit} margin="5px 0 " />
-          </s.SubmitBtnArea>
-        </s.PlusInfoArea>
-      </s.Container>
-    </>
+          </s.SelectBox>
+        </s.LocationArea>
+        <s.SubmitBtnArea>
+          <Button width="48%" height="40px" children="이전" onClick={handlePrevious} margin="5px 0" />
+          <Button width="48%" height="40px" type="main" children="수정완료" onClick={handleSubmit} margin="5px 0 " />
+        </s.SubmitBtnArea>
+      </s.PlusInfoArea>
+    </s.Container>
   );
 };
 
-export default PlusInfoPage;
+export default UpdateMyInfoPage;

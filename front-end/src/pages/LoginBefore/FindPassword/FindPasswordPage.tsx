@@ -4,6 +4,7 @@ import Input from '../../../components/Common/Input';
 import Button from '../../../components/Common/Button';
 import Header from '../../../components/Common/Header';
 import PhoneNumberInput from '../../../components/LoginBefore/phoneNumberInput';
+import EmailArea from '../../../components/LoginBefore/EmailArea';
 
 const s = {
   Container: styled.section`
@@ -22,7 +23,7 @@ const s = {
     padding: 60px 0 80px;
   `,
   InfoArea: styled.div`
-    width: 80%;
+    width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -30,14 +31,14 @@ const s = {
     margin-bottom: 20px;
   `,
   InputArea: styled.div`
-    width: 100%;
+    width: 90%;
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 10px;
   `,
   InfoNameBox: styled.div`
-    width: 100%;
+    width: 90%;
     display: flex;
     justify-content: left;
   `,
@@ -55,7 +56,7 @@ const s = {
     margin-top: 5px;
   `,
   BtnArea: styled.div`
-    width: 80%;
+    width: 90%;
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
@@ -66,6 +67,9 @@ const s = {
   `,
   InputBtn: styled.div`
     flex-shrink: 0;
+  `,
+  PhoneArea: styled.div`
+    width: 90%;
   `,
 };
 
@@ -95,7 +99,10 @@ const FindPasswordPage = (): JSX.Element => {
   // 인증번호
   const [verificationBtnText, setVerificationBtnText] = useState('인증번호 발송');
   const [verificationBtnType, setVerificationBtnType] = useState('main');
+  const [confirmBtnText, setConfirmBtnText] = useState('확인');
+  const [confirmBtnType, setConfirmBtnType] = useState('main');
   const [returnCode, setReturnCode] = useState('0000000'); // 7자로 설정하여 못 뚫게 함
+
   // 계정 존재 여부
   const [isExisted, setIsExisted] = useState(false);
   // 인증 완료 여부
@@ -182,11 +189,13 @@ const FindPasswordPage = (): JSX.Element => {
   };
 
   // 인증번호 확인
-  const handleVerifyCode = () => {
+  const handleCheckVerificationCode = () => {
     const { verificationCode } = data;
     console.log(returnCode, verificationCode);
     if (verificationCode === returnCode) {
       setIsVerified(true);
+      setConfirmBtnText('인증완료');
+      setConfirmBtnType('sub');
       alert('인증번호가 확인되었습니다.');
     } else {
       alert('인증번호가 틀립니다.');
@@ -229,56 +238,21 @@ const FindPasswordPage = (): JSX.Element => {
             <s.InputHeader children="전화번호" />
             {phoneNumberError && <s.ErrorText>{phoneNumberError}</s.ErrorText>}
           </s.InfoNameBox>
-          <PhoneNumberInput phonePart2={data.phonePart2} phonePart3={data.phonePart3} onChange={handleChangeValue} />
-          <s.InfoNameBox>
-            <s.InputHeader children="이메일" />
-            {emailError && <s.ErrorText>{emailError}</s.ErrorText>}
-          </s.InfoNameBox>
-          <s.InputArea>
-            <s.InputBox>
-              <Input
-                width="100%"
-                height="40px"
-                name="email"
-                placeholder="이메일을 입력해주세요"
-                type="text"
-                value={data.email}
-                onChange={handleChangeValue}
-              />
-            </s.InputBox>
-            <s.InputBtn>
-              <Button
-                width="100px"
-                height="40px"
-                type={verificationBtnType}
-                children={verificationBtnText}
-                onClick={handleSendVerificationCode}
-              />
-            </s.InputBtn>
-          </s.InputArea>
-          {isExisted && (
-            <s.InfoNameBox>
-              <s.InputHeader children="인증번호" />
-            </s.InfoNameBox>
-          )}
-          {isExisted && (
-            <s.InputArea>
-              <s.InputBox>
-                <Input
-                  width="100%"
-                  height="40px"
-                  name="verificationCode"
-                  placeholder="인증번호를 입력해주세요"
-                  type="text"
-                  value={data.verificationCode}
-                  onChange={handleChangeValue}
-                />
-              </s.InputBox>
-              <s.InputBtn>
-                <Button width="100px" height="40px" type="main" children="인증번호 확인" onClick={handleVerifyCode} />
-              </s.InputBtn>
-            </s.InputArea>
-          )}
+          <s.PhoneArea>
+            <PhoneNumberInput phonePart2={data.phonePart2} phonePart3={data.phonePart3} onChange={handleChangeValue} />
+          </s.PhoneArea>
+          <EmailArea
+            email={data.email}
+            verificationCode={data.verificationCode}
+            emailError={emailError}
+            verificationBtnText={verificationBtnText}
+            verificationBtnType={verificationBtnType}
+            confirmBtnText={confirmBtnText}
+            confirmBtnType={confirmBtnType}
+            onChange={handleChangeValue}
+            onSendVerificationCode={handleSendVerificationCode}
+            onCheckVerificationCode={handleCheckVerificationCode}
+          />
         </s.InfoArea>
         {isVerified && (
           <s.BtnArea>

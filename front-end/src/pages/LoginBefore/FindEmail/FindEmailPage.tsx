@@ -25,7 +25,7 @@ const s = {
     align-items: center;
   `,
   InfoArea: styled.div`
-    width: 80%;
+    width: 90%;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -46,7 +46,7 @@ const s = {
     font-size: 16px;
   `,
   BtnArea: styled.div`
-    width: 80%;
+    width: 90%;
     display: flex;
     justify-content: space-between;
     margin-top: 20px;

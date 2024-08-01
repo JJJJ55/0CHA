@@ -3,53 +3,6 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssafy.back_end.sns.mapper.SnsSocialMapper">
 
-    <resultMap id="FeedResultMap" type="com.ssafy.back_end.sns.model.FeedDto">
-        <result property="id" column="id"/>
-        <result property="userId" column="user_id"/>
-        <result property="routineId" column="routine_id"/>
-        <result property="image" column="image"/>
-        <result property="content" column="content"/>
-        <result property="createdAt" column="created_at"/>
-        <result property="updatedAt" column="updated_at"/>
-    </resultMap>
-
-    <resultMap id="FeedInteractionResultMap" type="com.ssafy.back_end.sns.model.FeedInteractionDto">
-        <result property="id" column="id"/>
-        <result property="userId" column="user_id"/>
-        <result property="feedId" column="feed_id"/>
-        <result property="interactionType" column="interaction_type"/>
-        <result property="comment" column="comment"/>
-        <result property="createdAt" column="created_at"/>
-    </resultMap>
-
-    <resultMap id="FollowResultMap" type="com.ssafy.back_end.sns.model.FollowDto">
-        <result property="id" column="id"/>
-        <result property="followerId" column="follower_id"/>
-        <result property="followedId" column="followed_id"/>
-        <result property="followedAt" column="followed_at"/>
-    </resultMap>
-
-    <resultMap id="UserPageResultMap" type="com.ssafy.back_end.sns.model.UserPageDto">
-        <result property="id" column="id"/>
-        <result property="nickname" column="nickname"/>
-        <result property="profileImage" column="profile_image"/>
-        <result property="feedCount" column="feed_count"/>
-        <result property="itemCount" column="item_count"/>
-        <result property="followedIdCount" column="followed_id_count"/>
-        <result property="followerIdCount" column="follower_id_count"/>
-    </resultMap>
-
-    <resultMap id="UserPageListResultMap" type="com.ssafy.back_end.sns.model.UserPageListDto">
-        <result property="id" column="id"/>
-        <result property="image" column="image"/>
-    </resultMap>
-
-    <resultMap id="UserFollowListResultMap" type="com.ssafy.back_end.sns.model.UserPageDto">
-        <result property="id" column="id"/>
-        <result property="nickname" column="nickname"/>
-        <result property="profileImage" column="profile_image"/>
-    </resultMap>
-
     <select id="getUserPageInfo" resultType="UserPageDto">
         SELECT nickname,
                profile_image,

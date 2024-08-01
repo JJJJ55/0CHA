@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import Header from '../../components/Common/Header';
 import { FitnessPlanData } from '../../util/TestData';
-import FitnessPlan from '../../components/Fitness/FitnessList/FitnessPlan';
+import FitnessPlan from '../../components/Fitness/Detail/FitnessPlan';
 import { ReactComponent as add } from '../../asset/img/svg/add.svg';
 import IconSvg from '../../components/Common/IconSvg';
 import Button from '../../components/Common/Button';

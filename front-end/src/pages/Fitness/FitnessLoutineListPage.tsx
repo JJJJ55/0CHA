@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import FitnessRoutineList from '../../components/Fitness/FitnessList/FitnessRoutineList';
+import FitnessRoutineList from '../../components/Fitness/List/FitnessRoutineList';
 import Header from '../../components/Common/Header';
 import BottomNav from '../../components/Common/BottomNav';
 import Button from '../../components/Common/Button';

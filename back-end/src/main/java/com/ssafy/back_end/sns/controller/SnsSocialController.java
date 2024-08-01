@@ -24,47 +24,44 @@ public class SnsSocialController {
     }
 
     @GetMapping ("/user-page/info")
-    public ResponseEntity<?> getUserPageInfo(@RequestHeader ("Authorization") String token, @RequestParam ("user_id") int userId) {
+    public ResponseEntity<?> getUserPageInfo(@RequestHeader ("ID") int ID, @RequestParam ("user_id") int userId) {
         UserPageDto userInfo = snsSocialService.getUserPageInfo(userId);
         if (userInfo == null) {
             return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
         }
         return ResponseEntity.ok(userInfo);
-
     }
 
     @GetMapping ("/user-page/feeds")
-    public ResponseEntity<?> getUserPageFeeds(@RequestHeader ("Authorization") String token, @RequestParam ("user_id") int userId) {
-        System.out.println(token);
+    public ResponseEntity<?> getUserPageFeeds(@RequestHeader ("ID") int ID, @RequestParam ("user_id") int userId) {
         List<UserPageListDto> feedList = snsSocialService.getUserPageFeeds(userId);
         return ResponseEntity.ok(feedList);
     }
 
     @GetMapping ("/user-page/items")
-    public ResponseEntity<?> getUserPageItems(@RequestHeader ("Authorization") String token, @RequestParam ("user_id") int userId) {
+    public ResponseEntity<?> getUserPageItems(@RequestHeader ("ID") int ID, @RequestParam ("user_id") int userId) {
         List<UserPageListDto> itemList = snsSocialService.getUserPageItems(userId);
         return ResponseEntity.ok(itemList);
     }
 
     @GetMapping ("/user-page/followers")
-    public ResponseEntity<?> getUserPageFollowers(@RequestHeader ("Authorization") String token, @RequestParam ("user_id") int userId) {
+    public ResponseEntity<?> getUserPageFollowers(@RequestHeader ("ID") int ID, @RequestParam ("user_id") int userId) {
         List<UserPageDto> follwerList = snsSocialService.getUserPageFollowers(userId);
         return ResponseEntity.ok(follwerList);
     }
 
     @GetMapping ("/user-page/followings")
-    public ResponseEntity<?> getUserPageFollowings(@RequestHeader ("Authorization") String token, @RequestParam ("user_id") int userId) {
+    public ResponseEntity<?> getUserPageFollowings(@RequestHeader ("ID") int ID, @RequestParam ("user_id") int userId) {
         List<UserPageDto> follwingList = snsSocialService.getUserPageFollowings(userId);
         return ResponseEntity.ok(follwingList);
     }
 
     @PostMapping ("/follow")
-    public ResponseEntity<?> follow(@RequestHeader ("Authorization") String token, @RequestBody int targetId) {
-        int userId = jwtUtil.getUserIdFromRefreshToken(token);
-        int isFollowing = snsSocialService.isFollowing(userId, targetId);
+    public ResponseEntity<?> follow(@RequestHeader ("ID") int ID, @RequestBody int targetId) {
+        int isFollowing = snsSocialService.isFollowing(ID, targetId);
 
         if (isFollowing == 0) {   //팔로우 안되어 있음
-            snsSocialService.follow(userId, targetId);
+            snsSocialService.follow(ID, targetId);
             return ResponseEntity.ok("팔로우성공");
         }
         else {
@@ -73,12 +70,11 @@ public class SnsSocialController {
     }
 
     @DeleteMapping ("/follow")
-    public ResponseEntity<?> unfollow(@RequestHeader ("Authorization") String token, @RequestBody int targetId) {
-        int userId = jwtUtil.getUserIdFromRefreshToken(token);
-        int isFollowing = snsSocialService.isFollowing(userId, targetId);
+    public ResponseEntity<?> unfollow(@RequestHeader ("ID") int ID, @RequestBody int targetId) {
+        int isFollowing = snsSocialService.isFollowing(ID, targetId);
 
         if (isFollowing == 1) {   //팔로우 되어 있음
-            snsSocialService.unfollow(userId, targetId);
+            snsSocialService.unfollow(ID, targetId);
             return ResponseEntity.ok("팔로우취소 성공");
         }
         else {
@@ -86,4 +82,3 @@ public class SnsSocialController {
         }
     }
 }
-

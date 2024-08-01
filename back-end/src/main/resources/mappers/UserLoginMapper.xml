@@ -27,9 +27,18 @@
           AND password = #{password};
     </select>
 
-    <select id="loginRefresh">
+    <update id="storeRefreshToken">
+        UPDATE users
+        SET refresh_token = #{refreshToken}
+        WHERE id = #{id};
+    </update>
 
-    </select>
+    <update id="invalidateRefreshToken">
+        UPDATE users
+        SET refresh_token = NULL
+        WHERE id = #{id}
+    </update>
+
 
     <select id="social">
 

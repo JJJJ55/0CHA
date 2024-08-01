@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/api/auth/login")
+@RequestMapping (value = "/api/auth/login")
 public class UserLoginController {
     private final UserLoginService userLoginService;
-    private JwtUtil jwtUtil;
+    private final JwtUtil jwtUtil;
 
 
     @Autowired
@@ -25,26 +25,28 @@ public class UserLoginController {
         this.jwtUtil = jwtUtil;
     }
 
-    @PostMapping("/")
+    @PostMapping ("/")
     public ResponseEntity<?> login(@RequestBody UserDto userDto) {
         UserDto user = userLoginService.login(userDto);
 
         if (user != null) {
-            String accessToken = jwtUtil.createAccessToken(user.getEmail());
-            String refreshToken = jwtUtil.createRefreshToken(user.getEmail());
+            String accessToken = jwtUtil.createAccessToken(user.getId());
+            String refreshToken = jwtUtil.createRefreshToken(user.getId());
             return ResponseEntity.ok(new JwtResponse(accessToken, refreshToken));
-        } else {
+        }
+        else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인실패");
         }
     }
 
-    @PostMapping("/refresh")
+    @PostMapping ("/refresh")
     public ResponseEntity<?> refreshAccessToken(@RequestBody String refreshToken) {
         if (jwtUtil.validateToken(refreshToken, true)) {
-            String email = jwtUtil.getEmailFromRefreshToken(refreshToken);
-            String newAccessToken = jwtUtil.createAccessToken(email);
+            int userId = jwtUtil.getUserIdFromRefreshToken(refreshToken);
+            String newAccessToken = jwtUtil.createAccessToken(userId);
             return ResponseEntity.ok(new JwtResponse(newAccessToken, refreshToken));
-        } else {
+        }
+        else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("유효하지 않은 리프레시 토큰");
         }
     }

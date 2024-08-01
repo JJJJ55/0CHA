@@ -30,6 +30,7 @@
     </resultMap>
 
     <resultMap id="UserPageResultMap" type="com.ssafy.back_end.sns.model.UserPageDto">
+        <result property="id" column="id"/>
         <result property="nickname" column="nickname"/>
         <result property="profileImage" column="profile_image"/>
         <result property="feedCount" column="feed_count"/>
@@ -38,6 +39,16 @@
         <result property="followerIdCount" column="follower_id_count"/>
     </resultMap>
 
+    <resultMap id="UserPageListResultMap" type="com.ssafy.back_end.sns.model.UserPageListDto">
+        <result property="id" column="id"/>
+        <result property="image" column="image"/>
+    </resultMap>
+
+    <resultMap id="UserFollowListResultMap" type="com.ssafy.back_end.sns.model.UserPageDto">
+        <result property="id" column="id"/>
+        <result property="nickname" column="nickname"/>
+        <result property="profileImage" column="profile_image"/>
+    </resultMap>
 
     <select id="getUserPageInfo" resultType="UserPageDto">
         SELECT nickname,
@@ -53,13 +64,55 @@
     <select id="getUserPageFeeds" resultType="UserPageListDto">
         SELECT id, image
         FROM feeds
-        WHERE user_id = #{userId};
+        WHERE user_id = #{userId}
+        ORDER BY created_at DESC;
     </select>
 
     <select id="getUserPageItems" resultType="UserPageListDto">
-        SELECT id, image
-        FROM items
-        WHERE user_id = #{userId};
+        SELECT i.id AS id, d.image_url AS image
+        FROM items i
+                 LEFT JOIN (SELECT item_id, image_url
+                            FROM item_details
+                            WHERE detail_type = "image"
+                              AND (item_id, id) IN (SELECT item_id, MIN(id)
+                                                    FROM item_details
+                                                    WHERE detail_type = "image"
+                                                    GROUP BY item_id)) d ON i.id = d.item_id
+        WHERE i.user_id = #{userId};
     </select>
+
+    <select id="getUserPageFollowers" resultType="UserPageDto">
+        SELECT u.id AS id, u.nickname, u.profile_image
+        FROM follows f
+                 JOIN users u ON f.follower_id = u.id
+        WHERE f.followed_id = #{userId};
+
+    </select>
+
+    <select id="getUserPageFollowings" resultType="UserPageDto">
+        SELECT u.id AS id, u.nickname, u.profile_image
+        FROM follows f
+                 JOIN users u ON f.followed_id = u.id
+        WHERE f.follower_id = #{userId};
+    </select>
+
+    <select id="isFollowing" resultType="int">
+        SELECT COUNT(*)
+        FROM follows
+        WHERE follower_id = #{followerId}
+          AND followed_id = #{followedId}
+    </select>
+
+    <insert id="follow">
+        INSERT INTO follows (follower_id, followed_id)
+        VALUES (#{followerId}, #{followedId});
+    </insert>
+
+    <delete id="unfollow">
+        DELETE
+        FROM follows
+        WHERE follower_id = #{followerId}
+          AND followed_id = #{followedId};
+    </delete>
 
 </mapper>

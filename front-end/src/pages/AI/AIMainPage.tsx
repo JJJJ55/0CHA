@@ -106,7 +106,6 @@ const AIMainPage: React.FC = () => {
     { set: 12, isError: false, message: '좋은 자세입니다.' },
     { set: 13, isError: false, message: '좋은 자세입니다.' },
     { set: 14, isError: false, message: '좋은 자세입니다.' },
-    { set: 15, isError: false, message: '좋은 자세입니다.' },
   ];
   // 나중엔 자동인식으로 바뀔 부분
   const handleNext = () => {

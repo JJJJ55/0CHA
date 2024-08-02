@@ -13,6 +13,18 @@
             <input type="number" id="totalCount" name="totalCount" value="10" min="1" />
         </div>
 
+        <!-- 목소리 선택 -->
+        <div>
+            <label for="voiceSelect">목소리 선택:</label>
+            <select id="voiceSelect">
+                <option value="아라">아라</option>
+                <option value="레이첼">레이첼</option>
+                <option value="와카바">와카바</option>
+                <option value="은우">은우</option>
+                <option value="토모코">토모코</option>
+            </select>
+        </div>
+
         <!-- 이 부분에서 시작버튼 생성 -->
         <button type="button" onclick="init()">카메라 버튼이지롱</button>
         <button type="button" onclick="stop()">종료 버튼이지롱</button>
@@ -26,7 +38,7 @@
         <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/pose@0.8/dist/teachablemachine-pose.min.js"></script>
         <script type="text/javascript">
             // 학습 모델 URL 위치
-            const URL = './squart/my_model/';
+            const URL = './my_model/';
             let model, webcam, ctx, labelContainer, maxPredictions;
 
             let status = 'sit'; // 현재 상태
@@ -38,17 +50,34 @@
             let incorrectSecs = 0; // 틀린 자세 count[전방 굽힘 상태]
             let isRunning = false; // Loop 상태 플래그
 
+            // 선택된 목소리
+            let selectedVoice = '아라';
+
+            // 목소리 선택 이벤트 리스너
+            document.getElementById('voiceSelect').addEventListener('change', function (event) {
+                selectedVoice = event.target.value;
+            });
+
             async function init() {
+                // 초기화 코드
+                status = 'middle';
+                correctCount = 0;
+                inCorrectCount = 0;
+                comments = [];
+                correctSecs = 0;
+                incorrectSecs = 0;
+                totalCount = parseInt(document.getElementById('totalCount').value);
+
                 const modelURL = URL + 'model.json';
                 const metadataURL = URL + 'metadata.json';
 
                 model = await tmPose.load(modelURL, metadataURL);
                 maxPredictions = model.getTotalClasses();
 
-                const size = 200;
+                const size = 200; // webcam size
                 const flip = true; // whether to flip the webcam
                 webcam = new tmPose.Webcam(size, size, flip); // width, height, flip
-                await webcam.setup(); // request access to the webcam
+                await webcam.setup(); // webcam access 요청
                 await webcam.play();
                 isRunning = true;
                 requestID = window.requestAnimationFrame(loop);
@@ -59,9 +88,15 @@
                 canvas.height = size;
                 ctx = canvas.getContext('2d');
                 labelContainer = document.getElementById('label-container');
+                labelContainer.innerHTML = ''; // Clear previous labels
                 for (let i = 0; i < maxPredictions; i++) {
                     labelContainer.appendChild(document.createElement('div'));
                 }
+
+                document.getElementById('count-container').innerText = `0 / ${totalCount}`;
+                document.getElementById('comment-container').innerHTML = '';
+
+                playAudio('start'); // 시작할 때 0.mp3 재생
             }
 
             async function loop(timestamp) {
@@ -96,28 +131,36 @@
                     if (status == 'squart') {
                         correctCount++;
                         comments.push('완벽합니다!!');
+
+                        correctSecs = 0;
+                        incorrectSecs = 0;
+                        playAudio(correctCount + inCorrectCount);
                     } else if (status == 'frontSquart') {
                         inCorrectCount++;
                         comments.push('상체가 앞으로 기울었습니다.');
+
+                        correctSecs = 0;
+                        incorrectSecs = 0;
+                        playAudio(correctCount + inCorrectCount);
                     }
 
                     // var audio = new Audio(correctCount + inCxorrectCount % 10 + '.mp3'); // sound play
                     // audio.play();
 
                     status = 'stand';
-                    correctSecs = 0;
-                    incorrectSecs = 0;
                 } else if (prediction[4].probability.toFixed(2) >= 0.9) {
                     if (status == 'squart' || status == 'frontSquart') {
                         comments.push('상체가 앞으로 기울었습니다.');
                         inCorrectCount++;
+
+                        correctSecs = 0;
+                        incorrectSecs = 0;
+                        playAudio(correctCount + inCorrectCount);
                     }
 
                     status = 'frontStand';
-                    correctSecs = 0;
-                    incorrectSecs = 0;
                 } else if (prediction[0].probability.toFixed(2) == 1.0) {
-                    status = 'bottom'; // 아래에 내려간 상태
+                    status = 'sit'; // 아래에 내려간 상태
                 } else if (prediction[1].probability.toFixed(2) == 1.0) {
                     status = 'squart'; // 굽힘 상태
                     correctSecs++;
@@ -159,6 +202,12 @@
                 drawPose(pose);
             }
 
+            function playAudio(count) {
+                const audioPath = `./audio/${selectedVoice}/${count}.mp3`;
+                const audio = new Audio(audioPath);
+                audio.play().catch((err) => console.error('Failed to play audio:', err));
+            }
+
             function drawPose(pose) {
                 if (webcam.canvas) {
                     ctx.drawImage(webcam.canvas, 0, 0);
@@ -182,6 +231,8 @@
                 if (canvas) {
                     canvas.style.display = 'none';
                 }
+
+                setTimeout(() => playAudio('finish'), 1000); // 1초 대기 후 playAudio 실행
                 displayComments(); // Display comments when stopped
             }
 

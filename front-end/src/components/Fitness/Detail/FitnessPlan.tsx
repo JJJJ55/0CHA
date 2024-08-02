@@ -7,11 +7,9 @@ import IconSvg from '../../Common/IconSvg';
 const s = {
   Container: styled.section`
     width: 100%;
-    border: 1px solid red;
   `,
   PlanHeaderArea: styled.div`
     width: 85%;
-    border: 1px solid yellow;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -26,25 +24,17 @@ const s = {
   `,
   PlanTable: styled.table`
     width: 80%;
-    border: 1px solid red;
     color: ${(props) => props.theme.textColor};
     text-align: center;
-    margin: 0 auto;
+    margin: 30px auto;
   `,
   TableHead: styled.thead`
     font-size: 14px;
   `,
-  TableBody: styled.tbody`
-    border: 1px solid red;
-  `,
-  Th: styled.th`
-    border: 1px solid red;
-  `,
-  Tr: styled.tr`
-    border: 1px solid red;
-  `,
+  TableBody: styled.tbody``,
+  Th: styled.th``,
+  Tr: styled.tr``,
   Td: styled.td`
-    border: 1px solid red;
     vertical-align: middle;
     width: 20%;
     padding: 5px;
@@ -61,9 +51,8 @@ const s = {
   `,
 
   SetBtnArea: styled.div`
-    width: 70%;
+    width: 50%;
     margin: 20px auto;
-    border: 1px solid yellow;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -74,7 +63,6 @@ const s = {
     text-align: center;
     line-height: 40px;
     height: 40px;
-    border: 1px solid red;
     color: ${(props) => props.theme.mainColor};
     cursor: pointer;
   `,

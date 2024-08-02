@@ -9,7 +9,6 @@ const s = {
     max-width: 800px;
     height: 70px;
     background-color: ${(props) => props.theme.bgColor};
-    border: 1px solid red;
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -18,7 +17,6 @@ const s = {
   `,
   MainArea: styled.div`
     width: 50%;
-    border: 1px solid yellow;
     display: flex;
     justify-content: space-between;
     margin-right: 20px;
@@ -26,7 +24,6 @@ const s = {
   ContentArea: styled.div`
     width: 50%;
     height: 40px;
-    border: 1px solid red;
     display: flex;
     flex-direction: column;
     justify-content: center;

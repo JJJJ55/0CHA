@@ -13,7 +13,7 @@ const s = {
   `,
 };
 
-const FitnessLoutineListPage = (): JSX.Element => {
+const FitnessRoutineListPage = (): JSX.Element => {
   return (
     <>
       <Header text="루틴목록"></Header>
@@ -25,4 +25,4 @@ const FitnessLoutineListPage = (): JSX.Element => {
   );
 };
 
-export default FitnessLoutineListPage;
+export default FitnessRoutineListPage;

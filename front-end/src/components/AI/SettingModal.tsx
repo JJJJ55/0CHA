@@ -33,7 +33,7 @@ const s = {
     display: flex;
     flex-direction: column;
     align-items: center;
-    overflow: hidden;
+    overflow-y: auto;
     position: relative;
   `,
   Exercise: styled.div<{ selected: boolean; disabled: boolean }>`
@@ -88,6 +88,7 @@ const SettingModal: React.FC<TrainingSettingsModalProps> = ({ onClose }) => {
   // 기본 설정 스쿼트
   const [selectedExercise, setSelectedExercise] = useState('스쿼트');
   const listRef = useRef<HTMLDivElement>(null);
+  const startY = useRef(0); // 터치 시작 지점을 저장하기 위한 Ref
 
   // 선택된 운동을 중앙으로 이동시키는 함수
   const scrollToCenter = (index: number) => {
@@ -110,35 +111,49 @@ const SettingModal: React.FC<TrainingSettingsModalProps> = ({ onClose }) => {
     scrollToCenter(idx);
   }, [selectedExercise]);
 
-  // 스크롤링 효과
   useEffect(() => {
-    // 스크롤 관련 함수
-    const handleScroll = (e: WheelEvent) => {
-      e.preventDefault();
-      // 방향 설정
-      const direction = e.deltaY > 0 ? 1 : -1;
-      // 현재 위치에서 방향 값에 따라 이동 위치로
+    const listElement = listRef.current;
+
+    const handleScroll = (direction: number) => {
       const currentIdx = exercises.indexOf(selectedExercise);
       const newIdx = currentIdx + direction;
 
-      // 상하 양 끝으로의 이동을 제어하는 함수
       if (newIdx >= 1 && newIdx <= exercises.length - 2) {
         setSelectedExercise(exercises[newIdx]);
         scrollToCenter(newIdx);
       }
     };
 
-    const listElement = listRef.current;
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      const direction = e.deltaY > 0 ? 1 : -1;
+      handleScroll(direction);
+    };
+
+    const handleTouchStart = (e: TouchEvent) => {
+      startY.current = e.touches[0].clientY;
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      const endY = e.changedTouches[0].clientY;
+      const direction = startY.current - endY > 0 ? 1 : -1;
+      handleScroll(direction);
+    };
+
     if (listElement) {
-      listElement.addEventListener('wheel', handleScroll, { passive: false });
+      listElement.addEventListener('wheel', handleWheel, { passive: false });
+      listElement.addEventListener('touchstart', handleTouchStart, { passive: false });
+      listElement.addEventListener('touchend', handleTouchEnd, { passive: false });
     }
 
     return () => {
       if (listElement) {
-        listElement.removeEventListener('wheel', handleScroll);
+        listElement.removeEventListener('wheel', handleWheel);
+        listElement.removeEventListener('touchstart', handleTouchStart);
+        listElement.removeEventListener('touchend', handleTouchEnd);
       }
     };
-  }, [selectedExercise]);
+  }, [selectedExercise, exercises]);
 
   const handleConfirm = () => {
     alert(`${selectedExercise} ${counter}회 시작합니다.`);

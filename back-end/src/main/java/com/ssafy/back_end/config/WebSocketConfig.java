@@ -8,14 +8,17 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
 @Configuration
-@EnableWebSocket  // 웹소켓 서버 사용
 @EnableWebSocketMessageBroker  // STOMP 사용
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
-    public void configureMessageBroker(final MessageBrokerRegistry registry) {
-        registry.enableSimpleBroker("/sub"); // /sub로 시작하는 주제를 구독자에게 전달
-        registry.setApplicationDestinationPrefixes("/pub"); // /pub로 클라이언트가 메시지 전송
+    public void configureMessageBroker(MessageBrokerRegistry registry) {
+        registry.enableStompBrokerRelay("/topic")
+                .setRelayHost("13.124.57.45") // Redis 컨테이너가 실행 중인 호스트
+                .setRelayPort(6379)         // Redis 기본 포트
+                .setClientLogin("guest")
+                .setClientPasscode("guest");
+        registry.setApplicationDestinationPrefixes("/app");
     }
 
     @Override

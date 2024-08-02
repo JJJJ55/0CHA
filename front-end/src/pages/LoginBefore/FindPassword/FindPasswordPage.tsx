@@ -96,6 +96,7 @@ const FindPasswordPage = (): JSX.Element => {
   const [phoneNumberError, setPhoneNumberError] = useState('');
   // 이메일
   const [emailError, setEmailError] = useState('');
+  const [emailInfoMessage, setEmailInfoMessage] = useState(''); // 가입 가/불 메시지
   // 인증번호
   const [verificationBtnText, setVerificationBtnText] = useState('인증번호 발송');
   const [verificationBtnType, setVerificationBtnType] = useState('main');
@@ -105,6 +106,7 @@ const FindPasswordPage = (): JSX.Element => {
 
   // 계정 존재 여부
   const [isExisted, setIsExisted] = useState(false);
+
   // 인증 완료 여부
   const [isVerified, setIsVerified] = useState(false);
 
@@ -131,7 +133,7 @@ const FindPasswordPage = (): JSX.Element => {
   const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
-    // 이름 필드에 대한 유효성 검사: 한글 또는 영문만 허용, 최대 20자까지 입력 가능
+    // 이름 필드
     if (name === 'username') {
       const usernameRegex = /^[a-zA-Z가-힣]*$/;
       // 한 글자는 입력 불가
@@ -156,8 +158,18 @@ const FindPasswordPage = (): JSX.Element => {
       }
     }
 
-    // 이메일 필드에 대한 유효성 검사
+    // 이메일 필드
     if (name === 'email') {
+      // 인증번호가 보내진 상태에서 수정을 가했다면 초기화
+      if (verificationBtnType === 'sub') {
+        setIsVerified(false); // 인증 상태 초기화
+        setVerificationBtnText('인증번호 발송'); // 인증번호 전송 버튼 텍스트 초기화
+        setVerificationBtnType('main'); // 인증번호 전송 버튼 타입 초기화
+        setConfirmBtnText('확인'); // 인증번호 확인 버튼 텍스트 초기화
+        setConfirmBtnType('main'); // 인증번호 확인 버튼 초기화
+        setEmailInfoMessage(''); // 이메일 가/불 안내 메시지 초기화
+      }
+      // 이메일 유효성 검사
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(value) && value.length > 0) {
         setEmailError('유효한 이메일 주소를 입력하세요.');
@@ -166,46 +178,82 @@ const FindPasswordPage = (): JSX.Element => {
       }
     }
 
-    // 인증번호 필드에 대해 6자리로 제한
-    if (name === 'verificationCode' && value.length > 6) {
-      return;
+    // 이메일 인증번호 필드
+    if (name === 'verificationCode') {
+      // 전송 버튼이 안 보내졌거나 6자 이상은 입력 불가
+      if (verificationBtnType === 'main' || value.length > 6) {
+        return;
+      }
     }
+
     setData({
       ...data,
       [name]: value,
     });
   };
 
-  // 추후 회원정보를 확인하고 인증번호를 받아오는 과정 추가 필요
+  // 이메일 전송 버튼 로직(기존 이메일과 중복 확인하는 작업 필요)
   const handleSendVerificationCode = () => {
-    // 회원정보 확인 로직 작성할 부분
-    console.log(data);
-    // 회원정보 있을 경우 수행될 부분
-    setIsExisted(true);
-    alert('인증번호가 발송되었습니다.');
-    setReturnCode('000000'); // 인증번호 설정
-    setVerificationBtnText('재전송');
-    setVerificationBtnType('sub');
+    // 이메일 필드 조건 충족한 경우
+    if (emailError === '' && data.email !== '') {
+      // 기존에 가입한 이메일과 중복확인하는 로직이 들어갈 부분
+      if (true) {
+        // 가입 이력이 있는 이메일인 경우 인증번호 발송
+        alert('인증번호가 발송되었습니다.');
+        setReturnCode('000000'); // 인증번호 설정
+        setVerificationBtnText('재전송'); // 버튼명 변경
+        setVerificationBtnType('sub'); // 버튼 타입변경
+        setConfirmBtnText('확인'); // 확인 필드에 대해서도 변경
+        setConfirmBtnType('main');
+        setIsVerified(false); // 인증여부 초기화
+        setEmailInfoMessage('');
+      } else {
+        // 가입 이력이 없는 이메일인 경우
+        setEmailInfoMessage('가입 정보가 없습니다. 다시 확인해주세요.');
+      }
+    } else {
+      // 이메일 필드 조건을 미충족한 경우
+      // 정상 이메일이 아니면 이메일 확인
+      alert('조건에 맞는 이메일을 먼저 입력해 주세요.');
+    }
   };
 
-  // 인증번호 확인
+  // 이메일 인증 확인 로직
   const handleCheckVerificationCode = () => {
     const { verificationCode } = data;
-    console.log(returnCode, verificationCode);
-    if (verificationCode === returnCode) {
-      setIsVerified(true);
-      setConfirmBtnText('인증완료');
-      setConfirmBtnType('sub');
-      alert('인증번호가 확인되었습니다.');
-    } else {
-      alert('인증번호가 틀립니다.');
+    // 인증완료시 비활성화
+    if (!isVerified) {
+      // 인증번호 6자를 안 누르고 확인 누를 경우 인증번호 6자를 정확하게 입력해주세요 알림창 띄움
+      if (data.verificationCode.length !== 6) {
+        alert('인증번호 6자를 정확하게 입력해주세요.');
+      } else {
+        // 6자 누른 경우
+        if (verificationCode === returnCode) {
+          alert('인증번호가 확인되었습니다.');
+          setConfirmBtnText('인증완료');
+          setConfirmBtnType('sub');
+          setIsVerified(true);
+        } else {
+          alert('인증번호가 틀립니다.');
+        }
+      }
     }
   };
 
   const handleSubmit = () => {
     // 제출 로직 작성
-    console.log('Form submitted:', data);
-    alert('비밀번호 변경 요청이 제출되었습니다.');
+    if (
+      isVerified &&
+      phoneNumberError === '' &&
+      data.phonePart2.length !== 0 &&
+      data.username.length !== 0 &&
+      usernameError === ''
+    ) {
+      console.log('Form submitted:', data);
+      alert('비밀번호 변경 페이지로 이동합니다.');
+    } else {
+      alert('입력 다시');
+    }
   };
 
   const handlePrevious = () => {
@@ -252,14 +300,13 @@ const FindPasswordPage = (): JSX.Element => {
             onChange={handleChangeValue}
             onSendVerificationCode={handleSendVerificationCode}
             onCheckVerificationCode={handleCheckVerificationCode}
+            emailInfoMessage={emailInfoMessage}
           />
         </s.InfoArea>
-        {isVerified && (
-          <s.BtnArea>
-            <Button width="48%" height="40px" children="이전" onClick={handlePrevious} />
-            <Button width="48%" height="40px" type="main" children="비밀번호 변경" onClick={handleSubmit} />
-          </s.BtnArea>
-        )}
+        <s.BtnArea>
+          <Button width="48%" height="40px" children="이전" onClick={handlePrevious} />
+          <Button width="48%" height="40px" type="main" children="비밀번호 변경" onClick={handleSubmit} />
+        </s.BtnArea>
       </s.FindPasswordArea>
     </s.Container>
   );

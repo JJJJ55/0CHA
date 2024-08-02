@@ -147,10 +147,9 @@ const SignUpPage = (): JSX.Element => {
     phonePart3: '',
   });
 
-  const [daysInMonth, setDaysInMonth] = useState<number[]>([]);
-  const [phoneNumberError, setPhoneNumberError] = useState('');
   // 이메일
-  const [emailError, setEmailError] = useState('');
+  const [emailError, setEmailError] = useState(''); // 유효성
+  const [emailInfoMessage, setEmailInfoMessage] = useState(''); // 가입 가/불 메시지
   // 인증번호
   const [verificationBtnText, setVerificationBtnText] = useState('인증번호 발송');
   const [verificationBtnType, setVerificationBtnType] = useState('main');
@@ -167,7 +166,11 @@ const SignUpPage = (): JSX.Element => {
   const [usernameError, setUsernameError] = useState('');
   // 닉네임
   const [nicknameError, setNicknameError] = useState('');
-  const [isNicknameAvailable, setIsNicknameAvailable] = useState(false);
+  const [isNicknameExisted, setIsNicknameExisted] = useState(true);
+
+  // 생년월일
+  const [daysInMonth, setDaysInMonth] = useState<number[]>([]);
+  const [phoneNumberError, setPhoneNumberError] = useState('');
 
   // 전화번호 유효성 검사
   useEffect(() => {
@@ -191,17 +194,19 @@ const SignUpPage = (): JSX.Element => {
   // 유효성 검사
   const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    // 전화번호 두 번째와 세 번째 필드에 대해 4자리로 제한
-    if ((name === 'phonePart2' || name === 'phonePart3') && value.length > 4) {
-      return;
-    }
-    // 이메일 필드에 대한 유효성 검사
+
+    // 이메일 필드
     if (name === 'email') {
-      if (isVerified) {
-        setIsVerified(false);
-        setVerificationBtnText('인증번호 발송');
-        setVerificationBtnType('main');
+      // 인증번호가 보내진 상태에서 수정을 가했다면 초기화
+      if (verificationBtnType === 'sub') {
+        setIsVerified(false); // 인증 상태 초기화
+        setVerificationBtnText('인증번호 발송'); // 인증번호 전송 버튼 텍스트 초기화
+        setVerificationBtnType('main'); // 인증번호 전송 버튼 타입 초기화
+        setConfirmBtnText('확인'); // 인증번호 확인 버튼 텍스트 초기화
+        setConfirmBtnType('main'); // 인증번호 확인 버튼 초기화
+        setEmailInfoMessage(''); // 이메일 가/불 안내 메시지 초기화
       }
+      // 이메일 유효성 검사
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(value) && value.length > 0) {
         setEmailError('유효한 이메일 주소를 입력하세요.');
@@ -210,12 +215,15 @@ const SignUpPage = (): JSX.Element => {
       }
     }
 
-    // 인증번호 필드에 대해 6자리로 제한
-    if (name === 'verificationCode' && value.length > 6) {
-      return;
+    // 이메일 인증번호 필드
+    if (name === 'verificationCode') {
+      // 전송 버튼이 안 보내졌거나 6자 이상은 입력 불가
+      if (verificationBtnType === 'main' || value.length > 6) {
+        return;
+      }
     }
 
-    // 비밀번호 로직
+    // 비밀번호 필드
     if (name === 'pw') {
       const pwRegex = /^(?=.*[a-z])(?=.*[0-9])(?=.*[~!@#$%^&*()])[a-zA-Z0-9~!@#$%^&*()]+$/;
       if (value.length === 0) {
@@ -229,7 +237,8 @@ const SignUpPage = (): JSX.Element => {
         return;
       }
     }
-    // 비밀번호 확인 로직
+
+    // 비밀번호 확인 필드
     if (name === 'pwCheck') {
       if (value.length !== 0) {
         if (value === data.pw) {
@@ -242,7 +251,7 @@ const SignUpPage = (): JSX.Element => {
       }
     }
 
-    // 이름 필드에 대한 유효성 검사: 한글 또는 영문만 허용, 최대 20자까지 입력 가능
+    // 이름 필드
     if (name === 'username') {
       const usernameRegex = /^[a-zA-Z가-힣]*$/;
       // 한 글자는 입력 불가
@@ -256,8 +265,12 @@ const SignUpPage = (): JSX.Element => {
       }
     }
 
-    // 닉네임 유효성 검사: 영문 + 숫자만 허용, 최소 5자, 최대 10자
+    // 닉네임 필드
     if (name === 'nickname') {
+      // 중복확인 했는데 수정을 가하면 다시 존재하는 것으로
+      if (!isNicknameExisted) {
+        setIsNicknameExisted(true);
+      }
       const nicknameRegex = /^[a-zA-Z0-9_]*$/;
       if (value.length === 0) {
         setNicknameError('');
@@ -268,6 +281,17 @@ const SignUpPage = (): JSX.Element => {
       }
       // 10글자 초과 입력은 불가
       if (value.length > 10) {
+        return;
+      }
+    }
+
+    // 전화번호 필드
+    if (name === 'phonePart2' || name === 'phonePart3') {
+      const phoneNumberRegex = /^\d*$/;
+      if (!phoneNumberRegex.test(value)) {
+        return;
+      }
+      if (value.length > 4) {
         return;
       }
     }
@@ -294,50 +318,99 @@ const SignUpPage = (): JSX.Element => {
     }
   }, [data.birthYear, data.birthMonth]);
 
-  // 이메일 전송 로직(기존 이메일과 중복 확인하는 작업 필요)
+  // 이메일 전송 버튼 로직(기존 이메일과 중복 확인하는 작업 필요)
   const handleSendVerificationCode = () => {
+    // 이메일 필드 조건 충족한 경우
     if (emailError === '' && data.email !== '') {
-      // 정상 이메일이면 인증번호 발송
-      alert('인증번호가 발송되었습니다.');
-      setReturnCode('000000'); // 인증번호 설정
-      setVerificationBtnText('재전송');
-      setVerificationBtnType('sub');
+      // 기존에 가입한 이메일과 중복확인하는 로직이 들어갈 부분
+      if (true) {
+        // 가입 이력이 없는 이메일인 경우
+        // 정상 이메일이면 인증번호 발송
+        alert('인증번호가 발송되었습니다.');
+        setReturnCode('000000'); // 인증번호 설정
+        setVerificationBtnText('재전송'); // 버튼명 변경
+        setVerificationBtnType('sub'); // 버튼 타입변경
+        setConfirmBtnText('확인'); // 확인 필드에 대해서도 변경
+        setConfirmBtnType('main');
+        setIsVerified(false); // 인증여부 초기화
+        setEmailInfoMessage('가입 가능한 이메일입니다.');
+      } else {
+        // 가입 이력이 있는 이메일인 경우
+        setEmailInfoMessage('이미 가입된 메일입니다.');
+      }
     } else {
+      // 이메일 필드 조건을 미충족한 경우
       // 정상 이메일이 아니면 이메일 확인
-      alert('이메일을 확인해 주세요.');
-    }
-  };
-  // 이메일 인증 확인 로직
-  const handleCheckVerificationCode = () => {
-    const { verificationCode } = data;
-    if (verificationCode === returnCode) {
-      alert('인증번호가 확인되었습니다.');
-      setConfirmBtnText('인증완료');
-      setConfirmBtnType('sub');
-      setIsVerified(true);
-    } else {
-      alert('인증번호가 틀립니다.');
+      alert('조건에 맞는 이메일을 먼저 입력해 주세요.');
     }
   };
 
+  // 이메일 인증 확인 로직
+  const handleCheckVerificationCode = () => {
+    const { verificationCode } = data;
+    // 인증완료시 비활성화
+    if (!isVerified) {
+      // 인증번호 6자를 안 누르고 확인 누를 경우 인증번호 6자를 정확하게 입력해주세요 알림창 띄움
+      if (data.verificationCode.length !== 6) {
+        alert('인증번호 6자를 정확하게 입력해주세요.');
+      } else {
+        // 6자 누른 경우
+        if (verificationCode === returnCode) {
+          alert('인증번호가 확인되었습니다.');
+          setConfirmBtnText('인증완료');
+          setConfirmBtnType('sub');
+          setIsVerified(true);
+        } else {
+          alert('인증번호가 틀립니다.');
+        }
+      }
+    }
+  };
+
+  // 닉네임 중복 확인
   const handleCheckDuplicateNickname = () => {
     if (nicknameError === '' && data.nickname.length !== 0) {
       // 닉네임 중복 확인 로직 작성
       alert('사용할 수 있는 닉네임입니다.');
-      setIsNicknameAvailable(true);
+      setIsNicknameExisted(false);
     } else {
       alert('닉네임은 5~10자 영문/숫자/_만 사용 가능합니다.');
     }
   };
 
-  // 제출 버튼
+  // 제출
   const handleSubmit = () => {
     // 제출 로직 작성 (예: API 호출)
     // 모든 조건 만족해야 함.
     // 이메일 인증. 비밀번호
     // 이름, 닉네임, 생년월일 존재, 전화번호 존재
-    console.log('Form submitted:', data);
-    alert('회원가입이 완료되었습니다.');
+    // 인증 작업
+    console.log(isVerified, data.pw.length, pwError, pwCheckError);
+    console.log(data.username.length, usernameError, data.nickname.length, nicknameError);
+    console.log(isNicknameExisted, phoneNumberError, data.phonePart2.length);
+    console.log(data.birthYear, data.birthMonth, data.birthDay);
+    if (
+      isVerified &&
+      data.pw.length !== 0 &&
+      data.pwCheck.length !== 0 &&
+      pwError === '' &&
+      pwCheckError === '' &&
+      data.username.length !== 0 &&
+      usernameError === '' &&
+      data.nickname.length !== 0 &&
+      nicknameError === '' &&
+      !isNicknameExisted &&
+      phoneNumberError === '' &&
+      data.phonePart2.length !== 0 &&
+      data.birthYear !== '' &&
+      data.birthMonth !== '' &&
+      data.birthDay !== ''
+    ) {
+      console.log('Form submitted:', data);
+      alert('회원가입이 완료되었습니다.');
+    } else {
+      alert('입력 다시');
+    }
   };
 
   // 연, 월, 일 계산 로직
@@ -383,6 +456,7 @@ const SignUpPage = (): JSX.Element => {
           emailError={emailError}
           verificationBtnText={verificationBtnText}
           verificationBtnType={verificationBtnType}
+          emailInfoMessage={emailInfoMessage}
           confirmBtnText={confirmBtnText}
           confirmBtnType={confirmBtnType}
           onChange={handleChangeValue}

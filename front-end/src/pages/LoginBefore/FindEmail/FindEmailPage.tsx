@@ -11,18 +11,16 @@ const s = {
   Container: styled.section`
     height: 100%;
     background-color: ${(props) => props.theme.bgColor};
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
+    overflow: auto;
   `,
   FindEmailArea: styled.div`
     width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    padding: 60px 0 80px;
   `,
   InfoArea: styled.div`
     width: 90%;
@@ -62,6 +60,12 @@ const s = {
     display: flex;
     justify-content: left;
   `,
+  ExistedTest: styled.p`
+    color: ${(props) => props.theme.mainColor};
+    font-size: 12px;
+    margin-bottom: 10px;
+    width: 90%;
+  `,
 };
 
 interface dataType {
@@ -80,7 +84,8 @@ const FindEmailPage = (): JSX.Element => {
   // 유효성 검사 상태
   const [usernameError, setUsernameError] = useState('');
   const [phoneNumberError, setPhoneNumberError] = useState('');
-  const [isExisted, setIsExisted] = useState(true);
+  const [emailMessage, setEmailMessage] = useState('');
+  const [isExisted, setIsExisted] = useState(false); // 이메일이 존재하는가
 
   // 전화번호 유효성 검사
   useEffect(() => {
@@ -101,6 +106,13 @@ const FindEmailPage = (): JSX.Element => {
     validatePhoneNumber();
   }, [data.phonePart2, data.phonePart3]);
 
+  // 상태 변화 감지 후 처리
+  useEffect(() => {
+    if (emailMessage === '' && isExisted === true) {
+      alert('이메일 찾기 요청이 제출되었습니다.');
+    }
+  }, [emailMessage]);
+
   // 입력 값 변경 처리
   const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -117,8 +129,15 @@ const FindEmailPage = (): JSX.Element => {
       }
     }
 
-    if ((name === 'phonePart2' || name === 'phonePart3') && value.length > 4) {
-      return;
+    // 전화번호 필드
+    if (name === 'phonePart2' || name === 'phonePart3') {
+      const phoneNumberRegex = /^\d*$/;
+      if (!phoneNumberRegex.test(value)) {
+        return;
+      }
+      if (value.length > 4) {
+        return;
+      }
     }
 
     setData({
@@ -130,11 +149,18 @@ const FindEmailPage = (): JSX.Element => {
   // 제출 처리
   const handleSubmit = () => {
     console.log('Form submitted:', data);
-    // 회원정보 탐색
-    setIsExisted(false); // 존재하지 않음
-    if (isExisted) {
+    // 모든 정보가 완전하게 입력된 경우이면
+    if (data.username.length !== 0 && data.phonePart2.length !== 2 && phoneNumberError === '' && usernameError === '') {
+      // 회원정보 탐색 로직
+      // 존재하지 않는 경우
+      setEmailMessage('해당 정보로 가입된 이메일이 없습니다.');
+      setIsExisted(false);
+      // 존재하는 경우
+      // setIsExisted(true);
+      // setEmailMessage('');
+    } else {
+      alert('모든 정보를 정확히 입력해주십시오.');
     }
-    alert('이메일 찾기 요청이 제출되었습니다.');
   };
 
   // 이전 페이지로 이동 처리
@@ -143,40 +169,38 @@ const FindEmailPage = (): JSX.Element => {
     alert('이전 페이지로 이동합니다.');
   };
   return (
-    <>
+    <s.Container>
       <Header text="이메일 찾기" />
-      <s.Container>
-        <s.FindEmailArea>
-          <s.InfoArea>
-            <s.InfoNameBox>
-              <s.InputHeader children="이름" />
-              {usernameError && <s.ErrorText>{usernameError}</s.ErrorText>}
-            </s.InfoNameBox>
-            <s.InputArea>
-              <Input
-                width="100%"
-                height="40px"
-                name="username"
-                placeholder="이름을 입력해주세요"
-                type="text"
-                value={data.username}
-                onChange={handleChangeValue}
-              />
-            </s.InputArea>
-            <s.InfoNameBox>
-              <s.InputHeader children="전화번호" />
-              {phoneNumberError && <s.ErrorText>{phoneNumberError}</s.ErrorText>}
-            </s.InfoNameBox>
-            <PhoneNumberInput phonePart2={data.phonePart2} phonePart3={data.phonePart3} onChange={handleChangeValue} />
-          </s.InfoArea>
-          {!isExisted && <s.ErrorText>가입된 이메일이 없습니다.</s.ErrorText>}
-          <s.BtnArea>
-            <Button width="48%" height="40px" children="이전" onClick={handlePrevious} />
-            <Button width="48%" height="40px" type="main" children="이메일 찾기" onClick={handleSubmit} />
-          </s.BtnArea>
-        </s.FindEmailArea>
-      </s.Container>
-    </>
+      <s.FindEmailArea>
+        <s.InfoArea>
+          <s.InfoNameBox>
+            <s.InputHeader children="이름" />
+            {usernameError && <s.ErrorText>{usernameError}</s.ErrorText>}
+          </s.InfoNameBox>
+          <s.InputArea>
+            <Input
+              width="100%"
+              height="40px"
+              name="username"
+              placeholder="이름을 입력해주세요"
+              type="text"
+              value={data.username}
+              onChange={handleChangeValue}
+            />
+          </s.InputArea>
+          <s.InfoNameBox>
+            <s.InputHeader children="전화번호" />
+            {phoneNumberError && <s.ErrorText>{phoneNumberError}</s.ErrorText>}
+          </s.InfoNameBox>
+          <PhoneNumberInput phonePart2={data.phonePart2} phonePart3={data.phonePart3} onChange={handleChangeValue} />
+        </s.InfoArea>
+        {emailMessage && <s.ExistedTest>{emailMessage}</s.ExistedTest>}
+        <s.BtnArea>
+          <Button width="48%" height="40px" children="이전" onClick={handlePrevious} />
+          <Button width="48%" height="40px" type="main" children="이메일 찾기" onClick={handleSubmit} />
+        </s.BtnArea>
+      </s.FindEmailArea>
+    </s.Container>
   );
 };
 

@@ -65,22 +65,25 @@ public class JwtUtil {
             }
             return true;
         }
+        catch (ExpiredJwtException e) {
+            logger.info("토큰이 만료되었습니다.");
+            throw e;  // 만료된 토큰일 경우 예외를 던짐
+        }
         catch (SignatureException e) {
-            // 서명이 옳지 않을 때
             System.out.println("잘못된 토큰 서명입니다.");
         }
-        catch (ExpiredJwtException e) {
-            // 토큰이 만료됐을 때
-            System.out.println("만료된 토큰입니다.");
-        }
         catch (IllegalArgumentException | JwtException e) {
-            // 토큰이 올바르게 구성되지 않았을 때 처리
             System.out.println("잘못된 토큰입니다.");
         }
         return false;
     }
 
-    // Refresh Token에서 email 추출
+    // Access Token에서 id 추출
+    public int getUserIdFromAccessToken(String token) {
+        return Integer.parseInt(Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody().getSubject());
+    }
+
+    // Refresh Token에서 id 추출
     public int getUserIdFromRefreshToken(String token) {
         return Integer.parseInt(Jwts.parserBuilder().setSigningKey(refreshKey).build().parseClaimsJws(token).getBody().getSubject());
     }

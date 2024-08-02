@@ -13,7 +13,6 @@ const s = {
   `,
   MainArea: styled.div`
     padding: 60px 0 80px;
-    border: 1px solid red;
   `,
 };
 

@@ -26,7 +26,7 @@ public class SnsChatController {
     public MessageDto sendMessage(MessageDto message) {
         MessageDto savedMessage =
                 snsChatService.saveMessage(message.getSenderId(), message.getRoomId(), message.getMessage());
-        return new MessageDto(HtmlUtils.htmlEscape(savedMessage.getMessage()), savedMessage.getSenderId(), savedMessage.getRoomId());
+        return savedMessage;
     }
 
     @GetMapping("/history")

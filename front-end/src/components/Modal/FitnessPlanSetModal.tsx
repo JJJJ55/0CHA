@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import ReactModal from 'react-modal';
-import Calendar from 'react-calendar';
 import moment from 'moment';
 import '../../styles/modal.css';
-import '../../styles/Calendar.css';
 import Input from '../Common/Input';
 import Button from '../Common/Button';
 import Text from '../Common/Text';
+import CalendarArea from '../Common/CalendarArea';
 
 const s = {
   Container: styled.div`
@@ -40,12 +39,9 @@ interface FitnessRoutineProps {
 }
 
 const FitnessPlanSetModal = (props: FitnessPlanModalProps): JSX.Element => {
-  let test = '테스트';
-  const today = new Date();
-  const attendDay = ['2024-07-30', '2024-07-15', '2024-08-12'];
-  const attendDay2 = ['2024-07-31', '2024-07-16', '2024-08-13'];
+  const attendDay = ['2024-07-30', '2024-07-15', '2024-08-12']; // 운동시작 버튼 누른 날
+  const attendDay2 = ['2024-07-31', '2024-07-16', '2024-08-13']; // 운동 시작버튼 안누른 날(계획)
 
-  const [date, setDate] = useState<Date>(today);
   const [info, setInfo] = useState<FitnessRoutineProps>({
     title: '',
     date: '',
@@ -60,13 +56,11 @@ const FitnessPlanSetModal = (props: FitnessPlanModalProps): JSX.Element => {
 
   const handleChangeDate = (newDate: Date) => {
     const routineDate = moment(newDate).format('YYYY-MM-DD');
-
     if (attendDay.find((x) => x === routineDate)) {
       alert('운동을 완료했습니다.');
     } else if (attendDay2.find((x) => x === routineDate)) {
       alert('기존 루틴이 있는 날입니다.');
     } else {
-      setDate(newDate);
       setInfo({ ...info, date: routineDate });
       alert(routineDate);
     }
@@ -94,7 +88,7 @@ const FitnessPlanSetModal = (props: FitnessPlanModalProps): JSX.Element => {
           textalian="center"
         />
         <Input
-          placeholder={test}
+          placeholder={'루틴제목'}
           bold="700"
           size="16px"
           width="50%"
@@ -105,32 +99,12 @@ const FitnessPlanSetModal = (props: FitnessPlanModalProps): JSX.Element => {
           value={info.title}
           onChange={handleChangeTitle}
         />
-        <Calendar
-          locale="ko"
-          onClickDay={handleChangeDate}
-          value={date}
-          formatDay={(locale, date) => moment(date).format('D')}
-          prev2Label={null}
-          next2Label={null}
-          calendarType="gregory"
-          showNeighboringMonth={false}
-          minDetail="decade"
-          tileClassName={({ date, view }) => {
-            if (attendDay.find((x) => x === moment(date).format('YYYY-MM-DD'))) {
-              return 'routineFinish';
-            }
-            if (attendDay2.find((x) => x === moment(date).format('YYYY-MM-DD'))) {
-              return 'routine';
-            }
-          }}
-          tileContent={({ date, view }) => {
-            let html = [];
-            if (view === 'month' && date.getMonth() === today.getMonth() && date.getDate() === today.getDate()) {
-              html.push(<s.StyledToday key={'today'} />);
-            }
-            return <>{html}</>;
-          }}
-        ></Calendar>
+        <CalendarArea
+          className="react-calendar"
+          onChangeDate={handleChangeDate}
+          Routine={attendDay2}
+          RoutineFinish={attendDay}
+        />
         <Button
           width="200px"
           height="40px"

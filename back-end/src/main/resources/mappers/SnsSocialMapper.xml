@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.back_end.sns.mapper.SnsSocialMapper">
+
+    <resultMap id="FeedResultMap" type="com.ssafy.back_end.sns.model.FeedDto">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="routineId" column="routine_id"/>
+        <result property="image" column="image"/>
+        <result property="content" column="content"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <resultMap id="FeedInteractionResultMap" type="com.ssafy.back_end.sns.model.FeedInteractionDto">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="feedId" column="feed_id"/>
+        <result property="interactionType" column="interaction_type"/>
+        <result property="comment" column="comment"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <resultMap id="FollowResultMap" type="com.ssafy.back_end.sns.model.FollowDto">
+        <result property="id" column="id"/>
+        <result property="followerId" column="follower_id"/>
+        <result property="followedId" column="followed_id"/>
+        <result property="followedAt" column="followed_at"/>
+    </resultMap>
+
+    <resultMap id="UserPageResultMap" type="com.ssafy.back_end.sns.model.UserPageDto">
+        <result property="id" column="id"/>
+        <result property="nickname" column="nickname"/>
+        <result property="profileImage" column="profile_image"/>
+        <result property="feedCount" column="feed_count"/>
+        <result property="itemCount" column="item_count"/>
+        <result property="followedIdCount" column="followed_id_count"/>
+        <result property="followerIdCount" column="follower_id_count"/>
+    </resultMap>
+
+    <resultMap id="UserPageListResultMap" type="com.ssafy.back_end.sns.model.UserPageListDto">
+        <result property="id" column="id"/>
+        <result property="image" column="image"/>
+    </resultMap>
+
+    <resultMap id="UserFollowListResultMap" type="com.ssafy.back_end.sns.model.UserPageDto">
+        <result property="id" column="id"/>
+        <result property="nickname" column="nickname"/>
+        <result property="profileImage" column="profile_image"/>
+    </resultMap>
+
+    <select id="getUserPageInfo" resultType="UserPageDto">
+        SELECT nickname,
+               profile_image,
+               (SELECT COUNT(*) FROM feeds WHERE user_id = #{userId})      AS feed_count,
+               (SELECT COUNT(*) FROM items WHERE user_id = #{userId})      AS item_count,
+               (SELECT COUNT(*) FROM followings WHERE user_id = #{userId}) AS followed_id_count,
+               (SELECT COUNT(*) FROM followers WHERE user_id = #{userId})  AS follower_id_count
+        FROM users
+        WHERE user_id = #{userId};
+    </select>
+
+    <select id="getUserPageFeeds" resultType="UserPageListDto">
+        SELECT id, image
+        FROM feeds
+        WHERE user_id = #{userId}
+        ORDER BY created_at DESC;
+    </select>
+
+    <select id="getUserPageItems" resultType="UserPageListDto">
+        SELECT i.id AS id, d.image_url AS image
+        FROM items i
+                 LEFT JOIN (SELECT item_id, image_url
+                            FROM item_details
+                            WHERE detail_type = "image"
+                              AND (item_id, id) IN (SELECT item_id, MIN(id)
+                                                    FROM item_details
+                                                    WHERE detail_type = "image"
+                                                    GROUP BY item_id)) d ON i.id = d.item_id
+        WHERE i.user_id = #{userId};
+    </select>
+
+    <select id="getUserPageFollowers" resultType="UserPageDto">
+        SELECT u.id AS id, u.nickname, u.profile_image
+        FROM follows f
+                 JOIN users u ON f.follower_id = u.id
+        WHERE f.followed_id = #{userId};
+
+    </select>
+
+    <select id="getUserPageFollowings" resultType="UserPageDto">
+        SELECT u.id AS id, u.nickname, u.profile_image
+        FROM follows f
+                 JOIN users u ON f.followed_id = u.id
+        WHERE f.follower_id = #{userId};
+    </select>
+
+    <select id="isFollowing" resultType="int">
+        SELECT COUNT(*)
+        FROM follows
+        WHERE follower_id = #{followerId}
+          AND followed_id = #{followedId}
+    </select>
+
+    <insert id="follow">
+        INSERT INTO follows (follower_id, followed_id)
+        VALUES (#{followerId}, #{followedId});
+    </insert>
+
+    <delete id="unfollow">
+        DELETE
+        FROM follows
+        WHERE follower_id = #{followerId}
+          AND followed_id = #{followedId};
+    </delete>
+
+</mapper>

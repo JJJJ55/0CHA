@@ -20,7 +20,7 @@ const s = {
 const FitnessRoutineDetatilPage = (): JSX.Element => {
   const navigate = useNavigate();
   const handleClickMove = (): void => {
-    navigate('/fitness/plan');
+    navigate('../../plan');
   };
   return (
     <s.Container>

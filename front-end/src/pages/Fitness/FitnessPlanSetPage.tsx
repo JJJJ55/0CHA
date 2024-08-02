@@ -75,7 +75,7 @@ const FitnessPlanSetPage = (): JSX.Element => {
           width="80px"
           height="40px"
           children="불러오기"
-          onClick={() => handleClickMove('/fitness/history')}
+          onClick={() => handleClickMove('../history')}
           size="14px"
           margin="0 20px 0 0"
         />
@@ -85,7 +85,7 @@ const FitnessPlanSetPage = (): JSX.Element => {
         <s.FitnessArea>
           <FitnessPlan exercise={FitnessPlanData.exercise} />
         </s.FitnessArea>
-        <s.FitnessAdd onClick={() => handleClickMove('/fitness/list')}>
+        <s.FitnessAdd onClick={() => handleClickMove('../list')}>
           운동 추가
           <IconSvg width="24" height="24" Ico={add} />
         </s.FitnessAdd>
@@ -96,7 +96,7 @@ const FitnessPlanSetPage = (): JSX.Element => {
             children="루틴 저장"
             onClick={() => {
               alert('저장되었습니다.');
-              handleClickMove('/fitness/history');
+              handleClickMove('../history');
             }}
             bold="500"
             size="14px"
@@ -106,7 +106,7 @@ const FitnessPlanSetPage = (): JSX.Element => {
             width="170px"
             height="40px"
             children="운동시작"
-            onClick={() => handleClickMove('/fitness/play')}
+            onClick={() => handleClickMove('/play')}
             bold="500"
             size="14px"
             type="main"

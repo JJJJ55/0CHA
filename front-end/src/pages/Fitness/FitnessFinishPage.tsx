@@ -101,7 +101,7 @@ const FitnessFinishPage = (): JSX.Element => {
           width="170px"
           height="40px"
           children="확인"
-          onClick={() => handleClickMove('record/main')}
+          onClick={() => handleClickMove('record')}
           bold="500"
           size="14px"
           margin="10px"

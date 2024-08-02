@@ -48,10 +48,10 @@ const BottomNav = (): JSX.Element => {
       <s.IconArea onClick={() => handleClickIcon(0, '/main')}>
         <IconSvg width="25" height="40" color={getColor(0)} Ico={home} />
       </s.IconArea>
-      <s.IconArea onClick={() => handleClickIcon(1, '/fitness/list')}>
+      <s.IconArea onClick={() => handleClickIcon(1, '/fitness')}>
         <IconSvg width="25" height="40" color={getColor(1)} Ico={fitness} />
       </s.IconArea>
-      <s.IconArea onClick={() => handleClickIcon(2, '/record/main')}>
+      <s.IconArea onClick={() => handleClickIcon(2, '/record')}>
         <IconSvg width="25" height="40" color={getColor(2)} Ico={routine} />
       </s.IconArea>
       <s.IconArea onClick={() => handleClickIcon(3, '/ai')}>

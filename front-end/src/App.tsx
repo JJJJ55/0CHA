@@ -34,6 +34,7 @@ import RecordFitnessChartPage from './pages/Record/RecordFitnessChartPage';
 import ProfileMainPage from './pages/Profile/ProfileMain/ProfileMainPage';
 import UpdateMyInfoPage from './pages/Profile/UpdateMyInfo/UpdateMyInfoPage';
 import UpdateProfilePage from './pages/Profile/UpdateProfile/UpdateProfilePage';
+import FitnessPage from './pages/Fitness/FitnessPage';
 
 const s = {
   Background: styled.section`
@@ -89,13 +90,14 @@ function App() {
               <Route element={<PrivateRoute />}>
                 <Route path="/main" element={<MainPage />} />
                 <Route path="/fitness">
+                  <Route index element={<Navigate to="list" />} />
                   <Route path="list">
-                    <Route path="" element={<FitnessListPage />} />
+                    <Route index element={<FitnessListPage />} />
                     <Route path="detail" element={<FitnessDetailPage />} />
                   </Route>
                   <Route path="plan" element={<FitnessPlanSetPage />} />
                   <Route path="history">
-                    <Route path="" element={<FitnessRoutineListPage />} />
+                    <Route index element={<FitnessRoutineListPage />} />
                     <Route path="detail" element={<FitnessRoutineDetatilPage />} />
                   </Route>
                   <Route path="play">
@@ -103,7 +105,26 @@ function App() {
                     <Route path="" element={<FitnessFinishPage />} />
                   </Route>
                 </Route>
+                {/* fitness */}
+                {/* <Route path="/fitness" element={<FitnessPage />}>
+                  <Route index element={<Navigate to="list" />} />
+                  <Route path="list" element={<FitnessPage />}>
+                    <Route index element={<FitnessListPage />} />
+                    <Route path="detail" element={<FitnessDetailPage />} />
+                  </Route>
+                  <Route path="plan" element={<FitnessPlanSetPage />} />
+                  <Route path="history">
+                    <Route index element={<FitnessRoutineListPage />} />
+                    <Route path="detail" element={<FitnessRoutineDetatilPage />} />
+                  </Route>
+                </Route>
+                <Route path="/play">
+                  <Route path="" element={<FitnessPlayPage />} />
+                  <Route path="" element={<FitnessFinishPage />} />
+                </Route> */}
+                {/* record */}
                 <Route path="/record">
+                  <Route index element={<Navigate to={'main'} />} />
                   <Route path="main" element={<RecordMainPage />} />
                   <Route path="inbody">
                     <Route path="scan">
@@ -114,8 +135,11 @@ function App() {
                   </Route>
                   <Route path="data" element={<RecordFitnessChartPage />} />
                 </Route>
+                {/* ai */}
                 <Route path="/ai" element={<AIMainPage />} />
+                {/* sns */}
                 <Route path="/sns" element={<></>}></Route>
+                {/* mypage */}
                 <Route path="/mypage">
                   <Route path="" element={<ProfileMainPage />} />
                   <Route path="info" element={<UpdateMyInfoPage />} />

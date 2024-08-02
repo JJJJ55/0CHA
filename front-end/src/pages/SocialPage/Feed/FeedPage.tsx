@@ -6,6 +6,7 @@ import SnsHeader from '../../../components/SNS/SnsHeader';
 import SnsNavigation from '../../../components/SNS/SnsNavigation';
 import CommentModal from '../../../components/SNS/CommentModal';
 import BottomNav from '../../../components/Common/BottomNav';
+import UserSearchModal from '../../../components/SNS/UserSearchModal';
 
 import test from "../../../asset/img/testImg.png";
 
@@ -80,7 +81,8 @@ const FeedPage = (): JSX.Element => {
       commentCnt="30"
       content="example content test"
       />
-      <CommentModal/>      
+      {/* <CommentModal/>       */}
+      {/* <UserSearchModal/> */}
     </s.Container>
     <BottomNav/>
     </>

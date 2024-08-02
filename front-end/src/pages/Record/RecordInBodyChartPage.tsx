@@ -5,8 +5,6 @@ import BottomNav from '../../components/Common/BottomNav';
 import Text from '../../components/Common/Text';
 import { exerciseData } from '../../util/TestData';
 import Chart from '../../components/Common/Chart';
-import FitnessDetailChart from '../../components/Fitness/Etc/FitnessDetailChart';
-
 const s = {
   Container: styled.section`
     height: 100%;

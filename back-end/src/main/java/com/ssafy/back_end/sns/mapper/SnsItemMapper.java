@@ -17,7 +17,7 @@ public interface SnsItemMapper {
 
     int deleteItem(@Param ("id") int itemId);   //중고장터 삭제
 
-    int isLike(@Param ("itemId") int itemId, @Param ("userId") int userId);   //내가 좋아요 눌렀는지 확인
+    int isLike(@Param ("itemId") int itemId, @Param ("userId") int userId);   //내가 좋아요 눌렀는지 확 인
 
     int likeItem(@Param ("itemId") int itemId, @Param ("userId") int userId);   //중고장터 좋아요
 

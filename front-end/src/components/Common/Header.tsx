@@ -39,7 +39,7 @@ const Header = (props: HeaderProps): JSX.Element => {
   return (
     <s.Container>
       <s.BasicArea>
-        <IconSvg width="25" height="25" Ico={back} />
+        <IconSvg width="25" height="25" Ico={back} cursor="pointer" />
         <s.Title>{props.text}</s.Title>
       </s.BasicArea>
       {props.children}

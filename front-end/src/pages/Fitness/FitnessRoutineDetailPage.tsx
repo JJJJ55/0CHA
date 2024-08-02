@@ -6,6 +6,7 @@ import BottomNav from '../../components/Common/BottomNav';
 import FitnessPlan from '../../components/Fitness/Detail/FitnessPlan';
 import { FitnessPlanData } from '../../util/TestData';
 import FitnessRoutineListDetail from '../../components/Fitness/Detail/FitnessRoutineListDetail';
+import { useNavigate } from 'react-router';
 const s = {
   Container: styled.div`
     height: 100%;
@@ -17,10 +18,21 @@ const s = {
 };
 
 const FitnessRoutineDetatilPage = (): JSX.Element => {
+  const navigate = useNavigate();
+  const handleClickMove = (): void => {
+    navigate('/fitness/plan');
+  };
   return (
     <s.Container>
       <Header text={FitnessPlanData.title}>
-        <Button width="80px" height="40px" children="불러오기" onClick={() => {}} size="14px" margin="0 20px 0 0" />
+        <Button
+          width="80px"
+          height="40px"
+          children="불러오기"
+          onClick={handleClickMove}
+          size="14px"
+          margin="0 20px 0 0"
+        />
       </Header>
       <s.MainArea>
         <FitnessRoutineListDetail exercise={FitnessPlanData.exercise} />

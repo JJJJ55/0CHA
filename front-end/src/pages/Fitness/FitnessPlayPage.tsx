@@ -4,6 +4,7 @@ import Header from '../../components/Common/Header';
 import { FitnessPlanData } from '../../util/TestData';
 import FitnessPlan from '../../components/Fitness/Detail/FitnessPlan';
 import FitnessPlayBottomNav from '../../components/Fitness/Etc/FitnessPlayBottomNav';
+import { useNavigate } from 'react-router';
 
 const s = {
   Container: styled.section`

@@ -8,6 +8,7 @@ import { ReactComponent as jjimOn } from '../../../asset/img/svg/jjimOn.svg';
 import { ReactComponent as jjimOff } from '../../../asset/img/svg/jjimOff.svg';
 import { ReactComponent as addOff } from '../../../asset/img/svg/pickOff.svg';
 import { ReactComponent as addOn } from '../../../asset/img/svg/pickOn.svg';
+import { useNavigate } from 'react-router';
 
 const s = {
   Container: styled.section`
@@ -65,13 +66,17 @@ interface FitnessListProps {
 }
 
 const FitnessList = (props: FitnessListProps): JSX.Element => {
+  const navigate = useNavigate();
+  const handleClickMove = (): void => {
+    navigate('detail');
+  };
   return (
     <s.Container>
       <s.title>{props.text}</s.title>
       {props.data?.map((data, index) => (
         <div key={index}>
           <s.ListArea>
-            <s.ContentArea onClick={() => alert('클릭')}>
+            <s.ContentArea onClick={handleClickMove}>
               <Image width="60" height="60" type="" src={test} />
               <s.FitnessTitle>{data.title}</s.FitnessTitle>
             </s.ContentArea>

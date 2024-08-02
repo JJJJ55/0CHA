@@ -6,6 +6,7 @@ import FitnessList from '../../components/Fitness/List/FitnessList';
 import { FitnessData } from '../../util/TestData';
 import Button from '../../components/Common/Button';
 import BottomNav from '../../components/Common/BottomNav';
+import { useNavigate } from 'react-router';
 
 const s = {
   Container: styled.section`
@@ -52,6 +53,10 @@ const s = {
 };
 
 const FitnessListPage = (): JSX.Element => {
+  const navigate = useNavigate();
+  const handleClickMove = (): void => {
+    navigate('/fitness/plan');
+  };
   return (
     <s.Container>
       <s.HeaderArea>
@@ -65,8 +70,8 @@ const FitnessListPage = (): JSX.Element => {
           <FitnessList text="즐겨찾기" data={FitnessData} />
           <FitnessList text="전체" data={FitnessData} />
         </s.FitnessArea>
-        <s.Btn>새 루틴에 추가하기</s.Btn>
       </s.MainArea>
+      <s.Btn onClick={handleClickMove}>새 루틴에 추가하기</s.Btn>
       <BottomNav />
     </s.Container>
   );

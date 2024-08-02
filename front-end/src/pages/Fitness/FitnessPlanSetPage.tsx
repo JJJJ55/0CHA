@@ -8,6 +8,7 @@ import IconSvg from '../../components/Common/IconSvg';
 import Button from '../../components/Common/Button';
 import BottomNav from '../../components/Common/BottomNav';
 import FitnessPlanSetModal from '../../components/Modal/FitnessPlanSetModal';
+import { useNavigate } from 'react-router';
 
 const s = {
   Container: styled.section`
@@ -58,21 +59,33 @@ const s = {
 };
 
 const FitnessPlanSetPage = (): JSX.Element => {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const handleChangeOpen = (): void => {
     setOpen(!open);
   };
+
+  const handleClickMove = (path: string): void => {
+    navigate(path);
+  };
   return (
     <s.Container>
       <Header text="새루틴">
-        <Button width="80px" height="40px" children="불러오기" onClick={() => {}} size="14px" margin="0 20px 0 0" />
+        <Button
+          width="80px"
+          height="40px"
+          children="불러오기"
+          onClick={() => handleClickMove('/fitness/history')}
+          size="14px"
+          margin="0 20px 0 0"
+        />
       </Header>
       <s.ContentArea>
         <s.DateArea onClick={handleChangeOpen}>이름과 날짜를 지정해주세요.</s.DateArea>
         <s.FitnessArea>
           <FitnessPlan exercise={FitnessPlanData.exercise} />
         </s.FitnessArea>
-        <s.FitnessAdd>
+        <s.FitnessAdd onClick={() => handleClickMove('/fitness/list')}>
           운동 추가
           <IconSvg width="24" height="24" Ico={add} />
         </s.FitnessAdd>
@@ -81,7 +94,10 @@ const FitnessPlanSetPage = (): JSX.Element => {
             width="170px"
             height="40px"
             children="루틴 저장"
-            onClick={() => {}}
+            onClick={() => {
+              alert('저장되었습니다.');
+              handleClickMove('/fitness/history');
+            }}
             bold="500"
             size="14px"
             margin="10px"
@@ -90,7 +106,7 @@ const FitnessPlanSetPage = (): JSX.Element => {
             width="170px"
             height="40px"
             children="운동시작"
-            onClick={() => {}}
+            onClick={() => handleClickMove('/fitness/play')}
             bold="500"
             size="14px"
             type="main"

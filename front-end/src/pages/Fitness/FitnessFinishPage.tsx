@@ -4,6 +4,7 @@ import { ReactComponent as finish } from '../../asset/img/svg/finish.svg';
 import Text from '../../components/Common/Text';
 import IconSvg from '../../components/Common/IconSvg';
 import Button from '../../components/Common/Button';
+import { useNavigate } from 'react-router';
 const s = {
   Container: styled.section`
     height: 100%;
@@ -38,6 +39,11 @@ const s = {
 };
 
 const FitnessFinishPage = (): JSX.Element => {
+  const navigate = useNavigate();
+
+  const handleClickMove = (path: string): void => {
+    navigate(path);
+  };
   return (
     <s.Container>
       <s.MainArea>
@@ -91,7 +97,15 @@ const FitnessFinishPage = (): JSX.Element => {
         </s.ContentArea>
       </s.MainArea>
       <s.BtnArea>
-        <Button width="170px" height="40px" children="확인" onClick={() => {}} bold="500" size="14px" margin="10px" />
+        <Button
+          width="170px"
+          height="40px"
+          children="확인"
+          onClick={() => handleClickMove('record/main')}
+          bold="500"
+          size="14px"
+          margin="10px"
+        />
         <Button
           width="170px"
           height="40px"

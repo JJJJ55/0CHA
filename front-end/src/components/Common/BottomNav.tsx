@@ -6,6 +6,7 @@ import { ReactComponent as routine } from '../../asset/img/svg/calendar.svg';
 import { ReactComponent as ai } from '../../asset/img/svg/ai.svg';
 import { ReactComponent as sns } from '../../asset/img/svg/sns.svg';
 import IconSvg from './IconSvg';
+import { useNavigate } from 'react-router';
 
 const s = {
   Container: styled.section`
@@ -30,10 +31,12 @@ const s = {
 };
 
 const BottomNav = (): JSX.Element => {
+  const navigate = useNavigate();
   const [selectedIndex, setSelectedIndex] = useState<number | null>(0);
 
-  const handleClickIcon = (index: number) => {
+  const handleClickIcon = (index: number, path: string) => {
     setSelectedIndex(index);
+    navigate(path);
   };
 
   const getColor = (index: number) => {
@@ -42,19 +45,19 @@ const BottomNav = (): JSX.Element => {
 
   return (
     <s.Container>
-      <s.IconArea onClick={() => handleClickIcon(0)}>
+      <s.IconArea onClick={() => handleClickIcon(0, '/main')}>
         <IconSvg width="25" height="40" color={getColor(0)} Ico={home} />
       </s.IconArea>
-      <s.IconArea onClick={() => handleClickIcon(1)}>
+      <s.IconArea onClick={() => handleClickIcon(1, '/fitness/list')}>
         <IconSvg width="25" height="40" color={getColor(1)} Ico={fitness} />
       </s.IconArea>
-      <s.IconArea onClick={() => handleClickIcon(2)}>
+      <s.IconArea onClick={() => handleClickIcon(2, '/record/main')}>
         <IconSvg width="25" height="40" color={getColor(2)} Ico={routine} />
       </s.IconArea>
-      <s.IconArea onClick={() => handleClickIcon(3)}>
+      <s.IconArea onClick={() => handleClickIcon(3, '/ai')}>
         <IconSvg width="25" height="40" color={getColor(3)} Ico={ai} />
       </s.IconArea>
-      <s.IconArea onClick={() => handleClickIcon(4)}>
+      <s.IconArea onClick={() => handleClickIcon(4, '/sns')}>
         <IconSvg width="25" height="40" color={getColor(4)} Ico={sns} />
       </s.IconArea>
     </s.Container>

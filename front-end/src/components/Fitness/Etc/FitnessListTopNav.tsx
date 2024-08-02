@@ -5,7 +5,6 @@ const s = {
   Container: styled.section`
     width: 100%;
     height: 55px !important;
-    border: 1px solid green;
     display: flex;
     justify-content: space-between;
   `,

@@ -13,8 +13,6 @@ const s = {
   Container: styled.section`
     height: 100%;
     background-color: ${(props) => props.theme.bgColor};
-    overflow: auto;
-    border: 3px solid yellow;
   `,
   ContentArea: styled.div`
     width: 100%;
@@ -29,20 +27,17 @@ const s = {
     height: 40px;
     text-align: center;
     line-height: 40px;
-    border: 1px solid red;
     margin: 15px auto;
     cursor: pointer;
   `,
   FitnessArea: styled.div`
     width: 90%;
-    border: 1px solid red;
     margin: 0 auto;
   `,
   FitnessAdd: styled.div`
     width: 100px;
     height: 60px;
     margin: 20px auto;
-    border: 1px solid red;
     color: ${(props) => props.theme.mainColor};
     font-size: 16px;
     display: flex;
@@ -55,7 +50,6 @@ const s = {
     width: 100%;
     max-width: 500px;
     height: 70px;
-    border: 1px solid red;
     margin: 0 auto;
     display: flex;
     justify-content: center;
@@ -105,7 +99,7 @@ const FitnessPlanSetPage = (): JSX.Element => {
         </s.BtnArea>
       </s.ContentArea>
       <BottomNav />
-      <FitnessPlanSetModal open={open} />
+      {/* <FitnessPlanSetModal open={open} /> */}
     </s.Container>
   );
 };

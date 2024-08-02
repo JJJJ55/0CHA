@@ -7,6 +7,20 @@
   margin: 0 auto;
 }
 
+/* 기록 캘린더 css */
+.react-calendar__record {
+  width: 100%;
+  height: 400px;
+  background: #000;
+  line-height: 1.125em;
+  margin: 0 auto;
+}
+
+/* 전체 폰트 컬러 */
+.react-calendar__month-view {
+  color: #fff;
+}
+
 .react-calendar--doubleView {
   width: 700px;
 }

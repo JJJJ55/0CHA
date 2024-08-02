@@ -13,11 +13,10 @@ const s = {
   `,
   MainArea: styled.div`
     padding: 60px 0 80px;
-    border: 1px solid red;
   `,
 };
 
-const FitnessLoutineDetatilPage = (): JSX.Element => {
+const FitnessRoutineDetatilPage = (): JSX.Element => {
   return (
     <s.Container>
       <Header text={FitnessPlanData.title}>
@@ -31,4 +30,4 @@ const FitnessLoutineDetatilPage = (): JSX.Element => {
   );
 };
 
-export default FitnessLoutineDetatilPage;
+export default FitnessRoutineDetatilPage;

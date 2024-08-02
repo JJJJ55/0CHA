@@ -12,12 +12,10 @@ import { ReactComponent as addOn } from '../../../asset/img/svg/pickOn.svg';
 const s = {
   Container: styled.section`
     width: 100%;
-    border: 3px solid orange;
     flex: 1;
   `,
   title: styled.div`
     width: 90%;
-    border: 1px solid red;
     height: fit-content;
     margin: 10px auto;
     color: ${(props) => props.theme.textColor2};
@@ -27,7 +25,6 @@ const s = {
     width: 90%;
     height: 60px;
     margin: 10px auto;
-    border: 1px solid lightblue;
     display: flex;
   `,
   ContentArea: styled.div`
@@ -35,11 +32,9 @@ const s = {
     height: 100%;
     display: flex;
     align-items: center;
-    border: 3px solid orange;
     cursor: pointer;
   `,
   IconArea: styled.div`
-    border: 1px solid red;
     width: 20%;
     height: 100%;
     display: flex;

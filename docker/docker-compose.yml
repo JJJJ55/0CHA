@@ -27,9 +27,6 @@ services:
     build: ./redis
     image: redis-custom:latest
     container_name: redis-container
-    sysctls:
-      - net.core.somaxconn=511
-      - vm.overcommit_memory=1
     ports:
       - "6379:6379"
     volumes:

@@ -27,6 +27,9 @@ services:
     build: ./redis
     image: redis-custom:latest
     container_name: redis-container
+    sysctls:
+      - net.core.somaxconn=511
+      - vm.overcommit_memory=1
     ports:
       - "6379:6379"
     volumes:
@@ -64,6 +67,7 @@ services:
     container_name: spring-container
     environment:
       - TZ=${TZ}
+      - SPRING_MYSQL_HOST=mysql-container
       - SPRING_REDIS_HOST=redis-container
     ports:
       - "8081:8081"

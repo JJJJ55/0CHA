@@ -27,7 +27,7 @@ services:
     build: ./redis
     image: redis-custom:latest
     container_name: redis-container
-    ports:
+    ports: # 환경설정 삭제
       - "6379:6379"
     volumes:
       - ./redis/redis.conf:/usr/local/etc/redis/redis.conf

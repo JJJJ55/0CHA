@@ -3,7 +3,6 @@ package com.ssafy.back_end.sns.controller;
 import com.ssafy.back_end.sns.model.UserPageDto;
 import com.ssafy.back_end.sns.model.UserPageListDto;
 import com.ssafy.back_end.sns.service.SnsSocialServiceImpl;
-import com.ssafy.back_end.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,57 +14,85 @@ import java.util.List;
 @RequestMapping (value = "/api/sns/social")
 public class SnsSocialController {
     private final SnsSocialServiceImpl snsSocialService;
-    private final JwtUtil jwtUtil;
 
     @Autowired
-    public SnsSocialController(SnsSocialServiceImpl snsSocialService, JwtUtil jwtUtil) {
+    public SnsSocialController(SnsSocialServiceImpl snsSocialService) {
         this.snsSocialService = snsSocialService;
-        this.jwtUtil = jwtUtil;
     }
 
     @GetMapping ("/user-page/info")
-    public ResponseEntity<?> getUserPageInfo(@RequestHeader ("Authorization") String token, @RequestParam ("user_id") int userId) {
+    public ResponseEntity<?> getUserPageInfo(@RequestHeader ("ID") int ID, @RequestParam ("user_id") int userId) {
         UserPageDto userInfo = snsSocialService.getUserPageInfo(userId);
-        if (userInfo == null) {
-            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+        if (userInfo != null) {
+            return ResponseEntity.ok(userInfo);
         }
-        return ResponseEntity.ok(userInfo);
-
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("유저페이지 조회 오류");
     }
 
     @GetMapping ("/user-page/feeds")
-    public ResponseEntity<?> getUserPageFeeds(@RequestHeader ("Authorization") String token, @RequestParam ("user_id") int userId) {
-        System.out.println(token);
+    public ResponseEntity<?> getUserPageFeeds(@RequestHeader ("ID") int ID, @RequestParam ("user_id") int userId) {
         List<UserPageListDto> feedList = snsSocialService.getUserPageFeeds(userId);
-        return ResponseEntity.ok(feedList);
+
+        if (feedList != null) {
+            if (feedList.isEmpty()) {
+                return ResponseEntity.ok("피드 0개입니다");
+            }
+            return ResponseEntity.ok(feedList);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("피드 조회 오류");
     }
 
     @GetMapping ("/user-page/items")
-    public ResponseEntity<?> getUserPageItems(@RequestHeader ("Authorization") String token, @RequestParam ("user_id") int userId) {
+    public ResponseEntity<?> getUserPageItems(@RequestHeader ("ID") int ID, @RequestParam ("user_id") int userId) {
         List<UserPageListDto> itemList = snsSocialService.getUserPageItems(userId);
-        return ResponseEntity.ok(itemList);
+
+        if (itemList != null) {
+            if (itemList.isEmpty()) {
+                return ResponseEntity.ok("중고거래 0개입니다");
+            }
+            return ResponseEntity.ok(itemList);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("중고거래 조회 오류");
     }
 
     @GetMapping ("/user-page/followers")
-    public ResponseEntity<?> getUserPageFollowers(@RequestHeader ("Authorization") String token, @RequestParam ("user_id") int userId) {
+    public ResponseEntity<?> getUserPageFollowers(@RequestHeader ("ID") int ID, @RequestParam ("user_id") int userId) {
         List<UserPageDto> follwerList = snsSocialService.getUserPageFollowers(userId);
-        return ResponseEntity.ok(follwerList);
+
+        if (follwerList != null) {
+            if (follwerList.isEmpty()) {
+                return ResponseEntity.ok("팔로워 0명 입니다");
+            }
+            return ResponseEntity.ok(follwerList);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("팔로워 조회 오류");
     }
 
     @GetMapping ("/user-page/followings")
-    public ResponseEntity<?> getUserPageFollowings(@RequestHeader ("Authorization") String token, @RequestParam ("user_id") int userId) {
+    public ResponseEntity<?> getUserPageFollowings(@RequestHeader ("ID") int ID, @RequestParam ("user_id") int userId) {
         List<UserPageDto> follwingList = snsSocialService.getUserPageFollowings(userId);
-        return ResponseEntity.ok(follwingList);
+
+        if (follwingList != null) {
+            if (follwingList.isEmpty()) {
+                return ResponseEntity.ok("팔로잉 0명 입니다");
+            }
+            return ResponseEntity.ok(follwingList);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("팔로잉 조회 오류");
     }
 
     @PostMapping ("/follow")
-    public ResponseEntity<?> follow(@RequestHeader ("Authorization") String token, @RequestBody int targetId) {
-        int userId = jwtUtil.getUserIdFromRefreshToken(token);
-        int isFollowing = snsSocialService.isFollowing(userId, targetId);
+    public ResponseEntity<?> follow(@RequestHeader ("ID") int ID, @RequestBody int targetId) {
+        int isFollowing = snsSocialService.isFollowing(ID, targetId);
 
         if (isFollowing == 0) {   //팔로우 안되어 있음
-            snsSocialService.follow(userId, targetId);
-            return ResponseEntity.ok("팔로우성공");
+            int result = snsSocialService.follow(ID, targetId);
+            if (result != 0) {
+                return ResponseEntity.ok("팔로우성공");
+            }
+            else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("팔로우 오류");
+            }
         }
         else {
             return ResponseEntity.ok("이미 팔로우 되어 있음");
@@ -73,17 +100,20 @@ public class SnsSocialController {
     }
 
     @DeleteMapping ("/follow")
-    public ResponseEntity<?> unfollow(@RequestHeader ("Authorization") String token, @RequestBody int targetId) {
-        int userId = jwtUtil.getUserIdFromRefreshToken(token);
-        int isFollowing = snsSocialService.isFollowing(userId, targetId);
+    public ResponseEntity<?> unfollow(@RequestHeader ("ID") int ID, @RequestBody int targetId) {
+        int isFollowing = snsSocialService.isFollowing(ID, targetId);
 
         if (isFollowing == 1) {   //팔로우 되어 있음
-            snsSocialService.unfollow(userId, targetId);
-            return ResponseEntity.ok("팔로우취소 성공");
+            int result = snsSocialService.unfollow(ID, targetId);
+            if (result != 0) {
+                return ResponseEntity.ok("팔로우취소성공");
+            }
+            else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("팔로우취소 오류");
+            }
         }
         else {
             return ResponseEntity.ok("팔로우 안되어 있음");
         }
     }
 }
-

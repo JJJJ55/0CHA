@@ -74,14 +74,14 @@ const s = {
 };
 
 interface dataType {
-  newPw: string;
+  prePw: string;
   pw: string;
   pwCheck: string;
 }
 
 const ChangePasswordPage = (): JSX.Element => {
   const [data, setData] = useState<dataType>({
-    newPw: '',
+    prePw: '',
     pw: '',
     pwCheck: '',
   });
@@ -92,6 +92,21 @@ const ChangePasswordPage = (): JSX.Element => {
 
   const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+
+    // 이전 비밀번호 로직
+    if (name === 'newPw') {
+      const pwRegex = /^(?=.*[a-z])(?=.*[0-9])(?=.*[~!@#$%^&*()])[a-zA-Z0-9~!@#$%^&*()]+$/;
+      if (value.length === 0) {
+        setPwError('');
+      } else if (!pwRegex.test(value) || value.length < 8) {
+        setPwError('비밀번호는 8~16자 영문/특수문자(~!@#$%^&*()?)/숫자 하나 이상씩 조합해야 합니다.');
+      } else {
+        setPwError('');
+      }
+      if (value.length === 16) {
+        return;
+      }
+    }
 
     // 비밀번호 로직
     if (name === 'pw') {
@@ -107,6 +122,7 @@ const ChangePasswordPage = (): JSX.Element => {
         return;
       }
     }
+
     // 비밀번호 확인 로직
     if (name === 'pwCheck') {
       if (value.length !== 0) {
@@ -128,8 +144,26 @@ const ChangePasswordPage = (): JSX.Element => {
 
   const handleSubmit = () => {
     // 제출 로직 작성(기존 비밀번호가 맞는지 확인)
-    console.log('Form submitted:', data);
-    alert('비밀번호가 변경되었습니다.');
+    // 기존 비밀번호가 맞는지 확인
+    if (
+      data.prePw.length !== 0 &&
+      data.pw.length !== 0 &&
+      data.pwCheck.length !== 0 &&
+      pwError === '' &&
+      pwCheckError === ''
+    ) {
+      // 기존 비밀번호 확인 로직
+      if (true) {
+        console.log('Form submitted:', data);
+        alert('비밀번호가 변경되었습니다.');
+      } else {
+        // 틀리면
+        alert('변경 전 비밀번호를 다시 입력해 주세요.');
+      }
+    } else {
+      // 조건 미충족시
+      console.log('비활성화');
+    }
   };
 
   const handlePrevious = () => {
@@ -153,8 +187,8 @@ const ChangePasswordPage = (): JSX.Element => {
               placeholder="기존 비밀번호"
               margin="5px auto"
               type="password"
-              name="newPw"
-              value={data.newPw}
+              name="prePw"
+              value={data.prePw}
               onChange={handleChangeValue}
             />
           </s.InputArea>

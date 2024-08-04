@@ -1,5 +1,7 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import navReducer from './nav';
+import modalReducer from './modal';
+import pageReducer from './page';
 
 import { persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
@@ -8,10 +10,12 @@ import storageSession from 'redux-persist/lib/storage/session';
 
 const reducers = combineReducers({
   nav: navReducer,
+  modal: modalReducer,
+  page: pageReducer,
 });
 
 const persistConfig = {
-  key: 'nav',
+  key: 'redux-state',
   storage: storageSession,
 };
 const persistedReducer = persistReducer(persistConfig, reducers);

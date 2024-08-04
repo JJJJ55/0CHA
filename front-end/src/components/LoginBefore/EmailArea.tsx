@@ -39,6 +39,11 @@ const s = {
     margin-left: 10px;
     margin-top: 5px;
   `,
+  ExistedTest: styled.p`
+    color: ${(props) => props.theme.mainColor};
+    font-size: 12px;
+    margin-bottom: 10px;
+  `,
 };
 
 interface EmailAreaProps {
@@ -49,6 +54,7 @@ interface EmailAreaProps {
   verificationBtnType: string;
   confirmBtnText: string;
   confirmBtnType: string;
+  emailInfoMessage?: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSendVerificationCode: () => void;
   onCheckVerificationCode: () => void;
@@ -62,6 +68,7 @@ const EmailArea: React.FC<EmailAreaProps> = ({
   verificationBtnType,
   confirmBtnText,
   confirmBtnType,
+  emailInfoMessage,
   onChange,
   onSendVerificationCode,
   onCheckVerificationCode,
@@ -94,6 +101,7 @@ const EmailArea: React.FC<EmailAreaProps> = ({
           />
         </s.InputBtn>
       </s.InputArea>
+      {emailInfoMessage && <s.ExistedTest children={emailInfoMessage} />}
       <s.InfoNameBox>
         <s.InputHeader children="인증번호" />
       </s.InfoNameBox>

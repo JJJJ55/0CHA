@@ -3,6 +3,7 @@ package com.ssafy.back_end.sns.model;
 import lombok.*;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Getter
 @Setter
@@ -20,4 +21,10 @@ public class ItemDto {
     private Timestamp updatedAt;
     private String district;
     private String siGunGu;
+
+    private int like;
+    private String nickname;
+    private String profileImage;
+    private List<String> images;
+
 }

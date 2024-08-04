@@ -5,6 +5,9 @@ import com.ssafy.back_end.sns.model.ItemDto;
 import java.util.List;
 
 public interface SnsItemService {
+    List<ItemDto> getItems(int userId);   //특정 유저 중고장터 모두 보기
+
+    ItemDto getItemDetail( int itemId);   //중고장터 자세히 보기
 
     int writeItem(ItemDto item, List<String> images);   //중고장터 작성
 

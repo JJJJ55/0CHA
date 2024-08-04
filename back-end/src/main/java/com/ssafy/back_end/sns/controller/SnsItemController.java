@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-// 전체조회 -> 상세조회 -> DTO -> resultMap -> builder -> 테스트
 @RestController
 @RequestMapping(value = "/api/sns/item/")
 public class SnsItemController {
@@ -20,11 +19,34 @@ public class SnsItemController {
         this.snsItemService = snsItemService;
     }
 
+    @GetMapping("/")
+    public ResponseEntity<?> getItems(@RequestParam("user_id") int userId) {
+        List<ItemDto> items = snsItemService.getItems(userId);
+
+        if (items != null) {
+            if (items.isEmpty()) {
+                return ResponseEntity.ok("중고장터 0개입니다");
+            }
+            return ResponseEntity.ok(items);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("중고장터 조회 오류");
+    }
+
+    @GetMapping("/{itemId}")
+    public ResponseEntity<?> getItemDetail(@PathVariable("itemId") int itemId) {
+        ItemDto item = snsItemService.getItemDetail(itemId);
+
+        if (item != null) {
+            return ResponseEntity.ok(item);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("중고장터 세부조회 오류");
+    }
+
     @PostMapping("/")
     public ResponseEntity<?> writeItem(@RequestBody ItemDto item, @RequestBody List<String> images) {
         int id = snsItemService.writeItem(item, images);
 
-        if(id > 0) {
+        if (id > 0) {
             return ResponseEntity.ok("중고마켓 작성 성공");
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("중고마켓 작성 오류");
@@ -34,13 +56,13 @@ public class SnsItemController {
     public ResponseEntity<?> updateItem(@PathVariable int itemId, @RequestBody ItemDto item, @RequestBody List<String> images) {
         item.setId(itemId);
         int id = snsItemService.updateItem(item, images);
-        if(itemId > 0) {
+        if (itemId > 0) {
             return ResponseEntity.ok("중고마켓 수정 성공");
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("중고마켓 수정 오류");
     }
 
-    @DeleteMapping ("/{itemId}")
+    @DeleteMapping("/{itemId}")
     public ResponseEntity<?> deleteItem(@PathVariable int itemId) {
         int result = snsItemService.deleteItem(itemId);
 
@@ -50,7 +72,7 @@ public class SnsItemController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("중고장터 삭제 오류");
     }
 
-    @PostMapping ("/{itemId}/like")
+    @PostMapping("/{itemId}/like")
     public ResponseEntity<?> likeFeed(@PathVariable int itemId, @RequestParam int userId) {
         int isLike = snsItemService.isLike(itemId, userId);
 
@@ -58,17 +80,15 @@ public class SnsItemController {
             int result = snsItemService.likeItem(itemId, userId);
             if (result != 0) {
                 return ResponseEntity.ok("좋아요성공");
-            }
-            else {
+            } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("좋아요 오류");
             }
-        }
-        else {
+        } else {
             return ResponseEntity.ok("이미 좋아요 되어 있음");
         }
     }
 
-    @DeleteMapping ("/{itemId}/like")
+    @DeleteMapping("/{itemId}/like")
     public ResponseEntity<?> dislikeFeed(@PathVariable int itemId, @RequestParam int userId) {
         int isLike = snsItemService.isLike(itemId, userId);
 
@@ -76,12 +96,10 @@ public class SnsItemController {
             int result = snsItemService.dislikeItem(itemId, userId);
             if (result != 0) {
                 return ResponseEntity.ok("좋아요취소성공");
-            }
-            else {
+            } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("좋아요취소 오류");
             }
-        }
-        else {
+        } else {
             return ResponseEntity.ok("좋아요 안눌려 있음");
         }
     }

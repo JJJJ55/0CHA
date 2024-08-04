@@ -38,7 +38,7 @@ const s = {
   `,
   InputHeader: styled.p`
     text-align: left;
-    width: 100%;
+    width: 90px;
     color: ${(props) => props.theme.textColor};
     margin-bottom: 5px;
     font-size: 16px;
@@ -90,7 +90,7 @@ const ResetPasswordPage = (): JSX.Element => {
   const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
-    // 비밀번호 로직
+    // 비밀번호 필드
     if (name === 'pw') {
       const pwRegex = /^(?=.*[a-z])(?=.*[0-9])(?=.*[~!@#$%^&*()])[a-zA-Z0-9~!@#$%^&*()]+$/;
       if (value.length === 0) {
@@ -104,7 +104,8 @@ const ResetPasswordPage = (): JSX.Element => {
         return;
       }
     }
-    // 비밀번호 확인 로직
+
+    // 비밀번호 확인 필드
     if (name === 'pwCheck') {
       if (value.length !== 0) {
         if (value === data.pw) {
@@ -124,9 +125,14 @@ const ResetPasswordPage = (): JSX.Element => {
   };
 
   const handleSubmit = () => {
-    // 제출 로직 작성
-    console.log('Form submitted:', data);
-    alert('비밀번호가 변경되었습니다.');
+    // 입력 조건을 모두 충족한 경우
+    if (data.pw.length !== 0 && data.pwCheck.length !== 0 && pwError === '' && pwCheckError === '') {
+      console.log('Form submitted:', data);
+      alert('비밀번호가 변경되었습니다.');
+    } else {
+      // 입력 조건을 미충족한 경우
+      console.log('비밀번호를 확인해주세요.');
+    }
   };
 
   const handlePrevious = () => {

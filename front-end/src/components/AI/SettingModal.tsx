@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
+import Input from '../Common/Input';
 
 const s = {
   ModalOverlay: styled.div`
@@ -62,9 +63,13 @@ const s = {
     font-size: 18px;
     cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
   `,
-  CounterValue: styled.div`
+  CounterInput: styled(Input)`
     margin: 0 20px;
     font-size: 24px;
+    width: 50px;
+    text-align: center;
+    border: 1px solid ${(props) => props.theme.mainColor};
+    border-radius: 5px;
   `,
   ConfirmBtn: styled.button`
     background-color: ${(props) => props.theme.mainColor};
@@ -82,7 +87,7 @@ interface TrainingSettingsModalProps {
 }
 
 const SettingModal: React.FC<TrainingSettingsModalProps> = ({ onClose }) => {
-  const [counter, setCounter] = useState(1); // 운동 기본횟수 1회
+  const [counter, setCounter] = useState<string>('1'); // 운동 기본횟수 1회
   // 운동 목록
   const exercises = ['------------', '데드리프트', '스쿼트', '벤치프레스', ' ------------ '];
   // 기본 설정 스쿼트
@@ -156,14 +161,48 @@ const SettingModal: React.FC<TrainingSettingsModalProps> = ({ onClose }) => {
   }, [selectedExercise, exercises]);
 
   const handleConfirm = () => {
-    alert(`${selectedExercise} ${counter}회 시작합니다.`);
-    onClose();
+    const count = parseInt(counter, 10);
+    if (!isNaN(count) && count >= 1 && count <= 15) {
+      alert(`${selectedExercise} ${count}회 시작합니다.`);
+      onClose();
+    } else {
+      alert('1에서 15 사이의 숫자를 입력하세요.');
+    }
   };
 
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
       onClose();
     }
+  };
+
+  const handleCounterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value;
+    // 빈 값이나 숫자만 허용
+    if (value === '' || /^[0-9\b]+$/.test(value)) {
+      // 입력값이 1~15 범위를 벗어나지 않도록 제한
+      const numericValue = parseInt(value, 10);
+      if (numericValue < 1) {
+        value = '1';
+      } else if (numericValue > 15) {
+        value = '15';
+      }
+      setCounter(value);
+    }
+  };
+
+  const handleIncrement = () => {
+    setCounter((prev) => {
+      const currentValue = prev === '' ? 1 : parseInt(prev, 10);
+      return String(Math.min(15, currentValue + 1));
+    });
+  };
+
+  const handleDecrement = () => {
+    setCounter((prev) => {
+      const currentValue = prev === '' ? 1 : parseInt(prev, 10);
+      return String(Math.max(1, currentValue - 1));
+    });
   };
 
   useEffect(() => {
@@ -202,13 +241,9 @@ const SettingModal: React.FC<TrainingSettingsModalProps> = ({ onClose }) => {
           ))}
         </s.ExerciseList>
         <s.Counter>
-          <s.CounterBtn onClick={() => counter > 1 && setCounter(counter - 1)} disabled={counter === 1}>
-            -
-          </s.CounterBtn>
-          <s.CounterValue children={counter} />
-          <s.CounterBtn onClick={() => counter < 15 && setCounter(counter + 1)} disabled={counter === 15}>
-            +
-          </s.CounterBtn>
+          <s.CounterBtn onClick={handleDecrement} disabled={counter === '1'} children="-" />
+          <s.CounterInput type="text" value={counter} onChange={handleCounterChange} />
+          <s.CounterBtn onClick={handleIncrement} disabled={counter === '15'} children="+" />
         </s.Counter>
         <s.ConfirmBtn onClick={handleConfirm} children="시작하기" />
       </s.ModalContent>

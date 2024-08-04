@@ -19,8 +19,26 @@ public class SnsItemServiceImpl implements SnsItemService {
     }
 
     @Override
+    public List<ItemDto> getItems(int userId) {
+        return snsItemMapper.getItems(userId);
+    }
+
+    @Override
+    public ItemDto getItemDetail(int itemId) {
+        return snsItemMapper.getItemDetail(itemId);
+    }
+
+    @Override
     @Transactional
     public int writeItem(ItemDto item, List<String> images) {
+        ItemDto itemBuilder = ItemDto.builder()
+                .title(item.getTitle())
+                .price(item.getPrice())
+                .content(item.getContent())
+                .userId(item.getUserId())
+                .createdAt(item.getCreatedAt())
+                .build();
+
         snsItemMapper.insertItem(item);
 
         if (!images.isEmpty()) {
@@ -33,16 +51,15 @@ public class SnsItemServiceImpl implements SnsItemService {
     @Override
     @Transactional
     public int updateItem(ItemDto item, List<String> images) {
+        ItemDto itemBuilder = ItemDto.builder()
+                .title(item.getTitle())
+                .price(item.getPrice())
+                .content(item.getContent())
+                .updatedAt(item.getUpdatedAt())
+                .id(item.getId())
+                .build();
 
-//        SET title = #{title}, price = #{price}, content = #{content}, updated_at = NOW()
-//        WHERE id = #{id};
-//
-//        FeedInteractionDto comment = FeedInteractionDto.builder()
-//                .feedId(feedInteractionDto.getFeedId())
-//                .userId(feedInteractionDto.getUserId())
-//                .comment(feedInteractionDto.getComment())
-//                .build();
-        snsItemMapper.updateItem(item);
+        snsItemMapper.updateItem(itemBuilder);
         snsItemMapper.deleteItemImages(item.getId());
 
         if (!images.isEmpty()) {

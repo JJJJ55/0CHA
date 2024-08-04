@@ -8,7 +8,7 @@ const s = {
     background-color: ${(props) => props.theme.subColor};
     color: ${(props) => props.theme.textColor};
     font-weight: ${(props) => props.bold || '500'};
-    size: ${(props) => props.size || '14px'};
+    font-size: ${(props) => props.size || '14px'};
     display: ${(props) => props.display};
     margin: ${(props) => props.margin};
     outline: none;

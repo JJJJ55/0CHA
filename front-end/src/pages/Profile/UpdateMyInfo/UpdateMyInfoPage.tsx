@@ -102,6 +102,27 @@ const s = {
     align-items: center;
     margin-bottom: 10px;
   `,
+  GenderArea: styled.div`
+    width: 90%;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    margin-bottom: 20px;
+  `,
+  GenderOption: styled.div`
+    display: flex;
+    align-items: center;
+    margin: 0 50px 0 10px;
+    input {
+      accent-color: ${(props) => props.theme.mainColor};
+    }
+
+    label {
+      margin-left: 5px;
+      color: ${(props) => props.theme.textColor};
+      font-size: 16px;
+    }
+  `,
 };
 
 const cities = [
@@ -346,6 +367,7 @@ const districts: Record<string, string[]> = {
 };
 
 interface dataType {
+  gender: string;
   height: string;
   weight: string;
   location1: string;
@@ -353,6 +375,7 @@ interface dataType {
 }
 
 interface User {
+  gender: string;
   height: string;
   weight: string;
   location1: string;
@@ -361,6 +384,7 @@ interface User {
 
 const UpdateMyInfoPage = (): JSX.Element => {
   const [user, setUser] = useState<User>({
+    gender: '',
     height: '168.7',
     weight: '60.5',
     location1: '서울특별시',
@@ -368,6 +392,7 @@ const UpdateMyInfoPage = (): JSX.Element => {
   });
 
   const [data, setData] = useState<dataType>({
+    gender: user.gender,
     height: user.height,
     weight: user.weight,
     location1: user.location1,
@@ -390,7 +415,8 @@ const UpdateMyInfoPage = (): JSX.Element => {
   };
 
   const handleSubmit = () => {
-    // 제출 로직 작성 (예: API 호출)
+    // 입력된 정보만 넘겨주면 되므로 별도 확인 절차 필요 없음
+    // 제출 로직 작성
     console.log('Form submitted:', data);
     alert('정보가 제출되었습니다.');
   };
@@ -405,6 +431,38 @@ const UpdateMyInfoPage = (): JSX.Element => {
     <s.Container>
       <Header text="내 정보 수정" />
       <s.PlusInfoArea>
+        {!user.gender && (
+          <s.InfoNameBox>
+            <s.InputHeader children="성별" />
+          </s.InfoNameBox>
+        )}
+        {!user.gender && (
+          <s.GenderArea>
+            <s.GenderOption>
+              <input
+                type="radio"
+                id="male"
+                name="gender"
+                value="남성"
+                checked={data.gender === '남성'}
+                onChange={handleChangeValue}
+              />
+              <label htmlFor="male">남성</label>
+            </s.GenderOption>
+            <s.GenderOption>
+              <input
+                type="radio"
+                id="female"
+                name="gender"
+                value="여성"
+                checked={data.gender === '여성'}
+                onChange={handleChangeValue}
+              />
+              <label htmlFor="female">여성</label>
+            </s.GenderOption>
+          </s.GenderArea>
+        )}
+
         <s.InfoNameBox>
           <s.InputHeader children="키" />
         </s.InfoNameBox>

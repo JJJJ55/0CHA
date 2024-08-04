@@ -63,7 +63,6 @@ const s = {
     cursor: pointer;
     margin-top: 20px;
     width: 100%;
-    max-width: 400px;
   `,
   ProgressBar: styled.div`
     width: 100%;

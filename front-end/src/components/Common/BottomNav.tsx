@@ -8,7 +8,7 @@ import { ReactComponent as sns } from '../../asset/img/svg/sns.svg';
 import IconSvg from './IconSvg';
 import { useNavigate } from 'react-router';
 
-import { useAppDispatch, useAppSelector } from '../../lib/hook/reduxIndex';
+import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
 import { selectNav, navActions } from '../../store/nav';
 
 const s = {
@@ -36,14 +36,14 @@ const s = {
 const BottomNav = (): JSX.Element => {
   const navigate = useNavigate();
   const nav = useAppSelector(selectNav);
-  const dispatch = useAppDispatch();
+  // const dispatch = useAppDispatch();
 
-  const changeHandle = (mode: string) => {
-    dispatch(navActions.change(mode));
-  };
+  // const changeHandle = (mode: string) => {
+  //   dispatch(navActions.change(mode));
+  // };
 
   const handleClickIcon = (mode: string) => {
-    changeHandle(mode);
+    // changeHandle(mode);
     navigate('/' + mode);
   };
 

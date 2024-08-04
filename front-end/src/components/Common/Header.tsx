@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { MouseEventHandler } from 'react';
 import styled from 'styled-components';
 import { ReactComponent as back } from '../../asset/img/svg/back.svg';
 import IconSvg from './IconSvg';
@@ -27,19 +27,24 @@ const s = {
     font-size: 18px;
     font-weight: bold;
     margin-left: 20px;
+    cursor: default;
   `,
 };
 
 interface HeaderProps {
   text?: string;
   children?: React.ReactNode;
+  onBack?: Function;
 }
 
 const Header = (props: HeaderProps): JSX.Element => {
+  const onClickBack = () => {
+    props.onBack !== undefined && props.onBack();
+  };
   return (
     <s.Container>
       <s.BasicArea>
-        <IconSvg width="25" height="25" Ico={back} cursor="pointer" />
+        <IconSvg width="25" height="25" Ico={back} cursor="pointer" onClick={onClickBack} />
         <s.Title>{props.text}</s.Title>
       </s.BasicArea>
       {props.children}

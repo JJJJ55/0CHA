@@ -391,9 +391,14 @@ const PlusInfoPage = (): JSX.Element => {
       ...(name === 'location1' && { location2: '' }),
     });
   };
+  const handleNext = () => {
+    alert('로그인 페이지로 이동합니다.');
+    // 로그인 페이지로 이동
+  };
 
   const handleSubmit = () => {
-    // 제출 로직 작성 (예: API 호출)
+    // 제출 로직 작성 (API 호출)
+    // 입력한 정보만 옮기는 걸로
     console.log('Form submitted:', data);
     alert('정보가 제출되었습니다.');
   };
@@ -488,7 +493,7 @@ const PlusInfoPage = (): JSX.Element => {
             </s.SelectBox>
           </s.LocationArea>
           <s.SubmitBtnArea>
-            <Button width="100%" height="40px" children="다음에 입력하기" onClick={handleSubmit} margin="5px 0" />
+            <Button width="100%" height="40px" children="다음에 입력하기" onClick={handleNext} margin="5px 0" />
             <Button width="100%" height="40px" type="main" children="입력완료" onClick={handleSubmit} margin="5px 0 " />
           </s.SubmitBtnArea>
         </s.PlusInfoArea>

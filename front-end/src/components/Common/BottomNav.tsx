@@ -8,6 +8,9 @@ import { ReactComponent as sns } from '../../asset/img/svg/sns.svg';
 import IconSvg from './IconSvg';
 import { useNavigate } from 'react-router';
 
+import { useAppDispatch, useAppSelector } from '../../lib/hook/reduxIndex';
+import { selectNav, navActions } from '../../store/nav';
+
 const s = {
   Container: styled.section`
     width: 100%;
@@ -32,33 +35,38 @@ const s = {
 
 const BottomNav = (): JSX.Element => {
   const navigate = useNavigate();
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(0);
+  const nav = useAppSelector(selectNav);
+  const dispatch = useAppDispatch();
 
-  const handleClickIcon = (index: number, path: string) => {
-    setSelectedIndex(index);
-    navigate(path);
+  const changeHandle = (mode: string) => {
+    dispatch(navActions.change(mode));
   };
 
-  const getColor = (index: number) => {
-    return selectedIndex === index ? '#ccff33' : '#ffffff';
+  const handleClickIcon = (mode: string) => {
+    changeHandle(mode);
+    navigate('/' + mode);
+  };
+
+  const getColor = (mode: string) => {
+    return nav === mode ? '#ccff33' : '#ffffff';
   };
 
   return (
     <s.Container>
-      <s.IconArea onClick={() => handleClickIcon(0, '/main')}>
-        <IconSvg width="25" height="40" color={getColor(0)} Ico={home} />
+      <s.IconArea onClick={() => handleClickIcon('main')}>
+        <IconSvg width="25" height="40" color={getColor('main')} Ico={home} />
       </s.IconArea>
-      <s.IconArea onClick={() => handleClickIcon(1, '/fitness')}>
-        <IconSvg width="25" height="40" color={getColor(1)} Ico={fitness} />
+      <s.IconArea onClick={() => handleClickIcon('fitness')}>
+        <IconSvg width="25" height="40" color={getColor('fitness')} Ico={fitness} />
       </s.IconArea>
-      <s.IconArea onClick={() => handleClickIcon(2, '/record')}>
-        <IconSvg width="25" height="40" color={getColor(2)} Ico={routine} />
+      <s.IconArea onClick={() => handleClickIcon('record')}>
+        <IconSvg width="25" height="40" color={getColor('record')} Ico={routine} />
       </s.IconArea>
-      <s.IconArea onClick={() => handleClickIcon(3, '/ai')}>
-        <IconSvg width="25" height="40" color={getColor(3)} Ico={ai} />
+      <s.IconArea onClick={() => handleClickIcon('ai')}>
+        <IconSvg width="25" height="40" color={getColor('ai')} Ico={ai} />
       </s.IconArea>
-      <s.IconArea onClick={() => handleClickIcon(4, '/sns')}>
-        <IconSvg width="25" height="40" color={getColor(4)} Ico={sns} />
+      <s.IconArea onClick={() => handleClickIcon('sns')}>
+        <IconSvg width="25" height="40" color={getColor('sns')} Ico={sns} />
       </s.IconArea>
     </s.Container>
   );

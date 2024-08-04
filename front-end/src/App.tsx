@@ -35,6 +35,18 @@ import ProfileMainPage from './pages/Profile/ProfileMain/ProfileMainPage';
 import UpdateMyInfoPage from './pages/Profile/UpdateMyInfo/UpdateMyInfoPage';
 import UpdateProfilePage from './pages/Profile/UpdateProfile/UpdateProfilePage';
 import FitnessPage from './pages/Fitness/FitnessPage';
+import RecordPage from './pages/Record/RecordPage';
+import SocialPage from './pages/SocialPage/SocialPage';
+import FeedPage from './pages/SocialPage/Feed/FeedPage';
+import CreateFeedPage from './pages/SocialPage/Feed/CreateFeedPage';
+import UserPostPage from './pages/SocialPage/Feed/UserPostPage';
+import MarketPage from './pages/SocialPage/Market/MarketPage';
+import UploadItemPage from './pages/SocialPage/Market/UploadItemPage';
+import ChatListPage from './pages/SocialPage/Feed/ChatListPage';
+import ChatPage from './pages/SocialPage/Feed/ChatPage';
+import NotificationPage from './pages/SocialPage/Feed/NotificationPage';
+import { useAppSelector } from './lib/hook/useReduxHook';
+import { selectSnsType } from './store/page';
 
 const s = {
   Background: styled.section`
@@ -63,6 +75,7 @@ const s = {
 };
 
 function App() {
+  const snsType = useAppSelector(selectSnsType);
   return (
     <>
       <ThemeProvider theme={darkTheme}>
@@ -91,7 +104,7 @@ function App() {
               </Route>
               <Route element={<PrivateRoute />}>
                 <Route path="/main" element={<MainPage />} />
-                <Route path="/fitness">
+                {/* <Route path="/fitness">
                   <Route index element={<Navigate to="list" />} />
                   <Route path="list">
                     <Route index element={<FitnessListPage />} />
@@ -106,11 +119,11 @@ function App() {
                     <Route path="" element={<FitnessPlayPage />} />
                     <Route path="" element={<FitnessFinishPage />} />
                   </Route>
-                </Route>
+                </Route> */}
                 {/* fitness */}
-                {/* <Route path="/fitness" element={<FitnessPage />}>
-                  <Route index element={<Navigate to="list" />} />
-                  <Route path="list" element={<FitnessPage />}>
+                <Route path="/fitness" element={<FitnessPage />}>
+                  <Route index element={<Navigate to="list" replace />} />
+                  <Route path="list">
                     <Route index element={<FitnessListPage />} />
                     <Route path="detail" element={<FitnessDetailPage />} />
                   </Route>
@@ -123,9 +136,9 @@ function App() {
                 <Route path="/play">
                   <Route path="" element={<FitnessPlayPage />} />
                   <Route path="" element={<FitnessFinishPage />} />
-                </Route> */}
+                </Route>
                 {/* record */}
-                <Route path="/record">
+                {/* <Route path="/record">
                   <Route index element={<Navigate to={'main'} />} />
                   <Route path="main" element={<RecordMainPage />} />
                   <Route path="inbody">
@@ -136,11 +149,42 @@ function App() {
                     <Route path="data" element={<RecordInBodyChartPage />} />
                   </Route>
                   <Route path="data" element={<RecordFitnessChartPage />} />
+                </Route> */}
+                <Route path="/record" element={<RecordPage />}>
+                  <Route index element={<Navigate to={'main'} replace />} />
+                  <Route path="main" element={<RecordMainPage />} />
+                  <Route path="inbody">
+                    <Route path="scan">
+                      <Route path="" index element={<RecordInBodyScanPage />} />
+                      <Route path="" element={<RecordInBodyScanResultPage />} />
+                    </Route>
+                    <Route path="data" element={<RecordInBodyChartPage />} />
+                  </Route>
+                  <Route path="data" element={<RecordFitnessChartPage />} />
                 </Route>
                 {/* ai */}
                 <Route path="/ai" element={<AIMainPage />} />
                 {/* sns */}
-                <Route path="/sns" element={<></>}></Route>
+                <Route path="/sns" element={<SocialPage />}>
+                  <Route index element={<Navigate to={'feed'} replace />} />
+                  <Route path="feed">
+                    <Route index element={<FeedPage />} />
+                    <Route path="write" element={<CreateFeedPage />} />
+                  </Route>
+                  <Route path="profile">
+                    <Route index element={<Navigate to={'id'} replace />} />
+                    <Route path=":id" element={<UserPostPage />} />
+                  </Route>
+                  <Route path="market">
+                    <Route index element={<MarketPage />} />
+                    <Route path="write" element={<UploadItemPage />} />
+                  </Route>
+                  <Route path="chat">
+                    <Route index element={<ChatListPage />} />
+                    <Route path=":id" element={<ChatPage />} />
+                  </Route>
+                  <Route path="notification" element={<NotificationPage />} />
+                </Route>
                 {/* mypage */}
                 <Route path="/mypage">
                   <Route path="" element={<ProfileMainPage />} />

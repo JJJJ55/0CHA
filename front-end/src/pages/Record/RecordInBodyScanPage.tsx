@@ -57,7 +57,7 @@ const RecordInBodyScanPage = (): JSX.Element => {
           <Button width="47%" height="40px" children="촬영" bold="500" size="14px" type="main" />
         </s.BtnArea>
       </s.MainArea>
-      <BottomNav />
+      {/* <BottomNav /> */}
     </s.Container>
   );
 };

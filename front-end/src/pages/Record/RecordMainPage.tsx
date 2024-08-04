@@ -89,7 +89,7 @@ const RecordMainPage = (): JSX.Element => {
           <IconSvg width="24" height="24" Ico={move} />
         </s.TextBtnArea>
       </s.MainArea>
-      <BottomNav />
+      {/* <BottomNav /> */}
     </s.Continer>
   );
 };

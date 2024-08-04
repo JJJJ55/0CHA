@@ -5,7 +5,7 @@ import Button from '../Common/Button';
 import Image from '../Common/Image';
 
 import test from '../../asset/img/testImg.png';
-
+import { useNavigate } from 'react-router';
 
 const s = {
   Container: styled.section`
@@ -46,6 +46,7 @@ const s = {
     width: 100%;
     max-width: 300px;
     min-width: 150px;
+    cursor: default;
   `,
   ProfileBottomArea: styled.div`
     display: flex;
@@ -54,6 +55,7 @@ const s = {
     width: 100%;
     max-width: 270px;
     min-width: 150px;
+    cursor: default;
   `,
   UserStat: styled.div`
     display: flex;
@@ -73,7 +75,6 @@ const s = {
   `,
 };
 
-
 interface UserProfileInfoProps {
   isCurrentUser: boolean;
   userName: string;
@@ -82,31 +83,44 @@ interface UserProfileInfoProps {
   followerCnt: string;
 }
 
-
 const UserProfileInfo = (props: UserProfileInfoProps): JSX.Element => {
   const { isCurrentUser, userName, postCnt, followingCnt, followerCnt } = props;
+  const naviagate = useNavigate();
+  const handleMovePage = (path: string): void => {
+    naviagate(path);
+  };
   return (
     <s.Container>
       <s.ProfileTopArea>
         <s.ProfileImage>
-          <Image
-            width="60px"
-            height="60px"
-            src={test}
-          />
+          <Image width="60px" height="60px" src={test} />
         </s.ProfileImage>
         <s.ProfileButtonArea>
           <s.UserName>{userName}</s.UserName>
           <s.ProfileButton>
             {isCurrentUser === true ? (
-              <Button width="48%" height="30px" children="채팅 목록" size="14px" bold="500"/>
+              <Button
+                width="48%"
+                height="30px"
+                children="채팅 목록"
+                size="14px"
+                bold="500"
+                onClick={() => handleMovePage('../chat')}
+              />
             ) : (
-              <Button width="48%" height="30px" children="채팅" size="14px" bold="500"/>          
+              <Button
+                width="48%"
+                height="30px"
+                children="채팅"
+                size="14px"
+                bold="500"
+                onClick={() => handleMovePage('../../chat/id')}
+              />
             )}
             {isCurrentUser === true ? (
-              <Button width="48%" height="30px" children="내 정보"size="14px" bold="500"/>
+              <Button width="48%" height="30px" children="내 정보" size="14px" bold="500" />
             ) : (
-              <Button width="48%" height="30px" children="팔로우" size="14px" bold="500"/>          
+              <Button width="48%" height="30px" children="팔로우" size="14px" bold="500" />
             )}
           </s.ProfileButton>
         </s.ProfileButtonArea>

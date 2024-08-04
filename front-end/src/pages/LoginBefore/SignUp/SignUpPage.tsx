@@ -6,6 +6,7 @@ import Text from '../../../components/Common/Text';
 import PhoneNumberInput from '../../../components/LoginBefore/phoneNumberInput';
 import Header from '../../../components/Common/Header';
 import EmailArea from '../../../components/LoginBefore/EmailArea';
+import { useNavigate } from 'react-router';
 
 const s = {
   Container: styled.section`
@@ -133,6 +134,10 @@ interface dataType {
 }
 
 const SignUpPage = (): JSX.Element => {
+  const navigate = useNavigate();
+  const handleMovePage = (path: string): void => {
+    navigate(path);
+  };
   const [data, setData] = useState<dataType>({
     email: '',
     verificationCode: '',
@@ -572,7 +577,15 @@ const SignUpPage = (): JSX.Element => {
         </s.SubBtnArea>
         <s.TextBtnArea>
           <Text children="이미 회원이신가요?" type="guide" size="14px" />
-          <Text type="guide" children="로그인" size="14px" onClick={() => {}} cursor="pointer" />
+          <Text
+            type="guide"
+            children="로그인"
+            size="14px"
+            onClick={() => {
+              handleMovePage('/login');
+            }}
+            cursor="pointer"
+          />
         </s.TextBtnArea>
       </s.SignUpArea>
     </s.Container>

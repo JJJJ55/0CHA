@@ -4,6 +4,7 @@ import Input from '../../../components/Common/Input';
 import Button from '../../../components/Common/Button';
 import Text from '../../../components/Common/Text';
 import { ReactComponent as Logo } from '../../../asset/img/svg/0CHA.svg';
+import { useNavigate } from 'react-router';
 
 const s = {
   Container: styled.section`
@@ -61,6 +62,7 @@ const LoginPage = (): JSX.Element => {
     email: '',
     pw: '',
   });
+  const navigate = useNavigate();
 
   const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     setData({
@@ -68,8 +70,12 @@ const LoginPage = (): JSX.Element => {
       [e.target.name]: e.target.value,
     });
   };
-  const handleClickLogin = () => {
+  const handleClickLogin = (): void => {
     alert(data.email + ' ' + data.pw);
+    navigate('/main');
+  };
+  const handleMovePage = (path: string): void => {
+    navigate(path);
   };
 
   return (
@@ -112,9 +118,33 @@ const LoginPage = (): JSX.Element => {
           onClick={handleClickLogin}
         />
         <s.TextBtnArea>
-          <Text type="guide" children="회원가입" size="14px" onClick={() => {}} cursor="pointer" />
-          <Text type="guide" children="이메일 찾기" size="14px" onClick={() => {}} cursor="pointer" />
-          <Text type="guide" children="비밀번호 찾기" size="14px" onClick={() => {}} cursor="pointer" />
+          <Text
+            type="guide"
+            children="회원가입"
+            size="14px"
+            onClick={() => {
+              handleMovePage('/signup');
+            }}
+            cursor="pointer"
+          />
+          <Text
+            type="guide"
+            children="이메일 찾기"
+            size="14px"
+            onClick={() => {
+              handleMovePage('/find/email');
+            }}
+            cursor="pointer"
+          />
+          <Text
+            type="guide"
+            children="비밀번호 찾기"
+            size="14px"
+            onClick={() => {
+              handleMovePage('/find/password');
+            }}
+            cursor="pointer"
+          />
         </s.TextBtnArea>
         <s.SnsText>SNS 로그인</s.SnsText>
       </s.LoginArea>

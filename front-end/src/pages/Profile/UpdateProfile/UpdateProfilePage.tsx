@@ -87,11 +87,13 @@ const s = {
 interface User {
   nickname: string;
   profileImage: string;
+  tempNickname: string;
 }
 
 const UpdateProfilePage = (): JSX.Element => {
   const [user, setUser] = useState<User>({
     nickname: 'it_is_me',
+    tempNickname: 'it_is_me',
     profileImage: test,
   });
 
@@ -139,9 +141,10 @@ const UpdateProfilePage = (): JSX.Element => {
   // 닉네임 중복 확인 핸들러
   const handleCheckDuplicate = () => {
     // 닉네임 중복 확인 로직 (예: API 호출)
-    // 중복 확인이 성공적으로 완료되었다면 상태를 true로 변경
+    // 중복 확인이 성공적으로 완료되었다면 상태를 true와 현재 닉네임 값 변경
     if (nicknameError === '' && tempNickname.length !== 0) {
       setIsNicknameConfirmed(true);
+      setUser({ ...user, tempNickname: tempNickname }); // 현재 닉네임 값을 변경
       alert('사용할 수 있는 닉네임입니다.');
     } else {
       alert('사용할 수 없는 닉네임입니다.');
@@ -154,9 +157,10 @@ const UpdateProfilePage = (): JSX.Element => {
 
   const handleSave = () => {
     // 이미지 저장 로직 구현해야 함
+    // 이미지 저장 시 행동 로직도 구현해야 함
     if (isNicknameConfirmed) {
-      setUser({ ...user, nickname: tempNickname });
-      nicknameChanged.current = true;
+      nicknameChanged.current = true; // 변경 상태 초기화
+      setUser({ ...user, nickname: tempNickname }); // 사용자의 닉네임을 변경
     } else {
       alert('닉네임 중복 확인을 해주세요.');
     }

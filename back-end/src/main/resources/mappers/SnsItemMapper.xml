@@ -9,7 +9,7 @@
         <result property="price" column="price"/>
         <result property="isSold" column="is_sold"/>
         <result property="createdAt" column="created_at"/>
-        <result property="like" column="like"/>
+        <result property="likeCount" column="like_count"/>
         <result property="userId" column="user_id"/>
         <result property="nickname" column="nickname"/>
         <result property="profileImage" column="profile_image"/>
@@ -27,7 +27,7 @@
         <result property="district" column="district"/>
         <result property="siGunGu" column="si_gun_gu"/>
         <result property="createdAt" column="created_at"/>
-        <result property="like" column="like"/>
+        <result property="likeCount" column="like_count"/>
         <result property="userId" column="user_id"/>
         <result property="nickname" column="nickname"/>
         <result property="profileImage" column="profile_image"/>
@@ -37,16 +37,16 @@
     </resultMap>
 
     <select id="getItems" resultMap="item">
-        SELECT i.id,
-               i.title,
-               i.price,
-               i.is_sold,
-               i.created_at,
+        SELECT i.id AS id,
+               i.title AS title,
+               i.price AS price,
+               i.is_sold AS is_sold,
+               i.created_at AS created_at,
                u.id AS user_id,
-               u.nickname,
-               u.profile_image,
-               (SELECT COUNT(*) FROM item_details WHERE item_id = i.id AND detail_type = 'like') AS like,
-            d.image_url
+               u.nickname AS nickname,
+               u.profile_image AS profile_image,
+               (SELECT COUNT(*) FROM item_details WHERE item_id = i.id AND detail_type = 'like') AS `like_count`,
+            d.image_url AS image_url
         FROM
             items i
             JOIN
@@ -63,7 +63,7 @@
             ELSE i.user_id = #{userId}
         END
         ORDER BY
-            i.created_at DESC;
+            i.created_at DESC
     </select>
 
     <select id="getItemDetail" resultMap="itemDetail">
@@ -75,10 +75,10 @@
                i.district,
                i.si_gun_gu,
                i.created_at,
-               (SELECT COUNT(*) FROM item_details WHERE item_id = i.id AND detail_type = 'like') AS like,
+               (SELECT COUNT(*) FROM item_details WHERE item_id = i.id AND detail_type = 'like') AS like_count,
             u.id AS user_id,
             u.nickname,
-            u.profile_image
+            u.profile_image,
             d.image_url
         FROM
             items i

@@ -22,7 +22,7 @@ public class ItemDto {
     private String district;
     private String siGunGu;
 
-    private int like;
+    private int likeCount;
     private String nickname;
     private String profileImage;
     private List<String> images;

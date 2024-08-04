@@ -7,7 +7,7 @@
         <id property="id" column="id"/>
         <result property="content" column="content"/>
         <result property="image" column="image"/>
-        <result property="like" column="like"/>
+        <result property="likeCount" column="like_count"/>
         <result property="commentCount" column="comment"/>
         <result property="createdAt" column="created_at"/>
         <result property="userId" column="user_id"/>
@@ -30,7 +30,7 @@
         SELECT f.id,
                f.content,
                f.image,
-               (SELECT COUNT(*) FROM feed_interactions WHERE feed_id = f.id AND interaction_type = 'like') AS `like`,
+               (SELECT COUNT(*) FROM feed_interactions WHERE feed_id = f.id AND interaction_type = 'like') AS `like_count`,
                (SELECT COUNT(*)
                 FROM feed_interactions
                 WHERE feed_id = f.id
@@ -69,11 +69,14 @@
     </delete>
 
     <select id="getListLikes" resultMap="likesList">
-        SELECT user_id, nickname, profile_image
-        FROM feed_interactions
-        WHERE feed_id = #{feedId}
-          AND interaction_type = "like"
-        ORDER BY created_at DESC;
+        SELECT u.id AS user_id,
+               u.nickname,
+               u.profile_image
+        FROM feed_interactions fi
+                 JOIN users u ON fi.user_id = u.id
+        WHERE fi.feed_id = #{feedId}
+          AND fi.interaction_type = "like"
+        ORDER BY fi.created_at DESC;
     </select>
 
     <select id="isLike" resultType="int">

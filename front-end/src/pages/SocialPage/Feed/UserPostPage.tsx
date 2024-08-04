@@ -4,7 +4,7 @@ import Input from '../../../components/Common/Input';
 import Button from '../../../components/Common/Button';
 import Text from '../../../components/Common/Text';
 import { ReactComponent as Logo } from '../../../asset/img/svg/0CHA.svg';
-import test from "../../../asset/img/testImg.png";
+import test from '../../../asset/img/testImg.png';
 import Image from '../../../components/Common/Image';
 import Feed from '../../../components/SNS/Feed';
 import Header from '../../../components/Common/Header';
@@ -24,9 +24,7 @@ const s = {
     display: flex;
     justify-content: space-around;
   `,
-  TabBarContent: styled.span`
-    
-  `,
+  TabBarContent: styled.span``,
   ActiveText: styled.div`
     width: 50%;
     color: ${(props) => props.theme.mainColor};
@@ -35,6 +33,7 @@ const s = {
     border-bottom: 1px solid ${(props) => props.theme.mainColor};
     text-align: center;
     padding: 10px;
+    cursor: pointer;
   `,
   InactiveText: styled.div`
     width: 50%;
@@ -43,13 +42,13 @@ const s = {
     font-weight: 500;
     text-align: center;
     padding: 10px;
+    cursor: pointer;
   `,
   testArea: styled.div`
     width: 100%;
     margin-top: 3px;
   `,
   ThumbnailArea: styled.div`
-
     margin: auto;
     display: inline-flex;
     flex-wrap: wrap;
@@ -60,24 +59,22 @@ const s = {
   `,
 };
 
-
 const UserPostPage = (): JSX.Element => {
-  const [ isFitness, setIsFitness ] = useState(true);
+  const [isFitness, setIsFitness] = useState(true);
   const switchTabbar = () => {
-    setIsFitness(!isFitness)
-  }
+    setIsFitness(!isFitness);
+  };
 
   return (
     <>
-      <Header
-        text="피드"/>
+      <Header text="피드" />
       <s.Container>
         <UserProfileInfo
           isCurrentUser={false}
-          userName={"stranger_00"}
-          postCnt={"9"}
-          followerCnt={"12"}
-          followingCnt={"23"}
+          userName={'stranger_00'}
+          postCnt={'9'}
+          followerCnt={'12'}
+          followingCnt={'23'}
         />
         <s.TabBar>
           {isFitness === true ? (
@@ -94,49 +91,24 @@ const UserPostPage = (): JSX.Element => {
         <s.testArea>
           <s.ThumbnailArea>
             <s.Thumbnail>
-              <Image
-                width="100%"
-                height="auto"
-                src={test}
-                type="rect"
-              />
+              <Image width="100%" height="auto" src={test} type="rect" cursor="pointer" />
             </s.Thumbnail>
             <s.Thumbnail>
-              <Image
-                width="100%"
-                height="auto"
-                src={test}
-                type="rect"
-              />
+              <Image width="100%" height="auto" src={test} type="rect" cursor="pointer" />
             </s.Thumbnail>
             <s.Thumbnail>
-              <Image
-                width="100%"
-                height="auto"
-                src={test}
-                type="rect"
-              />
+              <Image width="100%" height="auto" src={test} type="rect" cursor="pointer" />
             </s.Thumbnail>
             <s.Thumbnail>
-              <Image
-                width="100%"
-                height="auto"
-                src={test}
-                type="rect"
-              />
+              <Image width="100%" height="auto" src={test} type="rect" cursor="pointer" />
             </s.Thumbnail>
             <s.Thumbnail>
-              <Image
-                width="100%"
-                height="auto"
-                src={test}
-                type="rect"
-              />
+              <Image width="100%" height="auto" src={test} type="rect" cursor="pointer" />
             </s.Thumbnail>
           </s.ThumbnailArea>
         </s.testArea>
       </s.Container>
-      <BottomNav/>
+      <BottomNav />
     </>
   );
 };

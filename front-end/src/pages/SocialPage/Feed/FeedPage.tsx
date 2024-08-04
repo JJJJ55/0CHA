@@ -8,8 +8,10 @@ import CommentModal from '../../../components/SNS/CommentModal';
 import BottomNav from '../../../components/Common/BottomNav';
 import UserSearchModal from '../../../components/SNS/UserSearchModal';
 
-import test from "../../../asset/img/testImg.png";
-
+import test from '../../../asset/img/testImg.png';
+import { useAppDispatch, useAppSelector } from '../../../lib/hook/useReduxHook';
+import { modalActions, selectModalComment, selectModalUserSearch } from '../../../store/modal';
+import { useNavigate } from 'react-router';
 
 const s = {
   Container: styled.section`
@@ -57,34 +59,47 @@ const s = {
   `,
 };
 
-
 interface dataType {
   email: string;
   pw: string;
 }
 
-
 const FeedPage = (): JSX.Element => {
+  const navigate = useNavigate();
+  const handleMovePage = (path: string): void => {
+    navigate(path);
+  };
+
+  const dispatch = useAppDispatch();
+  const isComment = useAppSelector(selectModalComment);
+  const isUserSearch = useAppSelector(selectModalUserSearch);
+  const toggleModalComment = (): void => {
+    dispatch(modalActions.toggleComment());
+  };
+  const toggleModalUserSearch = (): void => {
+    dispatch(modalActions.toggleUserSearch());
+  };
   return (
     <>
-    <s.Container>
-      <SnsHeader />
-      <SnsNavigation />
-      <Feed 
-      width="100vw"
-      height="100vw"
-      src={test}
-      authorName="stranger_00"
-      authorProfileImage={test}
-      like="true"
-      likeCnt="100"
-      commentCnt="30"
-      content="example content test"
-      />
-      {/* <CommentModal/>       */}
-      {/* <UserSearchModal/> */}
-    </s.Container>
-    <BottomNav/>
+      <s.Container>
+        <SnsHeader />
+        <SnsNavigation />
+        <Feed
+          width="100vw"
+          height="100vw"
+          src={test}
+          authorName="stranger_00"
+          authorProfileImage={test}
+          like="true"
+          likeCnt="100"
+          commentCnt="30"
+          content="example content test"
+          onClick={toggleModalComment}
+        />
+        <CommentModal open={isComment} onModal={toggleModalComment} />
+        <UserSearchModal open={isUserSearch} onModal={toggleModalUserSearch} />
+      </s.Container>
+      <BottomNav />
     </>
   );
 };

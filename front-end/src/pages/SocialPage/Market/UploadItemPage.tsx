@@ -8,10 +8,10 @@ import Input from '../../../components/Common/Input';
 import Button from '../../../components/Common/Button';
 import IconSvg from '../../../components/Common/IconSvg';
 import Image from '../../../components/Common/Image';
-import { ReactComponent as camera } from '../../../asset/img/svg/camera.svg'
+import { ReactComponent as camera } from '../../../asset/img/svg/camera.svg';
 
-import test from "../../../asset/img/testImg.png";
-
+import test from '../../../asset/img/testImg.png';
+import { useNavigate } from 'react-router';
 
 const s = {
   ImageText: styled.span`
@@ -46,6 +46,7 @@ const s = {
     height: 110px;
     flex-direction: column;
     align-items: center;
+    cursor: pointer;
   `,
   ImageArea: styled.div`
     width: 380px;
@@ -77,84 +78,53 @@ const s = {
     position: absolute;
     top: 44px;
   `,
-  MainImage: styled(Image)`
-  `,
+  MainImage: styled(Image)``,
 };
 
-
 const UploadItemPage = (): JSX.Element => {
+  const navigate = useNavigate();
+  const handleMovePage = (): void => {
+    navigate('/sns');
+  };
   return (
     <>
-    <Header text="판매하기"/>
-    <s.Container>
-      <s.ImageUploadArea>
-        <IconSvg width="50" height="50" Ico={camera} color="#ffffff"/>
-        <s.ImageText>5/5</s.ImageText>
-      </s.ImageUploadArea>
-      <s.ImageArea>
-        <s.MainImageArea>
-          <s.MainImage
-            width="64px"
-            height="64px"
-            src={test}
-            type="rect"
+      <Header text="판매하기" />
+      <s.Container>
+        <s.ImageUploadArea>
+          <IconSvg width="50" height="50" Ico={camera} color="#ffffff" />
+          <s.ImageText>5/5</s.ImageText>
+        </s.ImageUploadArea>
+        <s.ImageArea>
+          <s.MainImageArea>
+            <s.MainImage width="64px" height="64px" src={test} type="rect" />
+            <s.MainImageCaption>대표</s.MainImageCaption>
+          </s.MainImageArea>
+          <Image width="64px" height="64px" src={test} type="rect" />
+          <Image width="64px" height="64px" src={test} type="rect" />
+          <Image width="64px" height="64px" src={test} type="rect" />
+          <Image width="64px" height="64px" src={test} type="rect" />
+        </s.ImageArea>
+        <s.InputArea>
+          <s.InputLabel>제목</s.InputLabel>
+          <Input width="100%" height="40px" />
+          <s.InputLabel>가격</s.InputLabel>
+          <Input width="100%" height="40px" />
+          <s.InputLabel>상품 설명</s.InputLabel>
+          <TextArea width="100%" height="180px" />
+        </s.InputArea>
+        <s.Button>
+          <Button
+            width="100%"
+            height="40px"
+            size="14px"
+            type="main"
+            bold="500"
+            children="작성완료"
+            onClick={handleMovePage}
           />
-          <s.MainImageCaption>대표</s.MainImageCaption>
-        </s.MainImageArea>
-        <Image
-          width="64px"
-          height="64px"
-          src={test}
-          type="rect"
-        />
-        <Image
-          width="64px"
-          height="64px"
-          src={test}
-          type="rect"
-        />
-        <Image
-          width="64px"
-          height="64px"
-          src={test}
-          type="rect"
-        />
-        <Image
-          width="64px"
-          height="64px"
-          src={test}
-          type="rect"
-        />
-      </s.ImageArea>
-      <s.InputArea>
-        <s.InputLabel>제목</s.InputLabel>
-        <Input
-          width="100%"
-          height="40px"
-        />
-        <s.InputLabel>가격</s.InputLabel>
-        <Input
-          width="100%"
-          height="40px"
-        />
-        <s.InputLabel>상품 설명</s.InputLabel>
-        <TextArea
-          width="100%"
-          height="180px"
-        />
-      </s.InputArea>
-      <s.Button>
-        <Button
-          width="100%"
-          height="40px"
-          size="14px"
-          type="main"
-          bold="500"
-          children="작성완료"
-        />
-      </s.Button>
-    </s.Container>
-    <BottomNav/>
+        </s.Button>
+      </s.Container>
+      <BottomNav />
     </>
   );
 };

@@ -1,11 +1,10 @@
-import React from 'react';
+import React, { MouseEventHandler } from 'react';
 import styled from 'styled-components';
 
 import Image from '../Common/Image';
 import IconSvg from '../Common/IconSvg';
-import { ReactComponent as likeOn } from '../../asset/img/svg/likeOn.svg'
-import { ReactComponent as likeOff } from '../../asset/img/svg/liekOff.svg'
-
+import { ReactComponent as likeOn } from '../../asset/img/svg/likeOn.svg';
+import { ReactComponent as likeOff } from '../../asset/img/svg/liekOff.svg';
 
 const s = {
   Container: styled.section`
@@ -14,6 +13,7 @@ const s = {
     display: flex;
     padding: 0 15px;
     margin: 20px 0;
+    cursor: pointer;
   `,
   ItemName: styled.div`
     color: ${(props) => props.theme.textColor};
@@ -66,7 +66,6 @@ const s = {
   `,
 };
 
-
 interface MarketItemProps {
   itemImage: string;
   itemName: string;
@@ -74,51 +73,34 @@ interface MarketItemProps {
   isOnSale: boolean;
   itemLike: string;
   isLiked: boolean;
+  onClick: MouseEventHandler<HTMLElement>;
 }
 
-
 const MarketItem = (props: MarketItemProps): JSX.Element => {
-  const { itemImage, itemName, itemPrice, isOnSale, itemLike, isLiked } = props;
-  
+  const { itemImage, itemName, itemPrice, isOnSale, itemLike, isLiked, onClick } = props;
+
   return (
     <s.Container>
-      <Image
-        width="70px"
-        height="70px"
-        src={itemImage}
-        type="rect"
-      />
+      <Image width="70px" height="70px" src={itemImage} type="rect" />
       <s.ItemInfoArea>
-        <s.ItemTopArea>
+        <s.ItemTopArea onClick={onClick}>
           <s.ItemName>{itemName}</s.ItemName>
-          {isOnSale === true ? (
-            <s.Available>판매중</s.Available>
-          ) : (
-            <s.Unavailable>판매완료</s.Unavailable>
-          )}
+          {isOnSale === true ? <s.Available>판매중</s.Available> : <s.Unavailable>판매완료</s.Unavailable>}
         </s.ItemTopArea>
         <s.ItemBottomArea>
           <s.ItemPrice>{itemPrice}</s.ItemPrice>
-            <s.ItemLikeArea>
-              {isLiked === true ? (
-                <IconSvg
-                  width="23"
-                  height="23"
-                  Ico={likeOn}
-                />
-              ) : (
-                <IconSvg
-                  width="23"
-                  height="23"
-                  Ico={likeOff}
-                />
-              )}
-              <s.ItemLike>{itemLike}</s.ItemLike>
-            </s.ItemLikeArea>
+          <s.ItemLikeArea onClick={() => alert('클릭')}>
+            {isLiked === true ? (
+              <IconSvg width="23" height="23" Ico={likeOn} />
+            ) : (
+              <IconSvg width="23" height="23" Ico={likeOff} />
+            )}
+            <s.ItemLike>{itemLike}</s.ItemLike>
+          </s.ItemLikeArea>
         </s.ItemBottomArea>
       </s.ItemInfoArea>
     </s.Container>
-  )
+  );
 };
 
 export default MarketItem;

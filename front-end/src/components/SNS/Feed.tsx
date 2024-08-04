@@ -49,6 +49,7 @@ const s = {
   IconArea: styled.div`
     display: flex;
     align-items: center;
+    cursor: pointer;
   `,
 };
 

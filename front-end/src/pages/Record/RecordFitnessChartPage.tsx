@@ -47,7 +47,7 @@ const RecordFitnessChartPage = (): JSX.Element => {
         />
         <Chart labels={labels} datas={exerciseData} />
       </s.MainArea>
-      <BottomNav />
+      {/* <BottomNav /> */}
     </s.Container>
   );
 };

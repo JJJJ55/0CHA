@@ -24,11 +24,8 @@ public class SnsChatServiceImpl implements SnsChatService{
     }
 
     @Override
-    public MessageDto saveMessage(int senderId, int roomId, String message) {
-        RoomDto roomDto = snsChatRoomMapper.findById(roomId);
-        if(roomDto == null) {
-            throw new IllegalArgumentException("Invalid room id");
-        }
+    public MessageDto saveMessage(int senderId, int receiverId, String message) {
+        int roomId = getOrCreateRoom(senderId, receiverId);
 
         MessageDto messageDto = new MessageDto();
         messageDto.setSenderId(senderId);
@@ -37,5 +34,20 @@ public class SnsChatServiceImpl implements SnsChatService{
 
         snsChatMessageMapper.insert(messageDto);
         return messageDto;
+    }
+
+    @Override
+    public int getOrCreateRoom(int senderId, int receiverId) {
+        RoomDto room = snsChatRoomMapper.findByUsers(senderId, receiverId);
+
+        if (room == null) {
+            RoomDto newRoom = new RoomDto();
+            newRoom.setUser1Id(senderId);
+            newRoom.setUser2Id(receiverId);
+            snsChatRoomMapper.insert(newRoom);
+            return newRoom.getId();
+        }
+
+        return room.getId();
     }
 }

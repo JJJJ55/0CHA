@@ -15,15 +15,15 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private String redisHost;
 
     @Override
-    public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.enableSimpleBroker("/topic");  // Redis를 사용하는 간단한 브로커 설정
-        registry.setApplicationDestinationPrefixes("/app");
+    public void configureMessageBroker(MessageBrokerRegistry config) {
+        config.enableSimpleBroker("/topic", "/queue");  // Redis를 사용하는 간단한 브로커 설정
+        config.setApplicationDestinationPrefixes("/app");
     }
 
     @Override
     public void registerStompEndpoints(final StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")   // websocket 연결시, 엔드포인트 : /ws
-                .setAllowedOrigins("*")
+                .setAllowedOriginPatterns("*")
                 .withSockJS();
     }
 }

@@ -74,8 +74,10 @@ function App() {
               <Route element={<PublicRoute />}>
                 <Route path="/" element={<SplashPage />} />
                 <Route path="/login" element={<LoginPage />} />
-                <Route path="/signup" element={<SignUpPage />} />
-                <Route path="/signup/ok" element={<PlusInfoPage />} />
+                <Route path="/signup">
+                  <Route index element={<SignUpPage />} />
+                  <Route path="ok" element={<PlusInfoPage />} />
+                </Route>
                 <Route path="/find">
                   <Route path="email">
                     <Route path="" element={<FindEmailPage />} />

@@ -9,6 +9,8 @@ import Button from '../../components/Common/Button';
 import BottomNav from '../../components/Common/BottomNav';
 import FitnessPlanSetModal from '../../components/Modal/FitnessPlanSetModal';
 import { useNavigate } from 'react-router';
+import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
+import { modalActions, selectModalCalendar } from '../../store/modal';
 
 const s = {
   Container: styled.section`
@@ -60,14 +62,21 @@ const s = {
 
 const FitnessPlanSetPage = (): JSX.Element => {
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
   const handleChangeOpen = (): void => {
-    setOpen(!open);
+    dispatch(modalActions.toggleCalendar());
   };
 
   const handleClickMove = (path: string): void => {
     navigate(path);
   };
+
+  const isModal = useAppSelector(selectModalCalendar);
+  const dispatch = useAppDispatch();
+
+  const toggleModal = (): void => {
+    dispatch(modalActions.toggleCalendar());
+  };
+
   return (
     <s.Container>
       <Header text="새루틴">
@@ -115,7 +124,7 @@ const FitnessPlanSetPage = (): JSX.Element => {
         </s.BtnArea>
       </s.ContentArea>
       <BottomNav />
-      {/* <FitnessPlanSetModal open={open} /> */}
+      <FitnessPlanSetModal open={isModal} onModal={toggleModal} />
     </s.Container>
   );
 };

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import Input from '../../components/Common/Input';
 import FitnessListTopNav from '../../components/Fitness/Etc/FitnessListTopNav';
@@ -7,6 +7,9 @@ import { FitnessData } from '../../util/TestData';
 import Button from '../../components/Common/Button';
 import BottomNav from '../../components/Common/BottomNav';
 import { Outlet, useNavigate } from 'react-router';
+import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
+import { navActions, selectNav } from '../../store/nav';
+import { useBottomNavHook } from '../../lib/hook/useBottomNavHook';
 
 const s = {
   Container: styled.section`
@@ -53,6 +56,7 @@ const s = {
 };
 
 const FitnessPage = (): JSX.Element => {
+  useBottomNavHook('fitness');
   return (
     <s.Container>
       <Outlet />

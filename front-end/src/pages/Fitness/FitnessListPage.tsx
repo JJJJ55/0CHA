@@ -71,7 +71,6 @@ const FitnessListPage = (): JSX.Element => {
           <FitnessList text="전체" data={FitnessData} />
         </s.FitnessArea>
       </s.MainArea>
-      <Outlet />
       <s.Btn onClick={handleClickMove}>새 루틴에 추가하기</s.Btn>
       <BottomNav />
     </s.Container>

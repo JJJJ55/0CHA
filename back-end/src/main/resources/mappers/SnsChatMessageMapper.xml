@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.back_end.sns.mapper.SnsChatMessageMapper">
+    <resultMap id="messageResultMap" type="com.ssafy.back_end.sns.model.MessageDto">
+        <result column="id" property="id"/>
+        <result column="sender_id" property="senderId"/>
+        <result column="room_id" property="roomId"/>
+        <result column="message" property="message"/>
+        <result column="send_at" property="sendAt"/>
+    </resultMap>
+
+    <select id="findByRoomId" resultMap="messageResultMap">
+        SELECT * FROM messages WHERE room_id = #{roomId}
+    </select>
+    
+    <insert id="saveMessage" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO messages (sender_id, room_id, message)
+        VALUES (#{senderId}, #{roomId}, #{message})
+    </insert>
+</mapper>

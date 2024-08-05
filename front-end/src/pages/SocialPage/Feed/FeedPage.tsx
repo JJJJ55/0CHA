@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import Feed from '../../../components/SNS/Feed';
@@ -14,10 +14,9 @@ import { modalActions, selectModalComment, selectModalUserSearch } from '../../.
 import { useNavigate } from 'react-router';
 import { useModalExitHook } from '../../../lib/hook/useModalExitHook';
 
-import { FeedData } from '../../../util/FeedTestData.js';
 import FeedList from '../../../components/SNS/FeedList';
 import axios from 'axios';
-
+import { debounce } from 'lodash';
 
 const s = {
   Container: styled.section`
@@ -65,6 +64,20 @@ const s = {
   `,
 };
 
+type dataType = {
+  id: number;
+  content: string;
+  image: string;
+  like: number;
+  comment: number;
+  created_at: string;
+  author: {
+    id: number;
+    nickname: string;
+    profile_image: string;
+  }
+}
+
 
 const FeedPage = (): JSX.Element => {
   const navigate = useNavigate();
@@ -82,25 +95,66 @@ const FeedPage = (): JSX.Element => {
     dispatch(modalActions.toggleUserSearch());
   };
 
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const [feedData, setFeedData] = useState([]);
-  const getFeedData = async () => {
+  const [feedData, setFeedData] = useState<dataType[]>([]);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const[isMoreData, setIsMoreData] = useState(true);
+
+
+  const getFeedData = async (page: number) => {
+    if (loading) return;
     try {
-      const res = await axios.get('/testdata/FeedTestData.json');
-      setFeedData(res.data)
-    } catch(error) {
-      console.error(error)
+      setLoading(true);
+      const res = await axios.get(`http://localhost:4000/test?_page=${page}&_limit=10`);
+      const data = res.data;
+
+      if (data.length === 0) {
+        setIsMoreData(false);
+      } else {
+        setFeedData((prevData) => [...prevData, ...data]);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
-  useEffect(() => {
-    getFeedData();
-  }, []);
 
-  
+  useEffect(() => {
+    getFeedData(page);
+  }, [page]);
+
+  const handleScroll = debounce(() => {
+    if (containerRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
+
+      if ((scrollTop + clientHeight+1000) >= scrollHeight) {
+        if (!loading && isMoreData) {
+          setPage((prevPage) => prevPage + 1);
+        }
+      }
+    }
+  }, 300);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener('scroll', handleScroll);
+    }
+    return () => {
+      if (container) {
+        container.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, [handleScroll]);
+
   useModalExitHook();
+
   return (
     <>
-      <s.Container>
+      <s.Container ref={containerRef}>
         <SnsHeader />
         <SnsNavigation />
         <FeedList data={feedData} onClick={toggleModalComment} />

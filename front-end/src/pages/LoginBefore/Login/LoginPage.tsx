@@ -5,7 +5,8 @@ import Button from '../../../components/Common/Button';
 import Text from '../../../components/Common/Text';
 import { ReactComponent as Logo } from '../../../asset/img/svg/0CHA.svg';
 import { useNavigate } from 'react-router';
-import { login } from '../../../lib/api/user-api';
+import { AxiosError, AxiosResponse } from 'axios';
+import { login, user } from '../../../lib/api/user-api';
 
 const s = {
   Container: styled.section`
@@ -73,7 +74,6 @@ const LoginPage = (): JSX.Element => {
   };
   const handleClickLogin = (): void => {
     // alert(data.email + ' ' + data.pw);
-    postLogin(data);
     // navigate('/main');
   };
   const handleMovePage = (path: string): void => {
@@ -81,17 +81,21 @@ const LoginPage = (): JSX.Element => {
   };
 
   // 로그인
-  const postLogin = (data: dataType) => {
+  const postLogin = async () => {
     login(
       data,
-      (resp: any) => {
+      (resp) => {
         console.log(resp.data);
       },
-      (error: any) => {
+      (error: AxiosError) => {
         console.log('로그인 실패');
         console.log(error);
       },
     );
+  };
+
+  const testLogin = () => {
+    user.login(data.email, data.password);
   };
 
   return (
@@ -131,7 +135,7 @@ const LoginPage = (): JSX.Element => {
           display="block"
           margin="30px auto"
           children="로그인"
-          onClick={handleClickLogin}
+          onClick={testLogin}
         />
         <s.TextBtnArea>
           <Text

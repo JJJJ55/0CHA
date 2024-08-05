@@ -2,6 +2,7 @@ package com.ssafy.back_end.sns.mapper;
 
 import com.ssafy.back_end.sns.model.ItemDto;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -12,9 +13,10 @@ public interface SnsItemMapper {
 
     ItemDto getItemDetail(@Param("itemId") int itemId);   //중고장터 자세히 보기
 
+    @Options (useGeneratedKeys = true, keyProperty = "id")
     int insertItem(ItemDto item);   // 중고장터 글 작성
 
-    int insertItemImages(@Param("itemId") int itemId, @Param("images") List<String> images);   // 중고장터 이미지 등록
+    int insertItemImages(@Param("itemId") int itemId, @Param("userId") int userId, @Param("images") List<String> images);   // 중고장터 이미지 등록
 
     int deleteItemImages(@Param("itemId") int itemId);   // 중고장터 이미지 삭제
 
@@ -27,4 +29,6 @@ public interface SnsItemMapper {
     int likeItem(@Param("itemId") int itemId, @Param("userId") int userId);   //중고장터 좋아요
 
     int dislikeItem(@Param("itemId") int itemId, @Param("userId") int userId);   //중고장터 좋아요 취소
+
+    int soldOut(@Param("id") int itemId);   //판매완료
 }

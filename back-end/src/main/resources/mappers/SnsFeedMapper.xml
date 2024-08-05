@@ -30,29 +30,32 @@
     </resultMap>
 
     <select id="getFeeds" resultMap="feed">
-        SELECT f.id                                                                                        AS id,
-               f.content                                                                                   AS content,
-               f.image                                                                                     AS image,
+        SELECT f.id                                 AS id,
+               f.content                            AS content,
+               f.image                              AS image,
                (SELECT COUNT(*)
                 FROM feed_interactions
                 WHERE feed_id = f.id
-                  AND interaction_type = 'like')                                                           AS `like_count`,
+                  AND interaction_type = 'like')    AS `like_count`,
                (SELECT COUNT(*)
                 FROM feed_interactions
                 WHERE feed_id = f.id
-                  AND interaction_type = 'comment')                                                        AS `comment`,
-               f.created_at                                                                                AS created_at,
-               u.id                                                                                        AS user_id,
-               u.nickname                                                                                  AS nickname,
-               u.profile_image                                                                             AS profile_image
+                  AND interaction_type = 'comment') AS `comment`,
+               f.created_at                         AS created_at,
+               u.id                                 AS user_id,
+               u.nickname                           AS nickname,
+               u.profile_image                      AS profile_image
         FROM feeds f
                  JOIN
              users u ON f.user_id = u.id
         WHERE CASE
-                  WHEN #{userId} = 0 THEN TRUE
+                  WHEN #{userId} = 0 THEN f.user_id IN (SELECT followed_id
+                                                        FROM follows
+                                                        WHERE follower_id = #{myId}) OR f.user_id = #{myId}
                   ELSE f.user_id = #{userId}
                   END
         ORDER BY f.created_at DESC;
+
     </select>
 
     <insert id="writeFeed">

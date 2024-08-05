@@ -25,9 +25,9 @@ public class SnsFeedController {
     }
 
     @Operation (summary = "전체or유저 피드 목록보기-완")
-    @GetMapping ("/")
+    @GetMapping ("/list")
     public ResponseEntity<?> getFeeds(@RequestHeader ("ID") int ID, @RequestParam ("user_id") int userId) {
-        List<FeedDto> feeds = snsFeedService.getFeeds(userId);
+        List<FeedDto> feeds = snsFeedService.getFeeds(ID, userId);
 
         if (feeds != null) {
             if (feeds.isEmpty()) {
@@ -39,7 +39,7 @@ public class SnsFeedController {
     }
 
     @Operation (summary = "피드 글쓰기-완")
-    @PostMapping ("/")
+    @PostMapping ("/write")
     public ResponseEntity<?> writeFeed(@RequestHeader ("ID") int ID, @RequestBody FeedDto feedDto) {
         feedDto.setUserId(ID);
         int result = snsFeedService.writeFeed(feedDto);

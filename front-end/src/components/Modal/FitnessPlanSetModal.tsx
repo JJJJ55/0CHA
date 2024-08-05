@@ -32,6 +32,7 @@ const s = {
 
 interface FitnessPlanModalProps {
   open: boolean;
+  onModal: Function;
 }
 interface FitnessRoutineProps {
   title: string;
@@ -71,11 +72,17 @@ const FitnessPlanSetModal = (props: FitnessPlanModalProps): JSX.Element => {
       alert('제목 및 날짜를 선택하십시오.');
     } else {
       alert(info.title + ' ' + info.date);
+      props.onModal();
     }
   };
 
   return (
-    <ReactModal isOpen={true} className="FitnessCalendarModal" overlayClassName="Overlay">
+    <ReactModal
+      isOpen={props.open}
+      onRequestClose={() => props.onModal()}
+      className="FitnessCalendarModal"
+      overlayClassName="Overlay"
+    >
       <s.Container>
         <Text
           children="루틴 제목"

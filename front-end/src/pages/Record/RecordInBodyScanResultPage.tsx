@@ -133,7 +133,7 @@ const RecordInBodyScanResultPage = (): JSX.Element => {
           width="90%"
         />
       </s.MainArea>
-      <BottomNav />
+      {/* <BottomNav /> */}
     </s.Container>
   );
 };

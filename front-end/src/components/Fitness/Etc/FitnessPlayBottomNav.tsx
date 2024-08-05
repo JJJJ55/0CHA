@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import Button from '../../Common/Button';
 import Text from '../../Common/Text';
+import { useNavigate } from 'react-router';
 
 const s = {
   Container: styled.div`

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
-
 const s = {
   Container: styled.section`
     width: 100%;
@@ -18,6 +17,7 @@ const s = {
     border: none;
     line-height: 2;
     margin-right: 20px;
+    cursor: pointer;
   `,
   LocationOption: styled.option`
     color: ${(props) => props.theme.textColor};
@@ -25,7 +25,6 @@ const s = {
     font-weight: 600;
   `,
 };
-
 
 const cities = [
   '서울특별시',
@@ -268,12 +267,10 @@ const districts: Record<string, string[]> = {
   제주특별자치도: ['제주시', '서귀포시'],
 };
 
-
 interface dataType {
   location1: string;
   location2: string;
 }
-
 
 const LocationDropdown = (): JSX.Element => {
   const [data, setData] = useState<dataType>({
@@ -282,28 +279,27 @@ const LocationDropdown = (): JSX.Element => {
   });
 
   const handleChangeValue = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, value } =  e.target;
+    const { name, value } = e.target;
 
     setData({
       ...data,
       [name]: value,
-    })
-  }
+    });
+  };
 
-  
   return (
     <s.Container>
       <s.LocationSelect name="location1" value={data.location1} onChange={handleChangeValue}>
-        <s.LocationOption value="" children="전체"/>
+        <s.LocationOption value="" children="전체" />
         {cities.map((city) => (
-          <s.LocationOption key={city} value={city} children={city}/>
+          <s.LocationOption key={city} value={city} children={city} />
         ))}
       </s.LocationSelect>
       <s.LocationSelect name="location2" value={data.location2} onChange={handleChangeValue} disabled={!data.location1}>
-        <s.LocationOption value="" children="전체"/>
+        <s.LocationOption value="" children="전체" />
         {data.location1 &&
           districts[data.location1]?.map((district) => (
-            <s.LocationOption key={district} value={district} children={district}/>
+            <s.LocationOption key={district} value={district} children={district} />
           ))}
       </s.LocationSelect>
     </s.Container>

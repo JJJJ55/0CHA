@@ -4,6 +4,7 @@ import Button from '../../../components/Common/Button';
 import test from '../../../asset/img/testImg.png';
 import Header from '../../../components/Common/Header';
 import BottomNav from '../../../components/Common/BottomNav';
+import { useNavigate } from 'react-router';
 
 const s = {
   Container: styled.section`
@@ -26,6 +27,7 @@ const s = {
     display: flex;
     align-items: center;
     padding-bottom: 20px;
+    cursor: default;
   `,
   ProfileImage: styled.img`
     width: 120px;
@@ -94,6 +96,7 @@ const s = {
     color: ${(props) => props.theme.textColor2};
     margin-bottom: 5px;
     font-size: 14px;
+    cursor: default;
   `,
 };
 
@@ -105,17 +108,24 @@ const ProfileMainPage = (): JSX.Element => {
     email: 'example@gmail.com',
     profileImage: test,
   };
+  const navigate = useNavigate();
+  const handleMovePage = (path: string): void => {
+    navigate(path);
+  };
 
   const handleEditProfile = () => {
     alert('프로필 수정 페이지로 이동');
+    navigate('profile');
   };
 
   const handleEditInfo = () => {
     alert('내 정보 수정 페이지로 이동');
+    navigate('info');
   };
 
   const handleChangePassword = () => {
     alert('비밀번호 변경 페이지로 이동');
+    navigate('password');
   };
 
   const handleDeleteAccount = () => {

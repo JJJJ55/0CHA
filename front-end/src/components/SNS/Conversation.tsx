@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import Image from '../Common/Image';
-
+import { useNavigate } from 'react-router';
 
 const s = {
   Container: styled.div`
@@ -10,6 +10,7 @@ const s = {
     display: flex;
     align-items: center;
     margin: 20px 0;
+    cursor: pointer;
   `,
   Username: styled.span`
     color: ${(props) => props.theme.textColor};
@@ -30,29 +31,27 @@ const s = {
   `,
 };
 
-
 interface CommentProps {
   profileImage: string;
   username: string;
   recentChat: string;
 }
 
-
 const Conversation = (props: CommentProps): JSX.Element => {
+  const navigate = useNavigate();
+  const handleMovePage = (): void => {
+    navigate('id');
+  };
   const { profileImage, username, recentChat } = props;
   return (
-    <s.Container>
-      <Image
-        width="45px"
-        height="45px"
-        src={profileImage}
-      />
+    <s.Container onClick={handleMovePage}>
+      <Image width="45px" height="45px" src={profileImage} />
       <s.Content>
         <s.Username>{username}</s.Username>
         <s.RecentChat>{recentChat}</s.RecentChat>
       </s.Content>
     </s.Container>
-  )
+  );
 };
 
 export default Conversation;

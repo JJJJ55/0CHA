@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import Input from '../../components/Common/Input';
 import FitnessListTopNav from '../../components/Fitness/Etc/FitnessListTopNav';
@@ -7,6 +7,9 @@ import { FitnessData } from '../../util/TestData';
 import Button from '../../components/Common/Button';
 import BottomNav from '../../components/Common/BottomNav';
 import { Outlet, useNavigate } from 'react-router';
+import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
+import { navActions, selectNav } from '../../store/nav';
+import { useBottomNavHook } from '../../lib/hook/useBottomNavHook';
 
 const s = {
   Container: styled.section`
@@ -52,29 +55,14 @@ const s = {
   `,
 };
 
-const FitnessListPage = (): JSX.Element => {
-  const navigate = useNavigate();
-  const handleClickMove = (): void => {
-    navigate('../plan');
-  };
+const FitnessPage = (): JSX.Element => {
+  useBottomNavHook('fitness');
   return (
     <s.Container>
-      <s.HeaderArea>
-        <s.InputArea>
-          <Input width="100%" height="40px" placeholder="검색" type="text" name="" value={''} onChange={() => {}} />
-        </s.InputArea>
-        <FitnessListTopNav />
-      </s.HeaderArea>
-      <s.MainArea>
-        <s.FitnessArea>
-          <FitnessList text="즐겨찾기" data={FitnessData} />
-          <FitnessList text="전체" data={FitnessData} />
-        </s.FitnessArea>
-      </s.MainArea>
-      <s.Btn onClick={handleClickMove}>새 루틴에 추가하기</s.Btn>
+      <Outlet />
       <BottomNav />
     </s.Container>
   );
 };
 
-export default FitnessListPage;
+export default FitnessPage;

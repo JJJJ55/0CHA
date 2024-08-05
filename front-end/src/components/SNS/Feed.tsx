@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { MouseEventHandler } from 'react';
 import styled from 'styled-components';
 
 import Image from '../Common/Image';
 import IconSvg from '../Common/IconSvg';
 import Button from '../Common/Button';
-import { ReactComponent as likeOn } from '../../asset/img/svg/likeOn.svg'
-import { ReactComponent as likeOff } from '../../asset/img/svg/liekOff.svg'
-import { ReactComponent as comment } from '../../asset/img/svg/comment.svg'
-
+import { ReactComponent as likeOn } from '../../asset/img/svg/likeOn.svg';
+import { ReactComponent as likeOff } from '../../asset/img/svg/likeOff.svg';
+import { ReactComponent as comment } from '../../asset/img/svg/comment.svg';
+import { useNavigate } from 'react-router';
 
 const s = {
   FeedContentArea: styled.div`
@@ -19,6 +19,7 @@ const s = {
   AuthorName: styled.span`
     color: ${(props) => props.theme.textColor};
     font-size: 12px;
+    cursor: pointer;
   `,
   FeedCaption: styled.span`
     color: ${(props) => props.theme.textColor};
@@ -38,13 +39,19 @@ const s = {
   `,
   RoutineButton: styled.div`
     display: flex;
-    margin-left: auto; 
+    margin-left: auto;
   `,
   AuthorProfileImage: styled(Image)`
     margin-right: 10px;
+    cursor: pointer;
+  `,
+
+  IconArea: styled.div`
+    display: flex;
+    align-items: center;
+    cursor: pointer;
   `,
 };
-
 
 interface FeedProps {
   width: string;
@@ -56,52 +63,54 @@ interface FeedProps {
   likeCnt: string;
   commentCnt: string;
   content: string;
+  onClick: MouseEventHandler<HTMLDivElement>;
 }
 
-
 const Feed = (props: FeedProps): JSX.Element => {
-  const test = () =>{
-    alert("클릭")
-  }
-  const { width, height, src, content, like, likeCnt, commentCnt, authorName, authorProfileImage } = props;
+  const navigate = useNavigate();
+  const handleMovePage = (path: string): void => {
+    navigate(path);
+  };
+  const { width, height, src, content, like, likeCnt, commentCnt, authorName, authorProfileImage, onClick } = props;
   return (
     <>
-    <s.AuthorProfileArea>
-      <s.AuthorProfileImage
-        width="30px"
-        height="30px"
-        src={authorProfileImage}
-      />
-      <s.AuthorName>{authorName}</s.AuthorName>
-    </s.AuthorProfileArea>
-    <Image 
-      width="100%"
-      height="auto"
-      src={src}
-      type="rect"
-    />
-    <s.FeedInteractionArea>
-      {like === 'true' ? (
-        <IconSvg width="25" height="25" color="#ffffff" Ico={likeOn} />
-      ) : (
-        <IconSvg width="25" height="25" color="#ffffff" Ico={likeOff} />
-      )}
-      <s.FeedCaption>{likeCnt}</s.FeedCaption>
-      <IconSvg width="25" height="25" color="#ffffff" Ico={comment} onClick={test} />
-      <s.FeedCaption>{commentCnt}</s.FeedCaption>
-      <s.RoutineButton>
-        <Button
-          width="90px"
+      <s.AuthorProfileArea>
+        <s.AuthorProfileImage
+          width="30px"
           height="30px"
-          children="루틴 불러오기"
-          size="12px"
-          bold="500"
+          src={authorProfileImage}
+          onClick={() => handleMovePage('../profile/id')}
         />
-      </s.RoutineButton>
-    </s.FeedInteractionArea>
-    <s.FeedContentArea>{content}</s.FeedContentArea>
+        <s.AuthorName onClick={() => handleMovePage('../profile/id')}>{authorName}</s.AuthorName>
+      </s.AuthorProfileArea>
+      <Image width="100%" height="auto" src={src} type="rect" />
+      <s.FeedInteractionArea>
+        <s.IconArea>
+          {like === 'true' ? (
+            <IconSvg width="25" height="25" color="#ffffff" Ico={likeOn} />
+          ) : (
+            <IconSvg width="25" height="25" color="#ffffff" Ico={likeOff} />
+          )}
+          <s.FeedCaption>{likeCnt}</s.FeedCaption>
+        </s.IconArea>
+        <s.IconArea onClick={onClick}>
+          <IconSvg width="25" height="25" color="#ffffff" Ico={comment} />
+          <s.FeedCaption>{commentCnt}</s.FeedCaption>
+        </s.IconArea>
+        <s.RoutineButton>
+          <Button
+            width="90px"
+            height="30px"
+            children="루틴 불러오기"
+            size="12px"
+            bold="500"
+            onClick={() => handleMovePage('/fitness/history/detail')}
+          />
+        </s.RoutineButton>
+      </s.FeedInteractionArea>
+      <s.FeedContentArea>{content}</s.FeedContentArea>
     </>
-  )
+  );
 };
 
 export default Feed;

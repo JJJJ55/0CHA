@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.back_end.exercise.mapper.WorkoutRoutineMapper">
+
+    <resultMap id="routineResultMap" type="com.ssafy.back_end.exercise.model.RoutineDto">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="title" column="title"/>
+        <result property="sumVolume" column="sum_volume"/>
+        <result property="sumTime" column="sum_time"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="isUpload" column="is_upload"/>
+        <result property="isComplete" column="is_complete"/>
+        <result property="completedAt" column="completed_at"/>
+        <result property="isLike" column="is_like"/>
+        <result property="dueDate" column="due_date"/>
+    </resultMap>
+
+    <select id="getAllRoutines" parameterType="int" resultMap="routineResultMap">
+        SELECT * FROM routines WHERE user_id = #{userId}
+    </select>
+
+    <select id="getRoutineById" parameterType="int" resultMap="routineResultMap">
+        SELECT * FROM routines WHERE id = #{routineId}
+    </select>
+
+    <insert id="createRoutine" parameterType="com.ssafy.back_end.exercise.model.RoutineDto" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO routines (user_id, title, due_date)
+        VALUES (#{userId}, #{title}, #{dueDate})
+    </insert>
+
+    <update id="updateRoutine" parameterType="com.ssafy.back_end.exercise.model.RoutineDto">
+        UPDATE routines SET title = #{title}, due_date = #{dueDate} WHERE id = #{id}
+    </update>
+
+    <delete id="deleteRoutine" parameterType="int">
+        DELETE FROM routines WHERE id = #{routineId}
+    </delete>
+
+    <insert id="addExerciseToRoutine" parameterType="map">
+        INSERT INTO routine_details (routine_id, exercise_id)
+        VALUES (#{routineId}, #{exerciseId})
+    </insert>
+
+    <delete id="removeExerciseFromRoutine" parameterType="map">
+        DELETE FROM routine_details WHERE routine_id = #{routineId} AND exercise_id = #{exerciseId}
+    </delete>
+
+    <insert id="addSetToExercise" parameterType="com.ssafy.back_end.exercise.model.RoutineSetDto" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO routine_sets (routine_detail, `set`, weight, count, is_complete)
+        VALUES (#{routineDetail}, #{set}, #{weight}, #{count}, #{isComplete})
+    </insert>
+
+    <delete id="removeSetFromExercise" parameterType="int">
+        DELETE FROM routine_sets WHERE id = #{setId}
+    </delete>
+
+    <update id="completeRoutine" parameterType="int">
+        UPDATE routines SET is_complete = true, completed_at = NOW() WHERE id = #{routineId}
+    </update>
+
+</mapper>

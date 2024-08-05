@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.back_end.sns.mapper.SnsItemMapper">
+
+    <resultMap id="item" type="com.ssafy.back_end.sns.model.ItemDto">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="price" column="price"/>
+        <result property="isSold" column="is_sold"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="likeCount" column="like_count"/>
+        <result property="userId" column="user_id"/>
+        <result property="nickname" column="nickname"/>
+        <result property="profileImage" column="profile_image"/>
+        <collection property="images" ofType="java.lang.String">
+            <result column="image_url"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="itemDetail" type="com.ssafy.back_end.sns.model.ItemDto">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="price" column="price"/>
+        <result property="content" column="content"/>
+        <result property="isSold" column="is_sold"/>
+        <result property="district" column="district"/>
+        <result property="siGunGu" column="si_gun_gu"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="likeCount" column="like_count"/>
+        <result property="userId" column="user_id"/>
+        <result property="nickname" column="nickname"/>
+        <result property="profileImage" column="profile_image"/>
+        <collection property="images" ofType="java.lang.String">
+            <result column="image_url"/>
+        </collection>
+    </resultMap>
+
+    <select id="getItems" resultMap="item">
+        SELECT i.id                                                                              AS id,
+               i.title                                                                           AS title,
+               i.price                                                                           AS price,
+               i.is_sold                                                                         AS is_sold,
+               i.created_at                                                                      AS created_at,
+               u.id                                                                              AS user_id,
+               u.nickname                                                                        AS nickname,
+               u.profile_image                                                                   AS profile_image,
+               (SELECT COUNT(*) FROM item_details WHERE item_id = i.id AND detail_type = 'like') AS `like_count`,
+               d.image_url                                                                       AS image_url
+        FROM items i
+                 JOIN
+             users u
+             ON i.user_id = u.id
+                 LEFT JOIN
+             (SELECT item_id, image_url
+              FROM item_details
+              WHERE detail_type = 'image' ) d ON i.id = d.item_id
+        WHERE CASE
+                  WHEN #{userId} = 0 THEN TRUE
+                  ELSE i.user_id = #{userId}
+                  END
+        ORDER BY i.created_at DESC
+    </select>
+
+    <select id="getItemDetail" resultMap="itemDetail">
+        SELECT i.id                                                                              AS id,
+               i.title                                                                           AS title,
+               i.price                                                                           AS price,
+               i.content                                                                         AS content,
+               i.is_sold                                                                         AS is_sold,
+               i.district                                                                        AS district,
+               i.si_gun_gu                                                                       AS si_gun_gu,
+               i.created_at                                                                      AS created_at,
+               (SELECT COUNT(*) FROM item_details WHERE item_id = i.id AND detail_type = 'like') AS like_count,
+               u.id                                                                              AS user_id,
+               u.nickname                                                                        AS nickname,
+               u.profile_image                                                                   AS profile_image,
+               d.image_url                                                                       AS image_url
+        FROM items i
+                 JOIN
+             users u
+             ON i.user_id = u.id
+                 LEFT JOIN item_details d ON i.id = d.item_id AND d.detail_type = 'image'
+        WHERE i.id = #{itemId} LIMIT 5
+    </select>
+
+    <insert id="insertItem" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO items (title, price, content, user_id, created_at)
+        VALUES (#{title}, #{price}, #{content}, #{userId}, NOW())
+    </insert>
+
+    <insert id="insertItemImages">
+        INSERT INTO item_details (item_id, user_id, detail_type, image_url, uploaded_at)
+        VALUES
+        <foreach collection="images" item="image" separator=",">
+            (#{itemId}, #{userId}, 'image', #{image}, NOW())
+        </foreach>
+    </insert>
+
+    <delete id="deleteItemImages">
+        DELETE
+        FROM item_details
+        WHERE item_id = #{itemId}
+          AND detail_type = 'image';
+    </delete>
+
+    <update id="updateItem">
+        UPDATE items
+        SET title      = #{title},
+            price      = #{price},
+            content    = #{content},
+            updated_at = NOW()
+        WHERE id = #{id};
+    </update>
+
+    <delete id="deleteItem">
+        DELETE
+        FROM items
+        WHERE id = #{id};
+    </delete>
+
+    <select id="isLike" resultType="int">
+        SELECT COUNT(*)
+        FROM item_details
+        WHERE item_id = #{itemId}
+          AND user_id = #{userId}
+          AND detail_type = "like";
+    </select>
+
+    <insert id="likeItem">
+        INSERT INTO item_details (item_id, user_id, detail_type)
+        VALUES (#{itemId}, #{userId}, "like");
+    </insert>
+
+    <delete id="dislikeItem">
+        DELETE
+        FROM item_details
+        WHERE item_id = #{itemId}
+          AND user_id = #{userId}
+          AND detail_type = "like";
+    </delete>
+
+    <update id="soldOut">
+        UPDATE items
+        SET is_sold = 1
+        WHERE id = #{id};
+    </update>
+</mapper>

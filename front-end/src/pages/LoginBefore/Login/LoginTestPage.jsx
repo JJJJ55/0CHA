@@ -53,41 +53,37 @@ const s = {
     font-size: 14px;
   `,
 };
-interface dataType {
-  email: string;
-  password: string;
-}
 
-const LoginPage = (): JSX.Element => {
-  const [data, setData] = useState<dataType>({
+const LoginTestPage = () => {
+  const [data, setData] = useState({
     email: '',
     password: '',
   });
   const navigate = useNavigate();
 
-  const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeValue = (e) => {
     setData({
       ...data,
       [e.target.name]: e.target.value,
     });
   };
-  const handleClickLogin = (): void => {
+  const handleClickLogin = () => {
     // alert(data.email + ' ' + data.pw);
     postLogin(data);
     // navigate('/main');
   };
-  const handleMovePage = (path: string): void => {
+  const handleMovePage = (path) => {
     navigate(path);
   };
 
   // 로그인
-  const postLogin = (data: dataType) => {
+  const postLogin = (data) => {
     login(
       data,
-      (resp: any) => {
+      (resp) => {
         console.log(resp.data);
       },
-      (error: any) => {
+      (error) => {
         console.log('로그인 실패');
         console.log(error);
       },
@@ -96,9 +92,6 @@ const LoginPage = (): JSX.Element => {
 
   return (
     <s.Container>
-      <s.Title>
-        <Logo />
-      </s.Title>
       <s.LoginArea>
         <Input
           width="80%"
@@ -168,4 +161,4 @@ const LoginPage = (): JSX.Element => {
   );
 };
 
-export default LoginPage;
+export default LoginTestPage;

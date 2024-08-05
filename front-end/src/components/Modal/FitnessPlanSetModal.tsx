@@ -7,11 +7,12 @@ import Input from '../Common/Input';
 import Button from '../Common/Button';
 import Text from '../Common/Text';
 import CalendarArea from '../Common/CalendarArea';
+import { useModalExitHook } from '../../lib/hook/useModalExitHook';
 
 const s = {
   Container: styled.div`
     width: 100%;
-    height: 100vh;
+    height: 100%;
     background-color: ${(props) => props.theme.bgColor};
     color: ${(props) => props.theme.textColor};
     padding: 20px 0 20px 0;
@@ -79,6 +80,7 @@ const FitnessPlanSetModal = (props: FitnessPlanModalProps): JSX.Element => {
   return (
     <ReactModal
       isOpen={props.open}
+      ariaHideApp={false}
       onRequestClose={() => props.onModal()}
       className="FitnessCalendarModal"
       overlayClassName="Overlay"

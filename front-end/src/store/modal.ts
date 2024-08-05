@@ -32,6 +32,18 @@ export const modalSlice = createSlice({
     toggleMarket: (state) => {
       state.isMarket = !state.isMarket;
     },
+    CloseCalendar: (state) => {
+      state.isCalendar = false;
+    },
+    CloseUserSearch: (state) => {
+      state.isUserSearch = false;
+    },
+    CloseComment: (state) => {
+      state.isComment = false;
+    },
+    CloseMarket: (state) => {
+      state.isMarket = false;
+    },
   },
 });
 

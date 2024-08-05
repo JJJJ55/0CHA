@@ -2,6 +2,8 @@ package com.ssafy.back_end.auth.controller;
 
 import com.ssafy.back_end.auth.model.UserDto;
 import com.ssafy.back_end.auth.service.UserRegisterService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Random;
 
+@Tag (name = "AUTH회원가입")
 @RestController
 @RequestMapping (value = "/api/auth/register")
 public class UserRegisterController {
@@ -20,6 +23,7 @@ public class UserRegisterController {
         this.userRegisterService = userRegisterService;
     }
 
+    @Operation (summary = "회원가입")
     @PostMapping ("/signup")
     public ResponseEntity<?> register(@RequestBody UserDto userDto) {
         int result = userRegisterService.register(userDto);
@@ -32,6 +36,7 @@ public class UserRegisterController {
         }
     }
 
+    @Operation (summary = "이메일 중복검사&인증발송")
     @PostMapping ("/check_email")
     public ResponseEntity<?> checkEmail(@RequestBody String email) {
         int result = userRegisterService.checkEmail(email);
@@ -45,6 +50,7 @@ public class UserRegisterController {
         }
     }
 
+    @Operation (summary = "이메일 인증확인")
     @PostMapping ("/check_email/verify")
     public ResponseEntity<?> verifyEmail(@RequestBody int code) {
         if (code == authCode) {
@@ -56,6 +62,7 @@ public class UserRegisterController {
         }
     }
 
+    @Operation (summary = "닉네임 중복검사")
     @PostMapping ("/check_nickname")
     public ResponseEntity<?> checkNickname(@RequestBody String nickname) {
         int result = userRegisterService.checkNickname(nickname);

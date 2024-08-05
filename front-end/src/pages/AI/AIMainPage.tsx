@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import styled, { css } from 'styled-components';
 import Header from '../../components/Common/Header';
 import ResultModal from '../../components/AI/ResultModal';
@@ -15,12 +15,12 @@ const s = {
   `,
   AIArea: styled.div`
     width: 100%;
-    height: 100%;
+    height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 60px 10px 70px;
+    padding: 100px 10px 120px;
   `,
   PageBody: styled.div`
     display: flex;
@@ -64,6 +64,11 @@ const s = {
     margin-top: 20px;
     width: 100%;
   `,
+  BtnArea: styled.div`
+    width: 100%;
+    display: flex;
+    gap: 5px;
+  `,
   ProgressBar: styled.div`
     width: 100%;
     background-color: ${(props) => props.theme.subColor};
@@ -85,11 +90,14 @@ const s = {
 };
 
 const AIMainPage: React.FC = () => {
-  const [isResultModalOpen, setIsResultModalOpen] = useState(false); // 결과창
-  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false); // 설정 창
-  const [progress, setProgress] = useState(0); // 진행바
+  const [isResultModalOpen, setIsResultModalOpen] = useState(false);
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [currentResult, setCurrentResult] = useState<{ isError: boolean; message: string } | null>(null);
-  // 운동 결과. (추후 받는 로직 작성)
+
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
   const results = [
     { set: 1, isError: false, message: '좋은 자세입니다.' },
     { set: 2, isError: true, message: '허리 굽힘이 발생했습니다.' },
@@ -106,7 +114,7 @@ const AIMainPage: React.FC = () => {
     { set: 13, isError: false, message: '좋은 자세입니다.' },
     { set: 14, isError: false, message: '좋은 자세입니다.' },
   ];
-  // 나중엔 자동인식으로 바뀔 부분
+
   const handleNext = () => {
     if (progress < 99) {
       const nextProgress = progress + 100 / results.length;
@@ -116,18 +124,67 @@ const AIMainPage: React.FC = () => {
     }
   };
 
+  const [cameraStarted, setCameraStarted] = useState(false);
+  const [facingMode, setFacingMode] = useState('user');
+  const [stream, setStream] = useState<MediaStream | null>(null); // 스트림 상태 추가
+
+  const startCamera = () => {
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      const constraints = {
+        video: {
+          facingMode: facingMode,
+        },
+      };
+
+      navigator.mediaDevices
+        .getUserMedia(constraints)
+        .then((stream) => {
+          if (videoRef.current) {
+            videoRef.current.srcObject = stream;
+            setStream(stream); // 스트림을 상태에 저장
+            setCameraStarted(true);
+          }
+        })
+        .catch((error) => {
+          console.error('카메라 접근 권한이 거부되었습니다:', error);
+        });
+    } else {
+      alert('이 브라우저는 카메라 접근을 지원하지 않습니다. 다른 브라우저를 사용해 주세요.');
+    }
+  };
+
+  const stopCamera = () => {
+    if (stream) {
+      stream.getTracks().forEach((track) => track.stop()); // 모든 트랙을 중지
+      setCameraStarted(false);
+      setStream(null); // 스트림 상태를 초기화
+    }
+  };
+
+  const switchCamera = () => {
+    setFacingMode(facingMode === 'user' ? 'environment' : 'user');
+
+    // 카메라를 전환하고 재시작
+    if (cameraStarted) {
+      stopCamera();
+      startCamera();
+    }
+  };
+
   return (
     <s.Container>
       <Header text="AI 트레이너" />
       <s.AIArea>
-        <s.CameraHeader children="카메라를 사용자 기준 우측 하단에 위치해 주세요." />
+        <s.CameraHeader>카메라를 사용자 기준 우측 하단에 위치해 주세요.</s.CameraHeader>
         <s.CameraBox $isError={currentResult ? currentResult.isError : null}>
+          <video ref={videoRef} autoPlay playsInline width="100%" height="100%" max-height="100%" />
+
           {currentResult && (currentResult.isError ? 'X' : 'O')}
         </s.CameraBox>
         <s.PageBody>
           {isResultModalOpen && <ResultModal onClose={() => setIsResultModalOpen(false)} results={results} />}
           {isSettingsModalOpen && <SettingModal onClose={() => setIsSettingsModalOpen(false)} />}
-          <s.SettingBtn onClick={() => setIsSettingsModalOpen(true)} children="트레이닝 설정" />
+          <s.SettingBtn onClick={() => setIsSettingsModalOpen(true)}>트레이닝 설정</s.SettingBtn>
           {progress < 99 ? (
             <>
               <s.ProgressBar>
@@ -136,10 +193,17 @@ const AIMainPage: React.FC = () => {
               <s.ProgressText>
                 {Math.round((progress * results.length) / 100)} / {results.length}
               </s.ProgressText>
-              <s.SettingBtn onClick={handleNext} children="다음" />
+              <s.SettingBtn onClick={handleNext}>다음</s.SettingBtn>
             </>
           ) : (
-            <s.SettingBtn onClick={() => setIsResultModalOpen(true)} children="결과 보기" />
+            <s.SettingBtn onClick={() => setIsResultModalOpen(true)}>결과 보기</s.SettingBtn>
+          )}
+          {!cameraStarted && <s.SettingBtn onClick={startCamera} disabled={cameraStarted} children="카메라 시작" />}
+          {cameraStarted && (
+            <s.BtnArea>
+              <s.SettingBtn children="카메라 전환" onClick={switchCamera} />
+              <s.SettingBtn children="카메라 종료" onClick={stopCamera} />
+            </s.BtnArea>
           )}
         </s.PageBody>
       </s.AIArea>

@@ -20,12 +20,14 @@ public class SnsFeedServiceImpl implements SnsFeedService {
     }
 
     @Override
-    public List<FeedDto> getFeeds(int userId) {
-        return snsFeedMapper.getFeeds(userId);
+    public List<FeedDto> getFeeds(int myId, int userId) {
+        return snsFeedMapper.getFeeds(myId, userId);
     }
 
     @Override
     public int writeFeed(FeedDto feedDto) {
+        validateImages(feedDto.getImage());
+
         FeedDto feed = FeedDto.builder()
                 .content(feedDto.getContent())
                 .image(feedDto.getImage())
@@ -37,6 +39,8 @@ public class SnsFeedServiceImpl implements SnsFeedService {
 
     @Override
     public int updateFeed(FeedDto feedDto) {
+        validateImages(feedDto.getImage());
+
         FeedDto feed = FeedDto.builder()
                 .content(feedDto.getContent())
                 .image(feedDto.getImage())
@@ -98,5 +102,12 @@ public class SnsFeedServiceImpl implements SnsFeedService {
     @Override
     public int deleteComment(int commentId) {
         return snsFeedMapper.deleteComment(commentId);
+    }
+
+    @Override
+    public void validateImages(String image) {
+        if (image == null || image.isEmpty()) {
+            throw new IllegalArgumentException("At least one image is required.");
+        }
     }
 }

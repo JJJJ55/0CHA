@@ -9,6 +9,7 @@ declare module 'react-modal' {
     shouldCloseOnEsc?: boolean;
     className?: string;
     overlayClassName?: string;
+    ariaHideApp?: boolean;
     style?: {
       content?: React.CSSProperties;
       overlay?: React.CSSProperties;

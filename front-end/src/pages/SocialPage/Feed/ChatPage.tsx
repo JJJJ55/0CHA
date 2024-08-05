@@ -9,8 +9,8 @@ import Input from '../../../components/Common/Input';
 import Chat from '../../../components/SNS/Chat';
 import { ReactComponent as back } from '../../../asset/img/svg/back.svg';
 
-import test from "../../../asset/img/testImg.png";
-
+import test from '../../../asset/img/testImg.png';
+import { useNavigate } from 'react-router';
 
 const s = {
   Container: styled.section`
@@ -29,6 +29,7 @@ const s = {
     display: flex;
     align-items: center;
     margin-left: 20px;
+    cursor: pointer;
   `,
   ChatHeader: styled.section`
     max-width: 800px;
@@ -60,56 +61,33 @@ const s = {
   `,
 };
 
-
 const ChatPage = (): JSX.Element => {
+  const navigate = useNavigate();
+  const handleMovePage = (): void => {
+    navigate('../../profile/id');
+  };
   return (
     <>
-    <s.ChatHeader>
-      <IconSvg
-        width="25"
-        height="25"
-        Ico={back}
-      />
-      <s.ProfileArea>
-        <Image
-          width="40px"
-          height="40px"
-          src={test}
-        />
-        <s.ProfileText>stranger_00</s.ProfileText>
-      </s.ProfileArea>
-    </s.ChatHeader>
-    <s.Container>
-      <Chat
-        isMyChat={true}
-        content="채팅입니다"
-      />
-      <Chat
-        isMyChat={false}
-        content="야호"
-      />
-    </s.Container>
-    <s.Send>
-      <s.InputArea>
-        <s.Input>
-          <Input
-            width="100%"
-            height="40px"
-            placeholder="내용 입력"
-          />
-        </s.Input>
-        <Button
-          width="64px"
-          height="40px"
-          children="전송"
-          size="14px"
-          bold="500"
-          type="main"
-          margin="0 0 0 10px"
-        />
-      </s.InputArea>
-    </s.Send>
-    <BottomNav/>
+      <s.ChatHeader>
+        <IconSvg width="25" height="25" Ico={back} cursor="pointer" />
+        <s.ProfileArea onClick={handleMovePage}>
+          <Image width="40px" height="40px" src={test} />
+          <s.ProfileText>stranger_00</s.ProfileText>
+        </s.ProfileArea>
+      </s.ChatHeader>
+      <s.Container>
+        <Chat isMyChat={true} content="채팅입니다" />
+        <Chat isMyChat={false} content="야호" />
+      </s.Container>
+      <s.Send>
+        <s.InputArea>
+          <s.Input>
+            <Input width="100%" height="40px" placeholder="내용 입력" />
+          </s.Input>
+          <Button width="64px" height="40px" children="전송" size="14px" bold="500" type="main" margin="0 0 0 10px" />
+        </s.InputArea>
+      </s.Send>
+      <BottomNav />
     </>
   );
 };

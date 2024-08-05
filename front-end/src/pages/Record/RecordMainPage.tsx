@@ -7,6 +7,7 @@ import Button from '../../components/Common/Button';
 import BottomNav from '../../components/Common/BottomNav';
 import IconSvg from '../../components/Common/IconSvg';
 import { ReactComponent as move } from '../../asset/img/svg/move.svg';
+import { useNavigate } from 'react-router';
 const s = {
   Continer: styled.section`
     height: 100%;
@@ -29,9 +30,14 @@ const s = {
 };
 
 const RecordMainPage = (): JSX.Element => {
+  const navigate = useNavigate();
+  const handleClickMove = (path: string): void => {
+    navigate(path);
+  };
   const attendDay = ['2024-07-30', '2024-07-15', '2024-08-12']; // 운동시작 버튼 누른 날
   const attendDay2 = ['2024-07-31', '2024-07-16', '2024-08-13']; // 운동 시작버튼 안누른 날(계획)
   const handleChangeDate = () => {};
+
   return (
     <s.Continer>
       <Header text="기록" />
@@ -70,20 +76,20 @@ const RecordMainPage = (): JSX.Element => {
           display="block"
           margin="0 auto"
         />
-        <s.TextBtnArea>
+        <s.TextBtnArea onClick={() => handleClickMove('../inbody/scan')}>
           <Text children="인바디 등록" color="textColor" bold="500" size="16px" width="100px" cursor="pointer" />
           <IconSvg width="24" height="24" Ico={move} />
         </s.TextBtnArea>
-        <s.TextBtnArea>
+        <s.TextBtnArea onClick={() => handleClickMove('../inbody/data')}>
           <Text children="인바디 결과" color="textColor" bold="500" size="16px" width="100px" cursor="pointer" />
           <IconSvg width="24" height="24" Ico={move} />
         </s.TextBtnArea>
-        <s.TextBtnArea>
+        <s.TextBtnArea onClick={() => handleClickMove('../data')}>
           <Text children="운동 기록" color="textColor" bold="500" size="16px" width="100px" cursor="pointer" />
           <IconSvg width="24" height="24" Ico={move} />
         </s.TextBtnArea>
       </s.MainArea>
-      <BottomNav />
+      {/* <BottomNav /> */}
     </s.Continer>
   );
 };

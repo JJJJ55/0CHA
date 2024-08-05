@@ -91,7 +91,7 @@ const RecordInBodyChartPage = (): JSX.Element => {
           <s.Btn>왼다리</s.Btn>
         </s.TextBtnArea>
       </s.MainArea>
-      <BottomNav />
+      {/* <BottomNav /> */}
     </s.Container>
   );
 };

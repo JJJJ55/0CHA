@@ -5,6 +5,8 @@ import IconSvg from '../../components/Common/IconSvg';
 import { ReactComponent as alarm } from '../../asset/img/svg/alram.svg';
 import BottomNav from '../../components/Common/BottomNav';
 import Button from '../../components/Common/Button';
+import { useBottomNavHook } from '../../lib/hook/useBottomNavHook';
+import { useNavigate } from 'react-router';
 
 const s = {
   Header: styled.header`
@@ -19,6 +21,8 @@ const s = {
   Title: styled.h1`
     font-size: 20px;
     margin: 0;
+    cursor: default;
+    font-weight: 600;
   `,
   HeaderIcons: styled.div`
     display: flex;
@@ -61,6 +65,7 @@ const s = {
     height: 100%;
     object-fit: cover;
     border-radius: 10px;
+    cursor: pointer;
   `,
   ItemText: styled.div`
     position: absolute;
@@ -73,6 +78,7 @@ const s = {
     background-color: rgba(0, 0, 0, 0.5);
     padding: 5px;
     border-radius: 5px;
+    cursor: default;
   `,
   RoutineList: styled.div`
     width: 100%;
@@ -98,6 +104,7 @@ const s = {
   RoutineInfo: styled.div`
     display: flex;
     flex-direction: column;
+    cursor: default;
   `,
   RoutineName: styled.div`
     font-size: 16px;
@@ -123,6 +130,7 @@ const s = {
     width: 40px;
     height: 40px;
     border-radius: 50%;
+    cursor: pointer;
   `,
   Container: styled.div`
     padding: 10px 20px 20px;
@@ -141,6 +149,7 @@ const s = {
   SectionTitle: styled.h4`
     font-size: 18px;
     margin: 0;
+    cursor: default;
   `,
   PageBody: styled.div`
     display: flex;
@@ -170,6 +179,12 @@ interface HorizontalScrollProps {
 const HorizontalScroll: React.FC<HorizontalScrollProps> = ({ items }) => {
   const scrollWrapperRef = useRef<HTMLDivElement | null>(null);
 
+  useBottomNavHook('main');
+  const navigate = useNavigate();
+  const handleMovePage = (path: string): void => {
+    navigate(path);
+  };
+
   useEffect(() => {
     const scrollWrapper = scrollWrapperRef.current;
     if (scrollWrapper) {
@@ -191,7 +206,7 @@ const HorizontalScroll: React.FC<HorizontalScrollProps> = ({ items }) => {
       <s.SectionTitle children="추천 루틴" />
       <s.ScrollArea ref={scrollWrapperRef}>
         {items.map((item, index) => (
-          <s.Item key={index}>
+          <s.Item key={index} onClick={() => handleMovePage('/fitness/history/detail')}>
             <s.ItemImage src={item.image} alt={item.name} />
             <s.ItemText>{item.name}</s.ItemText>
           </s.Item>
@@ -202,6 +217,10 @@ const HorizontalScroll: React.FC<HorizontalScrollProps> = ({ items }) => {
 };
 
 const MainPage = (): JSX.Element => {
+  const navigate = useNavigate();
+  const handleMovePage = (path: string): void => {
+    navigate(path);
+  };
   const items = [
     { name: '월요일 추천 루틴', image: testImage },
     { name: '헬스장 꿀팁 300선', image: testImage },
@@ -224,19 +243,22 @@ const MainPage = (): JSX.Element => {
     <s.Header>
       <s.Title children="홈" />
       <s.HeaderIcons>
-        <IconSvg width="25" height="25" color="#ffffff" Ico={alarm} />
-        <s.ProfileImage src={testImage} alt="Profile" />
+        <IconSvg
+          width="25"
+          height="25"
+          color="#ffffff"
+          Ico={alarm}
+          cursor="pointer"
+          onClick={() => handleMovePage('/sns/notification')}
+        />
+        <s.ProfileImage src={testImage} alt="Profile" onClick={() => handleMovePage('/mypage')} />
       </s.HeaderIcons>
     </s.Header>
   );
 
   const handleLiveExercise = () => {
     alert('진행중인 운동 페이지로 이동합니다.');
-  };
-
-  const handleMoreClick = () => {
-    alert('목록 페이지로 이동합니다');
-    // 여기서 목록 페이지로 이동하는 로직을 추가할 수 있습니다.
+    navigate('/play');
   };
 
   return (
@@ -250,7 +272,7 @@ const MainPage = (): JSX.Element => {
         <s.ScrollContainer>
           <s.SectionTitleContainer>
             <s.SectionTitle children="내 루틴" />
-            <s.MoreBtn onClick={handleMoreClick} children="더보기" />
+            <s.MoreBtn onClick={() => handleMovePage('/fitness/history')} children="더보기" />
           </s.SectionTitleContainer>
           <s.RoutineList>
             {routineItems.map((routine, index) => (
@@ -259,7 +281,7 @@ const MainPage = (): JSX.Element => {
                   <s.RoutineName children={routine.name} />
                   <s.RoutineDate children={routine.date} />
                 </s.RoutineInfo>
-                <s.RoutineBtn children="상세보기" />
+                <s.RoutineBtn children="상세보기" onClick={() => handleMovePage('/fitness/history/detail')} />
               </s.RoutineItem>
             ))}
           </s.RoutineList>

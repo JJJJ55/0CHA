@@ -5,7 +5,7 @@ import Image from '../Common/Image';
 import IconSvg from '../Common/IconSvg';
 import Button from '../Common/Button';
 import { ReactComponent as likeOn } from '../../asset/img/svg/likeOn.svg';
-import { ReactComponent as likeOff } from '../../asset/img/svg/liekOff.svg';
+import { ReactComponent as likeOff } from '../../asset/img/svg/likeOff.svg';
 import { ReactComponent as comment } from '../../asset/img/svg/comment.svg';
 import { useNavigate } from 'react-router';
 

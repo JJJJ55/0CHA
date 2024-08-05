@@ -33,13 +33,13 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000", "http://127.0.0.1:3000")
-                .allowedMethods("*")
-                .allowedHeaders("*")
-                .excludePathPatterns("/api/sns/**");
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(jwtInterceptor)
+                .addPathPatterns("/api/**") // 인터셉터를 적용할 경로
+                .excludePathPatterns("/api/auth/**") // 인터셉터를 제외할 경로
+                .excludePathPatterns("/api/redis/**")
+                .excludePathPatterns("/api/workout/**")
+                .excludePathPatterns("/api/sns/**")
+                .excludePathPatterns("/api/routine/**");
     }
-
-
 }

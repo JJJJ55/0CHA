@@ -37,6 +37,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(jwtInterceptor)
                 .addPathPatterns("/api/**") // 인터셉터를 적용할 경로
                 .excludePathPatterns("/api/auth/**") // 인터셉터를 제외할 경로
-                .excludePathPatterns("/api/redis/**");
+                .excludePathPatterns("/api/redis/**")
+                .excludePathPatterns("/api/sns/chat/**");
     }
 }

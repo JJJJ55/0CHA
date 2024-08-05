@@ -47,6 +47,7 @@ import ChatPage from './pages/SocialPage/Feed/ChatPage';
 import NotificationPage from './pages/SocialPage/Feed/NotificationPage';
 import { useAppSelector } from './lib/hook/useReduxHook';
 import { selectSnsType } from './store/page';
+import LoginTestPage from './pages/LoginBefore/Login/LoginTestPage';
 
 const s = {
   Background: styled.section`
@@ -86,7 +87,7 @@ function App() {
             <Routes>
               <Route element={<PublicRoute />}>
                 <Route path="/" element={<SplashPage />} />
-                <Route path="/login" element={<LoginPage />} />
+                <Route path="/login" element={<LoginTestPage />} />
                 <Route path="/signup">
                   <Route index element={<SignUpPage />} />
                   <Route path="ok" element={<PlusInfoPage />} />

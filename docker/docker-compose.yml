@@ -22,6 +22,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+    networks:
+      - my-network
 
   redis:
     build: ./redis
@@ -40,6 +42,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+    networks:
+      - my-network
 
   jenkins:
     build: ./jenkins
@@ -58,6 +62,8 @@ services:
       - TZ=${TZ}
       - JENKINS_OPTS=--prefix=/jenkins
     restart: always
+    networks:
+      - my-network
 
   spring:
     image: parksangcheon/spring:latest
@@ -76,6 +82,8 @@ services:
       nginx:
         condition: service_started
     restart: always
+    networks:
+      - my-network
 
   nginx:
     build: ./nginx
@@ -86,4 +94,10 @@ services:
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
     restart: always
+    networks:
+      - my-network
+
+networks:
+  my-network:
+    driver: bridge
 

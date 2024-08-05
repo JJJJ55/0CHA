@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import Image from '../Common/Image';
 import IconSvg from '../Common/IconSvg';
 import { ReactComponent as likeOn } from '../../asset/img/svg/likeOn.svg';
-import { ReactComponent as likeOff } from '../../asset/img/svg/liekOff.svg';
+import { ReactComponent as likeOff } from '../../asset/img/svg/likeOff.svg';
 
 const s = {
   Container: styled.section`

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.back_end.exercise.mapper.WorkoutExerciseMapper">
+    <select id="getAllExercises" resultType="com.ssafy.back_end.exercise.model.ExerciseDto">
+        SELECT * FROM exercises
+    </select>
+
+    <select id="getExerciseById" parameterType="int" resultType="com.ssafy.back_end.exercise.model.ExerciseDto">
+        SELECT * FROM exercises WHERE id = #{id}
+    </select>
+
+    <select id="isFavoriteExercise" parameterType="map" resultType="com.ssafy.back_end.exercise.model.ExerciseLikeDto">
+        SELECT * FROM exercise_likes WHERE exercise_id = #{exerciseId} AND user_id = #{userId}
+    </select>
+
+    <insert id="favoriteExercise" parameterType="map">
+        INSERT INTO exercise_likes (exercise_id, user_id) VALUES (#{exerciseId}, #{userId})
+    </insert>
+
+    <delete id="unfavoriteExercise" parameterType="map">
+        DELETE FROM exercise_likes WHERE exercise_id = #{exerciseId} AND user_id = #{userId}
+    </delete>
+</mapper>

@@ -11,7 +11,7 @@ import java.util.List;
 @Mapper
 public interface SnsFeedMapper {
 
-    List<FeedDto> getFeeds(@Param ("userId") int userId);   //특정 유저 피드 모두 보기
+    List<FeedDto> getFeeds(@Param("myId") int myId, @Param ("userId") int userId);   //특정 유저 피드 모두 보기
 
     int writeFeed(FeedDto feedDto);   //피드 작성
 
@@ -19,7 +19,7 @@ public interface SnsFeedMapper {
 
     int deleteFeed(@Param ("id") int feedId);   //피드 삭제
 
-    List<UserPageDto> getListLikes(@Param ("feedId") int feedId);   //피드 좋아요 목록 조 회
+    List<UserPageDto> getListLikes(@Param ("feedId") int feedId);   //피드 좋아요 목록 조회
 
     int isLike(@Param ("feedId") int feedId, @Param ("userId") int userId);   //내가 좋아요 눌렀는지 확인
 

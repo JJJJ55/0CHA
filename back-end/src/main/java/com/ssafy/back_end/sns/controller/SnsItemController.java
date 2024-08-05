@@ -13,7 +13,7 @@ import java.util.List;
 
 @Tag (name = "SNS중고장터")
 @RestController
-@RequestMapping (value = "/api/sns/item/")
+@RequestMapping (value = "/api/sns/item")
 public class SnsItemController {
     private final SnsItemService snsItemService;
 
@@ -22,8 +22,8 @@ public class SnsItemController {
         this.snsItemService = snsItemService;
     }
 
-    @Operation (summary = "전체or유저 중고장터 목록보기")
-    @GetMapping ("/")
+    @Operation (summary = "전체or유저 중고장터 목록보기-완")
+    @GetMapping ("/list")
     public ResponseEntity<?> getItems(@RequestHeader ("ID") int ID, @RequestParam ("user_id") int userId) {
         List<ItemDto> items = snsItemService.getItems(userId);
 
@@ -36,7 +36,7 @@ public class SnsItemController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("중고장터 조회 오류");
     }
 
-    @Operation (summary = "중고장터 자세히보기")
+    @Operation (summary = "중고장터 자세히보기-완")
     @GetMapping ("/{itemId}")
     public ResponseEntity<?> getItemDetail(@RequestHeader ("ID") int ID, @PathVariable ("itemId") int itemId) {
         ItemDto item = snsItemService.getItemDetail(itemId);
@@ -47,10 +47,11 @@ public class SnsItemController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("중고장터 세부조회 오류");
     }
 
-    @Operation (summary = "중고장터 글쓰기")
-    @PostMapping ("/")
-    public ResponseEntity<?> writeItem(@RequestHeader ("ID") int ID, @RequestBody ItemDto item, @RequestBody List<String> images) {
-        int id = snsItemService.writeItem(item, images);
+    @Operation (summary = "중고장터 글쓰기-완")
+    @PostMapping ("/write")
+    public ResponseEntity<?> writeItem(@RequestHeader ("ID") int ID, @RequestBody ItemDto item) {
+        item.setUserId(ID);
+        int id = snsItemService.writeItem(item);
 
         if (id > 0) {
             return ResponseEntity.ok("중고마켓 작성 성공");
@@ -58,12 +59,14 @@ public class SnsItemController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("중고마켓 작성 오류");
     }
 
-    @Operation (summary = "중고장터 글수정")
+    @Operation (summary = "중고장터 글수정-완")
     @PutMapping ("/{itemId}")
-    public ResponseEntity<?> updateItem(@RequestHeader ("ID") int ID, @PathVariable int itemId, @RequestBody ItemDto item, @RequestBody List<String> images) {
+    public ResponseEntity<?> updateItem(@RequestHeader ("ID") int ID, @PathVariable int itemId, @RequestBody ItemDto item) {
+        item.setUserId(ID);
         item.setId(itemId);
-        int id = snsItemService.updateItem(item, images);
-        if (itemId > 0) {
+        int id = snsItemService.updateItem(item);
+
+        if (id > 0) {
             return ResponseEntity.ok("중고마켓 수정 성공");
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("중고마켓 수정 오류");
@@ -116,5 +119,16 @@ public class SnsItemController {
         else {
             return ResponseEntity.ok("좋아요 안눌려 있음");
         }
+    }
+
+    @Operation (summary = "중고장터 판매완료-완")
+    @PutMapping ("/{itemId}/soldout")
+    public ResponseEntity<?> soldOut(@RequestHeader ("ID") int ID, @PathVariable int itemId) {
+        int id = snsItemService.soldOut(itemId);
+
+        if (id > 0) {
+            return ResponseEntity.ok("중고마켓 판매상태 변경 성공");
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("중고마켓 판매상태 변경 오류");
     }
 }

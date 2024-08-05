@@ -54,7 +54,7 @@
                  LEFT JOIN
              (SELECT item_id, image_url
               FROM item_details
-              WHERE detail_type = 'image' LIMIT 5) d ON i.id = d.item_id
+              WHERE detail_type = 'image' ) d ON i.id = d.item_id
         WHERE CASE
                   WHEN #{userId} = 0 THEN TRUE
                   ELSE i.user_id = #{userId}
@@ -84,16 +84,16 @@
         WHERE i.id = #{itemId} LIMIT 5
     </select>
 
-    <insert id="insertItem">
+    <insert id="insertItem" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO items (title, price, content, user_id, created_at)
         VALUES (#{title}, #{price}, #{content}, #{userId}, NOW())
     </insert>
 
     <insert id="insertItemImages">
-        INSERT INTO item_details (item_id, detail_type, image_url, uploaded_at)
+        INSERT INTO item_details (item_id, user_id, detail_type, image_url, uploaded_at)
         VALUES
         <foreach collection="images" item="image" separator=",">
-            (#{itemId}, 'image', #{image}, NOW())
+            (#{itemId}, #{userId}, 'image', #{image}, NOW())
         </foreach>
     </insert>
 
@@ -140,4 +140,9 @@
           AND detail_type = "like";
     </delete>
 
+    <update id="soldOut">
+        UPDATE items
+        SET is_sold = 1
+        WHERE id = #{id};
+    </update>
 </mapper>

@@ -30,27 +30,29 @@ public class SnsItemServiceImpl implements SnsItemService {
 
     @Override
     @Transactional
-    public int writeItem(ItemDto item, List<String> images) {
+    public int writeItem(ItemDto item) {
+        validateImages(item.getImages());
+
         ItemDto itemBuilder = ItemDto.builder()
                 .title(item.getTitle())
                 .price(item.getPrice())
                 .content(item.getContent())
                 .userId(item.getUserId())
-                .createdAt(item.getCreatedAt())
                 .build();
 
-        snsItemMapper.insertItem(item);
-
-        if (!images.isEmpty()) {
-            snsItemMapper.insertItemImages(item.getId(), images);
+        snsItemMapper.insertItem(itemBuilder);
+        if (item.getImages() != null && !item.getImages().isEmpty()) {
+            snsItemMapper.insertItemImages(itemBuilder.getId(), item.getUserId(), item.getImages());
         }
 
-        return item.getId();
+        return itemBuilder.getId();
     }
 
     @Override
     @Transactional
-    public int updateItem(ItemDto item, List<String> images) {
+    public int updateItem(ItemDto item) {
+        validateImages(item.getImages());
+
         ItemDto itemBuilder = ItemDto.builder()
                 .title(item.getTitle())
                 .price(item.getPrice())
@@ -60,10 +62,10 @@ public class SnsItemServiceImpl implements SnsItemService {
                 .build();
 
         snsItemMapper.updateItem(itemBuilder);
-        snsItemMapper.deleteItemImages(item.getId());
 
-        if (!images.isEmpty()) {
-            snsItemMapper.insertItemImages(item.getId(), images);
+        if (item.getImages() != null && !item.getImages().isEmpty()) {
+            snsItemMapper.deleteItemImages(item.getId());
+            snsItemMapper.insertItemImages(item.getId(), item.getUserId(), item.getImages());
         }
 
         return item.getId();
@@ -88,4 +90,20 @@ public class SnsItemServiceImpl implements SnsItemService {
     public int dislikeItem(int itemId, int userId) {
         return snsItemMapper.dislikeItem(itemId, userId);
     }
+
+    @Override
+    public int soldOut(int itemId) {
+        return snsItemMapper.soldOut(itemId);
+    }
+
+    @Override
+    public void validateImages(List<String> images) {
+        if (images == null || images.isEmpty()) {
+            throw new IllegalArgumentException("At least one image is required.");
+        }
+        if (images.size() >= 5) {
+            throw new IllegalArgumentException("A maximum of 5 images are allowed.");
+        }
+    }
+
 }

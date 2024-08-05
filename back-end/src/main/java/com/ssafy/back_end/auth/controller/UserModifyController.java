@@ -2,6 +2,8 @@ package com.ssafy.back_end.auth.controller;
 
 import com.ssafy.back_end.auth.model.UserDto;
 import com.ssafy.back_end.auth.service.UserModifyServiceImpl;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Random;
 
+@Tag (name = "AUTH정보수정")
 @RestController
 @RequestMapping (value = "/api/auth/modify")
 public class UserModifyController {
@@ -20,6 +23,7 @@ public class UserModifyController {
         this.userModifyService = userModifyService;
     }
 
+    @Operation (summary = "이메일 찾기")
     @PostMapping ("/find_email")
     public ResponseEntity<?> findEmail(@RequestBody UserDto userDto) {
         String email = userModifyService.findEmail(userDto);
@@ -32,6 +36,7 @@ public class UserModifyController {
         }
     }
 
+    @Operation (summary = "비밀번호 찾기&인증발송")
     @PostMapping ("/find_password")
     public ResponseEntity<?> findPassword(@RequestBody UserDto userDto) {
         int result = userModifyService.findPassword(userDto);
@@ -45,6 +50,7 @@ public class UserModifyController {
         }
     }
 
+    @Operation (summary = "비밀번호 인증확인")
     @PostMapping ("/find_password/verify")
     public ResponseEntity<?> verifyPassword(@RequestBody int code) {
         if (code == authCode) {
@@ -56,6 +62,7 @@ public class UserModifyController {
         }
     }
 
+    @Operation (summary = "비밀번호 초기화")
     @PutMapping ("/reset_password")
     public ResponseEntity<?> resetPassword(@RequestBody UserDto userDto) {
         int result = userModifyService.resetPassword(userDto);

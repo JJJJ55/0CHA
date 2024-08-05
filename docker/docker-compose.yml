@@ -1,0 +1,89 @@
+version: "3.7"
+
+services:
+  mysql:
+    build: ./mysql
+    image: mysql-custom:latest
+    container_name: mysql-container
+    ports:
+      - "${MYSQL_BINDING_PORT}:${MYSQL_PORT}"
+    volumes:
+      - "${MYSQL_VOLUME_PATH}:/var/lib/mysql"
+      - "${MYSQL_DEFAULT_CONFIG_PATH}:/etc/my.cnf"
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - TZ=${TZ}
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    restart: always
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  redis:
+    build: ./redis
+    image: redis-custom:latest
+    container_name: redis-container
+    ports: # 환경설정 삭제
+      - "6379:6379"
+    volumes:
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis/users.acl:/usr/local/etc/redis/users.acl
+      - ./redis/data:/data
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  jenkins:
+    build: ./jenkins
+    image: jenkins-custom:latest
+    container_name: jenkins-container
+    privileged: true
+    user: root
+    ports:
+      - "${JENKINS_BINDING_PORT}:${JENKINS_PORT}"
+      - "${JENKINS_AGENT_PORT}:50000"
+    volumes:
+      - "${JENKINS_VOLUME_PATH}:/var/jenkins_home"
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/bin/docker:/usr/bin/docker
+    environment:
+      - TZ=${TZ}
+      - JENKINS_OPTS=--prefix=/jenkins
+    restart: always
+
+  spring:
+    image: parksangcheon/spring:latest
+    container_name: spring-container
+    environment:
+      - TZ=${TZ}
+      - SPRING_MYSQL_HOST=mysql-container
+      - SPRING_REDIS_HOST=redis-container
+    ports:
+      - "8081:8081"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nginx:
+        condition: service_started
+    restart: always
+
+  nginx:
+    build: ./nginx
+    image: nginx-custom:latest
+    container_name: nginx-container
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    restart: always
+

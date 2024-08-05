@@ -4,6 +4,7 @@ import Input from '../../../components/Common/Input';
 import Button from '../../../components/Common/Button';
 import Text from '../../../components/Common/Text';
 import Header from '../../../components/Common/Header';
+import { useNavigate } from 'react-router';
 
 // 배치 구체화
 
@@ -80,12 +81,11 @@ const s = {
     color: ${(props) => props.theme.textColor};
     margin-bottom: 5px;
     font-size: 16px;
-    border: 1px solid red;
     display: inline-block; /* 콘텐츠 크기에 맞게 너비 조정 */
     white-space: nowrap; /* 줄바꿈 방지 */
   `,
   ErrorText: styled.p`
-    color: red;
+    color: ${(props) => props.theme.mainColor};
     font-size: 12px;
     margin-left: 10px;
     border: 1px solid green;
@@ -383,6 +383,8 @@ interface User {
 }
 
 const UpdateMyInfoPage = (): JSX.Element => {
+  const navigate = useNavigate();
+
   const [user, setUser] = useState<User>({
     gender: '',
     height: '168.7',
@@ -415,16 +417,12 @@ const UpdateMyInfoPage = (): JSX.Element => {
   };
 
   const handleSubmit = () => {
-    // 입력된 정보만 넘겨주면 되므로 별도 확인 절차 필요 없음
-    // 제출 로직 작성
-    console.log('Form submitted:', data);
     alert('정보가 제출되었습니다.');
+    navigate('../');
   };
 
   const handlePrevious = () => {
-    // 이전 이동
-    console.log('이전 페이지로 이동합니다');
-    alert('이전 페이지로 이동합니다.');
+    navigate(-1);
   };
 
   return (
@@ -470,11 +468,12 @@ const UpdateMyInfoPage = (): JSX.Element => {
           <Input
             type="text"
             height="40px"
-            width="50%"
+            width="130px"
             name="height"
             placeholder="키"
             value={data.height}
             onChange={handleChangeValue}
+            textalian="right"
           />
           <Text type="guide" children="cm" width="30px" />
         </s.MeasurementArea>
@@ -485,11 +484,12 @@ const UpdateMyInfoPage = (): JSX.Element => {
           <Input
             type="text"
             height="40px"
-            width="50%"
+            width="130px"
             name="weight"
             placeholder="체중"
             value={data.weight}
             onChange={handleChangeValue}
+            textalian="right"
           />
           <Text type="guide" children="kg" width="30px" />
         </s.MeasurementArea>
@@ -512,8 +512,16 @@ const UpdateMyInfoPage = (): JSX.Element => {
           </s.SelectBox>
         </s.LocationArea>
         <s.SubmitBtnArea>
-          <Button width="48%" height="40px" children="이전" onClick={handlePrevious} margin="5px 0" />
-          <Button width="48%" height="40px" type="main" children="수정완료" onClick={handleSubmit} margin="5px 0 " />
+          <Button width="48%" height="40px" children="이전" onClick={handlePrevious} margin="5px 0" bold="500" />
+          <Button
+            width="48%"
+            height="40px"
+            type="main"
+            children="수정완료"
+            onClick={handleSubmit}
+            margin="5px 0 "
+            bold="500"
+          />
         </s.SubmitBtnArea>
       </s.PlusInfoArea>
     </s.Container>

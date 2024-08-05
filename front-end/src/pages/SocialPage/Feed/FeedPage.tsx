@@ -4,14 +4,15 @@ import styled from 'styled-components';
 import Feed from '../../../components/SNS/Feed';
 import SnsHeader from '../../../components/SNS/SnsHeader';
 import SnsNavigation from '../../../components/SNS/SnsNavigation';
-import CommentModal from '../../../components/SNS/CommentModal';
+import CommentModal from '../../../components/Modal/CommentModal';
 import BottomNav from '../../../components/Common/BottomNav';
-import UserSearchModal from '../../../components/SNS/UserSearchModal';
+import UserSearchModal from '../../../components/Modal/UserSearchModal';
 
 import test from '../../../asset/img/testImg.png';
 import { useAppDispatch, useAppSelector } from '../../../lib/hook/useReduxHook';
 import { modalActions, selectModalComment, selectModalUserSearch } from '../../../store/modal';
 import { useNavigate } from 'react-router';
+import { useModalExitHook } from '../../../lib/hook/useModalExitHook';
 
 const s = {
   Container: styled.section`
@@ -79,6 +80,7 @@ const FeedPage = (): JSX.Element => {
   const toggleModalUserSearch = (): void => {
     dispatch(modalActions.toggleUserSearch());
   };
+  useModalExitHook();
   return (
     <>
       <s.Container>

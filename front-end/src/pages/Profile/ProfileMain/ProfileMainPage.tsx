@@ -66,6 +66,7 @@ const s = {
     border-radius: 10px;
     background-color: ${(props) => props.theme.btnColor};
     color: ${(props) => props.theme.btnTextColor};
+    font-weight: 500;
   `,
   InfoArea: styled.div`
     width: 100%;
@@ -114,17 +115,14 @@ const ProfileMainPage = (): JSX.Element => {
   };
 
   const handleEditProfile = () => {
-    alert('프로필 수정 페이지로 이동');
     navigate('profile');
   };
 
   const handleEditInfo = () => {
-    alert('내 정보 수정 페이지로 이동');
     navigate('info');
   };
 
   const handleChangePassword = () => {
-    alert('비밀번호 변경 페이지로 이동');
     navigate('password');
   };
 

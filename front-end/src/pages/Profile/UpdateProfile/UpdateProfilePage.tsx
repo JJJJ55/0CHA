@@ -5,6 +5,7 @@ import test from '../../../asset/img/testImg.png';
 import Header from '../../../components/Common/Header';
 import Input from '../../../components/Common/Input';
 import BottomNav from '../../../components/Common/BottomNav';
+import { useNavigate } from 'react-router';
 
 const s = {
   Container: styled.section`
@@ -43,15 +44,13 @@ const s = {
     color: ${(props) => props.theme.textColor};
     margin-bottom: 5px;
     font-size: 16px;
-    border: 1px solid red;
     display: inline-block; /* 콘텐츠 크기에 맞게 너비 조정 */
     white-space: nowrap; /* 줄바꿈 방지 */
   `,
   ErrorText: styled.p`
-    color: red;
+    color: ${(props) => props.theme.mainColor};
     font-size: 12px;
     margin-left: 10px;
-    border: 1px solid green;
   `,
   InfoNameBox: styled.div`
     width: 100%;
@@ -91,6 +90,8 @@ interface User {
 }
 
 const UpdateProfilePage = (): JSX.Element => {
+  const navigate = useNavigate();
+
   const [user, setUser] = useState<User>({
     nickname: 'it_is_me',
     tempNickname: 'it_is_me',
@@ -106,6 +107,7 @@ const UpdateProfilePage = (): JSX.Element => {
   useEffect(() => {
     if (nicknameChanged.current && user.nickname === tempNickname) {
       alert(`닉네임이 성공적으로 ${tempNickname}으로 변경되었습니다.`);
+      navigate('../');
     }
   }, [user.nickname, tempNickname]);
 
@@ -152,7 +154,7 @@ const UpdateProfilePage = (): JSX.Element => {
   };
 
   const handleCancel = () => {
-    alert('이전 페이지로 이동');
+    navigate(-1);
   };
 
   const handleSave = () => {
@@ -197,11 +199,18 @@ const UpdateProfilePage = (): JSX.Element => {
               onChange={handleNicknameChange}
             />
           </s.InputBox>
-          <Button onClick={handleCheckDuplicate} type="main" width="80px" height="40px" children="중복확인" />
+          <Button
+            onClick={handleCheckDuplicate}
+            type="main"
+            width="80px"
+            height="40px"
+            children="중복확인"
+            bold="500"
+          />
         </s.InputArea>
         <s.ButtonArea>
-          <s.CancelButton onClick={handleCancel} children="이전" />
-          <s.ProfileButton onClick={handleSave} children="수정완료" />
+          <s.CancelButton onClick={handleCancel} children="이전" bold="500" />
+          <s.ProfileButton onClick={handleSave} children="수정완료" bold="500" />
         </s.ButtonArea>
       </s.ProfileArea>
       <BottomNav />

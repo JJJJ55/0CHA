@@ -29,8 +29,8 @@ services:
     build: ./redis
     image: redis-custom:latest
     container_name: redis-container
-    ports: # 환경설정 삭제
-      - "6379:6379"
+    ports:
+      - "${REDIS_BINDING_PORT}:6379"
     volumes:
       - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
       - ./redis/users.acl:/usr/local/etc/redis/users.acl
@@ -73,29 +73,43 @@ services:
       - SPRING_MYSQL_HOST=mysql-container
       - SPRING_REDIS_HOST=redis-container
     ports:
-      - "8081:8081"
+      - "${SPRING_BINDING_PORT}:8081"
     depends_on:
       mysql:
         condition: service_healthy
       redis:
         condition: service_healthy
-      nginx:
-        condition: service_started
     restart: always
     networks:
       - my-network
 
-  nginx:
-    build: ./nginx
-    image: nginx-custom:latest
-    container_name: nginx-container
+  proxy-nginx:
+    build: ./proxy-nginx
+    image: proxy-nginx-custom:latest
+    container_name: proxy-nginx-container
     ports:
-      - "80:80"
+      - "${NGINX_BINDING_PORT}:80"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./proxy-nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - spring
+#      - react-nginx
+      - jenkins
     restart: always
     networks:
       - my-network
+
+#  react-nginx:
+#  build: ./react-nginx
+#image: react-nginx-custom:latest
+#    container_name: react-nginx-container
+#    depends_on:
+#      - spring
+#    volumes:
+#      - ./react-nginx/nginx.conf:/etc/nginx/nginx.conf
+#    restart: always
+#    networks:
+#      - my-network
 
 networks:
   my-network:

@@ -2,11 +2,7 @@ import React from 'react';
 import styled, { ThemeProvider } from 'styled-components';
 import { darkTheme } from './styles/theme';
 import GlobalStyle from './styles/global-styles';
-import Input from './components/Common/Input';
-import Button from './components/Common/Button';
-import Text from './components/Common/Text';
 import LoginPage from './pages/LoginBefore/Login/LoginPage';
-import BottomNav from './components/Common/BottomNav';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { PrivateRoute, PublicRoute } from './pages/IsLoginPage';
 import SignUpPage from './pages/LoginBefore/SignUp/SignUpPage';
@@ -45,9 +41,6 @@ import UploadItemPage from './pages/SocialPage/Market/UploadItemPage';
 import ChatListPage from './pages/SocialPage/Feed/ChatListPage';
 import ChatPage from './pages/SocialPage/Feed/ChatPage';
 import NotificationPage from './pages/SocialPage/Feed/NotificationPage';
-import { useAppSelector } from './lib/hook/useReduxHook';
-import { selectSnsType } from './store/page';
-import LoginTestPage from './pages/LoginBefore/Login/LoginTestPage';
 
 const s = {
   Background: styled.section`
@@ -76,7 +69,6 @@ const s = {
 };
 
 function App() {
-  const snsType = useAppSelector(selectSnsType);
   return (
     <>
       <ThemeProvider theme={darkTheme}>
@@ -87,7 +79,7 @@ function App() {
             <Routes>
               <Route element={<PublicRoute />}>
                 <Route path="/" element={<SplashPage />} />
-                <Route path="/login" element={<LoginTestPage />} />
+                <Route path="/login" element={<LoginPage />} />
                 <Route path="/signup">
                   <Route index element={<SignUpPage />} />
                   <Route path="ok" element={<PlusInfoPage />} />
@@ -105,22 +97,6 @@ function App() {
               </Route>
               <Route element={<PrivateRoute />}>
                 <Route path="/main" element={<MainPage />} />
-                {/* <Route path="/fitness">
-                  <Route index element={<Navigate to="list" />} />
-                  <Route path="list">
-                    <Route index element={<FitnessListPage />} />
-                    <Route path="detail" element={<FitnessDetailPage />} />
-                  </Route>
-                  <Route path="plan" element={<FitnessPlanSetPage />} />
-                  <Route path="history">
-                    <Route index element={<FitnessRoutineListPage />} />
-                    <Route path="detail" element={<FitnessRoutineDetatilPage />} />
-                  </Route>
-                  <Route path="play">
-                    <Route path="" element={<FitnessPlayPage />} />
-                    <Route path="" element={<FitnessFinishPage />} />
-                  </Route>
-                </Route> */}
                 {/* fitness */}
                 <Route path="/fitness" element={<FitnessPage />}>
                   <Route index element={<Navigate to="list" replace />} />
@@ -139,18 +115,6 @@ function App() {
                   <Route path="" element={<FitnessFinishPage />} />
                 </Route>
                 {/* record */}
-                {/* <Route path="/record">
-                  <Route index element={<Navigate to={'main'} />} />
-                  <Route path="main" element={<RecordMainPage />} />
-                  <Route path="inbody">
-                    <Route path="scan">
-                      <Route path="" element={<RecordInBodyScanPage />} />
-                      <Route path="" element={<RecordInBodyScanResultPage />} />
-                    </Route>
-                    <Route path="data" element={<RecordInBodyChartPage />} />
-                  </Route>
-                  <Route path="data" element={<RecordFitnessChartPage />} />
-                </Route> */}
                 <Route path="/record" element={<RecordPage />}>
                   <Route index element={<Navigate to={'main'} replace />} />
                   <Route path="main" element={<RecordMainPage />} />

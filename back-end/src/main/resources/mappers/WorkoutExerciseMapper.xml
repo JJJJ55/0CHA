@@ -23,4 +23,11 @@
     <delete id="unfavoriteExercise" parameterType="map">
         DELETE FROM exercise_likes WHERE exercise_id = #{exerciseId} AND user_id = #{userId}
     </delete>
+
+    <select id="getFavoriteExercisesByUserId" parameterType="int" resultType="com.ssafy.back_end.exercise.model.ExerciseDto">
+        SELECT e.*
+        FROM exercises e
+                 JOIN exercise_likes el ON e.id = el.exercise_id
+        WHERE el.user_id = #{userId}
+    </select>
 </mapper>

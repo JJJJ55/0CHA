@@ -40,11 +40,13 @@ const GlobalStyle = createGlobalStyle`
     input {
         border: none;
         outline: none;
-        padding-left: 10px;
+        padding: 0 10px 0 10px;
         border-radius: 10px;
     }
     ::-webkit-scrollbar{
       display: none;
     }
+    input:-webkit-autofill { -webkit-box-shadow: 0 0 0 30px ${(props) => props.theme.subColor} inset ; -webkit-text-fill-color: ${(props) => props.theme.textColor}; }
+    input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, input:-webkit-autofill:active { transition: background-color 5000s ease-in-out 0s; }
 `;
 export default GlobalStyle;

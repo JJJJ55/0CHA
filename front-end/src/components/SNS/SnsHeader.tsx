@@ -6,6 +6,7 @@ import Input from '../Common/Input';
 import Image from '../Common/Image';
 import { ReactComponent as alarm } from '../../asset/img/svg/alram.svg';
 import { ReactComponent as message } from '../../asset/img/svg/message.svg';
+import { ReactComponent as search } from '../../asset/img/svg/search.svg';
 
 import test from '../../asset/img/testImg.png';
 import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
@@ -40,10 +41,8 @@ const SnsHeader = (): JSX.Element => {
     navigate(path);
   };
   const dispatch = useAppDispatch();
-  const toggleModal = (e: React.KeyboardEvent<HTMLInputElement>): void => {
-    if (e.key === 'Enter') {
-      dispatch(modalActions.toggleUserSearch());
-    }
+  const handleClickModal = (): void => {
+    dispatch(modalActions.toggleUserSearch());
   };
   return (
     <s.Container>
@@ -57,27 +56,27 @@ const SnsHeader = (): JSX.Element => {
           display="block"
           margin="0 10px 0 0"
         />
-        <Input width="100%" height="35px" placeholder="검색" onKeyPress={toggleModal} />
       </s.MenuArea1>
       <s.MenuArea2>
         <IconSvg
           width="25"
           height="25"
-          color="#ffffff"
-          Ico={alarm}
+          Ico={search}
           cursor="pointer"
-          onClick={() => handleMovePage('../notification')}
+          onClick={handleClickModal}
           display="block"
           margin=" 0 10px 0 0"
         />
         <IconSvg
           width="25"
           height="25"
-          color="#ffffff"
-          Ico={message}
+          Ico={alarm}
           cursor="pointer"
-          onClick={() => handleMovePage('../chat')}
+          onClick={() => handleMovePage('../notification')}
+          display="block"
+          margin=" 0 10px 0 0"
         />
+        <IconSvg width="25" height="25" Ico={message} cursor="pointer" onClick={() => handleMovePage('../chat')} />
       </s.MenuArea2>
     </s.Container>
   );

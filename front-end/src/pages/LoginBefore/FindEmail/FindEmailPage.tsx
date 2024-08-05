@@ -38,7 +38,6 @@ const s = {
   `,
   InputHeader: styled.p`
     text-align: left;
-    width: 80px;
     color: ${(props) => props.theme.textColor};
     margin-bottom: 5px;
     font-size: 16px;
@@ -50,7 +49,7 @@ const s = {
     margin-top: 20px;
   `,
   ErrorText: styled.p`
-    color: red;
+    color: ${(props) => props.theme.mainColor};
     font-size: 12px;
     margin-left: 10px;
     margin-top: 5px;

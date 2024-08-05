@@ -69,7 +69,7 @@ const ChatPage = (): JSX.Element => {
   return (
     <>
       <s.ChatHeader>
-        <IconSvg width="25" height="25" Ico={back} cursor="pointer" />
+        <IconSvg width="25" height="25" Ico={back} cursor="pointer" onClick={() => navigate(-1)} />
         <s.ProfileArea onClick={handleMovePage}>
           <Image width="40px" height="40px" src={test} />
           <s.ProfileText>stranger_00</s.ProfileText>

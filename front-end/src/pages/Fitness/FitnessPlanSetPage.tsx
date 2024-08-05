@@ -11,6 +11,7 @@ import FitnessPlanSetModal from '../../components/Modal/FitnessPlanSetModal';
 import { useNavigate } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
 import { modalActions, selectModalCalendar } from '../../store/modal';
+import { useModalExitHook } from '../../lib/hook/useModalExitHook';
 
 const s = {
   Container: styled.section`
@@ -76,6 +77,8 @@ const FitnessPlanSetPage = (): JSX.Element => {
   const toggleModal = (): void => {
     dispatch(modalActions.toggleCalendar());
   };
+
+  useModalExitHook();
 
   return (
     <s.Container>

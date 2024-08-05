@@ -26,14 +26,16 @@ const s = {
   `,
   HeaderIcons: styled.div`
     display: flex;
+    justify-content: space-around;
     align-items: center;
+    width: 100px;
   `,
   ScrollContainer: styled.section`
     background-color: ${(props) => props.theme.bgColor};
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    padding: 20px;
+    padding: 20px 0 20px 0;
     color: ${(props) => props.theme.textColor};
     width: 100%;
   `,
@@ -108,12 +110,13 @@ const s = {
   `,
   RoutineName: styled.div`
     font-size: 16px;
-    font-weight: bold;
+    font-weight: 600;
   `,
   RoutineDate: styled.div`
     font-size: 12px;
     color: ${(props) => props.theme.textColor2};
     margin-top: 10px;
+    font-weight: 500;
   `,
   MoreBtn: styled.button`
     background: none;
@@ -121,6 +124,7 @@ const s = {
     color: ${(props) => props.theme.textColor2};
     font-size: 14px;
     cursor: pointer;
+    font-weight: 500;
   `,
   Icon: styled.img`
     width: 24px;
@@ -150,6 +154,7 @@ const s = {
     font-size: 18px;
     margin: 0;
     cursor: default;
+    font-weight: 600;
   `,
   PageBody: styled.div`
     display: flex;
@@ -169,6 +174,7 @@ const s = {
     border-radius: 10px;
     background-color: ${(props) => props.theme.btnColor};
     color: ${(props) => props.theme.btnTextColor};
+    font-weight: 500;
   `,
 };
 
@@ -223,7 +229,7 @@ const MainPage = (): JSX.Element => {
   };
   const items = [
     { name: '월요일 추천 루틴', image: testImage },
-    { name: '헬스장 꿀팁 300선', image: testImage },
+    { name: '헬스 꿀팁 300선', image: testImage },
     { name: '홈트레이닝 맛있게', image: testImage },
     { name: '치킨을 먹기 위해', image: testImage },
     { name: '걸어서 집 가기 싫은 날', image: testImage },

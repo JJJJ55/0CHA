@@ -11,6 +11,7 @@ const s = {
     size: ${(props) => props.size || '14px'};
     display: ${(props) => props.display};
     margin: ${(props) => props.margin};
+    text-align: ${(props) => props.textalian};
     &::placeholder {
       color: ${({ placeColor, theme }) => (placeColor ? theme[placeColor] : theme['textColor2'])};
     }
@@ -32,6 +33,7 @@ interface InputProps {
   onKeyPress?: Function;
   placeColor?: string;
   bold?: string;
+  textalian?: string;
 }
 const Input = (props: InputProps): JSX.Element => {
   return <s.input {...props} />;

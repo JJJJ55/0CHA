@@ -4,6 +4,8 @@ import com.ssafy.back_end.sns.model.FeedDto;
 import com.ssafy.back_end.sns.model.FeedInteractionDto;
 import com.ssafy.back_end.sns.model.UserPageDto;
 import com.ssafy.back_end.sns.service.SnsFeedServiceImpl;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag (name = "SNS피드")
 @RestController
 @RequestMapping (value = "/api/sns/feed")
 public class SnsFeedController {
@@ -21,8 +24,9 @@ public class SnsFeedController {
         this.snsFeedService = snsFeedService;
     }
 
+    @Operation (summary = "전체or유저 피드 목록보기-완")
     @GetMapping ("/")
-    public ResponseEntity<?> getFeeds(@RequestParam ("user_id") int userId) {
+    public ResponseEntity<?> getFeeds(@RequestHeader ("ID") int ID, @RequestParam ("user_id") int userId) {
         List<FeedDto> feeds = snsFeedService.getFeeds(userId);
 
         if (feeds != null) {
@@ -34,8 +38,10 @@ public class SnsFeedController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("피드 조회 오류");
     }
 
+    @Operation (summary = "피드 글쓰기-완")
     @PostMapping ("/")
-    public ResponseEntity<?> writeFeed(@RequestBody FeedDto feedDto) {
+    public ResponseEntity<?> writeFeed(@RequestHeader ("ID") int ID, @RequestBody FeedDto feedDto) {
+        feedDto.setUserId(ID);
         int result = snsFeedService.writeFeed(feedDto);
 
         if (result != 0) {
@@ -44,8 +50,9 @@ public class SnsFeedController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("피드 작성 오류");
     }
 
+    @Operation (summary = "피드 글수정-완")
     @PutMapping ("/{feedId}")
-    public ResponseEntity<?> updateFeed(@PathVariable int feedId, @RequestBody FeedDto feedDto) {
+    public ResponseEntity<?> updateFeed(@RequestHeader ("ID") int ID, @PathVariable int feedId, @RequestBody FeedDto feedDto) {
         feedDto.setId(feedId);
         int result = snsFeedService.updateFeed(feedDto);
 
@@ -55,8 +62,9 @@ public class SnsFeedController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("피드 수정 오류");
     }
 
+    @Operation (summary = "피드 글삭제-완")
     @DeleteMapping ("/{feedId}")
-    public ResponseEntity<?> deleteFeed(@PathVariable int feedId) {
+    public ResponseEntity<?> deleteFeed(@RequestHeader ("ID") int ID, @PathVariable int feedId) {
         int result = snsFeedService.deleteFeed(feedId);
 
         if (result != 0) {
@@ -65,8 +73,9 @@ public class SnsFeedController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("피드 삭제 오류");
     }
 
+    @Operation (summary = "피드 좋아요 목록보기-완")
     @GetMapping ("/{feedId}/like")
-    public ResponseEntity<?> getListLikes(@PathVariable int feedId) {
+    public ResponseEntity<?> getListLikes(@RequestHeader ("ID") int ID, @PathVariable int feedId) {
         List<UserPageDto> likes = snsFeedService.getListLikes(feedId);
 
         if (likes != null) {
@@ -78,12 +87,13 @@ public class SnsFeedController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("댓글 조회 오류");
     }
 
+    @Operation (summary = "피드 좋아요-완")
     @PostMapping ("/{feedId}/like")
-    public ResponseEntity<?> likeFeed(@PathVariable int feedId, @RequestParam int userId) {
-        int isLike = snsFeedService.isLike(feedId, userId);
+    public ResponseEntity<?> likeFeed(@RequestHeader ("ID") int ID, @PathVariable int feedId) {
+        int isLike = snsFeedService.isLike(feedId, ID);
 
         if (isLike == 0) {   //좋아요 안눌려있음
-            int result = snsFeedService.likeFeed(feedId, userId);
+            int result = snsFeedService.likeFeed(feedId, ID);
             if (result != 0) {
                 return ResponseEntity.ok("좋아요성공");
             }
@@ -96,12 +106,13 @@ public class SnsFeedController {
         }
     }
 
+    @Operation (summary = "피드 좋아요 삭제-완")
     @DeleteMapping ("/{feedId}/like")
-    public ResponseEntity<?> dislikeFeed(@PathVariable int feedId, @RequestParam int userId) {
-        int isLike = snsFeedService.isLike(feedId, userId);
+    public ResponseEntity<?> dislikeFeed(@RequestHeader ("ID") int ID, @PathVariable int feedId) {
+        int isLike = snsFeedService.isLike(feedId, ID);
 
         if (isLike == 1) {   //좋아요 눌려있음
-            int result = snsFeedService.dislikeFeed(feedId, userId);
+            int result = snsFeedService.dislikeFeed(feedId, ID);
             if (result != 0) {
                 return ResponseEntity.ok("좋아요취소성공");
             }
@@ -114,8 +125,9 @@ public class SnsFeedController {
         }
     }
 
+    @Operation (summary = "피드 댓글 목록보기-완")
     @GetMapping ("/{feedId}/comment")
-    public ResponseEntity<?> getListComments(@PathVariable int feedId) {
+    public ResponseEntity<?> getListComments(@RequestHeader ("ID") int ID, @PathVariable int feedId) {
         List<FeedInteractionDto> comments = snsFeedService.getListComments(feedId);
 
         if (comments != null) {
@@ -127,8 +139,10 @@ public class SnsFeedController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("댓글 조회 오류");
     }
 
+    @Operation (summary = "피드 댓글 쓰기-완")
     @PostMapping ("/{feedId}/comment")
-    public ResponseEntity<?> writeComment(@PathVariable int feedId, @RequestBody FeedInteractionDto feedInteractionDto) {
+    public ResponseEntity<?> writeComment(@RequestHeader ("ID") int ID, @PathVariable int feedId, @RequestBody FeedInteractionDto feedInteractionDto) {
+        feedInteractionDto.setUserId(ID);
         feedInteractionDto.setFeedId(feedId);
         int result = snsFeedService.writeComment(feedInteractionDto);
 
@@ -138,8 +152,9 @@ public class SnsFeedController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("댓글 작성 오류");
     }
 
+    @Operation (summary = "피드 댓글 수정-완")
     @PutMapping ("/comment/{commentId}")
-    public ResponseEntity<?> updateComment(@PathVariable int commentId, @RequestBody FeedInteractionDto feedInteractionDto) {
+    public ResponseEntity<?> updateComment(@RequestHeader ("ID") int ID, @PathVariable int commentId, @RequestBody FeedInteractionDto feedInteractionDto) {
         feedInteractionDto.setId(commentId);
         int result = snsFeedService.updateComment(feedInteractionDto);
 
@@ -149,8 +164,9 @@ public class SnsFeedController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("댓글 수정 오류");
     }
 
+    @Operation (summary = "피드 댓글 삭제-완")
     @DeleteMapping ("/comment/{commentId}")
-    public ResponseEntity<?> deleteComment(@PathVariable int commentId) {
+    public ResponseEntity<?> deleteComment(@RequestHeader ("ID") int ID, @PathVariable int commentId) {
         int result = snsFeedService.deleteComment(commentId);
 
         if (result != 0) {

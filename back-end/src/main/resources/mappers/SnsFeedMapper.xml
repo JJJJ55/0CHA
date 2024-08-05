@@ -21,24 +21,30 @@
     </resultMap>
 
     <resultMap id="commentsList" type="com.ssafy.back_end.sns.model.FeedInteractionDto">
+        <id property="id" column="user_id"/>
         <result property="userId" column="user_id"/>
+        <result property="nickname" column="nickname"/>
+        <result property="profileImage" column="profile_image"/>
         <result property="comment" column="comment"/>
         <result property="createdAt" column="created_at"/>
     </resultMap>
 
     <select id="getFeeds" resultMap="feed">
-        SELECT f.id,
-               f.content,
-               f.image,
-               (SELECT COUNT(*) FROM feed_interactions WHERE feed_id = f.id AND interaction_type = 'like') AS `like_count`,
+        SELECT f.id                                                                                        AS id,
+               f.content                                                                                   AS content,
+               f.image                                                                                     AS image,
+               (SELECT COUNT(*)
+                FROM feed_interactions
+                WHERE feed_id = f.id
+                  AND interaction_type = 'like')                                                           AS `like_count`,
                (SELECT COUNT(*)
                 FROM feed_interactions
                 WHERE feed_id = f.id
                   AND interaction_type = 'comment')                                                        AS `comment`,
-               f.created_at,
+               f.created_at                                                                                AS created_at,
                u.id                                                                                        AS user_id,
-               u.nickname,
-               u.profile_image
+               u.nickname                                                                                  AS nickname,
+               u.profile_image                                                                             AS profile_image
         FROM feeds f
                  JOIN
              users u ON f.user_id = u.id
@@ -51,13 +57,13 @@
 
     <insert id="writeFeed">
         INSERT INTO feeds (content, image, routine_id, user_id)
-        VALUES (#{content}, #{images}, #{routineId}, #{userId});
+        VALUES (#{content}, #{image}, #{routineId}, #{userId});
     </insert>
 
     <update id="updateFeed">
         UPDATE feeds
         SET content    = #{content},
-            image      = #{images},
+            image      = #{image},
             routine_id = #{routineId}
         WHERE id = #{id};
     </update>
@@ -69,9 +75,9 @@
     </delete>
 
     <select id="getListLikes" resultMap="likesList">
-        SELECT u.id AS user_id,
-               u.nickname,
-               u.profile_image
+        SELECT u.id            AS user_id,
+               u.nickname      AS nickname,
+               u.profile_image AS profile_image
         FROM feed_interactions fi
                  JOIN users u ON fi.user_id = u.id
         WHERE fi.feed_id = #{feedId}
@@ -101,11 +107,17 @@
     </delete>
 
     <select id="getListComments" resultMap="commentsList">
-        SELECT user_id, comment, created_at
-        FROM feed_interactions
-        WHERE feed_id = #{feedId}
-          AND interaction_type = "comment"
-        ORDER BY created_at DESC;
+        SELECT fi.id           AS id,
+               fi.comment      AS comment,
+               fi.created_at   AS created_at,
+               u.id            AS user_id,
+               u.nickname      AS nickname,
+               u.profile_image AS profile_image
+        FROM feed_interactions fi
+                 JOIN users u ON fi.user_id = u.id
+        WHERE fi.feed_id = #{feedId}
+          AND fi.interaction_type = "comment"
+        ORDER BY fi.created_at DESC;
     </select>
 
     <insert id="writeComment">

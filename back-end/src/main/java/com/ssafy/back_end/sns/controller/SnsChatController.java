@@ -37,7 +37,6 @@ public class SnsChatController {
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
-    private final List<SseEmitter> emitters = new CopyOnWriteArrayList<>();
     private final List<Integer> dummyUserIds = Arrays.asList(1, 2, 3); // 더미 유저 ID 목록
     private final Random random = new Random();
 
@@ -73,24 +72,8 @@ public class SnsChatController {
         return history;
     }
 
-    // SSE 구독
-    @GetMapping("/subscribe")
-    public SseEmitter subscribe() {
-        logger.info("New SSE subscription");
-        SseEmitter emitter = new SseEmitter();
-        emitters.add(emitter);
-        emitter.onCompletion(() -> {
-            emitters.remove(emitter);
-            logger.info("SSE subscription completed and removed");
-        });
-        emitter.onTimeout(() -> {
-            emitters.remove(emitter);
-            logger.warn("SSE subscription timed out and removed");
-        });
-        return emitter;
-    }
-
     // 연결 요청 시 더미 유저 ID 반환
+    // 나중에 토큰을 받고, 토큰이 맞으면 해당 토큰에서 유저 ID를 반환
     @MessageMapping("/connect")
     @SendTo("/topic/connect")
     public int connect() {

@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { ReactComponent as back } from '../../asset/img/svg/back.svg';
 import IconSvg from './IconSvg';
 import Button from './Button';
+import { useNavigate } from 'react-router';
 
 const s = {
   Container: styled.section`
@@ -14,6 +15,7 @@ const s = {
     align-items: center;
     background-color: ${(props) => props.theme.bgColor};
     position: fixed;
+    /* z-index: 100; */
   `,
   BasicArea: styled.div`
     width: 200px;
@@ -38,8 +40,10 @@ interface HeaderProps {
 }
 
 const Header = (props: HeaderProps): JSX.Element => {
+  const navigate = useNavigate();
+
   const onClickBack = () => {
-    props.onBack !== undefined && props.onBack();
+    props.onBack !== undefined ? props.onBack() : navigate(-1);
   };
   return (
     <s.Container>

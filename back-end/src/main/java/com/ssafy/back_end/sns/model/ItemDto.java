@@ -1,13 +1,12 @@
 package com.ssafy.back_end.sns.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,4 +21,10 @@ public class ItemDto {
     private Timestamp updatedAt;
     private String district;
     private String siGunGu;
+
+    private int likeCount;
+    private String nickname;
+    private String profileImage;
+    private List<String> images;
+
 }

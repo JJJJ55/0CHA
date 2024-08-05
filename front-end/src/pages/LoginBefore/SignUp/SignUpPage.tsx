@@ -54,12 +54,10 @@ const s = {
   `,
   InputHeader: styled.p`
     text-align: left;
-    width: 90px;
-    min-width: 60px;
+    width: fit-content;
     color: ${(props) => props.theme.textColor};
     margin-bottom: 5px;
     font-size: 16px;
-    border: 1px solid red;
   `,
   InputBox: styled.div`
     flex: 1;
@@ -76,12 +74,9 @@ const s = {
     color: ${(props) => props.theme.textColor};
   `,
   TextBtnArea: styled.div`
-    text-align: center;
     color: ${(props) => props.theme.textColor};
-    width: 230px;
-    display: flex;
-    justify-content: space-around;
-    margin-bottom: 50px;
+    width: 90%;
+    margin: 20px 0;
   `,
   SelectBox: styled.select`
     width: 30%;
@@ -99,16 +94,16 @@ const s = {
     color: ${(props) => props.theme.optionTextColor};
     font-size: 14px;
     font-weight: 600;
-    text-align: right;
+    text-align: center;
   `,
   SubBtnArea: styled.div`
     width: 90%;
     display: flex;
     justify-content: center;
-    margin-top: 20px;
+    margin: 20px auto;
   `,
   ErrorText: styled.p`
-    color: red;
+    color: ${(props) => props.theme.mainColor};
     font-size: 12px;
     margin-left: 5px;
   `,
@@ -234,7 +229,7 @@ const SignUpPage = (): JSX.Element => {
       if (value.length === 0) {
         setPwError('');
       } else if (!pwRegex.test(value) || value.length < 8) {
-        setPwError('비밀번호는 8~16자 영문/특수문자(~!@#$%^&*()?)/숫자 하나 이상씩 조합해야 합니다.');
+        setPwError('영소문자, 숫자, 특수문자를 포함한 8~16자로 입력하세요.');
       } else {
         setPwError('');
       }
@@ -470,7 +465,7 @@ const SignUpPage = (): JSX.Element => {
         />
         <s.PasswordArea>
           <s.InfoNameBox>
-            <s.InputHeader children="비밀번호" />
+            <s.InputHeader children="비밀번호" style={{ minWidth: '60px' }} />
             {pwError && <s.ErrorText>{pwError}</s.ErrorText>}
           </s.InfoNameBox>
           <s.InputArea>
@@ -542,6 +537,7 @@ const SignUpPage = (): JSX.Element => {
                 height="40px"
                 type="main"
                 children="중복확인"
+                bold="500"
                 onClick={handleCheckDuplicateNickname}
               />
             </s.InputBtn>
@@ -572,9 +568,6 @@ const SignUpPage = (): JSX.Element => {
           </s.InfoNameBox>
           <PhoneNumberInput phonePart2={data.phonePart2} phonePart3={data.phonePart3} onChange={handleChangeValue} />
         </s.InfoArea>
-        <s.SubBtnArea>
-          <Button width="100%" height="40px" type="main" children="회원가입" onClick={handleSubmit} />
-        </s.SubBtnArea>
         <s.TextBtnArea>
           <Text children="이미 회원이신가요?" type="guide" size="14px" />
           <Text
@@ -585,8 +578,12 @@ const SignUpPage = (): JSX.Element => {
               handleMovePage('/login');
             }}
             cursor="pointer"
+            margin="0 0 0 20px"
           />
         </s.TextBtnArea>
+        <s.SubBtnArea>
+          <Button width="100%" height="40px" type="main" children="회원가입" onClick={handleSubmit} />
+        </s.SubBtnArea>
       </s.SignUpArea>
     </s.Container>
   );

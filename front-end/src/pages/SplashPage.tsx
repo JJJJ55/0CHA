@@ -23,9 +23,12 @@ const s = {
 
 const SplashPage = (): JSX.Element => {
   const navigate = useNavigate();
-  setInterval(() => {
-    navigate('/login');
-  }, 2000);
+
+  useEffect(() => {
+    setTimeout(() => {
+      navigate('/login');
+    }, 2000);
+  }, []);
 
   return (
     <s.Container>

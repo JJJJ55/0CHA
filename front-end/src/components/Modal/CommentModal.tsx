@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import Button from '../Common/Button';
 import Input from '../Common/Input';
 import ReactModal from 'react-modal';
-import Comment from './Comment';
+import Comment from '../SNS/Comment';
 import { useState } from 'react';
 
 import test from '../../asset/img/testImg.png';

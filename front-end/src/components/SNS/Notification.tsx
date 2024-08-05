@@ -5,13 +5,13 @@ import Image from '../Common/Image';
 import IconSvg from '../Common/IconSvg';
 import { ReactComponent as alarmOn } from '../../asset/img/svg/alramOn.svg';
 
-
 const s = {
   Container: styled.div`
     height: 45px;
     display: flex;
     align-items: center;
     margin: 20px 0;
+    cursor: pointer;
   `,
 
   Content: styled.span`
@@ -37,9 +37,8 @@ const s = {
     position: absolute;
     top: -25%;
     left: -10%;
-  `
+  `,
 };
-
 
 interface CommentProps {
   profileImage: string;
@@ -49,24 +48,15 @@ interface CommentProps {
   isUnread: boolean;
 }
 
-
 const NotificationItem = (props: CommentProps): JSX.Element => {
   const { profileImage, username, content, time, isUnread } = props;
   return (
     <s.Container>
       <s.ProfileImage>
-        <Image
-          width="45px"
-          height="45px"
-          src={profileImage}
-        />
+        <Image width="45px" height="45px" src={profileImage} />
         {isUnread === true ? (
           <s.IsUnread>
-            <IconSvg
-              width="6"
-              height="6"
-              Ico={alarmOn}
-            />
+            <IconSvg width="6" height="6" Ico={alarmOn} />
           </s.IsUnread>
         ) : (
           <></>
@@ -74,10 +64,13 @@ const NotificationItem = (props: CommentProps): JSX.Element => {
       </s.ProfileImage>
       <s.ContentArea>
         <s.Time>{time}</s.Time>
-        <s.Content>{username}{content}</s.Content>
+        <s.Content>
+          {username}
+          {content}
+        </s.Content>
       </s.ContentArea>
     </s.Container>
-  )
+  );
 };
 
 export default NotificationItem;

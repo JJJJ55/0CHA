@@ -6,11 +6,13 @@ import SnsNavigation from '../../../components/SNS/SnsNavigation';
 import BottomNav from '../../../components/Common/BottomNav';
 import LocationDropdown from '../../../components/SNS/LocationDropdown';
 import MarketItem from '../../../components/SNS/MarketItem';
-import ItemModal from '../../../components/SNS/ItemModal';
+import ItemModal from '../../../components/Modal/ItemModal';
 
 import test from '../../../asset/img/testImg.png';
 import { useAppDispatch, useAppSelector } from '../../../lib/hook/useReduxHook';
-import { modalActions, selectModalMarket } from '../../../store/modal';
+import { modalActions, selectModalMarket, selectModalUserSearch } from '../../../store/modal';
+import { useModalExitHook } from '../../../lib/hook/useModalExitHook';
+import UserSearchModal from '../../../components/Modal/UserSearchModal';
 
 const s = {
   Container: styled.section`
@@ -27,12 +29,17 @@ const s = {
 };
 
 const MarketPage = (): JSX.Element => {
-  const isModal = useAppSelector(selectModalMarket);
+  const isMarket = useAppSelector(selectModalMarket);
+  const isUserSearch = useAppSelector(selectModalUserSearch);
   const dispatch = useAppDispatch();
 
-  const toggleModal = (): void => {
+  const toggleMarket = (): void => {
     dispatch(modalActions.toggleMarket());
   };
+  const toggleUserSearch = (): void => {
+    dispatch(modalActions.toggleUserSearch());
+  };
+  useModalExitHook();
   return (
     <>
       <s.Container>
@@ -46,7 +53,7 @@ const MarketPage = (): JSX.Element => {
           isOnSale={true}
           itemLike="25"
           isLiked={true}
-          onClick={toggleModal}
+          onClick={toggleMarket}
         />
         <s.Horizon />
         <MarketItem
@@ -56,7 +63,7 @@ const MarketPage = (): JSX.Element => {
           isOnSale={false}
           itemLike="25"
           isLiked={false}
-          onClick={toggleModal}
+          onClick={toggleMarket}
         />
         <s.Horizon />
         <MarketItem
@@ -66,10 +73,11 @@ const MarketPage = (): JSX.Element => {
           isOnSale={true}
           itemLike="25"
           isLiked={true}
-          onClick={toggleModal}
+          onClick={toggleMarket}
         />
         <s.Horizon />
-        <ItemModal open={isModal} onModal={toggleModal} />
+        <ItemModal open={isMarket} onModal={toggleMarket} />
+        <UserSearchModal open={isUserSearch} onModal={toggleUserSearch} />
       </s.Container>
       <BottomNav />
     </>

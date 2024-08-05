@@ -45,12 +45,12 @@ const s = {
   InputHeader: styled.p`
     text-align: left;
     color: ${(props) => props.theme.textColor};
-    width: 80px;
+    width: fit-content;
     margin-bottom: 5px;
     font-size: 16px;
   `,
   ErrorText: styled.p`
-    color: red;
+    color: ${(props) => props.theme.mainColor};
     font-size: 12px;
     margin-left: 10px;
     margin-top: 5px;

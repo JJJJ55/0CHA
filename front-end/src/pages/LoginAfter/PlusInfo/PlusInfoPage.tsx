@@ -5,6 +5,7 @@ import Button from '../../../components/Common/Button';
 import Text from '../../../components/Common/Text';
 import TextArea from '../../../components/Common/TextArea';
 import { ReactComponent as Logo } from '../../../asset/img/svg/0CHA.svg';
+import { useNavigate } from 'react-router';
 
 // 배치 구체화
 
@@ -18,8 +19,9 @@ const s = {
   InfoHeader: styled.div`
     display: flex;
     flex-direction: column;
-    padding-left: 10px;
+    width: 90%;
     padding-bottom: 50px;
+    margin: 0 auto;
   `,
   PlusInfoArea: styled.div`
     width: 100%;
@@ -38,7 +40,7 @@ const s = {
   GenderOption: styled.div`
     display: flex;
     align-items: center;
-    margin: 0 50px 0 10px;
+    margin: 0 50px 0 0;
     input {
       accent-color: ${(props) => props.theme.mainColor};
     }
@@ -113,7 +115,6 @@ const s = {
     color: ${(props) => props.theme.textColor};
     margin-bottom: 5px;
     font-size: 16px;
-    border: 1px solid red;
     display: inline-block; /* 콘텐츠 크기에 맞게 너비 조정 */
     white-space: nowrap; /* 줄바꿈 방지 */
   `,
@@ -369,6 +370,10 @@ interface dataType {
 }
 
 const PlusInfoPage = (): JSX.Element => {
+  const navigate = useNavigate();
+  const handleMovePage = (): void => {
+    navigate('/login');
+  };
   const [data, setData] = useState<dataType>({
     gender: '',
     height: '',
@@ -393,6 +398,7 @@ const PlusInfoPage = (): JSX.Element => {
   };
   const handleNext = () => {
     alert('로그인 페이지로 이동합니다.');
+    handleMovePage();
     // 로그인 페이지로 이동
   };
 
@@ -401,15 +407,16 @@ const PlusInfoPage = (): JSX.Element => {
     // 입력한 정보만 옮기는 걸로
     console.log('Form submitted:', data);
     alert('정보가 제출되었습니다.');
+    handleMovePage();
   };
 
   return (
     <>
       <s.Container>
         <s.InfoHeader>
-          <Text size="24px" color="mainColor" children="회원가입 완료" margin="5px 0 20px" />
-          <Text type="guide" size="18px" children="더 나은 서비스를 위해" margin="5px" />
-          <Text type="guide" size="18px" children="추가 정보를 입력해주세요." />
+          <Text size="24px" color="mainColor" children="회원가입 완료" margin="5px 0 20px" bold="700" />
+          <Text type="guide" size="18px" children="더 나은 서비스를 위해" margin="0 0 5px 0" bold="500" />
+          <Text type="guide" size="18px" children="추가 정보를 입력해주세요." bold="500" />
         </s.InfoHeader>
         <s.PlusInfoArea>
           <s.InfoNameBox>
@@ -446,11 +453,12 @@ const PlusInfoPage = (): JSX.Element => {
             <Input
               type="text"
               height="40px"
-              width="50%"
+              width="130px"
               name="height"
               placeholder="키"
               value={data.height}
               onChange={handleChangeValue}
+              textalian="right"
             />
             <Text type="guide" children="cm" width="30px" />
           </s.MeasurementArea>
@@ -461,11 +469,12 @@ const PlusInfoPage = (): JSX.Element => {
             <Input
               type="text"
               height="40px"
-              width="50%"
+              width="130px"
               name="weight"
               placeholder="체중"
               value={data.weight}
               onChange={handleChangeValue}
+              textalian="right"
             />
             <Text type="guide" children="kg" width="30px" />
           </s.MeasurementArea>
@@ -493,8 +502,23 @@ const PlusInfoPage = (): JSX.Element => {
             </s.SelectBox>
           </s.LocationArea>
           <s.SubmitBtnArea>
-            <Button width="100%" height="40px" children="다음에 입력하기" onClick={handleNext} margin="5px 0" />
-            <Button width="100%" height="40px" type="main" children="입력완료" onClick={handleSubmit} margin="5px 0 " />
+            <Button
+              width="100%"
+              height="40px"
+              children="다음에 입력하기"
+              onClick={handleNext}
+              margin="5px 0"
+              bold="500"
+            />
+            <Button
+              width="100%"
+              height="40px"
+              type="main"
+              children="입력완료"
+              onClick={handleSubmit}
+              margin="5px 0 "
+              bold="500"
+            />
           </s.SubmitBtnArea>
         </s.PlusInfoArea>
       </s.Container>

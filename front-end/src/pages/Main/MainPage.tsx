@@ -22,6 +22,7 @@ const s = {
     font-size: 20px;
     margin: 0;
     cursor: default;
+    font-weight: 600;
   `,
   HeaderIcons: styled.div`
     display: flex;

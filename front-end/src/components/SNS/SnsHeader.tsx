@@ -21,6 +21,17 @@ const s = {
     align-items: center;
     padding: 0px 15px;
   `,
+  MenuArea1: styled.div`
+    width: 70%;
+    display: flex;
+    align-items: center;
+  `,
+  MenuArea2: styled.div`
+    width: 30%;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+  `,
 };
 
 const SnsHeader = (): JSX.Element => {
@@ -36,24 +47,38 @@ const SnsHeader = (): JSX.Element => {
   };
   return (
     <s.Container>
-      <Image width="35px" height="35px" src={test} cursor="pointer" onClick={() => handleMovePage('../profile/id')} />
-      <Input width="60%" height="35px" placeholder="검색" onKeyPress={toggleModal} />
-      <IconSvg
-        width="25"
-        height="25"
-        color="#ffffff"
-        Ico={alarm}
-        cursor="pointer"
-        onClick={() => handleMovePage('../notification')}
-      />
-      <IconSvg
-        width="25"
-        height="25"
-        color="#ffffff"
-        Ico={message}
-        cursor="pointer"
-        onClick={() => handleMovePage('../chat')}
-      />
+      <s.MenuArea1>
+        <Image
+          width="35px"
+          height="35px"
+          src={test}
+          cursor="pointer"
+          onClick={() => handleMovePage('../profile/id')}
+          display="block"
+          margin="0 10px 0 0"
+        />
+        <Input width="100%" height="35px" placeholder="검색" onKeyPress={toggleModal} />
+      </s.MenuArea1>
+      <s.MenuArea2>
+        <IconSvg
+          width="25"
+          height="25"
+          color="#ffffff"
+          Ico={alarm}
+          cursor="pointer"
+          onClick={() => handleMovePage('../notification')}
+          display="block"
+          margin=" 0 10px 0 0"
+        />
+        <IconSvg
+          width="25"
+          height="25"
+          color="#ffffff"
+          Ico={message}
+          cursor="pointer"
+          onClick={() => handleMovePage('../chat')}
+        />
+      </s.MenuArea2>
     </s.Container>
   );
 };

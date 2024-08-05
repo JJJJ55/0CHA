@@ -4,6 +4,7 @@
 <mapper namespace="com.ssafy.back_end.sns.mapper.SnsSocialMapper">
 
     <resultMap id="userPageInfo" type="com.ssafy.back_end.sns.model.UserPageDto">
+        <id property="id" column="id"/>
         <result property="nickname" column="nickname"/>
         <result property="profileImage" column="profile_image"/>
         <result property="feedCount" column="feed_count"/>
@@ -24,14 +25,15 @@
     </resultMap>
 
     <select id="getUserPageInfo" resultMap="userPageInfo">
-        SELECT nickname,
+        SELECT id,
+               nickname,
                profile_image,
-               (SELECT COUNT(*) FROM feeds WHERE user_id = #{userId})      AS feed_count,
-               (SELECT COUNT(*) FROM items WHERE user_id = #{userId})      AS item_count,
-               (SELECT COUNT(*) FROM followings WHERE user_id = #{userId}) AS followed_id_count,
-               (SELECT COUNT(*) FROM followers WHERE user_id = #{userId})  AS follower_id_count
+               (SELECT COUNT(*) FROM feeds WHERE user_id = #{userId})       AS feed_count,
+               (SELECT COUNT(*) FROM items WHERE user_id = #{userId})       AS item_count,
+               (SELECT COUNT(*) FROM follows WHERE follower_id = #{userId}) AS followed_id_count,
+               (SELECT COUNT(*) FROM follows WHERE followed_id = #{userId}) AS follower_id_count
         FROM users
-        WHERE user_id = #{userId};
+        WHERE id = #{userId};
     </select>
 
     <select id="getUserPageFeeds" resultMap="userPageList">
@@ -55,15 +57,14 @@
     </select>
 
     <select id="getUserPageFollowers" resultMap="userFollowList">
-        SELECT u.id AS id, u.nickname, u.profile_image
+        SELECT u.id AS id, u.nickname AS nickname, u.profile_image AS profile_image
         FROM follows f
                  JOIN users u ON f.follower_id = u.id
         WHERE f.followed_id = #{userId};
-
     </select>
 
     <select id="getUserPageFollowings" resultMap="userFollowList">
-        SELECT u.id AS id, u.nickname, u.profile_image
+        SELECT u.id AS id, u.nickname AS nickname, u.profile_image AS profile_image
         FROM follows f
                  JOIN users u ON f.followed_id = u.id
         WHERE f.follower_id = #{userId};

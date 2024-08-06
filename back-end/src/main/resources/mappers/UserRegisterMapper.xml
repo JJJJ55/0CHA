@@ -3,10 +3,20 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssafy.back_end.auth.mapper.UserRegisterMapper">
 
-    <insert id="register" parameterType="UserDto">
+    <insert id="register" parameterType="UserDto" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO users (email, password, name, nickname, phone, birth)
         VALUES (#{email}, #{password}, #{name}, #{nickname}, #{phone}, #{birth});
     </insert>
+
+    <update id="userInfo" parameterType="UserDto">
+        UPDATE users
+        SET gender    = #{gender},
+            height      = #{height},
+            weight = #{weight},
+            district = #{district},
+            si_gun_gu = #{siGunGu}
+        WHERE id = #{id};
+    </update>
 
     <select id="checkEmail" parameterType="UserDto" resultType="int">
         SELECT COUNT(*)

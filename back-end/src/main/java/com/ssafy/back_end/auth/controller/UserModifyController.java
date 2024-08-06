@@ -1,6 +1,7 @@
 package com.ssafy.back_end.auth.controller;
 
 import com.ssafy.back_end.auth.model.UserDto;
+import com.ssafy.back_end.auth.service.UserModifyService;
 import com.ssafy.back_end.auth.service.UserModifyServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -16,15 +17,16 @@ import java.util.Random;
 @RequestMapping (value = "/api/auth/modify")
 public class UserModifyController {
     static int authCode;
-    private final UserModifyServiceImpl userModifyService;
+    private final UserModifyService userModifyService;
 
     @Autowired
     public UserModifyController(UserModifyServiceImpl userModifyService) {
         this.userModifyService = userModifyService;
     }
 
+
     @Operation (summary = "이메일 찾기")
-    @PostMapping ("/find_email")
+    @PostMapping ("/find-email")
     public ResponseEntity<?> findEmail(@RequestBody UserDto userDto) {
         String email = userModifyService.findEmail(userDto);
 
@@ -37,12 +39,13 @@ public class UserModifyController {
     }
 
     @Operation (summary = "비밀번호 찾기&인증발송")
-    @PostMapping ("/find_password")
+    @PostMapping ("/find-password")
     public ResponseEntity<?> findPassword(@RequestBody UserDto userDto) {
         int result = userModifyService.findPassword(userDto);
 
         if (result > 0) {
             authCode = getRandomNumber();   //랜덤으로 이메일로 전송해줘야함
+            userModifyService.sendEmail(userDto.getEmail(), authCode);
             return ResponseEntity.ok("이메일로 인증코드가 전송되었습니다.");
         }
         else {
@@ -51,7 +54,7 @@ public class UserModifyController {
     }
 
     @Operation (summary = "비밀번호 인증확인")
-    @PostMapping ("/find_password/verify")
+    @PostMapping ("/find-password/verify")
     public ResponseEntity<?> verifyPassword(@RequestBody int code) {
         if (code == authCode) {
             authCode = 0;   //인증코드 초기화
@@ -63,7 +66,7 @@ public class UserModifyController {
     }
 
     @Operation (summary = "비밀번호 초기화")
-    @PutMapping ("/reset_password")
+    @PutMapping ("/reset-password")
     public ResponseEntity<?> resetPassword(@RequestBody UserDto userDto) {
         int result = userModifyService.resetPassword(userDto);
 

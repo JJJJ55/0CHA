@@ -26,5 +26,5 @@ public class ItemDto {
     private String nickname;
     private String profileImage;
     private List<String> images;
-
+    private int isLike;
 }

@@ -6,7 +6,7 @@ import Text from '../../../components/Common/Text';
 import { ReactComponent as Logo } from '../../../asset/img/svg/0CHA.svg';
 import { useNavigate } from 'react-router';
 import { AxiosError, AxiosResponse } from 'axios';
-import { login, user } from '../../../lib/api/user-api';
+import { login } from '../../../lib/api/user-api';
 
 const s = {
   Container: styled.section`
@@ -72,31 +72,36 @@ const LoginPage = (): JSX.Element => {
       [e.target.name]: e.target.value,
     });
   };
-  const handleClickLogin = (): void => {
-    // alert(data.email + ' ' + data.pw);
-    // navigate('/main');
-  };
+
   const handleMovePage = (path: string): void => {
     navigate(path);
   };
 
   // 로그인
   const postLogin = async () => {
-    login(
-      data,
-      (resp) => {
-        console.log(resp.data);
-      },
-      (error: AxiosError) => {
-        console.log('로그인 실패');
-        console.log(error);
-      },
-    );
+    // login(
+    //   data,
+    //   (resp) => {
+    //     localStorage.setItem('accessToken', resp.data.accessToken);
+    //     localStorage.setItem('refreshToken', resp.data.refreshToken);
+    //     navigate('/main');
+    //   },
+    //   (error: AxiosError) => {
+    //     alert('아이디 및 비밀번호를 다시 확인해주세요.');
+    //   },
+    // );
+    localStorage.setItem('accessToken', '1');
+    localStorage.setItem('refreshToken', '1');
+    navigate('/main');
   };
 
-  const testLogin = () => {
-    user.login(data.email, data.password);
-  };
+  // const testLogin = async () => {
+  //   const resp = await user.login(data);
+  //   localStorage.setItem('accessToken', resp.accessToken);
+  //   localStorage.setItem('refreshToken', resp.refreshToken);
+
+  //   navigate('/main');
+  // };
 
   return (
     <s.Container>
@@ -135,7 +140,7 @@ const LoginPage = (): JSX.Element => {
           display="block"
           margin="30px auto"
           children="로그인"
-          onClick={testLogin}
+          onClick={postLogin}
         />
         <s.TextBtnArea>
           <Text

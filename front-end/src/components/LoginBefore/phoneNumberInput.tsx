@@ -47,6 +47,7 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({ phonePart2, phonePa
       placeholder="앞 4자리"
       value={phonePart2}
       onChange={onChange}
+      textalian="center"
     />
     <s.BetweenText children="-" />
     <Input
@@ -57,6 +58,7 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({ phonePart2, phonePa
       placeholder="뒤 4자리"
       value={phonePart3}
       onChange={onChange}
+      textalian="center"
     />
   </s.PhoneNumberContainer>
 );

@@ -5,22 +5,25 @@ import Button from '../../../components/Common/Button';
 import Header from '../../../components/Common/Header';
 import PhoneNumberInput from '../../../components/LoginBefore/phoneNumberInput';
 import EmailArea from '../../../components/LoginBefore/EmailArea';
+import { useNavigate } from 'react-router';
+import { useAppDispatch } from '../../../lib/hook/useReduxHook';
+import { findPwAuth, findPwAuthCheck } from '../../../lib/api/user-api';
+import { pageActions } from '../../../store/page';
 
 const s = {
   Container: styled.section`
     height: 100%;
     background-color: ${(props) => props.theme.bgColor};
-    justify-content: center;
-    align-items: center;
+  `,
+  BinArea: styled.div`
+    width: 100%;
+    height: 60px;
   `,
   FindPasswordArea: styled.div`
     width: 100%;
-    height: 100%; // 가운데
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 60px 0 80px;
+    height: calc(100%-60px); // 가운데
+    padding: 120px 0 80px !important;
+    overflow: auto;
   `,
   InfoArea: styled.div`
     width: 100%;
@@ -60,6 +63,7 @@ const s = {
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
+    margin: 20px auto 0;
   `,
   InputBox: styled.div`
     flex: 1;
@@ -89,6 +93,9 @@ const FindPasswordPage = (): JSX.Element => {
     email: '',
     verificationCode: '',
   });
+
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   // 이름
   const [usernameError, setUsernameError] = useState('');
@@ -193,23 +200,43 @@ const FindPasswordPage = (): JSX.Element => {
   };
 
   // 이메일 전송 버튼 로직(기존 이메일과 중복 확인하는 작업 필요)
-  const handleSendVerificationCode = () => {
+  const handleSendVerificationCode = async () => {
     // 이메일 필드 조건 충족한 경우
     if (emailError === '' && data.email !== '') {
-      // 기존에 가입한 이메일과 중복확인하는 로직이 들어갈 부분
+      const param = {
+        email: data.email,
+        name: data.username,
+        phone: '010' + data.phonePart2 + data.phonePart3,
+      };
+      await findPwAuth(
+        param,
+        (resp) => {
+          alert('인증번호가 발송되었습니다.');
+          setReturnCode('000000'); // 인증번호 설정
+          setVerificationBtnText('재전송'); // 버튼명 변경
+          setVerificationBtnType('sub'); // 버튼 타입변경
+          setConfirmBtnText('확인'); // 확인 필드에 대해서도 변경
+          setConfirmBtnType('main');
+          setIsVerified(false); // 인증여부 초기화
+          setEmailInfoMessage('');
+        },
+        (error) => {
+          setEmailInfoMessage('가입 정보가 없습니다. 다시 확인해주세요.');
+        },
+      );
       if (true) {
         // 가입 이력이 있는 이메일인 경우 인증번호 발송
-        alert('인증번호가 발송되었습니다.');
-        setReturnCode('000000'); // 인증번호 설정
-        setVerificationBtnText('재전송'); // 버튼명 변경
-        setVerificationBtnType('sub'); // 버튼 타입변경
-        setConfirmBtnText('확인'); // 확인 필드에 대해서도 변경
-        setConfirmBtnType('main');
-        setIsVerified(false); // 인증여부 초기화
-        setEmailInfoMessage('');
+        // alert('인증번호가 발송되었습니다.');
+        // setReturnCode('000000'); // 인증번호 설정
+        // setVerificationBtnText('재전송'); // 버튼명 변경
+        // setVerificationBtnType('sub'); // 버튼 타입변경
+        // setConfirmBtnText('확인'); // 확인 필드에 대해서도 변경
+        // setConfirmBtnType('main');
+        // setIsVerified(false); // 인증여부 초기화
+        // setEmailInfoMessage('');
       } else {
         // 가입 이력이 없는 이메일인 경우
-        setEmailInfoMessage('가입 정보가 없습니다. 다시 확인해주세요.');
+        // setEmailInfoMessage('가입 정보가 없습니다. 다시 확인해주세요.');
       }
     } else {
       // 이메일 필드 조건을 미충족한 경우
@@ -219,7 +246,7 @@ const FindPasswordPage = (): JSX.Element => {
   };
 
   // 이메일 인증 확인 로직
-  const handleCheckVerificationCode = () => {
+  const handleCheckVerificationCode = async () => {
     const { verificationCode } = data;
     // 인증완료시 비활성화
     if (!isVerified) {
@@ -229,12 +256,24 @@ const FindPasswordPage = (): JSX.Element => {
       } else {
         // 6자 누른 경우
         if (verificationCode === returnCode) {
-          alert('인증번호가 확인되었습니다.');
-          setConfirmBtnText('인증완료');
-          setConfirmBtnType('sub');
-          setIsVerified(true);
+          await findPwAuthCheck(
+            parseInt(data.verificationCode),
+            (resp) => {
+              alert('인증번호가 확인되었습니다.');
+              setConfirmBtnText('인증완료');
+              setConfirmBtnType('sub');
+              setIsVerified(true);
+            },
+            (error) => {
+              alert('인증번호가 틀립니다.');
+            },
+          );
+          // alert('인증번호가 확인되었습니다.');
+          // setConfirmBtnText('인증완료');
+          // setConfirmBtnType('sub');
+          // setIsVerified(true);
         } else {
-          alert('인증번호가 틀립니다.');
+          // alert('인증번호가 틀립니다.');
         }
       }
     }
@@ -250,21 +289,22 @@ const FindPasswordPage = (): JSX.Element => {
       usernameError === ''
     ) {
       console.log('Form submitted:', data);
-      alert('비밀번호 변경 페이지로 이동합니다.');
+      // alert('비밀번호 변경 페이지로 이동합니다.');
+      dispatch(pageActions.toogleIsPw(true));
+      navigate('', { state: { email: data.email } });
     } else {
-      alert('입력 다시');
+      alert('입력값을 다시한번 확인해주세요.');
     }
   };
 
   const handlePrevious = () => {
-    // 이전 페이지로 이동하는 로직 작성
-    console.log('Previous button clicked');
-    alert('이전 페이지로 이동합니다.');
+    navigate('/login');
   };
 
   return (
     <s.Container>
       <Header text="비밀번호 찾기" />
+      <s.BinArea></s.BinArea>
       <s.FindPasswordArea>
         <s.InfoArea>
           <s.InfoNameBox>

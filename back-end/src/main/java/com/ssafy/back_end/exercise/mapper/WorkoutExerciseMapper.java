@@ -14,4 +14,5 @@ public interface WorkoutExerciseMapper {
     ExerciseLikeDto isFavoriteExercise(@Param("exerciseId") int exerciseId, @Param("userId") int userId);
     int favoriteExercise(@Param("exerciseId") int exerciseId, @Param("userId") int userId);
     int unfavoriteExercise(@Param("exerciseId") int exerciseId, @Param("userId") int userId);
+    List<ExerciseDto> getFavoriteExercisesByUserId(@Param("userId") int userId);
 }

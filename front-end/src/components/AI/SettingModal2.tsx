@@ -89,9 +89,9 @@ interface TrainingSettingsModalProps {
 }
 
 const SettingModal: React.FC<TrainingSettingsModalProps> = ({ onClose, onConfirm }) => {
-  const [counter, setCounter] = useState<string>('1'); // 운동 기본횟수 1회
+  const [counter, setCounter] = useState<string>('5'); // 운동 기본횟수 5회
   // 운동 목록
-  const exercises = ['------------', '데드리프트', '스쿼트', '벤치프레스', ' ------------ '];
+  const exercises = ['------------', '데드리프트', '스쿼트', '벤치프레스', '테스트모델', ' ------------ '];
   // 기본 설정 스쿼트
   const [selectedExercise, setSelectedExercise] = useState('스쿼트');
   const listRef = useRef<HTMLDivElement>(null);

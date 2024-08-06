@@ -67,6 +67,18 @@ export const localAxios = () => {
   return instance;
 };
 
+export const publicAxios = () => {
+  const publicAxios: Axios = axios.create({
+    baseURL: '/proxy',
+    withCredentials: true,
+  });
+
+  publicAxios.defaults.headers.common['Authorization'] = '';
+  publicAxios.defaults.headers.post['Content-Type'] = 'application/json';
+  publicAxios.defaults.headers.patch['Content-Type'] = 'application/json';
+  return publicAxios;
+};
+
 const interceptioLogout = async () => {
   await logout(
     (resp) => {

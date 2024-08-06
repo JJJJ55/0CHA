@@ -36,3 +36,12 @@ export interface SignupType {
   phone: string;
   birth: string;
 }
+
+export interface PlusInfoType {
+  id: number;
+  gender: number;
+  height: number;
+  weight: number;
+  district: string;
+  siGunGu: string;
+}

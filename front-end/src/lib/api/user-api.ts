@@ -1,9 +1,19 @@
 import { AxiosError, AxiosResponse } from 'axios';
-import { localAxios } from '../../util/axios-setting';
+import { localAxios, publicAxios } from '../../util/axios-setting';
 import { request } from './index';
-import { AuthCheck, FindEmail, FindPwAuth, ResetPw, SignupType, Token, UserLogin } from '../../util/types/axios-user';
+import {
+  AuthCheck,
+  FindEmail,
+  FindPwAuth,
+  PlusInfoType,
+  ResetPw,
+  SignupType,
+  Token,
+  UserLogin,
+} from '../../util/types/axios-user';
 
-const local = localAxios();
+const local = publicAxios();
+const jwt = localAxios();
 
 interface UserInfo {
   id: number;
@@ -25,7 +35,7 @@ export const login = async (param: UserLogin, success: (response: any) => void, 
 };
 
 export const logout = async (success: (response: any) => void, fail: (error: AxiosError) => void) => {
-  await local.post(`/auth/login/logout`).then(success).catch(fail);
+  await jwt.post(`/auth/login/logout`).then(success).catch(fail);
 };
 
 // AT 재발급 고려중(axios intercept에 적용)
@@ -62,20 +72,38 @@ export const resetPw = async (param: ResetPw, success: (response: any) => void, 
   await local.put(`/auth/modify/reset-password`, param).then(success).catch(fail);
 };
 
-export const emailAuth = async (param: string, success: (response: any) => void, fail: (error: AxiosError) => void) => {
-  await local.post(`/auth/register/check-email`, param).then(success).catch(fail);
+export const emailAuth = async (email: string, success: (response: any) => void, fail: (error: AxiosError) => void) => {
+  await local
+    .post(`/auth/register/check-email`, email, {
+      headers: {
+        'Content-Type': 'application/text',
+      },
+    })
+    .then(success)
+    .catch(fail);
 };
 
 export const emailAuthCheck = async (
-  param: AuthCheck,
+  param: number,
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
 ) => {
   await local.post(`/auth/register/check-email/verify`, param).then(success).catch(fail);
 };
 
-export const nickCheck = async (param: string, success: (response: any) => void, fail: (error: AxiosError) => void) => {
-  await local.post(`/auth/register/check-nickname`, param).then(success).catch(fail);
+export const nickCheck = async (
+  nickname: string,
+  success: (response: any) => void,
+  fail: (error: AxiosError) => void,
+) => {
+  await local
+    .post(`/auth/register/check-nickname`, nickname, {
+      headers: {
+        'Content-Type': 'application/text',
+      },
+    })
+    .then(success)
+    .catch(fail);
 };
 
 export const signup = async (
@@ -84,6 +112,14 @@ export const signup = async (
   fail: (error: AxiosError) => void,
 ) => {
   await local.post(`/auth/register/signup`, param).then(success).catch(fail);
+};
+
+export const putPlusInfo = async (
+  param: PlusInfoType,
+  success: (response: any) => void,
+  fail: (error: AxiosError) => void,
+) => {
+  await local.put(`/auth/register/user-info`, param).then(success).catch(fail);
 };
 // export const user = {
 //   login: (param: UserLogin) => request.post<Token>('/auth/login/login', param).then().catch(),

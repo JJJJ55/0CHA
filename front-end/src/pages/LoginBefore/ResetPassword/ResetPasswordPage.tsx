@@ -81,7 +81,7 @@ interface dataType {
 
 const ResetPasswordPage = (): JSX.Element => {
   const navigate = useNavigate();
-  const emailProps: string = useLocation().state;
+  const email = useLocation().state?.email;
   const [data, setData] = useState<dataType>({
     pw: '',
     pwCheck: '',
@@ -133,14 +133,14 @@ const ResetPasswordPage = (): JSX.Element => {
     if (data.pw.length !== 0 && data.pwCheck.length !== 0 && pwError === '' && pwCheckError === '') {
       console.log('Form submitted:', data);
       const param = {
-        email: emailProps,
+        email,
         password: data.pw,
       };
       await resetPw(
         param,
         (resp) => {
           alert('비밀번호가 변경되었습니다.');
-          navigate('/main');
+          navigate('/login');
         },
         (error) => {},
       );
@@ -150,13 +150,9 @@ const ResetPasswordPage = (): JSX.Element => {
     }
   };
 
-  const handlePrevious = () => {
-    navigate(-1);
-  };
-
   return (
     <s.Container>
-      <Header text="비밀번호 변경" />
+      <Header text="비밀번호 변경" onBack={() => navigate('../../login')} />
       <s.ChangePasswordArea>
         <s.PasswordArea>
           <s.InfoNameBox>
@@ -194,7 +190,7 @@ const ResetPasswordPage = (): JSX.Element => {
         </s.PasswordArea>
 
         <s.ButtonArea>
-          <Button width="48%" height="40px" children="이전" onClick={handlePrevious} bold="500" />
+          <Button width="48%" height="40px" children="이전" onClick={() => navigate('../../login')} bold="500" />
           <Button width="48%" height="40px" type="main" children="비밀번호 변경" onClick={handleSubmit} bold="500" />
         </s.ButtonArea>
       </s.ChangePasswordArea>

@@ -5,7 +5,7 @@ import Button from '../../../components/Common/Button';
 import Header from '../../../components/Common/Header';
 import PhoneNumberInput from '../../../components/LoginBefore/phoneNumberInput';
 import { findEmail } from '../../../lib/api/user-api';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import { useAppDispatch } from '../../../lib/hook/useReduxHook';
 import { pageActions, selectIsEmail } from '../../../store/page';
 
@@ -80,6 +80,8 @@ interface dataType {
 }
 
 const FindEmailPage = (): JSX.Element => {
+  const location = useLocation();
+  console.log(location);
   const [data, setData] = useState<dataType>({
     username: '',
     phonePart2: '',
@@ -169,7 +171,7 @@ const FindEmailPage = (): JSX.Element => {
         param,
         (resp) => {
           dispatch(pageActions.toogleIsEmail(true));
-          navigate('', { state: { result: resp.data } });
+          navigate('/find/email', { state: { result: { name: param.name, email: resp.data } } });
         },
         (error) => {
           setEmailMessage('해당 정보로 가입된 이메일이 없습니다.');

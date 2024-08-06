@@ -79,20 +79,17 @@ const LoginPage = (): JSX.Element => {
 
   // 로그인
   const postLogin = async () => {
-    // login(
-    //   data,
-    //   (resp) => {
-    //     localStorage.setItem('accessToken', resp.data.accessToken);
-    //     localStorage.setItem('refreshToken', resp.data.refreshToken);
-    //     navigate('/main');
-    //   },
-    //   (error: AxiosError) => {
-    //     alert('아이디 및 비밀번호를 다시 확인해주세요.');
-    //   },
-    // );
-    localStorage.setItem('accessToken', '1');
-    localStorage.setItem('refreshToken', '1');
-    navigate('/main');
+    login(
+      data,
+      (resp) => {
+        localStorage.setItem('accessToken', resp.data.accessToken);
+        localStorage.setItem('refreshToken', resp.data.refreshToken);
+        navigate('/main');
+      },
+      (error) => {
+        alert('아이디 및 비밀번호를 다시 확인해주세요.');
+      },
+    );
   };
 
   // const testLogin = async () => {

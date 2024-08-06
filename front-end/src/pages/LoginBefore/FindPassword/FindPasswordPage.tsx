@@ -255,19 +255,19 @@ const FindPasswordPage = (): JSX.Element => {
         alert('인증번호 6자를 정확하게 입력해주세요.');
       } else {
         // 6자 누른 경우
+        await findPwAuthCheck(
+          parseInt(data.verificationCode),
+          (resp) => {
+            alert('인증번호가 확인되었습니다.');
+            setConfirmBtnText('인증완료');
+            setConfirmBtnType('sub');
+            setIsVerified(true);
+          },
+          (error) => {
+            alert('인증번호가 틀립니다.');
+          },
+        );
         if (verificationCode === returnCode) {
-          await findPwAuthCheck(
-            parseInt(data.verificationCode),
-            (resp) => {
-              alert('인증번호가 확인되었습니다.');
-              setConfirmBtnText('인증완료');
-              setConfirmBtnType('sub');
-              setIsVerified(true);
-            },
-            (error) => {
-              alert('인증번호가 틀립니다.');
-            },
-          );
           // alert('인증번호가 확인되었습니다.');
           // setConfirmBtnText('인증완료');
           // setConfirmBtnType('sub');
@@ -291,7 +291,7 @@ const FindPasswordPage = (): JSX.Element => {
       console.log('Form submitted:', data);
       // alert('비밀번호 변경 페이지로 이동합니다.');
       dispatch(pageActions.toogleIsPw(true));
-      navigate('', { state: { email: data.email } });
+      navigate('/find/password', { state: { email: data.email } });
     } else {
       alert('입력값을 다시한번 확인해주세요.');
     }

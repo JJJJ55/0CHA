@@ -129,20 +129,17 @@ const ProfileMainPage = (): JSX.Element => {
   };
 
   const postLogout = async () => {
-    // await logout(
-    //   (resp) => {
-    //     console.log(resp.data);
-    //     localStorage.removeItem('accessToken');
-    //     localStorage.removeItem('refreshToken');
-    //     navigate('/login');
-    //   },
-    //   (error) => {
-    //     alert('로그아웃 도중 에러가 발생했습니다. 잠시 후 다시 시도해주세요.');
-    //   },
-    // );
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    navigate('/login');
+    await logout(
+      (resp) => {
+        console.log(resp.data);
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        navigate('/login');
+      },
+      (error) => {
+        alert('로그아웃 도중 에러가 발생했습니다. 잠시 후 다시 시도해주세요.');
+      },
+    );
   };
 
   const handleDeleteAccount = () => {

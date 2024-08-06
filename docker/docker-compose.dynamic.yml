@@ -21,7 +21,7 @@ services:
     image: react-nginx-custom:latest
     container_name: react-nginx-container
     volumes:
-      - ./react-nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/react-nginx/nginx.conf:/etc/nginx/nginx.conf
     restart: always
     networks:
       - app-network

@@ -1,6 +1,9 @@
 package com.ssafy.back_end.util;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -90,10 +93,13 @@ public class JwtUtil {
 
     // HttpServletRequest에서 Authorization Header를 통해 access token을 추출하는 메서드입니다.
     public String getAccessToken(HttpServletRequest httpServletRequest) {
+        System.out.println("httpServletRequest: " + httpServletRequest);
+
+
         String bearerToken = httpServletRequest.getHeader(AUTHORIZATION_HEADER);
-        System.out.println("bearerToken: " + bearerToken);
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
+        System.out.println("accessToken: " + bearerToken);
+        if (StringUtils.hasText(bearerToken) ) {
+            return bearerToken;
         }
         return null;
     }

@@ -5,6 +5,7 @@ import com.ssafy.back_end.sns.model.UserPageListDto;
 import com.ssafy.back_end.sns.service.SnsSocialServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,7 @@ public class SnsSocialController {
 
     @Operation (summary = "유저페이지-완")
     @GetMapping ("/user-page/info")
-    public ResponseEntity<?> getUserPageInfo(@RequestHeader ("ID") int ID, @RequestParam ("user_id") int userId) {
+    public ResponseEntity<?> getUserPageInfo(@RequestParam ("user_id") int userId) {
         UserPageDto userInfo = snsSocialService.getUserPageInfo(userId);
         if (userInfo != null) {
             return ResponseEntity.ok(userInfo);
@@ -35,7 +36,7 @@ public class SnsSocialController {
 
     @Operation (summary = "유저 피드 간략히보기-완")
     @GetMapping ("/user-page/feeds")
-    public ResponseEntity<?> getUserPageFeeds(@RequestHeader ("ID") int ID, @RequestParam ("user_id") int userId) {
+    public ResponseEntity<?> getUserPageFeeds(@RequestParam ("user_id") int userId) {
         List<UserPageListDto> feedList = snsSocialService.getUserPageFeeds(userId);
 
         if (feedList != null) {
@@ -49,7 +50,7 @@ public class SnsSocialController {
 
     @Operation (summary = "유저 중고장터 간략히보기-완")
     @GetMapping ("/user-page/items")
-    public ResponseEntity<?> getUserPageItems(@RequestHeader ("ID") int ID, @RequestParam ("user_id") int userId) {
+    public ResponseEntity<?> getUserPageItems(@RequestParam ("user_id") int userId) {
         List<UserPageListDto> itemList = snsSocialService.getUserPageItems(userId);
 
         if (itemList != null) {
@@ -63,7 +64,7 @@ public class SnsSocialController {
 
     @Operation (summary = "유저 팔로워 목록보기-완")
     @GetMapping ("/user-page/followers")
-    public ResponseEntity<?> getUserPageFollowers(@RequestHeader ("ID") int ID, @RequestParam ("user_id") int userId) {
+    public ResponseEntity<?> getUserPageFollowers(@RequestParam ("user_id") int userId) {
         List<UserPageDto> follwerList = snsSocialService.getUserPageFollowers(userId);
 
         if (follwerList != null) {
@@ -77,7 +78,7 @@ public class SnsSocialController {
 
     @Operation (summary = "유저 팔로잉 목록보기-완")
     @GetMapping ("/user-page/followings")
-    public ResponseEntity<?> getUserPageFollowings(@RequestHeader ("ID") int ID, @RequestParam ("user_id") int userId) {
+    public ResponseEntity<?> getUserPageFollowings(@RequestParam ("user_id") int userId) {
         List<UserPageDto> follwingList = snsSocialService.getUserPageFollowings(userId);
 
         if (follwingList != null) {
@@ -91,8 +92,10 @@ public class SnsSocialController {
 
     @Operation (summary = "팔로우-완")
     @PostMapping ("/follow")
-    public ResponseEntity<?> follow(@RequestHeader ("ID") int ID, @RequestBody int targetId) {
-        if(ID == targetId) {
+    public ResponseEntity<?> follow(HttpServletRequest request, @RequestBody int targetId) {
+        int ID = (Integer)request.getAttribute("userId");
+
+        if (ID == targetId) {
             return ResponseEntity.ok("본인입니다.");
         }
 
@@ -114,8 +117,9 @@ public class SnsSocialController {
 
     @Operation (summary = "팔로우 삭제-완")
     @DeleteMapping ("/follow")
-    public ResponseEntity<?> unfollow(@RequestHeader ("ID") int ID, @RequestBody int targetId) {
-        if(ID == targetId) {
+    public ResponseEntity<?> unfollow(HttpServletRequest request, @RequestBody int targetId) {
+        int ID = (Integer)request.getAttribute("userId");
+        if (ID == targetId) {
             return ResponseEntity.ok("본인입니다.");
         }
 

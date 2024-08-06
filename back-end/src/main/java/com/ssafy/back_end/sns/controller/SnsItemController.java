@@ -4,6 +4,7 @@ import com.ssafy.back_end.sns.model.ItemDto;
 import com.ssafy.back_end.sns.service.SnsItemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ public class SnsItemController {
 
     @Operation (summary = "전체or유저 중고장터 목록보기-완")
     @GetMapping ("/list")
-    public ResponseEntity<?> getItems(@RequestHeader ("ID") int ID, @RequestParam ("user_id") int userId) {
+    public ResponseEntity<?> getItems( @RequestParam ("user_id") int userId) {
         List<ItemDto> items = snsItemService.getItems(userId);
 
         if (items != null) {
@@ -38,7 +39,7 @@ public class SnsItemController {
 
     @Operation (summary = "중고장터 자세히보기-완")
     @GetMapping ("/{itemId}")
-    public ResponseEntity<?> getItemDetail(@RequestHeader ("ID") int ID, @PathVariable ("itemId") int itemId) {
+    public ResponseEntity<?> getItemDetail( @PathVariable ("itemId") int itemId) {
         ItemDto item = snsItemService.getItemDetail(itemId);
 
         if (item != null) {
@@ -49,8 +50,8 @@ public class SnsItemController {
 
     @Operation (summary = "중고장터 글쓰기-완")
     @PostMapping ("/write")
-    public ResponseEntity<?> writeItem(@RequestHeader ("ID") int ID, @RequestBody ItemDto item) {
-        item.setUserId(ID);
+    public ResponseEntity<?> writeItem(HttpServletRequest request, @RequestBody ItemDto item) {
+        int ID = (Integer)request.getAttribute("userId");
         int id = snsItemService.writeItem(item);
 
         if (id > 0) {
@@ -61,7 +62,8 @@ public class SnsItemController {
 
     @Operation (summary = "중고장터 글수정-완")
     @PutMapping ("/{itemId}")
-    public ResponseEntity<?> updateItem(@RequestHeader ("ID") int ID, @PathVariable int itemId, @RequestBody ItemDto item) {
+    public ResponseEntity<?> updateItem(HttpServletRequest request, @PathVariable int itemId, @RequestBody ItemDto item) {
+        int ID = (Integer)request.getAttribute("userId");
         item.setUserId(ID);
         item.setId(itemId);
         int id = snsItemService.updateItem(item);
@@ -74,7 +76,7 @@ public class SnsItemController {
 
     @Operation (summary = "중고장터 글삭제-완")
     @DeleteMapping ("/{itemId}")
-    public ResponseEntity<?> deleteItem(@RequestHeader ("ID") int ID, @PathVariable int itemId) {
+    public ResponseEntity<?> deleteItem(@PathVariable int itemId) {
         int result = snsItemService.deleteItem(itemId);
 
         if (result != 0) {
@@ -85,7 +87,8 @@ public class SnsItemController {
 
     @Operation (summary = "중고장터 좋아요-완")
     @PostMapping ("/{itemId}/like")
-    public ResponseEntity<?> likeItem(@RequestHeader ("ID") int ID, @PathVariable int itemId) {
+    public ResponseEntity<?> likeItem(HttpServletRequest request, @PathVariable int itemId) {
+        int ID = (Integer)request.getAttribute("userId");
         int isLike = snsItemService.isLike(itemId, ID);
 
         if (isLike == 0) {   //좋아요 안눌려있음
@@ -104,7 +107,8 @@ public class SnsItemController {
 
     @Operation (summary = "중고장터 좋아요삭제-완")
     @DeleteMapping ("/{itemId}/like")
-    public ResponseEntity<?> dislikeItem(@RequestHeader ("ID") int ID, @PathVariable int itemId) {
+    public ResponseEntity<?> dislikeItem(HttpServletRequest request, @PathVariable int itemId) {
+        int ID = (Integer)request.getAttribute("userId");
         int isLike = snsItemService.isLike(itemId, ID);
 
         if (isLike == 1) {   //좋아요 눌려있음
@@ -123,7 +127,7 @@ public class SnsItemController {
 
     @Operation (summary = "중고장터 판매완료-완")
     @PutMapping ("/{itemId}/soldout")
-    public ResponseEntity<?> soldOut(@RequestHeader ("ID") int ID, @PathVariable int itemId) {
+    public ResponseEntity<?> soldOut( @PathVariable int itemId) {
         int id = snsItemService.soldOut(itemId);
 
         if (id > 0) {

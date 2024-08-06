@@ -5,6 +5,7 @@ import test from '../../../asset/img/testImg.png';
 import Header from '../../../components/Common/Header';
 import BottomNav from '../../../components/Common/BottomNav';
 import { useNavigate } from 'react-router';
+import { logout } from '../../../lib/api/user-api';
 
 const s = {
   Container: styled.section`
@@ -21,6 +22,7 @@ const s = {
     flex-direction: column;
     align-items: center;
     padding: 80px 5px 70px;
+    overflow: auto;
   `,
   ProfileImageArea: styled.div`
     width: 100%;
@@ -126,6 +128,23 @@ const ProfileMainPage = (): JSX.Element => {
     navigate('password');
   };
 
+  const postLogout = async () => {
+    // await logout(
+    //   (resp) => {
+    //     console.log(resp.data);
+    //     localStorage.removeItem('accessToken');
+    //     localStorage.removeItem('refreshToken');
+    //     navigate('/login');
+    //   },
+    //   (error) => {
+    //     alert('로그아웃 도중 에러가 발생했습니다. 잠시 후 다시 시도해주세요.');
+    //   },
+    // );
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    navigate('/login');
+  };
+
   const handleDeleteAccount = () => {
     alert('회원 탈퇴 페이지로 이동');
   };
@@ -155,12 +174,17 @@ const ProfileMainPage = (): JSX.Element => {
             <s.InfoText children="비밀번호 변경" />
             <s.Arrow>›</s.Arrow>
           </s.InfoItem>
+          <s.InfoItem onClick={postLogout}>
+            <s.InfoText children="로그아웃" />
+            <s.Arrow>›</s.Arrow>
+          </s.InfoItem>
           <s.InfoItem onClick={handleDeleteAccount}>
             <s.InfoText children="회원 탈퇴" />
             <s.Arrow>›</s.Arrow>
           </s.InfoItem>
         </s.InfoArea>
       </s.ProfileArea>
+
       <BottomNav />
     </s.Container>
   );

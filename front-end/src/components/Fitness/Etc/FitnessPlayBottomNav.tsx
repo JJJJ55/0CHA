@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import Button from '../../Common/Button';
 import Text from '../../Common/Text';
 import { useNavigate } from 'react-router';
+import { useAppDispatch } from '../../../lib/hook/useReduxHook';
+import { pageActions } from '../../../store/page';
 
 const s = {
   Container: styled.div`
@@ -32,6 +34,12 @@ const s = {
 };
 
 const FitnessPlayBottomNav = (): JSX.Element => {
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
+  const handleFinish = (): void => {
+    dispatch(pageActions.toogleIsFinish(true));
+  };
   return (
     <s.Container>
       <s.MainArea>
@@ -44,7 +52,7 @@ const FitnessPlayBottomNav = (): JSX.Element => {
           <Text width="100%" children="00:00" bold="700" size="16px" textalian="center" />
         </s.ContentArea>
       </s.MainArea>
-      <Button width="40%" height="40px" children="운동 종료" bold="500" type="main" onClick={() => {}} />
+      <Button width="40%" height="40px" children="운동 종료" bold="500" type="main" onClick={handleFinish} />
     </s.Container>
   );
 };

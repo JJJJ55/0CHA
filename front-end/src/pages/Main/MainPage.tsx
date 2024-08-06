@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useLayoutEffect } from 'react';
 import styled from 'styled-components';
 import testImage from '../../asset/img/testImg.png';
 import IconSvg from '../../components/Common/IconSvg';
@@ -7,6 +7,7 @@ import BottomNav from '../../components/Common/BottomNav';
 import Button from '../../components/Common/Button';
 import { useBottomNavHook } from '../../lib/hook/useBottomNavHook';
 import { useNavigate } from 'react-router';
+// import { user } from '../../lib/api/user-api';
 
 const s = {
   Header: styled.header`
@@ -191,6 +192,10 @@ const HorizontalScroll: React.FC<HorizontalScrollProps> = ({ items }) => {
     navigate(path);
   };
 
+  // useLayoutEffect(() => {
+  //   const info = user.info();
+  //   console.log(info);
+  // }, []);
   useEffect(() => {
     const scrollWrapper = scrollWrapperRef.current;
     if (scrollWrapper) {

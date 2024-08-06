@@ -7,6 +7,9 @@ import PhoneNumberInput from '../../../components/LoginBefore/phoneNumberInput';
 import Header from '../../../components/Common/Header';
 import EmailArea from '../../../components/LoginBefore/EmailArea';
 import { useNavigate } from 'react-router';
+import { nickCheck, signup } from '../../../lib/api/user-api';
+import { useAppDispatch } from '../../../lib/hook/useReduxHook';
+import { pageActions } from '../../../store/page';
 
 const s = {
   Container: styled.section`
@@ -368,18 +371,29 @@ const SignUpPage = (): JSX.Element => {
   };
 
   // 닉네임 중복 확인
-  const handleCheckDuplicateNickname = () => {
+  const handleCheckDuplicateNickname = async () => {
     if (nicknameError === '' && data.nickname.length !== 0) {
       // 닉네임 중복 확인 로직 작성
-      alert('사용할 수 있는 닉네임입니다.');
+      await nickCheck(
+        data.nickname,
+        (resp) => {
+          alert('사용할 수 있는 닉네임입니다.');
+        },
+        (error) => {
+          alert('중복된 닉네임입니다.');
+          setData({ ...data, nickname: '' });
+        },
+      );
       setIsNicknameExisted(false);
     } else {
       alert('닉네임은 5~10자 영문/숫자/_만 사용 가능합니다.');
     }
   };
 
+  const dispatch = useAppDispatch();
+
   // 제출
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // 제출 로직 작성 (예: API 호출)
     // 모든 조건 만족해야 함.
     // 이메일 인증. 비밀번호
@@ -406,10 +420,27 @@ const SignUpPage = (): JSX.Element => {
       data.birthMonth !== '' &&
       data.birthDay !== ''
     ) {
-      console.log('Form submitted:', data);
-      alert('회원가입이 완료되었습니다.');
+      const param = {
+        email: data.email,
+        password: data.pw,
+        name: data.username,
+        nickname: data.nickname,
+        phone: '010' + data.phonePart2 + data.phonePart3,
+        birth: data.birthYear + '-' + data.birthMonth + '-' + data.birthDay,
+      };
+      console.log('Form submitted:', param);
+      // await signup(
+      //   param,
+      //   (resp) => {
+      //     dispatch(pageActions.OnPageChange());
+      //     alert('가입성공');
+      //   },
+      //   (error) => {
+      //     alert('가입도중 오류가 발생하였습니다. 잠시후 다시 시도해주세요.');
+      //   },
+      // );
     } else {
-      alert('입력 다시');
+      alert('입력된 값을 다시한번 확인해주세요.');
     }
   };
 
@@ -429,9 +460,10 @@ const SignUpPage = (): JSX.Element => {
   const generateMonthOptions = () => {
     const months = [];
     for (let month = 1; month <= 12; month++) {
+      const formattedMonth = month < 10 ? `0${month}` : `${month}`;
       months.push(
-        <s.Option key={month} value={month}>
-          {month}
+        <s.Option key={month} value={formattedMonth}>
+          {formattedMonth}
         </s.Option>,
       );
     }
@@ -439,11 +471,14 @@ const SignUpPage = (): JSX.Element => {
   };
 
   const generateDayOptions = () => {
-    return daysInMonth.map((day) => (
-      <s.Option key={day} value={day}>
-        {day}
-      </s.Option>
-    ));
+    return daysInMonth.map((day) => {
+      const formattedDay = day < 10 ? `0${day}` : `${day}`;
+      return (
+        <s.Option key={day} value={formattedDay}>
+          {formattedDay}
+        </s.Option>
+      );
+    });
   };
 
   return (

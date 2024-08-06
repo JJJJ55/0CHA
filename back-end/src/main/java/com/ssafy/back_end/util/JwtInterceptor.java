@@ -44,7 +44,7 @@ public class JwtInterceptor implements HandlerInterceptor {
 
                     int userId = jwtUtil.getUserIdFromAccessToken(accessToken);
                     response.setHeader("ID", String.valueOf(userId)); // 사용자 ID를 헤더에 추가
-                    //request.setAttribute("userId", userId); // 요청 속성에 userId 추가
+                    request.setAttribute("userId", userId); // 요청 속성에 userId 추가
                     return true;
                 }
             }

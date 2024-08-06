@@ -25,8 +25,9 @@ public class SnsItemController {
 
     @Operation (summary = "전체or유저 중고장터 목록보기-완")
     @GetMapping ("/list")
-    public ResponseEntity<?> getItems(@RequestParam ("user_id") int userId) {
-        List<ItemDto> items = snsItemService.getItems(userId);
+    public ResponseEntity<?> getItems(HttpServletRequest request, @RequestParam ("user_id") int userId) {
+        int ID = (Integer)request.getAttribute("userId");
+        List<ItemDto> items = snsItemService.getItems(ID, userId);
 
         if (items != null) {
             if (items.isEmpty()) {
@@ -39,8 +40,9 @@ public class SnsItemController {
 
     @Operation (summary = "중고장터 자세히보기-완")
     @GetMapping ("/{itemId}")
-    public ResponseEntity<?> getItemDetail(@PathVariable ("itemId") int itemId) {
-        ItemDto item = snsItemService.getItemDetail(itemId);
+    public ResponseEntity<?> getItemDetail(HttpServletRequest request, @PathVariable ("itemId") int itemId) {
+        int ID = (Integer)request.getAttribute("userId");
+        ItemDto item = snsItemService.getItemDetail(ID, itemId);
 
         if (item != null) {
             return ResponseEntity.ok(item);
@@ -52,6 +54,7 @@ public class SnsItemController {
     @PostMapping ("/write")
     public ResponseEntity<?> writeItem(HttpServletRequest request, @RequestBody ItemDto item) {
         int ID = (Integer)request.getAttribute("userId");
+        item.setUserId(ID);
         int id = snsItemService.writeItem(item);
 
         if (id > 0) {

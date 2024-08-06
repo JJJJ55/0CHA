@@ -37,12 +37,27 @@ const s = {
   CreateButton: styled.div`
     margin-left: 10px;
   `,
+  test: styled.span`
+    color: red;
+  `
 };
+
+type commentData = {
+  id: number;
+  content: string;
+  createdAt: string;
+  author: {
+    userId: number;
+    nickname: string;
+    profileImage: string;
+  }
+}
 
 interface CommentModalProps {
   open: boolean;
   onModal: Function;
-}
+  data?: commentData[];
+};
 
 const CommentModal = (props: CommentModalProps): JSX.Element => {
   const toggleModal = () => {
@@ -60,60 +75,15 @@ const CommentModal = (props: CommentModalProps): JSX.Element => {
         <s.Container>
           <s.TopBar onClick={toggleModal}></s.TopBar>
           <s.CommentArea>
-            <Comment
-              commentProfileImage={test}
-              commentAuthor="stranger_00"
-              commentContent="그 루틴 좋아보이네여"
-              isUserComment={false}
-            />
-            <Comment
-              commentProfileImage={test}
-              commentAuthor="stranger_00"
-              commentContent="아아 마이크체크 마이크체크"
-              isUserComment={false}
-            />
-            <Comment
-              commentProfileImage={test}
-              commentAuthor="it_is_me"
-              commentContent="내 댓글이예요"
-              isUserComment={true}
-            />
-            <Comment
-              commentProfileImage={test}
-              commentAuthor="it_is_me"
-              commentContent="내 댓글이예요"
-              isUserComment={true}
-            />
-            <Comment
-              commentProfileImage={test}
-              commentAuthor="it_is_me"
-              commentContent="내 댓글이예요"
-              isUserComment={true}
-            />
-            <Comment
-              commentProfileImage={test}
-              commentAuthor="it_is_me"
-              commentContent="내 댓글이예요"
-              isUserComment={true}
-            />
-            <Comment
-              commentProfileImage={test}
-              commentAuthor="it_is_me"
-              commentContent="내 댓글이예요"
-              isUserComment={true}
-            />
-            <Comment
-              commentProfileImage={test}
-              commentAuthor="it_is_me"
-              commentContent="내 댓글이예요"
-              isUserComment={true}
-            />
-            <Comment
-              commentProfileImage={test}
-              commentAuthor="it_is_me"
-              commentContent="내 댓글이예요"
-              isUserComment={true}
-            />
+            {props.data?.map((data, index) => (
+              <Comment key={index}
+                commentProfileImage={data.author.profileImage}
+                commentAuthor={data.author.nickname}
+                commentContent={data.content}
+                isUserComment={false}
+              />
+
+            ))}
           </s.CommentArea>
           <s.CreateComment>
             <Input width="100%" height="40px" placeholder="댓글 작성" />

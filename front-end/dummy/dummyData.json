@@ -1,0 +1,1366 @@
+{
+    "feedData": [
+{
+    "id": 1,
+    "content": "This is a post content",
+    "image": "https://picsum.photos/500/200",
+    "like": 100,
+    "comment": 10,
+    "createdAt": "2024-07-28T10:00:00Z",
+    "author": {
+        "id": 123,
+        "nickname": "user123",
+        "profileImage": "https://picsum.photos/200"
+    }
+},
+{
+    "id": 2,
+    "content": "Another post content",
+    "image": "https://picsum.photos/500",
+    "like": 150,
+    "comment": 20,
+    "createdAt": "2024-07-28T11:00:00Z",
+    "author": {
+        "id": 124,
+        "nickname": "user124",
+        "profileImage": "https://picsum.photos/200"
+    }
+},
+{
+    "id": 3,
+    "content": "More post content",
+    "image": "https://picsum.photos/500",
+    "like": 200,
+    "comment": 25,
+    "createdAt": "2024-07-28T12:00:00Z",
+    "author": {
+        "id": 125,
+        "nickname": "user125",
+        "profileImage": "https://picsum.photos/200"
+    }
+},
+{
+    "id": 4,
+    "content": "Interesting post content",
+    "image": "https://picsum.photos/500",
+    "like": 250,
+    "comment": 30,
+    "createdAt": "2024-07-28T13:00:00Z",
+    "author": {
+        "id": 126,
+        "nickname": "user126",
+        "profileImage": "https://picsum.photos/200"
+    }
+},
+{
+    "id": 5,
+    "content": "Exciting post content",
+    "image": "https://picsum.photos/500",
+    "like": 300,
+    "comment": 35,
+    "createdAt": "2024-07-28T14:00:00Z",
+    "author": {
+        "id": 127,
+        "nickname": "user127",
+        "profileImage": "https://picsum.photos/200"
+    }
+},
+{
+    "id": 6,
+    "content": "Inspiring post content",
+    "image": "https://picsum.photos/500",
+    "like": 350,
+    "comment": 40,
+    "createdAt": "2024-07-28T15:00:00Z",
+    "author": {
+        "id": 128,
+        "nickname": "user128",
+        "profileImage": "https://picsum.photos/200"
+    }
+},
+{
+    "id": 7,
+    "content": "Motivating post content",
+    "image": "https://picsum.photos/500",
+    "like": 400,
+    "comment": 45,
+    "createdAt": "2024-07-28T16:00:00Z",
+    "author": {
+        "id": 129,
+        "nickname": "user129",
+        "profileImage": "https://picsum.photos/200"
+    }
+},
+{
+    "id": 8,
+    "content": "Funny post content",
+    "image": "https://picsum.photos/500",
+    "like": 450,
+    "comment": 50,
+    "createdAt": "2024-07-28T17:00:00Z",
+    "author": {
+        "id": 130,
+        "nickname": "user130",
+        "profileImage": "https://picsum.photos/200"
+    }
+},
+{
+    "id": 9,
+    "content": "Sad post content",
+    "image": "https://picsum.photos/500",
+    "like": 500,
+    "comment": 55,
+    "createdAt": "2024-07-28T18:00:00Z",
+    "author": {
+        "id": 131,
+        "nickname": "user131",
+        "profileImage": "https://picsum.photos/200"
+    }
+},
+{
+    "id": 10,
+    "content": "Happy post content",
+    "image": "https://picsum.photos/500",
+    "like": 550,
+    "comment": 60,
+    "createdAt": "2024-07-28T19:00:00Z",
+    "author": {
+        "id": 132,
+        "nickname": "user132",
+        "profileImage": "https://picsum.photos/200"
+    }
+},
+{
+    "id": 11,
+    "content": "Adventurous post content",
+    "image": "https://picsum.photos/500",
+    "like": 600,
+    "comment": 65,
+    "createdAt": "2024-07-28T20:00:00Z",
+    "author": {
+        "id": 133,
+        "nickname": "user133",
+        "profileImage": "https://picsum.photos/200"
+    }
+},
+{
+    "id": 12,
+    "content": "Thought-provoking post content",
+    "image": "https://picsum.photos/500",
+    "like": 650,
+    "comment": 70,
+    "createdAt": "2024-07-28T21:00:00Z",
+    "author": {
+        "id": 134,
+        "nickname": "user134",
+        "profileImage": "https://picsum.photos/200"
+    }
+},
+{
+    "id": 13,
+    "content": "Nostalgic post content",
+    "image": "https://picsum.photos/500",
+    "like": 700,
+    "comment": 75,
+    "createdAt": "2024-07-28T22:00:00Z",
+    "author": {
+        "id": 135,
+        "nickname": "user135",
+        "profileImage": "https://picsum.photos/200"
+    }
+},
+{
+    "id": 14,
+    "content": "Cute post content",
+    "image": "https://picsum.photos/500",
+    "like": 750,
+    "comment": 80,
+    "createdAt": "2024-07-28T23:00:00Z",
+    "author": {
+        "id": 136,
+        "nickname": "user136",
+        "profileImage": "https://picsum.photos/200"
+    }
+},
+{
+    "id": 15,
+    "content": "Informative post content",
+    "image": "https://picsum.photos/500",
+    "like": 800,
+    "comment": 85,
+    "createdAt": "2024-07-29T00:00:00Z",
+    "author": {
+        "id": 137,
+        "nickname": "user137",
+        "profileImage": "https://picsum.photos/200"
+    }
+},
+{
+    "id": 16,
+    "content": "Educational post content",
+    "image": "https://picsum.photos/500",
+    "like": 850,
+    "comment": 90,
+    "createdAt": "2024-07-29T01:00:00Z",
+    "author": {
+        "id": 138,
+        "nickname": "user138",
+        "profileImage": "https://picsum.photos/200"
+    }
+},
+{
+    "id": 17,
+    "content": "Controversial post content",
+    "image": "https://picsum.photos/500",
+    "like": 900,
+    "comment": 95,
+    "createdAt": "2024-07-29T02:00:00Z",
+    "author": {
+        "id": 139,
+        "nickname": "user139",
+        "profileImage": "https://picsum.photos/200"
+    }
+},
+{
+    "id": 18,
+    "content": "Heartwarming post content",
+    "image": "https://picsum.photos/500",
+    "like": 950,
+    "comment": 100,
+    "createdAt": "2024-07-29T03:00:00Z",
+    "author": {
+        "id": 140,
+        "nickname": "user140",
+        "profileImage": "https://picsum.photos/200"
+    }
+},
+{
+    "id": 19,
+    "content": "Dramatic post content",
+    "image": "https://picsum.photos/500",
+    "like": 1000,
+    "comment": 105,
+    "createdAt": "2024-07-29T04:00:00Z",
+    "author": {
+        "id": 141,
+        "nickname": "user141",
+        "profileImage": "https://picsum.photos/200"
+    }
+},
+{
+    "id": 20,
+    "content": "Poetic post content",
+    "image": "https://picsum.photos/500",
+    "like": 1050,
+    "comment": 110,
+    "createdAt": "2024-07-29T05:00:00Z",
+    "author": {
+        "id": 142,
+        "nickname": "user142",
+        "profileImage": "https://picsum.photos/200"
+    }
+},
+{
+    "id": 21,
+    "content": "Philosophical post content",
+    "image": "https://picsum.photos/500",
+    "like": 1100,
+    "comment": 115,
+    "createdAt": "2024-07-29T06:00:00Z",
+    "author": {
+        "id": 143,
+        "nickname": "user143",
+        "profileImage": "https://picsum.photos/200"
+    }
+},
+{
+    "id": 22,
+    "content": "Satirical post content",
+    "image": "https://picsum.photos/500",
+    "like": 1150,
+    "comment": 120,
+    "createdAt": "2024-07-29T07:00:00Z",
+    "author": {
+        "id": 144,
+        "nickname": "user144",
+        "profileImage": "https://picsum.photos/200"
+    }
+},
+{
+    "id": 23,
+    "content": "Political post content",
+    "image": "https://picsum.photos/500",
+    "like": 1200,
+    "comment": 125,
+    "createdAt": "2024-07-29T08:00:00Z",
+    "author": {
+        "id": 145,
+        "nickname": "user145",
+        "profileImage": "https://picsum.photos/200"
+    }
+},
+{
+    "id": 24,
+    "content": "Spiritual post content",
+    "image": "https://picsum.photos/500",
+    "like": 1250,
+    "comment": 130,
+    "createdAt": "2024-07-29T09:00:00Z",
+    "author": {
+        "id": 146,
+        "nickname": "user146",
+        "profileImage": "https://picsum.photos/200"
+    }
+},
+{
+    "id": 25,
+    "content": "Artistic post content",
+    "image": "https://picsum.photos/500",
+    "like": 1300,
+    "comment": 135,
+    "createdAt": "2024-07-29T10:00:00Z",
+    "author": {
+        "id": 147,
+        "nickname": "user147",
+        "profileImage": "https://picsum.photos/200"
+    }
+},
+{
+    "id": 26,
+    "content": "Technological post content",
+    "image": "https://picsum.photos/500",
+    "like": 1350,
+    "comment": 140,
+    "createdAt": "2024-07-29T11:00:00Z",
+    "author": {
+        "id": 148,
+        "nickname": "user148",
+        "profileImage": "https://picsum.photos/200"
+    }
+},
+{
+    "id": 27,
+    "content": "Medical post content",
+    "image": "https://picsum.photos/500",
+    "like": 1400,
+    "comment": 145,
+    "createdAt": "2024-07-29T12:00:00Z",
+    "author": {
+        "id": 149,
+        "nickname": "user149",
+        "profileImage": "https://picsum.photos/200"
+    }
+},
+{
+    "id": 28,
+    "content": "Historical post content",
+    "image": "https://picsum.photos/500",
+    "like": 1450,
+    "comment": 150,
+    "createdAt": "2024-07-29T13:00:00Z",
+    "author": {
+        "id": 150,
+        "nickname": "user150",
+        "profileImage": "https://picsum.photos/200"
+    }
+},
+{
+    "id": 29,
+    "content": "Cultural post content",
+    "image": "https://picsum.photos/500",
+    "like": 1500,
+    "comment": 155,
+    "createdAt": "2024-07-29T14:00:00Z",
+    "author": {
+        "id": 151,
+        "nickname": "user151",
+        "profileImage": "https://picsum.photos/200"
+    }
+},
+{
+    "id": 30,
+    "content": "Scientific post content",
+    "image": "https://picsum.photos/500",
+    "like": 1550,
+    "comment": 160,
+    "createdAt": "2024-07-29T15:00:00Z",
+    "author": {
+        "id": 152,
+        "nickname": "user152",
+        "profileImage": "https://picsum.photos/200"
+    }
+}
+    ],
+    "marketItem": [
+    {
+        "id": 1,
+        "title": "Used Bicycle",
+        "price": 30000,
+        "isSold": false,
+        "createdAt": "2024-07-28T10:00:00Z",
+        "userId": 3,
+        "nickname": "user123",
+        "profileImage": "https://picsum.photos/200",
+        "likeCount": 23,
+        "isLike": 1,
+        "images": ["https://picsum.photos/500", "https://picsum.photos/600", "https://picsum.photos/700"]
+        },
+        {
+        "id": 2,
+        "title": "Second Hand Guitar",
+        "price": 15000,
+        "isSold": true,
+        "createdAt": "2024-07-20T14:30:00Z",
+        "userId": 7,
+        "nickname": "musicLover",
+        "profileImage": "https://picsum.photos/201",
+        "likeCount": 45,
+        "isLike": 0,
+        "images": ["https://picsum.photos/501", "https://picsum.photos/601", "https://picsum.photos/701"]
+        },
+        {
+        "id": 3,
+        "title": "Used Laptop",
+        "price": 45000,
+        "isSold": false,
+        "createdAt": "2024-07-25T09:00:00Z",
+        "userId": 12,
+        "nickname": "techGeek",
+        "profileImage": "https://picsum.photos/202",
+        "likeCount": 67,
+        "isLike": 1,
+        "images": ["https://picsum.photos/502", "https://picsum.photos/602", "https://picsum.photos/702"]
+        },
+        {
+        "id": 4,
+        "title": "Vintage Camera",
+        "price": 8000,
+        "isSold": true,
+        "createdAt": "2024-07-18T16:45:00Z",
+        "userId": 4,
+        "nickname": "shutterbug",
+        "profileImage": "https://picsum.photos/203",
+        "likeCount": 89,
+        "isLike": 0,
+        "images": ["https://picsum.photos/503", "https://picsum.photos/603", "https://picsum.photos/703"]
+        },
+        {
+        "id": 5,
+        "title": "Old Books Collection",
+        "price": 12000,
+        "isSold": false,
+        "createdAt": "2024-07-21T13:15:00Z",
+        "userId": 8,
+        "nickname": "bookworm",
+        "profileImage": "https://picsum.photos/204",
+        "likeCount": 34,
+        "isLike": 1,
+        "images": ["https://picsum.photos/504", "https://picsum.photos/604", "https://picsum.photos/704"]
+        },
+        {
+        "id": 6,
+        "title": "Used Car",
+        "price": 300000,
+        "isSold": false,
+        "createdAt": "2024-07-19T11:00:00Z",
+        "userId": 5,
+        "nickname": "carEnthusiast",
+        "profileImage": "https://picsum.photos/205",
+        "likeCount": 120,
+        "isLike": 0,
+        "images": ["https://picsum.photos/505", "https://picsum.photos/605", "https://picsum.photos/705"]
+        },
+        {
+        "id": 7,
+        "title": "Old Furniture Set",
+        "price": 22000,
+        "isSold": true,
+        "createdAt": "2024-07-26T15:30:00Z",
+        "userId": 9,
+        "nickname": "interiorDesigner",
+        "profileImage": "https://picsum.photos/206",
+        "likeCount": 78,
+        "isLike": 1,
+        "images": ["https://picsum.photos/506", "https://picsum.photos/606", "https://picsum.photos/706"]
+        },
+        {
+        "id": 8,
+        "title": "Antique Clock",
+        "price": 15000,
+        "isSold": false,
+        "createdAt": "2024-07-29T08:45:00Z",
+        "userId": 11,
+        "nickname": "timeKeeper",
+        "profileImage": "https://picsum.photos/207",
+        "likeCount": 56,
+        "isLike": 0,
+        "images": ["https://picsum.photos/507", "https://picsum.photos/607", "https://picsum.photos/707"]
+        },
+        {
+        "id": 9,
+        "title": "Second Hand Refrigerator",
+        "price": 50000,
+        "isSold": false,
+        "createdAt": "2024-07-22T12:00:00Z",
+        "userId": 10,
+        "nickname": "homeChef",
+        "profileImage": "https://picsum.photos/208",
+        "likeCount": 38,
+        "isLike": 1,
+        "images": ["https://picsum.photos/508", "https://picsum.photos/608", "https://picsum.photos/708"]
+        },
+        {
+        "id": 10,
+        "title": "Used Washing Machine",
+        "price": 25000,
+        "isSold": true,
+        "createdAt": "2024-07-24T17:00:00Z",
+        "userId": 6,
+        "nickname": "cleanFreak",
+        "profileImage": "https://picsum.photos/209",
+        "likeCount": 66,
+        "isLike": 0,
+        "images": ["https://picsum.photos/509", "https://picsum.photos/609", "https://picsum.photos/709"]
+        },
+        {
+        "id": 11,
+        "title": "Used Microwave",
+        "price": 10000,
+        "isSold": false,
+        "createdAt": "2024-07-27T10:30:00Z",
+        "userId": 13,
+        "nickname": "kitchenWhiz",
+        "profileImage": "https://picsum.photos/210",
+        "likeCount": 40,
+        "isLike": 1,
+        "images": ["https://picsum.photos/510", "https://picsum.photos/610", "https://picsum.photos/710"]
+        },
+        {
+        "id": 12,
+        "title": "Second Hand TV",
+        "price": 35000,
+        "isSold": true,
+        "createdAt": "2024-07-23T09:30:00Z",
+        "userId": 14,
+        "nickname": "movieBuff",
+        "profileImage": "https://picsum.photos/211",
+        "likeCount": 92,
+        "isLike": 0,
+        "images": ["https://picsum.photos/511", "https://picsum.photos/611", "https://picsum.photos/711"]
+        },
+        {
+        "id": 13,
+        "title": "Used Vacuum Cleaner",
+        "price": 8000,
+        "isSold": false,
+        "createdAt": "2024-07-20T14:00:00Z",
+        "userId": 15,
+        "nickname": "dustBuster",
+        "profileImage": "https://picsum.photos/212",
+        "likeCount": 53,
+        "isLike": 1,
+        "images": ["https://picsum.photos/512", "https://picsum.photos/612", "https://picsum.photos/712"]
+        },
+        {
+        "id": 14,
+        "title": "Old Painting",
+        "price": 25000,
+        "isSold": true,
+        "createdAt": "2024-07-18T16:00:00Z",
+        "userId": 16,
+        "nickname": "artLover",
+        "profileImage": "https://picsum.photos/213",
+        "likeCount": 85,
+        "isLike": 0,
+        "images": ["https://picsum.photos/513", "https://picsum.photos/613", "https://picsum.photos/713"]
+        },
+        {
+        "id": 15,
+        "title": "Second Hand Sofa",
+        "price": 40000,
+        "isSold": false,
+        "createdAt": "2024-07-21T13:45:00Z",
+        "userId": 17,
+        "nickname": "comfortSeeker",
+        "profileImage": "https://picsum.photos/214",
+        "likeCount": 67,
+        "isLike": 1,
+        "images": ["https://picsum.photos/514", "https://picsum.photos/614", "https://picsum.photos/714"]
+        },
+        {
+        "id": 16,
+        "title": "Used Desk",
+        "price": 15000,
+        "isSold": true,
+        "createdAt": "2024-07-25T18:00:00Z",
+        "userId": 18,
+        "nickname": "workFromHome",
+        "profileImage": "https://picsum.photos/215",
+        "likeCount": 48,
+        "isLike": 0,
+        "images": ["https://picsum.photos/515", "https://picsum.photos/615", "https://picsum.photos/715"]
+        },
+        {
+        "id": 17,
+        "title": "Used Lamp",
+        "price": 5000,
+        "isSold": false,
+        "createdAt": "2024-07-24T15:00:00Z",
+        "userId": 19,
+        "nickname": "lightEnthusiast",
+        "profileImage": "https://picsum.photos/216",
+        "likeCount": 60,
+        "isLike": 1,
+        "images": ["https://picsum.photos/516", "https://picsum.photos/616", "https://picsum.photos/716"]
+        },
+        {
+        "id": 18,
+        "title": "Used Printer",
+        "price": 12000,
+        "isSold": false,
+        "createdAt": "2024-07-26T09:00:00Z",
+        "userId": 20,
+        "nickname": "paperPush",
+        "profileImage": "https://picsum.photos/217",
+        "likeCount": 38,
+        "isLike": 0,
+        "images": ["https://picsum.photos/517", "https://picsum.photos/617", "https://picsum.photos/717"]
+        },
+        {
+        "id": 19,
+        "title": "Second Hand Tablet",
+        "price": 25000,
+        "isSold": true,
+        "createdAt": "2024-07-28T08:00:00Z",
+        "userId": 21,
+        "nickname": "techie",
+        "profileImage": "https://picsum.photos/218",
+        "likeCount": 73,
+        "isLike": 1,
+        "images": ["https://picsum.photos/518", "https://picsum.photos/618", "https://picsum.photos/718"]
+        },
+        {
+        "id": 20,
+        "title": "Old Bicycle",
+        "price": 20000,
+        "isSold": false,
+        "createdAt": "2024-07-29T07:00:00Z",
+        "userId": 22,
+        "nickname": "biker",
+        "profileImage": "https://picsum.photos/219",
+        "likeCount": 65,
+        "isLike": 0,
+        "images": ["https://picsum.photos/519", "https://picsum.photos/619", "https://picsum.photos/719"]
+        },
+        {
+        "id": 21,
+        "title": "Used Smartphone",
+        "price": 15000,
+        "isSold": true,
+        "createdAt": "2024-07-30T10:30:00Z",
+        "userId": 23,
+        "nickname": "phoneFanatic",
+        "profileImage": "https://picsum.photos/220",
+        "likeCount": 52,
+        "isLike": 1,
+        "images": ["https://picsum.photos/520", "https://picsum.photos/620", "https://picsum.photos/720"]
+        },
+        {
+        "id": 22,
+        "title": "Second Hand Shoes",
+        "price": 7000,
+        "isSold": false,
+        "createdAt": "2024-07-27T14:30:00Z",
+        "userId": 24,
+        "nickname": "sneakerhead",
+        "profileImage": "https://picsum.photos/221",
+        "likeCount": 81,
+        "isLike": 0,
+        "images": ["https://picsum.photos/521", "https://picsum.photos/621", "https://picsum.photos/721"]
+        },
+        {
+        "id": 23,
+        "title": "Old Jacket",
+        "price": 10000,
+        "isSold": false,
+        "createdAt": "2024-07-25T11:00:00Z",
+        "userId": 25,
+        "nickname": "fashionista",
+        "profileImage": "https://picsum.photos/222",
+        "likeCount": 39,
+        "isLike": 1,
+        "images": ["https://picsum.photos/522", "https://picsum.photos/622", "https://picsum.photos/722"]
+        },
+        {
+        "id": 24,
+        "title": "Used Bicycle Helmet",
+        "price": 5000,
+        "isSold": true,
+        "createdAt": "2024-07-23T16:00:00Z",
+        "userId": 26,
+        "nickname": "safetyFirst",
+        "profileImage": "https://picsum.photos/223",
+        "likeCount": 47,
+        "isLike": 0,
+        "images": ["https://picsum.photos/523", "https://picsum.photos/623", "https://picsum.photos/723"]
+        },
+        {
+        "id": 25,
+        "title": "Old Table",
+        "price": 20000,
+        "isSold": false,
+        "createdAt": "2024-07-22T13:00:00Z",
+        "userId": 27,
+        "nickname": "furnitureFan",
+        "profileImage": "https://picsum.photos/224",
+        "likeCount": 59,
+        "isLike": 1,
+        "images": ["https://picsum.photos/524", "https://picsum.photos/624", "https://picsum.photos/724"]
+        },
+        {
+        "id": 26,
+        "title": "Used Coffee Maker",
+        "price": 8000,
+        "isSold": true,
+        "createdAt": "2024-07-21T08:45:00Z",
+        "userId": 28,
+        "nickname": "coffeeLover",
+        "profileImage": "https://picsum.photos/225",
+        "likeCount": 76,
+        "isLike": 0,
+        "images": ["https://picsum.photos/525", "https://picsum.photos/625", "https://picsum.photos/725"]
+        },
+        {
+        "id": 27,
+        "title": "Second Hand Watch",
+        "price": 15000,
+        "isSold": false,
+        "createdAt": "2024-07-20T10:30:00Z",
+        "userId": 29,
+        "nickname": "watchCollector",
+        "profileImage": "https://picsum.photos/226",
+        "likeCount": 84,
+        "isLike": 1,
+        "images": ["https://picsum.photos/526", "https://picsum.photos/626", "https://picsum.photos/726"]
+        },
+        {
+        "id": 28,
+        "title": "Used Backpack",
+        "price": 5000,
+        "isSold": false,
+        "createdAt": "2024-07-19T12:15:00Z",
+        "userId": 30,
+        "nickname": "traveler",
+        "profileImage": "https://picsum.photos/227",
+        "likeCount": 71,
+        "isLike": 0,
+        "images": ["https://picsum.photos/527", "https://picsum.photos/627", "https://picsum.photos/727"]
+        },
+        {
+        "id": 29,
+        "title": "Old Bicycle Bell",
+        "price": 2000,
+        "isSold": true,
+        "createdAt": "2024-07-18T09:00:00Z",
+        "userId": 31,
+        "nickname": "bellRinger",
+        "profileImage": "https://picsum.photos/228",
+        "likeCount": 22,
+        "isLike": 1,
+        "images": ["https://picsum.photos/528", "https://picsum.photos/628", "https://picsum.photos/728"]
+        },
+        {
+        "id": 30,
+        "title": "Used Roller Skates",
+        "price": 10000,
+        "isSold": false,
+        "createdAt": "2024-07-16T15:30:00Z",
+        "userId": 32,
+        "nickname": "skater",
+        "profileImage": "https://picsum.photos/229",
+        "likeCount": 64,
+        "isLike": 0,
+        "images": ["https://picsum.photos/529", "https://picsum.photos/629", "https://picsum.photos/729"]
+        }
+        
+    ],
+    "comment1" : [
+        {
+            "id": 1,
+            "content": "1번 게시글 댓글",
+            "createdAt": "2024-07-28T10:00:00Z",
+            "author": {
+                "userId": 123,
+                "nickname": "user123",
+                "profileImage": "https://picsum.photos/200"
+                }
+        },
+        {
+            "id": 2,
+            "content": "1번 게시글 댓글2",
+            "createdAt": "2024-07-28T10:00:00Z",
+            "author": {
+                "userId": 13,
+                "nickname": "user13",
+                "profileImage": "https://picsum.photos/200"
+                }
+        }
+    ],
+    "comment2" : [
+        {
+            "id": 1,
+            "content": "2번 게시글 댓글",
+            "createdAt": "2024-07-28T10:00:00Z",
+            "author": {
+                "userId": 123,
+                "nickname": "user123",
+                "profileImage": "https://picsum.photos/200"
+                }
+        },
+        {
+            "id": 2,
+            "content": "2번 게시글 댓글2",
+            "createdAt": "2024-07-28T10:00:00Z",
+            "author": {
+                "userId": 13,
+                "nickname": "user13",
+                "profileImage": "https://picsum.photos/200"
+                }
+        }
+    ],
+    "comment3" : [
+        {
+            "id": 1,
+            "content": "3번 게시글 댓글",
+            "createdAt": "2024-07-28T10:00:00Z",
+            "author": {
+                "userId": 123,
+                "nickname": "user123",
+                "profileImage": "https://picsum.photos/200"
+                }
+        },
+        {
+            "id": 2,
+            "content": "3번 게시글 댓글2",
+            "createdAt": "2024-07-28T10:00:00Z",
+            "author": {
+                "userId": 13,
+                "nickname": "user13",
+                "profileImage": "https://picsum.photos/200"
+                }
+        }
+    ],
+    "itemDetail": [
+        {
+        "id": 123,
+        "title": "Used Bicycle",
+        "image": "https://picsum.photos/500",
+        "price": 10000,
+        "content": "This is a used bicycle in good condition.",
+        "is_sold": false,
+        "district": "Seoul",
+        "siGunGu": "Gangnam-gu",
+        "createdAt": "2024-07-28T10:00:00Z",
+        "likeCount": 42,
+        "userId": 1,
+        "nickname": "user123",
+        "profileImage": "https://picsum.photos/200",
+        "isLike": 1,
+        "images": ["https://picsum.photos/500", "https://picsum.photos/600", "https://picsum.photos/700"]
+        },
+        {
+        "id": 124,
+        "title": "Second Hand Guitar",
+        "image": "https://picsum.photos/501",
+        "price": 15000,
+        "content": "Barely used guitar, great sound.",
+        "is_sold": true,
+        "district": "Seoul",
+        "siGunGu": "Jongno-gu",
+        "createdAt": "2024-07-20T14:30:00Z",
+        "likeCount": 23,
+        "userId": 2,
+        "nickname": "musicLover",
+        "profileImage": "https://picsum.photos/201",
+        "isLike": 0,
+        "images": ["https://picsum.photos/501", "https://picsum.photos/601", "https://picsum.photos/701"]
+        },
+        {
+        "id": 125,
+        "title": "Used Laptop",
+        "image": "https://picsum.photos/502",
+        "price": 45000,
+        "content": "High-performance laptop, good for gaming.",
+        "is_sold": false,
+        "district": "Seoul",
+        "siGunGu": "Mapo-gu",
+        "createdAt": "2024-07-25T09:00:00Z",
+        "likeCount": 67,
+        "userId": 3,
+        "nickname": "techGeek",
+        "profileImage": "https://picsum.photos/202",
+        "isLike": 1,
+        "images": ["https://picsum.photos/502", "https://picsum.photos/602", "https://picsum.photos/702"]
+        },
+        {
+        "id": 126,
+        "title": "Vintage Camera",
+        "image": "https://picsum.photos/503",
+        "price": 8000,
+        "content": "Vintage camera, perfect for collectors.",
+        "is_sold": true,
+        "district": "Seoul",
+        "siGunGu": "Seocho-gu",
+        "createdAt": "2024-07-18T16:45:00Z",
+        "likeCount": 89,
+        "userId": 4,
+        "nickname": "shutterbug",
+        "profileImage": "https://picsum.photos/203",
+        "isLike": 0,
+        "images": ["https://picsum.photos/503", "https://picsum.photos/603", "https://picsum.photos/703"]
+        },
+        {
+        "id": 127,
+        "title": "Old Books Collection",
+        "image": "https://picsum.photos/504",
+        "price": 12000,
+        "content": "Collection of classic books.",
+        "is_sold": false,
+        "district": "Seoul",
+        "siGunGu": "Gwanak-gu",
+        "createdAt": "2024-07-21T13:15:00Z",
+        "likeCount": 34,
+        "userId": 5,
+        "nickname": "bookworm",
+        "profileImage": "https://picsum.photos/204",
+        "isLike": 1,
+        "images": ["https://picsum.photos/504", "https://picsum.photos/604", "https://picsum.photos/704"]
+        },
+        {
+        "id": 128,
+        "title": "Used Car",
+        "image": "https://picsum.photos/505",
+        "price": 300000,
+        "content": "Well-maintained car with low mileage.",
+        "is_sold": false,
+        "district": "Seoul",
+        "siGunGu": "Songpa-gu",
+        "createdAt": "2024-07-19T11:00:00Z",
+        "likeCount": 120,
+        "userId": 6,
+        "nickname": "carEnthusiast",
+        "profileImage": "https://picsum.photos/205",
+        "isLike": 0,
+        "images": ["https://picsum.photos/505", "https://picsum.photos/605", "https://picsum.photos/705"]
+        },
+        {
+        "id": 129,
+        "title": "Old Furniture Set",
+        "image": "https://picsum.photos/506",
+        "price": 22000,
+        "content": "Elegant old furniture set.",
+        "is_sold": true,
+        "district": "Seoul",
+        "siGunGu": "Jung-gu",
+        "createdAt": "2024-07-26T15:30:00Z",
+        "likeCount": 78,
+        "userId": 7,
+        "nickname": "interiorDesigner",
+        "profileImage": "https://picsum.photos/206",
+        "isLike": 1,
+        "images": ["https://picsum.photos/506", "https://picsum.photos/606", "https://picsum.photos/706"]
+        },
+        {
+        "id": 130,
+        "title": "Antique Clock",
+        "image": "https://picsum.photos/507",
+        "price": 15000,
+        "content": "Beautiful antique clock.",
+        "is_sold": false,
+        "district": "Seoul",
+        "siGunGu": "Eunpyeong-gu",
+        "createdAt": "2024-07-29T08:45:00Z",
+        "likeCount": 56,
+        "userId": 8,
+        "nickname": "timeKeeper",
+        "profileImage": "https://picsum.photos/207",
+        "isLike": 0,
+        "images": ["https://picsum.photos/507", "https://picsum.photos/607", "https://picsum.photos/707"]
+        },
+        {
+        "id": 131,
+        "title": "Second Hand Refrigerator",
+        "image": "https://picsum.photos/508",
+        "price": 50000,
+        "content": "Spacious refrigerator in good condition.",
+        "is_sold": false,
+        "district": "Seoul",
+        "siGunGu": "Dongdaemun-gu",
+        "createdAt": "2024-07-22T12:00:00Z",
+        "likeCount": 38,
+        "userId": 9,
+        "nickname": "homeChef",
+        "profileImage": "https://picsum.photos/208",
+        "isLike": 1,
+        "images": ["https://picsum.photos/508", "https://picsum.photos/608", "https://picsum.photos/708"]
+        },
+        {
+        "id": 132,
+        "title": "Used Washing Machine",
+        "image": "https://picsum.photos/509",
+        "price": 25000,
+        "content": "High-efficiency washing machine.",
+        "is_sold": true,
+        "district": "Seoul",
+        "siGunGu": "Seongbuk-gu",
+        "createdAt": "2024-07-24T17:00:00Z",
+        "likeCount": 66,
+        "userId": 10,
+        "nickname": "cleanFreak",
+        "profileImage": "https://picsum.photos/209",
+        "isLike": 0,
+        "images": ["https://picsum.photos/509", "https://picsum.photos/609", "https://picsum.photos/709"]
+        },
+        {
+        "id": 133,
+        "title": "Used Microwave",
+        "image": "https://picsum.photos/510",
+        "price": 10000,
+        "content": "Compact microwave oven.",
+        "is_sold": false,
+        "district": "Seoul",
+        "siGunGu": "Gangdong-gu",
+        "createdAt": "2024-07-27T10:30:00Z",
+        "likeCount": 40,
+        "userId": 11,
+        "nickname": "kitchenWhiz",
+        "profileImage": "https://picsum.photos/210",
+        "isLike": 1,
+        "images": ["https://picsum.photos/510", "https://picsum.photos/610", "https://picsum.photos/710"]
+        },
+        {
+        "id": 134,
+        "title": "Second Hand TV",
+        "image": "https://picsum.photos/511",
+        "price": 35000,
+        "content": "Large screen TV, great for movies.",
+        "is_sold": true,
+        "district": "Seoul",
+        "siGunGu": "Yeongdeungpo-gu",
+        "createdAt": "2024-07-23T14:00:00Z",
+        "likeCount": 90,
+        "userId": 12,
+        "nickname": "movieBuff",
+        "profileImage": "https://picsum.photos/211",
+        "isLike": 0,
+        "images": ["https://picsum.photos/511", "https://picsum.photos/611", "https://picsum.photos/711"]
+        },
+        {
+        "id": 135,
+        "title": "Used Tablet",
+        "image": "https://picsum.photos/512",
+        "price": 20000,
+        "content": "Tablet in perfect working condition.",
+        "is_sold": false,
+        "district": "Seoul",
+        "siGunGu": "Nowon-gu",
+        "createdAt": "2024-07-28T13:30:00Z",
+        "likeCount": 47,
+        "userId": 13,
+        "nickname": "techie",
+        "profileImage": "https://picsum.photos/212",
+        "isLike": 1,
+        "images": ["https://picsum.photos/512", "https://picsum.photos/612", "https://picsum.photos/712"]
+        },
+        {
+        "id": 136,
+        "title": "Old Desk",
+        "image": "https://picsum.photos/513",
+        "price": 15000,
+        "content": "Sturdy wooden desk.",
+        "is_sold": false,
+        "district": "Seoul",
+        "siGunGu": "Dobong-gu",
+        "createdAt": "2024-07-18T11:45:00Z",
+        "likeCount": 22,
+        "userId": 14,
+        "nickname": "writer",
+        "profileImage": "https://picsum.photos/213",
+        "isLike": 0,
+        "images": ["https://picsum.photos/513", "https://picsum.photos/613", "https://picsum.photos/713"]
+        },
+        {
+        "id": 137,
+        "title": "Used Sofa",
+        "image": "https://picsum.photos/514",
+        "price": 30000,
+        "content": "Comfortable sofa, almost new.",
+        "is_sold": true,
+        "district": "Seoul",
+        "siGunGu": "Gwangjin-gu",
+        "createdAt": "2024-07-21T14:15:00Z",
+        "likeCount": 65,
+        "userId": 15,
+        "nickname": "lounger",
+        "profileImage": "https://picsum.photos/214",
+        "isLike": 1,
+        "images": ["https://picsum.photos/514", "https://picsum.photos/614", "https://picsum.photos/714"]
+        },
+        {
+        "id": 138,
+        "title": "Used Bike Helmet",
+        "image": "https://picsum.photos/515",
+        "price": 5000,
+        "content": "Bike helmet, good for safety.",
+        "is_sold": false,
+        "district": "Seoul",
+        "siGunGu": "Jungnang-gu",
+        "createdAt": "2024-07-17T08:30:00Z",
+        "likeCount": 33,
+        "userId": 16,
+        "nickname": "cyclist",
+        "profileImage": "https://picsum.photos/215",
+        "isLike": 0,
+        "images": ["https://picsum.photos/515", "https://picsum.photos/615", "https://picsum.photos/715"]
+        },
+        {
+        "id": 139,
+        "title": "Second Hand Shoes",
+        "image": "https://picsum.photos/516",
+        "price": 8000,
+        "content": "Comfortable shoes, hardly worn.",
+        "is_sold": true,
+        "district": "Seoul",
+        "siGunGu": "Gangbuk-gu",
+        "createdAt": "2024-07-16T12:45:00Z",
+        "likeCount": 54,
+        "userId": 17,
+        "nickname": "runner",
+        "profileImage": "https://picsum.photos/216",
+        "isLike": 1,
+        "images": ["https://picsum.photos/516", "https://picsum.photos/616", "https://picsum.photos/716"]
+        },
+        {
+        "id": 140,
+        "title": "Used Treadmill",
+        "image": "https://picsum.photos/517",
+        "price": 50000,
+        "content": "Treadmill in good condition.",
+        "is_sold": false,
+        "district": "Seoul",
+        "siGunGu": "Geumcheon-gu",
+        "createdAt": "2024-07-25T17:15:00Z",
+        "likeCount": 87,
+        "userId": 18,
+        "nickname": "fitnessFan",
+        "profileImage": "https://picsum.photos/217",
+        "isLike": 0,
+        "images": ["https://picsum.photos/517", "https://picsum.photos/617", "https://picsum.photos/717"]
+        },
+        {
+        "id": 141,
+        "title": "Second Hand Smartwatch",
+        "image": "https://picsum.photos/518",
+        "price": 15000,
+        "content": "Smartwatch with all accessories.",
+        "is_sold": true,
+        "district": "Seoul",
+        "siGunGu": "Yangcheon-gu",
+        "createdAt": "2024-07-28T09:00:00Z",
+        "likeCount": 29,
+        "userId": 19,
+        "nickname": "gadgetGuy",
+        "profileImage": "https://picsum.photos/218",
+        "isLike": 1,
+        "images": ["https://picsum.photos/518", "https://picsum.photos/618", "https://picsum.photos/718"]
+        },
+        {
+        "id": 142,
+        "title": "Used Kitchen Set",
+        "image": "https://picsum.photos/519",
+        "price": 20000,
+        "content": "Complete kitchen set in good condition.",
+        "is_sold": false,
+        "district": "Seoul",
+        "siGunGu": "Dongjak-gu",
+        "createdAt": "2024-07-22T08:30:00Z",
+        "likeCount": 46,
+        "userId": 20,
+        "nickname": "chefMaster",
+        "profileImage": "https://picsum.photos/219",
+        "isLike": 0,
+        "images": ["https://picsum.photos/519", "https://picsum.photos/619", "https://picsum.photos/719"]
+        },
+        {
+        "id": 143,
+        "title": "Used Printer",
+        "image": "https://picsum.photos/520",
+        "price": 12000,
+        "content": "All-in-one printer, scanner, and copier.",
+        "is_sold": true,
+        "district": "Seoul",
+        "siGunGu": "Seodaemun-gu",
+        "createdAt": "2024-07-26T14:00:00Z",
+        "likeCount": 61,
+        "userId": 21,
+        "nickname": "paperPusher",
+        "profileImage": "https://picsum.photos/220",
+        "isLike": 1,
+        "images": ["https://picsum.photos/520", "https://picsum.photos/620", "https://picsum.photos/720"]
+        },
+        {
+        "id": 144,
+        "title": "Old Bicycle Bell",
+        "image": "https://picsum.photos/521",
+        "price": 2000,
+        "content": "Vintage bicycle bell, still works.",
+        "is_sold": false,
+        "district": "Seoul",
+        "siGunGu": "Yongsan-gu",
+        "createdAt": "2024-07-19T10:00:00Z",
+        "likeCount": 21,
+        "userId": 22,
+        "nickname": "bellRinger",
+        "profileImage": "https://picsum.photos/221",
+        "isLike": 0,
+        "images": ["https://picsum.photos/521", "https://picsum.photos/621", "https://picsum.photos/721"]
+        },
+        {
+        "id": 145,
+        "title": "Second Hand Backpack",
+        "image": "https://picsum.photos/522",
+        "price": 5000,
+        "content": "Durable backpack for everyday use.",
+        "is_sold": true,
+        "district": "Seoul",
+        "siGunGu": "Guro-gu",
+        "createdAt": "2024-07-27T09:45:00Z",
+        "likeCount": 31,
+        "userId": 23,
+        "nickname": "traveler",
+        "profileImage": "https://picsum.photos/222",
+        "isLike": 1,
+        "images": ["https://picsum.photos/522", "https://picsum.photos/622", "https://picsum.photos/722"]
+        },
+        {
+        "id": 146,
+        "title": "Used Camping Tent",
+        "image": "https://picsum.photos/523",
+        "price": 10000,
+        "content": "Tent perfect for weekend getaways.",
+        "is_sold": false,
+        "district": "Seoul",
+        "siGunGu": "Jung-gu",
+        "createdAt": "2024-07-23T13:15:00Z",
+        "likeCount": 53,
+        "userId": 24,
+        "nickname": "camper",
+        "profileImage": "https://picsum.photos/223",
+        "isLike": 0,
+        "images": ["https://picsum.photos/523", "https://picsum.photos/623", "https://picsum.photos/723"]
+        },
+        {
+        "id": 147,
+        "title": "Second Hand Mattress",
+        "image": "https://picsum.photos/524",
+        "price": 25000,
+        "content": "Comfortable mattress, clean.",
+        "is_sold": true,
+        "district": "Seoul",
+        "siGunGu": "Jongno-gu",
+        "createdAt": "2024-07-18T15:30:00Z",
+        "likeCount": 48,
+        "userId": 25,
+        "nickname": "sleeper",
+        "profileImage": "https://picsum.photos/224",
+        "isLike": 1,
+        "images": ["https://picsum.photos/524", "https://picsum.photos/624", "https://picsum.photos/724"]
+        },
+        {
+        "id": 148,
+        "title": "Used Coffee Maker",
+        "image": "https://picsum.photos/525",
+        "price": 10000,
+        "content": "Coffee maker, brews great coffee.",
+        "is_sold": false,
+        "district": "Seoul",
+        "siGunGu": "Seocho-gu",
+        "createdAt": "2024-07-21T11:45:00Z",
+        "likeCount": 60,
+        "userId": 26,
+        "nickname": "coffeeLover",
+        "profileImage": "https://picsum.photos/225",
+        "isLike": 0,
+        "images": ["https://picsum.photos/525", "https://picsum.photos/625", "https://picsum.photos/725"]
+        },
+        {
+        "id": 149,
+        "title": "Second Hand Camera Lens",
+        "image": "https://picsum.photos/526",
+        "price": 15000,
+        "content": "Camera lens in excellent condition.",
+        "is_sold": true,
+        "district": "Seoul",
+        "siGunGu": "Gwanak-gu",
+        "createdAt": "2024-07-20T12:30:00Z",
+        "likeCount": 39,
+        "userId": 27,
+        "nickname": "lensman",
+        "profileImage": "https://picsum.photos/226",
+        "isLike": 1,
+        "images": ["https://picsum.photos/526", "https://picsum.photos/626", "https://picsum.photos/726"]
+        },
+        {
+        "id": 150,
+        "title": "Used Vacuum Cleaner",
+        "image": "https://picsum.photos/527",
+        "price": 20000,
+        "content": "High-power vacuum cleaner.",
+        "is_sold": false,
+        "district": "Seoul",
+        "siGunGu": "Songpa-gu",
+        "createdAt": "2024-07-24T10:15:00Z",
+        "likeCount": 74,
+        "userId": 28,
+        "nickname": "cleanHouse",
+        "profileImage": "https://picsum.photos/227",
+        "isLike": 0,
+        "images": ["https://picsum.photos/527", "https://picsum.photos/627", "https://picsum.photos/727"]
+        },
+        {
+        "id": 151,
+        "title": "Second Hand Dumbbells",
+        "image": "https://picsum.photos/528",
+        "price": 5000,
+        "content": "Set of dumbbells, great for home workouts.",
+        "is_sold": true,
+        "district": "Seoul",
+        "siGunGu": "Jung-gu",
+        "createdAt": "2024-07-19T14:45:00Z",
+        "likeCount": 62,
+        "userId": 29,
+        "nickname": "gymRat",
+        "profileImage": "https://picsum.photos/228",
+        "isLike": 1,
+        "images": ["https://picsum.photos/528", "https://picsum.photos/628", "https://picsum.photos/728"]
+        },
+        {
+        "id": 152,
+        "title": "Used Garden Tools",
+        "image": "https://picsum.photos/529",
+        "price": 8000,
+        "content": "Set of garden tools, barely used.",
+        "is_sold": false,
+        "district": "Seoul",
+        "siGunGu": "Gangnam-gu",
+        "createdAt": "2024-07-26T16:00:00Z",
+        "likeCount": 29,
+        "userId": 30,
+        "nickname": "gardener",
+        "profileImage": "https://picsum.photos/229",
+        "isLike": 0,
+        "images": ["https://picsum.photos/529", "https://picsum.photos/629", "https://picsum.photos/729"]
+        }
+    ]
+    
+}

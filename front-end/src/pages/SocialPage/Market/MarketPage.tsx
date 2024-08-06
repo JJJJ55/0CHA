@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import SnsHeader from '../../../components/SNS/SnsHeader';
@@ -13,6 +13,8 @@ import { useAppDispatch, useAppSelector } from '../../../lib/hook/useReduxHook';
 import { modalActions, selectModalMarket, selectModalUserSearch } from '../../../store/modal';
 import { useModalExitHook } from '../../../lib/hook/useModalExitHook';
 import UserSearchModal from '../../../components/Modal/UserSearchModal';
+import axios from 'axios';
+import { debounce } from 'lodash';
 
 const s = {
   Container: styled.section`
@@ -21,12 +23,22 @@ const s = {
     overflow: auto;
     padding-bottom: 68px;
   `,
-  Horizon: styled.hr`
-    margin: 0 15px;
-    min-width: 250px;
-    border-color: #212121;
-  `,
 };
+
+type marketItem = {
+  id: number;
+  title: string;
+  price: number;
+  isSold: boolean;
+  createdAt: string;
+  userId: number;
+  nickname: string;
+  profileImage: string;
+  likeCount: number;
+  isLike: number;
+  images: Array<string>;
+}
+
 
 const MarketPage = (): JSX.Element => {
   const isMarket = useAppSelector(selectModalMarket);
@@ -39,47 +51,78 @@ const MarketPage = (): JSX.Element => {
   const toggleUserSearch = (): void => {
     dispatch(modalActions.toggleUserSearch());
   };
+
+  
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const [marketItem, setMarketItem] = useState<marketItem[]>([]);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [isMoreData, setIsMoreData] = useState(true);
+
+  const getMarketItem = async (page: number) => {
+    if (loading) return;
+    try {
+      setLoading(true);
+      const res = await axios.get(`http://localhost:4000/marketItem?_${page}&_limit=10`);
+      const data = res.data;
+      
+      if (data.length === 0) {
+        setIsMoreData(false);
+      } else {
+        setMarketItem((prevData) => [...prevData, ...data]);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getMarketItem(page);
+  }, [page]);
+
+  const handleScroll = debounce(() => {
+    if (containerRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
+
+      if ((scrollTop + clientHeight+1000) >= scrollHeight) {
+        if (!loading && isMoreData) {
+          setPage((prevPage) => prevPage + 1);
+        }
+      }
+    }   
+  }, 300);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener('scroll', handleScroll);
+    }
+    return () => {
+      if (container) {
+        container.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, [handleScroll]);
+
   useModalExitHook();
+
   return (
     <>
-      <s.Container>
-        <SnsHeader />
-        <SnsNavigation />
-        <LocationDropdown />
-        <MarketItem
-          itemImage={test}
-          itemName="덤벨 40kg"
-          itemPrice="50,000원"
-          isOnSale={true}
-          itemLike="25"
-          isLiked={true}
-          onClick={toggleMarket}
-        />
-        <s.Horizon />
-        <MarketItem
-          itemImage={test}
-          itemName="테스트 상품명"
-          itemPrice="50,000원"
-          isOnSale={false}
-          itemLike="25"
-          isLiked={false}
-          onClick={toggleMarket}
-        />
-        <s.Horizon />
-        <MarketItem
-          itemImage={test}
-          itemName="덤벨 40kg"
-          itemPrice="50,000원"
-          isOnSale={true}
-          itemLike="25"
-          isLiked={true}
-          onClick={toggleMarket}
-        />
-        <s.Horizon />
-        <ItemModal open={isMarket} onModal={toggleMarket} />
-        <UserSearchModal open={isUserSearch} onModal={toggleUserSearch} />
-      </s.Container>
-      <BottomNav />
+    <SnsHeader />
+    <SnsNavigation />
+    <s.Container ref={containerRef}>
+      <LocationDropdown />
+      <MarketItem
+        data={marketItem}
+        onClick={toggleMarket}
+      />
+      <ItemModal open={isMarket} onModal={toggleMarket} />
+      <UserSearchModal open={isUserSearch} onModal={toggleUserSearch} />
+    </s.Container>
+    <BottomNav />
     </>
   );
 };

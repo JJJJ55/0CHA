@@ -6,10 +6,14 @@ import com.ssafy.back_end.util.JwtResponse;
 import com.ssafy.back_end.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Tag (name = "AUTH로그인")
 @RestController
@@ -57,7 +61,8 @@ public class UserLoginController {
 
     @Operation (summary = "로그아웃")
     @PostMapping ("/logout")
-    public ResponseEntity<?> logout(@RequestHeader ("ID") int ID) {
+    public ResponseEntity<?> logout(HttpServletRequest request) {
+        int ID = (Integer)request.getAttribute("userId");
         userLoginService.invalidateRefreshToken(ID);
         return ResponseEntity.ok("로그아웃 성공");
     }

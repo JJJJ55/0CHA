@@ -38,9 +38,11 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/api/**") // 인터셉터를 적용할 경로
 //                .excludePathPatterns("/api/auth/**") // 인터셉터를 제외할 경로
                 .excludePathPatterns("/api/auth/login/login") // 인터셉터를 제외할 경로
+                .excludePathPatterns("/api/auth/register/**") // 인터셉터를 제외할 경로
+                .excludePathPatterns("/api/auth/modify/**") // 인터셉터를 제외할 경로
                 .excludePathPatterns("/api/redis/**")
                 .excludePathPatterns("/api/workout/**")
-                //.excludePathPatterns("/api/sns/**")
+                .excludePathPatterns("/api/sns/**")
                 .excludePathPatterns("/api/routine/**");
     }
 }

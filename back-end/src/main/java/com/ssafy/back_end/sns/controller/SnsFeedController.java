@@ -27,7 +27,7 @@ public class SnsFeedController {
 
     @Operation (summary = "전체or유저 피드 목록보기-완")
     @GetMapping ("/list")
-    public ResponseEntity<?> getFeeds(HttpServletRequest request, @RequestParam ("user_id") int userId) {
+    public ResponseEntity<?> getFeeds(HttpServletRequest request, @RequestParam ("user-id") int userId) {
         int ID = (Integer)request.getAttribute("userId");
         List<FeedDto> feeds = snsFeedService.getFeeds(ID, userId);
 

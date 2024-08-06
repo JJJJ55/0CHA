@@ -56,7 +56,7 @@ export const pageSlice = createSlice({
 export const pageActions = pageSlice.actions;
 export const selectSnsType = (state: RootState) => state.page.snsType;
 export const selectIsSign = (state: RootState) => state.page.isSign;
-export const selectIsEmail = (state: RootState) => state.page.isPlay;
+export const selectIsEmail = (state: RootState) => state.page.isEmail;
 export const selectIsPw = (state: RootState) => state.page.isPw;
 export const selectIsPlay = (state: RootState) => state.page.isPlay;
 export const selectIsFinish = (state: RootState) => state.page.isFinish;

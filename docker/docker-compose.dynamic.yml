@@ -1,0 +1,32 @@
+version: "3.7"
+
+services:
+  spring:
+    image: parksangcheon/spring:latest
+    container_name: spring-container
+    environment:
+      - TZ=${TZ}
+      - SPRING_MYSQL_HOST=mysql-container
+      - SPRING_REDIS_HOST=redis-container
+    ports:
+      - "${SPRING_BINDING_PORT}:8081"
+    restart: always
+    networks:
+      - app-network
+
+  react-nginx:
+    build:
+      context: ..
+      dockerfile: ./docker/react-nginx/Dockerfile
+    image: react-nginx-custom:latest
+    container_name: react-nginx-container
+    volumes:
+      - ./react-nginx/nginx.conf:/etc/nginx/nginx.conf
+    restart: always
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    external: true
+

@@ -51,28 +51,30 @@ const s = {
     align-items: center;
     cursor: pointer;
   `,
+  FeedItem: styled.div`
+    margin-bottom: 80px;
+  `
 };
 
 
-type authorType = {
-  id: number;
-  nickname: string;
-  profile_image: string;
-};
-
-type dataType = {
+type feedData = {
   id: number;
   content: string;
   image: string;
   like: number;
   comment: number;
-  created_at: string;
-  author: authorType;
+  createdAt: string;
+  author: {
+    id: number;
+    nickname: string;
+    profileImage: string;
+  };
 };
 
 interface FeedListProps {
-  data?: dataType[];
-  onClick: MouseEventHandler<HTMLDivElement>;
+  data?: feedData[];
+  // onClick: MouseEventHandler<HTMLDivElement>;
+  onClick: (id: number) => void;
 };
 
 
@@ -85,12 +87,12 @@ const FeedList = (props: FeedListProps): JSX.Element => {
   return (
     <>
     {props.data?.map((data, index) => (
-      <div key={index}>
+      <s.FeedItem key={index}>
       <s.AuthorProfileArea>
         <s.AuthorProfileImage
           width="30px"
           height="30px"
-          src={data.author.profile_image}
+          src={data.author.profileImage}
           onClick={() => handleMovePage('../profile/id')}
         />
         <s.AuthorName onClick={() => handleMovePage('../profile/id')}>{data.author.nickname}</s.AuthorName>
@@ -116,7 +118,8 @@ const FeedList = (props: FeedListProps): JSX.Element => {
           />
           <s.FeedCaption>{data.like}</s.FeedCaption>
         </s.IconArea>
-        <s.IconArea onClick={onClick}>
+        {/* <s.IconArea onClick={onClick}> */}
+        <s.IconArea onClick={() => onClick(data.id)}>
           <IconSvg
             width="25"
             height="25"
@@ -138,7 +141,7 @@ const FeedList = (props: FeedListProps): JSX.Element => {
       </s.FeedInteractionArea>
       <s.FeedContentArea>{data.content}</s.FeedContentArea>
       {index + 1 === props.data?.length}
-      </div>
+      </s.FeedItem>
     ))}
     </>
   );

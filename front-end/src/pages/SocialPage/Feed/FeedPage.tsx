@@ -17,6 +17,7 @@ import { useModalExitHook } from '../../../lib/hook/useModalExitHook';
 import FeedList from '../../../components/SNS/FeedList';
 import axios from 'axios';
 import { debounce } from 'lodash';
+import { ScriptTarget } from 'typescript';
 
 const s = {
   Container: styled.section`
@@ -64,17 +65,28 @@ const s = {
   `,
 };
 
-type dataType = {
+type feedData = {
   id: number;
   content: string;
   image: string;
   like: number;
   comment: number;
-  created_at: string;
+  createdAt: string;
   author: {
     id: number;
     nickname: string;
-    profile_image: string;
+    profileImage: string;
+  }
+}
+
+type commentData = {
+  id: number;
+  content: string;
+  createdAt: string;
+  author: {
+    userId: number;
+    nickname: string;
+    profileImage: string;
   }
 }
 
@@ -90,6 +102,7 @@ const FeedPage = (): JSX.Element => {
   const isUserSearch = useAppSelector(selectModalUserSearch);
   const toggleModalComment = (): void => {
     dispatch(modalActions.toggleComment());
+    
   };
   const toggleModalUserSearch = (): void => {
     dispatch(modalActions.toggleUserSearch());
@@ -97,17 +110,18 @@ const FeedPage = (): JSX.Element => {
 
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const [feedData, setFeedData] = useState<dataType[]>([]);
+  const [feedData, setFeedData] = useState<feedData[]>([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
-  const[isMoreData, setIsMoreData] = useState(true);
-
+  const [isMoreData, setIsMoreData] = useState(true);
+  const [feedId, setFeedId] = useState<number | null>(null);
+  const [commentData, setCommentData] = useState<commentData[]>([]);
 
   const getFeedData = async (page: number) => {
     if (loading) return;
     try {
       setLoading(true);
-      const res = await axios.get(`http://localhost:4000/test?_page=${page}&_limit=10`);
+      const res = await axios.get(`http://localhost:4000/feedData?_page=${page}&_limit=10`);
       const data = res.data;
 
       if (data.length === 0) {
@@ -150,27 +164,37 @@ const FeedPage = (): JSX.Element => {
     };
   }, [handleScroll]);
 
+
+  const handleCommentClick = async (id: number) => {
+    setFeedId(id);
+    toggleModalComment();
+
+    try {
+      const res = await axios.get(`http://localhost:4000/comment${id}`);
+      const data = res.data;
+      if (data.length === 0) {
+        setCommentData([]);
+      } else {
+        setCommentData(data);
+      }
+      console.log(data)
+
+    } catch (error) {
+      setCommentData([]);
+      console.error(error);
+    }
+  }
+
   useModalExitHook();
 
   return (
     <>
-      <s.Container ref={containerRef}>
         <SnsHeader />
         <SnsNavigation />
-        <FeedList data={feedData} onClick={toggleModalComment} />
-        {/* <Feed
-          width="100vw"
-          height="100vw"
-          src={test}
-          authorName="stranger_00"
-          authorProfileImage={test}
-          like="true"
-          likeCnt="100"
-          commentCnt="30"
-          content="example content test"
-          onClick={toggleModalComment}
-        /> */}
-        <CommentModal open={isComment} onModal={toggleModalComment} />
+      <s.Container ref={containerRef}>
+        {/* <FeedList data={feedData} onClick={toggleModalComment} /> */}
+        <FeedList data={feedData} onClick={handleCommentClick} />
+        <CommentModal open={isComment} onModal={toggleModalComment} data={commentData}/>
         <UserSearchModal open={isUserSearch} onModal={toggleModalUserSearch} />
       </s.Container>
       <BottomNav />

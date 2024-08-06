@@ -30,6 +30,7 @@
         VALUES (#{userId}, #{title}, #{dueDate})
     </insert>
 
+
     <update id="updateRoutine" parameterType="com.ssafy.back_end.exercise.model.RoutineDto">
         UPDATE routines SET title = #{title}, due_date = #{dueDate} WHERE id = #{id}
     </update>

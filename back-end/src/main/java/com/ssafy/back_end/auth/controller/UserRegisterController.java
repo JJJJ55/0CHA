@@ -26,23 +26,37 @@ public class UserRegisterController {
     @Operation (summary = "회원가입")
     @PostMapping ("/signup")
     public ResponseEntity<?> register(@RequestBody UserDto userDto) {
-        int result = userRegisterService.register(userDto);
+        int ID = userRegisterService.register(userDto);
 
-        if (result > 0) {
-            return ResponseEntity.ok("회원가입이 완료되었습니다.");
+        if (ID > 0) {
+            return ResponseEntity.ok(ID);
         }
         else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("회원가입실패");
         }
     }
 
+    @Operation (summary = "회원가입 후 추가정보 기입")
+    @PutMapping ("/user-info")
+    public ResponseEntity<?> userInfo(@RequestBody UserDto userDto) {
+        int result = userRegisterService.userInfo(userDto);
+
+        if (result > 0) {
+            return ResponseEntity.ok("추가정보 기입이 완료되었습니다.");
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("추가정보 기입 실패");
+        }
+    }
+
     @Operation (summary = "이메일 중복검사&인증발송")
-    @PostMapping ("/check_email")
+    @PostMapping ("/check-email")
     public ResponseEntity<?> checkEmail(@RequestBody String email) {
         int result = userRegisterService.checkEmail(email);
 
         if (result <= 0) {
             authCode = getRandomNumber();   //랜덤코드
+            userRegisterService.sendEmail(email, authCode);
             return ResponseEntity.ok("이메일로 인증코드가 전송되었습니다.");
         }
         else {
@@ -51,7 +65,7 @@ public class UserRegisterController {
     }
 
     @Operation (summary = "이메일 인증확인")
-    @PostMapping ("/check_email/verify")
+    @PostMapping ("/check-email/verify")
     public ResponseEntity<?> verifyEmail(@RequestBody int code) {
         if (code == authCode) {
             authCode = 0;   //인증코드 초기화
@@ -63,7 +77,7 @@ public class UserRegisterController {
     }
 
     @Operation (summary = "닉네임 중복검사")
-    @PostMapping ("/check_nickname")
+    @PostMapping ("/check-nickname")
     public ResponseEntity<?> checkNickname(@RequestBody String nickname) {
         int result = userRegisterService.checkNickname(nickname);
 

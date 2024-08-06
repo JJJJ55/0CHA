@@ -25,7 +25,7 @@ public class SnsItemController {
 
     @Operation (summary = "전체or유저 중고장터 목록보기-완")
     @GetMapping ("/list")
-    public ResponseEntity<?> getItems(HttpServletRequest request, @RequestParam ("user_id") int userId) {
+    public ResponseEntity<?> getItems(HttpServletRequest request, @RequestParam ("user-id") int userId) {
         int ID = (Integer)request.getAttribute("userId");
         List<ItemDto> items = snsItemService.getItems(ID, userId);
 

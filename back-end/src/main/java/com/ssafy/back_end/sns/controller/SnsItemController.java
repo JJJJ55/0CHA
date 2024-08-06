@@ -25,7 +25,7 @@ public class SnsItemController {
 
     @Operation (summary = "전체or유저 중고장터 목록보기-완")
     @GetMapping ("/list")
-    public ResponseEntity<?> getItems( @RequestParam ("user_id") int userId) {
+    public ResponseEntity<?> getItems(@RequestParam ("user_id") int userId) {
         List<ItemDto> items = snsItemService.getItems(userId);
 
         if (items != null) {
@@ -39,7 +39,7 @@ public class SnsItemController {
 
     @Operation (summary = "중고장터 자세히보기-완")
     @GetMapping ("/{itemId}")
-    public ResponseEntity<?> getItemDetail( @PathVariable ("itemId") int itemId) {
+    public ResponseEntity<?> getItemDetail(@PathVariable ("itemId") int itemId) {
         ItemDto item = snsItemService.getItemDetail(itemId);
 
         if (item != null) {
@@ -127,7 +127,7 @@ public class SnsItemController {
 
     @Operation (summary = "중고장터 판매완료-완")
     @PutMapping ("/{itemId}/soldout")
-    public ResponseEntity<?> soldOut( @PathVariable int itemId) {
+    public ResponseEntity<?> soldOut(@PathVariable int itemId) {
         int id = snsItemService.soldOut(itemId);
 
         if (id > 0) {

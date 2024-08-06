@@ -81,9 +81,9 @@ const FitnessPlanSetPage = (): JSX.Element => {
 
   const handlePlay = (): void => {
     let count = 0;
-    setInterval(() => {
-      console.log(count + 1);
-    }, 1000);
+    // setInterval(() => {
+    //   console.log(count + 1);
+    // }, 1000);
     dispatch(pageActions.toogleIsPlay(true));
     navigate('/play');
   };

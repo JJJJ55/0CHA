@@ -29,8 +29,8 @@ export const PrivateRoute = () => {
   if (isScan && location.pathname !== '/inbody/scan') {
     dispatch(pageActions.toogleIsScan(false));
   }
-  // const checkLogin = !!localStorage.getItem('accessToken');
-  const checkLogin = true;
+  const checkLogin = !!localStorage.getItem('accessToken');
+  // const checkLogin = true;
 
   if (!checkLogin) {
     alert('로그인 후 접근 가능합니다.');
@@ -53,7 +53,8 @@ export const PublicRoute = () => {
   if (isPw && location.pathname !== '/find/password') {
     dispatch(pageActions.toogleIsPw(false));
   }
-  const checkLogin = false;
+  const checkLogin = !!localStorage.getItem('accessToken');
+  // const checkLogin = false;
   if (checkLogin) {
     alert('비정상적인 접근 : 로그인유저가 public 접근');
   }

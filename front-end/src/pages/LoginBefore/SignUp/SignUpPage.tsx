@@ -7,7 +7,7 @@ import PhoneNumberInput from '../../../components/LoginBefore/phoneNumberInput';
 import Header from '../../../components/Common/Header';
 import EmailArea from '../../../components/LoginBefore/EmailArea';
 import { useNavigate } from 'react-router';
-import { nickCheck, signup } from '../../../lib/api/user-api';
+import { emailAuth, emailAuthCheck, nickCheck, signup } from '../../../lib/api/user-api';
 import { useAppDispatch } from '../../../lib/hook/useReduxHook';
 import { pageActions } from '../../../store/page';
 
@@ -322,25 +322,41 @@ const SignUpPage = (): JSX.Element => {
   }, [data.birthYear, data.birthMonth]);
 
   // 이메일 전송 버튼 로직(기존 이메일과 중복 확인하는 작업 필요)
-  const handleSendVerificationCode = () => {
+  const handleSendVerificationCode = async () => {
     // 이메일 필드 조건 충족한 경우
     if (emailError === '' && data.email !== '') {
       // 기존에 가입한 이메일과 중복확인하는 로직이 들어갈 부분
-      if (true) {
-        // 가입 이력이 없는 이메일인 경우
-        // 정상 이메일이면 인증번호 발송
-        alert('인증번호가 발송되었습니다.');
-        setReturnCode('000000'); // 인증번호 설정
-        setVerificationBtnText('재전송'); // 버튼명 변경
-        setVerificationBtnType('sub'); // 버튼 타입변경
-        setConfirmBtnText('확인'); // 확인 필드에 대해서도 변경
-        setConfirmBtnType('main');
-        setIsVerified(false); // 인증여부 초기화
-        setEmailInfoMessage('가입 가능한 이메일입니다.');
-      } else {
-        // 가입 이력이 있는 이메일인 경우
-        setEmailInfoMessage('이미 가입된 메일입니다.');
-      }
+      await emailAuth(
+        data.email,
+        (resp) => {
+          alert('인증번호가 발송되었습니다.');
+          setVerificationBtnText('재전송'); // 버튼명 변경
+          setVerificationBtnType('sub'); // 버튼 타입변경
+          setConfirmBtnText('확인'); // 확인 필드에 대해서도 변경
+          setConfirmBtnType('main');
+          setIsVerified(false); // 인증여부 초기화
+          setEmailInfoMessage('가입 가능한 이메일입니다.');
+        },
+        (error) => {
+          setEmailInfoMessage('이미 가입된 메일입니다.');
+        },
+      );
+      // if (true) {
+      //   // 가입 이력이 없는 이메일인 경우
+      //   // 정상 이메일이면 인증번호 발송
+      //   //
+      //   // alert('인증번호가 발송되었습니다.');
+      //   // setReturnCode('000000'); // 인증번호 설정
+      //   // setVerificationBtnText('재전송'); // 버튼명 변경
+      //   // setVerificationBtnType('sub'); // 버튼 타입변경
+      //   // setConfirmBtnText('확인'); // 확인 필드에 대해서도 변경
+      //   // setConfirmBtnType('main');
+      //   // setIsVerified(false); // 인증여부 초기화
+      //   // setEmailInfoMessage('가입 가능한 이메일입니다.');
+      // } else {
+      //   // 가입 이력이 있는 이메일인 경우
+      //   // setEmailInfoMessage('이미 가입된 메일입니다.');
+      // }
     } else {
       // 이메일 필드 조건을 미충족한 경우
       // 정상 이메일이 아니면 이메일 확인
@@ -349,7 +365,7 @@ const SignUpPage = (): JSX.Element => {
   };
 
   // 이메일 인증 확인 로직
-  const handleCheckVerificationCode = () => {
+  const handleCheckVerificationCode = async () => {
     const { verificationCode } = data;
     // 인증완료시 비활성화
     if (!isVerified) {
@@ -358,14 +374,27 @@ const SignUpPage = (): JSX.Element => {
         alert('인증번호 6자를 정확하게 입력해주세요.');
       } else {
         // 6자 누른 경우
-        if (verificationCode === returnCode) {
-          alert('인증번호가 확인되었습니다.');
-          setConfirmBtnText('인증완료');
-          setConfirmBtnType('sub');
-          setIsVerified(true);
-        } else {
-          alert('인증번호가 틀립니다.');
-        }
+        await emailAuthCheck(
+          parseInt(data.verificationCode),
+          (resp) => {
+            alert('인증번호가 확인되었습니다.');
+            setConfirmBtnText('인증완료');
+            setConfirmBtnType('sub');
+            setIsVerified(true);
+          },
+          (error) => {
+            console.log(error);
+            alert('인증번호가 틀립니다.');
+          },
+        );
+        // if (verificationCode === returnCode) {
+        //   alert('인증번호가 확인되었습니다.');
+        //   setConfirmBtnText('인증완료');
+        //   setConfirmBtnType('sub');
+        //   setIsVerified(true);
+        // } else {
+        //   alert('인증번호가 틀립니다.');
+        // }
       }
     }
   };
@@ -429,16 +458,17 @@ const SignUpPage = (): JSX.Element => {
         birth: data.birthYear + '-' + data.birthMonth + '-' + data.birthDay,
       };
       console.log('Form submitted:', param);
-      // await signup(
-      //   param,
-      //   (resp) => {
-      //     dispatch(pageActions.OnPageChange());
-      //     alert('가입성공');
-      //   },
-      //   (error) => {
-      //     alert('가입도중 오류가 발생하였습니다. 잠시후 다시 시도해주세요.');
-      //   },
-      // );
+      await signup(
+        param,
+        (resp) => {
+          dispatch(pageActions.OnPageChange());
+          alert('가입성공');
+          navigate('/signup', { state: { id: resp.data.id } });
+        },
+        (error) => {
+          alert('가입도중 오류가 발생하였습니다. 잠시후 다시 시도해주세요.');
+        },
+      );
     } else {
       alert('입력된 값을 다시한번 확인해주세요.');
     }

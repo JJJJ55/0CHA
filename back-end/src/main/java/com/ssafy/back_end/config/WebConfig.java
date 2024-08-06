@@ -19,7 +19,7 @@ public class WebConfig implements WebMvcConfigurer {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOriginPatterns("*")  // 모든 출처 허용
+                        .allowedOriginPatterns("*")  // 모든 출처 허용1
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);
@@ -39,7 +39,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/api/auth/**") // 인터셉터를 제외할 경로
                 .excludePathPatterns("/api/redis/**")
                 .excludePathPatterns("/api/workout/**")
-                .excludePathPatterns("/api/sns/**")
+                //.excludePathPatterns("/api/sns/**")
                 .excludePathPatterns("/api/routine/**");
     }
 }

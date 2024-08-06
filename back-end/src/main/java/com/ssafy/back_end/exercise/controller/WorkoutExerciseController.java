@@ -2,6 +2,8 @@ package com.ssafy.back_end.exercise.controller;
 
 import com.ssafy.back_end.exercise.model.ExerciseDto;
 import com.ssafy.back_end.exercise.service.WorkoutExerciseService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "운동 관련 기능")
 @RestController
 @RequestMapping("/api/workout/exercise")
 public class WorkoutExerciseController {
@@ -19,7 +22,7 @@ public class WorkoutExerciseController {
         this.workoutExerciseService = workoutExerciseService;
     }
 
-    // 모든 운동목록
+    @Operation(summary = "모든 운동 목록 조회", description = "모든 운동 목록을 조회합니다.")
     @GetMapping("/")
     public ResponseEntity<?> getAllExercises() {
         List<ExerciseDto> exercises = workoutExerciseService.getAllExercises();
@@ -29,7 +32,7 @@ public class WorkoutExerciseController {
         return ResponseEntity.ok(exercises);
     }
 
-    // 특정 운동의 상세 정보
+    @Operation(summary = "특정 운동의 상세 정보 조회", description = "특정 운동의 상세 정보를 조회합니다.")
     @GetMapping("/{exercise_id}")
     public ResponseEntity<?> getExerciseById(@PathVariable("exercise_id") int exerciseId) {
         ExerciseDto exercise = workoutExerciseService.getExerciseById(exerciseId);
@@ -40,7 +43,7 @@ public class WorkoutExerciseController {
         }
     }
 
-    // 운동 찜하기
+    @Operation(summary = "운동 찜하기", description = "특정 운동을 찜합니다.")
     @PostMapping("/{exercise_id}/favorite")
     public ResponseEntity<?> favoriteExercise(@PathVariable("exercise_id") int exerciseId, @RequestHeader("ID") int userId) {
         boolean isFavorite = workoutExerciseService.isFavoriteExercise(exerciseId, userId);
@@ -56,7 +59,7 @@ public class WorkoutExerciseController {
         }
     }
 
-    // 운동 찜 취소하기
+    @Operation(summary = "운동 찜 취소하기", description = "특정 운동의 찜을 취소합니다.")
     @DeleteMapping("/{exercise_id}/favorite")
     public ResponseEntity<?> unfavoriteExercise(@PathVariable("exercise_id") int exerciseId, @RequestHeader("ID") int userId) {
         boolean isFavorite = workoutExerciseService.isFavoriteExercise(exerciseId, userId);
@@ -72,7 +75,7 @@ public class WorkoutExerciseController {
         }
     }
 
-    // 운동 찜 여부 확인
+    @Operation(summary = "운동 찜 여부 확인", description = "특정 운동이 찜되었는지 여부를 확인합니다.")
     @GetMapping("/{exercise_id}/is_favorite")
     public ResponseEntity<?> isFavoriteExercise(@PathVariable("exercise_id") int exerciseId, @RequestHeader("ID") int userId) {
         boolean isFavorite = workoutExerciseService.isFavoriteExercise(exerciseId, userId);
@@ -95,5 +98,15 @@ public class WorkoutExerciseController {
         public boolean isFavorite() {
             return isFavorite;
         }
+    }
+
+    @Operation(summary = "사용자가 찜한 운동 목록 조회", description = "사용자가 찜한 운동 목록을 조회합니다.")
+    @GetMapping("/favorites")
+    public ResponseEntity<?> getFavoriteExercisesByUserId(@RequestHeader("ID") int userId) {
+        List<ExerciseDto> favoriteExercises = workoutExerciseService.getFavoriteExercisesByUserId(userId);
+        if (favoriteExercises.isEmpty()) {
+            return ResponseEntity.ok("찜한 운동 목록이 비어 있습니다");
+        }
+        return ResponseEntity.ok(favoriteExercises);
     }
 }

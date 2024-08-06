@@ -28,9 +28,7 @@ public class WorkoutRoutineServiceImpl implements WorkoutRoutineService {
     }
 
     @Override
-    public int createRoutine(RoutineDto routineDto) {
-        return workoutRoutineMapper.createRoutine(routineDto);
-    }
+    public int createRoutine(RoutineDto routineDto) { return workoutRoutineMapper.createRoutine(routineDto); }
 
     @Override
     public int updateRoutine(RoutineDto routineDto) {

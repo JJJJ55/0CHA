@@ -41,4 +41,9 @@ public class WorkoutExerciseServiceImpl implements WorkoutExerciseService {
     public int unfavoriteExercise(int exerciseId, int userId) {
         return workoutExerciseMapper.unfavoriteExercise(exerciseId, userId);
     }
+
+    @Override
+    public List<ExerciseDto> getFavoriteExercisesByUserId(int userId) {
+        return workoutExerciseMapper.getFavoriteExercisesByUserId(userId);
+    }
 }

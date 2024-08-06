@@ -31,7 +31,7 @@ public class UserModifyController {
         String email = userModifyService.findEmail(userDto);
 
         if (email != null) {
-            return ResponseEntity.ok("이메일은 : " + email + " 입니다.");
+            return ResponseEntity.ok(email);
         }
         else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사용자 정보를 찾을 수 없습니다");

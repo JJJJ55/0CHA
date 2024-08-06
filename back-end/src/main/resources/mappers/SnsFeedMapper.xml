@@ -12,6 +12,7 @@
         <result property="createdAt" column="created_at"/>
         <result property="userId" column="user_id"/>
         <result property="nickname" column="nickname"/>
+        <result property="isLike" column="is_like"/>
     </resultMap>
 
     <resultMap id="likesList" type="com.ssafy.back_end.sns.model.UserPageDto">
@@ -44,10 +45,16 @@
                f.created_at                         AS created_at,
                u.id                                 AS user_id,
                u.nickname                           AS nickname,
-               u.profile_image                      AS profile_image
+               u.profile_image                      AS profile_image,
+               CASE
+                   WHEN fi.user_id IS NOT NULL THEN 1
+                   ELSE 0
+                   END AS is_like
         FROM feeds f
                  JOIN
              users u ON f.user_id = u.id
+                 LEFT JOIN feed_interactions fi
+                           ON f.id = fi.feed_id AND fi.user_id = #{myId} AND fi.interaction_type = 'like'
         WHERE CASE
                   WHEN #{userId} = 0 THEN f.user_id IN (SELECT followed_id
                                                         FROM follows

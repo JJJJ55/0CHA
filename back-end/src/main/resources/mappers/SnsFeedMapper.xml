@@ -13,7 +13,7 @@
         <result property="userId" column="user_id"/>
         <result property="nickname" column="nickname"/>
         <result property="isLike" column="is_like"/>
-    </resultMap>
+    </resultMap> 
 
     <resultMap id="likesList" type="com.ssafy.back_end.sns.model.UserPageDto">
         <id property="id" column="user_id"/>

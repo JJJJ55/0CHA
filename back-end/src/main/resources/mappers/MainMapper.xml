@@ -68,8 +68,7 @@
     <delete id="deleteUser">
         DELETE
         FROM users
-        WHERE id = #{id}
-          AND password = #{password};
+        WHERE id = #{id};
     </delete>
 
 </mapper>

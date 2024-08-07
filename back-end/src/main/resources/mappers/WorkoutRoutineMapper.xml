@@ -1,64 +1,118 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.ssafy.back_end.exercise.mapper.WorkoutRoutineMapper">
 
-    <resultMap id="routineResultMap" type="com.ssafy.back_end.exercise.model.RoutineDto">
+    <insert id="createRoutine" parameterType="com.ssafy.back_end.exercise.model.RoutineDto" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO routines (user_id, title, sum_volume, sum_time, created_at, completed_at, due_date, is_like, is_complete, is_upload)
+        VALUES (#{userId}, #{title}, #{sumVolume}, #{sumTime}, #{createdAt}, #{completedAt}, #{dueDate}, #{like}, #{complete}, #{upload})
+    </insert>
+
+    <insert id="createRoutineDetail" parameterType="com.ssafy.back_end.exercise.model.RoutineDetailDto" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO routine_details (routine_id, exercise_id, sequence)
+        VALUES (#{routineId}, #{exerciseId}, #{sequence})
+    </insert>
+
+    <insert id="createRoutineSet" parameterType="com.ssafy.back_end.exercise.model.RoutineSetDto" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO routine_sets (routine_detail_id, sequence, weight, count, `set`, is_complete)
+        VALUES (#{routineDetailId}, #{sequence}, #{weight}, #{count}, #{set}, #{complete})
+    </insert>
+
+    <update id="updateRoutine" parameterType="com.ssafy.back_end.exercise.model.RoutineDto">
+        UPDATE routines
+        SET title = #{title}, sum_volume = #{sumVolume}, sum_time = #{sumTime}, created_at = #{createdAt}, completed_at = #{completedAt}, due_date = #{dueDate}, is_like = #{like}, is_complete = #{complete}, is_upload = #{upload}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteRoutine" parameterType="map">
+        DELETE FROM routines WHERE id = #{routineId} AND user_id = #{userId}
+    </delete>
+
+    <delete id="deleteRoutineDetailsByRoutineId" parameterType="int">
+        DELETE FROM routine_details WHERE routine_id = #{routineId}
+    </delete>
+
+    <delete id="deleteRoutineSetsByRoutineId" parameterType="int">
+        DELETE FROM routine_sets WHERE routine_detail_id IN (SELECT id FROM routine_details WHERE routine_id = #{routineId})
+    </delete>
+
+    <select id="getRoutineByIdAndUserId" parameterType="map" resultMap="RoutineResultMap">
+        SELECT * FROM routines WHERE id = #{routineId} AND user_id = #{userId}
+    </select>
+
+    <select id="getRoutineDetailsByRoutineId" parameterType="int" resultMap="RoutineDetailResultMap">
+        SELECT * FROM routine_details WHERE routine_id = #{routineId}
+    </select>
+
+    <select id="getSetsByRoutineDetailId" parameterType="int" resultMap="RoutineSetResultMap">
+        SELECT * FROM routine_sets WHERE routine_detail_id = #{routineDetailId}
+    </select>
+
+    <select id="getAllRoutines" parameterType="int" resultMap="RoutineResultMap">
+        SELECT * FROM routines WHERE user_id = #{userId}
+    </select>
+
+    <select id="getAllUsersRoutines" resultMap="RoutineResultMap">
+        SELECT * FROM routines
+    </select>
+
+    <update id="completeRoutine" parameterType="map">
+        UPDATE routines
+        SET is_complete = true, completed_at = #{completedAt}
+        WHERE id = #{routineId} AND user_id = #{userId}
+    </update>
+
+    <resultMap id="RoutineResultMap" type="com.ssafy.back_end.exercise.model.RoutineDto">
         <id property="id" column="id"/>
         <result property="userId" column="user_id"/>
         <result property="title" column="title"/>
         <result property="sumVolume" column="sum_volume"/>
         <result property="sumTime" column="sum_time"/>
         <result property="createdAt" column="created_at"/>
-        <result property="isUpload" column="is_upload"/>
-        <result property="isComplete" column="is_complete"/>
         <result property="completedAt" column="completed_at"/>
-        <result property="isLike" column="is_like"/>
         <result property="dueDate" column="due_date"/>
+        <result property="like" column="is_like"/>
+        <result property="complete" column="is_complete"/>
+        <result property="upload" column="is_upload"/>
+        <collection property="details" ofType="com.ssafy.back_end.exercise.model.RoutineDetailDto" column="id" select="getRoutineDetailsByRoutineId"/>
     </resultMap>
 
-    <select id="getAllRoutines" parameterType="int" resultMap="routineResultMap">
-        SELECT * FROM routines WHERE user_id = #{userId}
-    </select>
+    <resultMap id="RoutineDetailResultMap" type="com.ssafy.back_end.exercise.model.RoutineDetailDto">
+        <id property="id" column="id"/>
+        <result property="routineId" column="routine_id"/>
+        <result property="exerciseId" column="exercise_id"/>
+        <result property="sequence" column="sequence"/>
+        <collection property="sets" ofType="com.ssafy.back_end.exercise.model.RoutineSetDto" column="id" select="getSetsByRoutineDetailId"/>
+    </resultMap>
 
-    <select id="getRoutineById" parameterType="int" resultMap="routineResultMap">
-        SELECT * FROM routines WHERE id = #{routineId}
-    </select>
+    <resultMap id="RoutineSetResultMap" type="com.ssafy.back_end.exercise.model.RoutineSetDto">
+        <id property="id" column="id"/>
+        <result property="routineDetailId" column="routine_detail_id"/>
+        <result property="sequence" column="sequence"/>
+        <result property="weight" column="weight"/>
+        <result property="count" column="count"/>
+        <result property="set" column="`set`"/>
+        <result property="complete" column="is_complete"/>
+    </resultMap>
 
-    <insert id="createRoutine" parameterType="com.ssafy.back_end.exercise.model.RoutineDto" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO routines (user_id, title, due_date)
-        VALUES (#{userId}, #{title}, #{dueDate})
-    </insert>
-
-
-    <update id="updateRoutine" parameterType="com.ssafy.back_end.exercise.model.RoutineDto">
-        UPDATE routines SET title = #{title}, due_date = #{dueDate} WHERE id = #{id}
+    <update id="likeRoutine">
+        UPDATE routines
+        SET is_like = 1
+        WHERE id = #{routineId} AND user_id = #{userId}
     </update>
 
-    <delete id="deleteRoutine" parameterType="int">
-        DELETE FROM routines WHERE id = #{routineId}
-    </delete>
-
-    <insert id="addExerciseToRoutine" parameterType="map">
-        INSERT INTO routine_details (routine_id, exercise_id)
-        VALUES (#{routineId}, #{exerciseId})
-    </insert>
-
-    <delete id="removeExerciseFromRoutine" parameterType="map">
-        DELETE FROM routine_details WHERE routine_id = #{routineId} AND exercise_id = #{exerciseId}
-    </delete>
-
-    <insert id="addSetToExercise" parameterType="com.ssafy.back_end.exercise.model.RoutineSetDto" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO routine_sets (routine_detail, `set`, weight, count, is_complete)
-        VALUES (#{routineDetail}, #{set}, #{weight}, #{count}, #{isComplete})
-    </insert>
-
-    <delete id="removeSetFromExercise" parameterType="int">
-        DELETE FROM routine_sets WHERE id = #{setId}
-    </delete>
-
-    <update id="completeRoutine" parameterType="int">
-        UPDATE routines SET is_complete = true, completed_at = NOW() WHERE id = #{routineId}
+    <update id="unlikeRoutine">
+        UPDATE routines
+        SET is_like = 0
+        WHERE id = #{routineId} AND user_id = #{userId}
     </update>
+
+    <select id="isRoutineLiked" resultType="boolean">
+        SELECT CASE WHEN is_like = 1 THEN TRUE ELSE FALSE END
+        FROM routines
+        WHERE id = #{routineId} AND user_id = #{userId}
+    </select>
 
 </mapper>

@@ -5,6 +5,8 @@ import Button from '../../../components/Common/Button';
 import Text from '../../../components/Common/Text';
 import Header from '../../../components/Common/Header';
 import { useNavigate } from 'react-router';
+import { userData } from '../../../lib/hook/userData';
+import { putMyInfoModify } from '../../../lib/api/main-api';
 
 // 배치 구체화
 
@@ -370,35 +372,36 @@ interface dataType {
   gender: string;
   height: string;
   weight: string;
-  location1: string;
-  location2: string;
+  district: string;
+  siGunGu: string;
 }
 
 interface User {
   gender: string;
   height: string;
   weight: string;
-  location1: string;
-  location2: string;
+  district: string;
+  siGunGu: string;
 }
 
 const UpdateMyInfoPage = (): JSX.Element => {
   const navigate = useNavigate();
 
-  const [user, setUser] = useState<User>({
-    gender: '',
-    height: '168.7',
-    weight: '60.5',
-    location1: '서울특별시',
-    location2: '중랑구',
-  });
+  const datas = userData();
+  // const [user, setUser] = useState<User>({
+  //   gender: '',
+  //   height: '168.7',
+  //   weight: '60.5',
+  //   district: '서울특별시',
+  //   siGunGu: '중랑구',
+  // });
 
   const [data, setData] = useState<dataType>({
-    gender: user.gender,
-    height: user.height,
-    weight: user.weight,
-    location1: user.location1,
-    location2: user.location2,
+    gender: datas.gender,
+    height: datas.height,
+    weight: datas.weight,
+    district: datas.district,
+    siGunGu: datas.siGunGu,
   });
 
   const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -411,14 +414,28 @@ const UpdateMyInfoPage = (): JSX.Element => {
     setData({
       ...data,
       [name]: value,
-      // location1이 변경되면 location2 초기화
-      ...(name === 'location1' && { location2: '' }),
+      // district이 변경되면 siGunGu 초기화
+      ...(name === 'district' && { siGunGu: '' }),
     });
   };
 
-  const handleSubmit = () => {
-    alert('정보가 제출되었습니다.');
-    navigate('../');
+  const handleSubmit = async () => {
+    const param = {
+      height: parseFloat(data.height),
+      weight: parseFloat(data.weight),
+      district: data.district,
+      siGunGu: data.siGunGu,
+    };
+    await putMyInfoModify(
+      param,
+      (resp) => {
+        alert('변경되었습니다.');
+        navigate('../');
+      },
+      (error) => {
+        alert('잠시후 다시 시도해주세요.');
+      },
+    );
   };
 
   const handlePrevious = () => {
@@ -429,12 +446,12 @@ const UpdateMyInfoPage = (): JSX.Element => {
     <s.Container>
       <Header text="내 정보 수정" />
       <s.PlusInfoArea>
-        {!user.gender && (
+        {!datas.gender && (
           <s.InfoNameBox>
             <s.InputHeader children="성별" />
           </s.InfoNameBox>
         )}
-        {!user.gender && (
+        {!datas.gender && (
           <s.GenderArea>
             <s.GenderOption>
               <input
@@ -497,16 +514,16 @@ const UpdateMyInfoPage = (): JSX.Element => {
           <s.InputHeader children="지역" />
         </s.InfoNameBox>
         <s.LocationArea>
-          <s.SelectBox name="location1" value={data.location1} onChange={handleChangeValue}>
+          <s.SelectBox name="district" value={data.district} onChange={handleChangeValue}>
             <s.Option value="" children="시/도" />
             {cities.map((city) => (
               <s.Option key={city} value={city} children={city} />
             ))}
           </s.SelectBox>
-          <s.SelectBox name="location2" value={data.location2} onChange={handleChangeValue} disabled={!data.location1}>
+          <s.SelectBox name="siGunGu" value={data.siGunGu} onChange={handleChangeValue} disabled={!data.district}>
             <s.Option value="" children="시/군/구" />
-            {data.location1 &&
-              districts[data.location1]?.map((district) => (
+            {data.district &&
+              districts[data.district]?.map((district) => (
                 <s.Option key={district} value={district} children={district} />
               ))}
           </s.SelectBox>

@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useLayoutEffect } from 'react';
+import React, { useRef, useEffect, useLayoutEffect, useState } from 'react';
 import styled from 'styled-components';
 import testImage from '../../asset/img/testImg.png';
 import IconSvg from '../../components/Common/IconSvg';
@@ -7,6 +7,8 @@ import BottomNav from '../../components/Common/BottomNav';
 import Button from '../../components/Common/Button';
 import { useBottomNavHook } from '../../lib/hook/useBottomNavHook';
 import { useNavigate } from 'react-router';
+import { getMyInfo } from '../../lib/api/main-api';
+import { Profile, User } from '../../util/types/axios-main';
 // import { user } from '../../lib/api/user-api';
 
 const s = {
@@ -191,11 +193,6 @@ const HorizontalScroll: React.FC<HorizontalScrollProps> = ({ items }) => {
   const handleMovePage = (path: string): void => {
     navigate(path);
   };
-
-  // useLayoutEffect(() => {
-  //   const info = user.info();
-  //   console.log(info);
-  // }, []);
   useEffect(() => {
     const scrollWrapper = scrollWrapperRef.current;
     if (scrollWrapper) {
@@ -229,9 +226,21 @@ const HorizontalScroll: React.FC<HorizontalScrollProps> = ({ items }) => {
 
 const MainPage = (): JSX.Element => {
   const navigate = useNavigate();
-  const handleMovePage = (path: string): void => {
-    navigate(path);
-  };
+  const [user, setUser] = useState<User>();
+  useEffect(() => {
+    getMyInfo(
+      (resp) => {
+        setUser(resp.data);
+        if (localStorage.getItem('user')) {
+          localStorage.removeItem('user');
+          localStorage.setItem('user', JSON.stringify(resp.data));
+        } else {
+          localStorage.setItem('user', JSON.stringify(resp.data));
+        }
+      },
+      (error) => {},
+    );
+  }, []);
   const items = [
     { name: '월요일 추천 루틴', image: testImage },
     { name: '헬스 꿀팁 300선', image: testImage },
@@ -260,9 +269,9 @@ const MainPage = (): JSX.Element => {
           color="#ffffff"
           Ico={alarm}
           cursor="pointer"
-          onClick={() => handleMovePage('/sns/notification')}
+          onClick={() => navigate('/sns/notification')}
         />
-        <s.ProfileImage src={testImage} alt="Profile" onClick={() => handleMovePage('/mypage')} />
+        <s.ProfileImage src={testImage} alt="Profile" onClick={() => navigate('/mypage')} />
       </s.HeaderIcons>
     </s.Header>
   );
@@ -283,7 +292,7 @@ const MainPage = (): JSX.Element => {
         <s.ScrollContainer>
           <s.SectionTitleContainer>
             <s.SectionTitle children="내 루틴" />
-            <s.MoreBtn onClick={() => handleMovePage('/fitness/history')} children="더보기" />
+            <s.MoreBtn onClick={() => navigate('/fitness/history')} children="더보기" />
           </s.SectionTitleContainer>
           <s.RoutineList>
             {routineItems.map((routine, index) => (
@@ -292,7 +301,7 @@ const MainPage = (): JSX.Element => {
                   <s.RoutineName children={routine.name} />
                   <s.RoutineDate children={routine.date} />
                 </s.RoutineInfo>
-                <s.RoutineBtn children="상세보기" onClick={() => handleMovePage('/fitness/history/detail')} />
+                <s.RoutineBtn children="상세보기" onClick={() => navigate('/fitness/history/detail')} />
               </s.RoutineItem>
             ))}
           </s.RoutineList>

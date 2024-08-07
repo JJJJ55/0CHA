@@ -2,28 +2,34 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import Button from '../../../components/Common/Button';
 import Header from '../../../components/Common/Header';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 
 const s = {
   Container: styled.section`
     height: 100%;
     background-color: ${(props) => props.theme.bgColor};
-    display: flex;
+    /* display: flex;
     flex-direction: column;
-    align-items: center;
-    padding: 10px;
+    align-items: center; */
+    /* padding: 10px; */
+  `,
+  BinArea: styled.div`
+    width: 100%;
+    height: 60px;
   `,
   ResultArea: styled.div`
     width: 90%;
-    height: 100%;
+    /* height: 100%; */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     background-color: ${(props) => props.theme.formBgColor};
-    padding: 20px;
+    padding: 120px 0 80px;
     border-radius: 10px;
     text-align: center;
+    overflow: auto;
+    margin: 0 auto;
   `,
   Message: styled.span`
     color: ${(props) => props.theme.textColor};
@@ -56,19 +62,19 @@ const s = {
 
 const FindEmailResultPage = (): JSX.Element => {
   const navigate = useNavigate();
+  const result = useLocation().state?.result;
   const handleMovePage = (path: string): void => {
     navigate(path);
   };
-  const email = 'exam***@gmail.com'; // 실제 이메일 받아오기
-  const name = '성이름'; // 실제 이름 받아오기
 
   return (
     <s.Container>
-      <Header text="이메일 찾기" />
+      <Header text="이메일 찾기" onBack={() => navigate('../../login')} />
+      <s.BinArea></s.BinArea>
       <s.ResultArea>
-        <s.Message children={`${name}님의 이메일은`} />
+        <s.Message children={`${result?.name}님의 이메일은`} />
         <s.Email>
-          {email}
+          {result?.email}
           <s.Message children="입니다." />
         </s.Email>
         <s.BtnArea>

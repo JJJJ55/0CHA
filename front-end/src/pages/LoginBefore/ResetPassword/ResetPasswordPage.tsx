@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import Input from '../../../components/Common/Input';
 import Button from '../../../components/Common/Button';
 import Header from '../../../components/Common/Header';
+import { useLocation, useNavigate } from 'react-router';
+import { resetPw } from '../../../lib/api/user-api';
 
 const s = {
   Container: styled.section`
@@ -38,7 +40,7 @@ const s = {
   `,
   InputHeader: styled.p`
     text-align: left;
-    width: 90px;
+    /* width: 90px; */
     color: ${(props) => props.theme.textColor};
     margin-bottom: 5px;
     font-size: 16px;
@@ -66,7 +68,7 @@ const s = {
     justify-content: left;
   `,
   ErrorText: styled.p`
-    color: red;
+    color: ${(props) => props.theme.mainColor};
     font-size: 12px;
     margin-left: 5px;
   `,
@@ -78,6 +80,8 @@ interface dataType {
 }
 
 const ResetPasswordPage = (): JSX.Element => {
+  const navigate = useNavigate();
+  const email = useLocation().state?.email;
   const [data, setData] = useState<dataType>({
     pw: '',
     pwCheck: '',
@@ -96,7 +100,7 @@ const ResetPasswordPage = (): JSX.Element => {
       if (value.length === 0) {
         setPwError('');
       } else if (!pwRegex.test(value) || value.length < 8) {
-        setPwError('비밀번호는 8~16자 영문/특수문자(~!@#$%^&*()?)/숫자 하나 이상씩 조합해야 합니다.');
+        setPwError('영소문자, 숫자, 특수문자를 포함한 8~16자로 입력하세요.');
       } else {
         setPwError('');
       }
@@ -124,30 +128,35 @@ const ResetPasswordPage = (): JSX.Element => {
     });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // 입력 조건을 모두 충족한 경우
     if (data.pw.length !== 0 && data.pwCheck.length !== 0 && pwError === '' && pwCheckError === '') {
       console.log('Form submitted:', data);
-      alert('비밀번호가 변경되었습니다.');
+      const param = {
+        email,
+        password: data.pw,
+      };
+      await resetPw(
+        param,
+        (resp) => {
+          alert('비밀번호가 변경되었습니다.');
+          navigate('/login');
+        },
+        (error) => {},
+      );
     } else {
       // 입력 조건을 미충족한 경우
       console.log('비밀번호를 확인해주세요.');
     }
   };
 
-  const handlePrevious = () => {
-    // 이전 페이지로 이동하는 로직 작성
-    console.log('Previous button clicked');
-    alert('이전 페이지로 이동합니다. 지금까지 진행한 모든 절차가 초기화됩니다.');
-  };
-
   return (
     <s.Container>
-      <Header text="비밀번호 변경" />
+      <Header text="비밀번호 변경" onBack={() => navigate('../../login')} />
       <s.ChangePasswordArea>
         <s.PasswordArea>
           <s.InfoNameBox>
-            <s.InputHeader children="비밀번호" />
+            <s.InputHeader children="비밀번호" style={{ minWidth: '60px' }} />
             {pwError && <s.ErrorText>{pwError}</s.ErrorText>}
           </s.InfoNameBox>
           <s.InputArea>
@@ -181,8 +190,8 @@ const ResetPasswordPage = (): JSX.Element => {
         </s.PasswordArea>
 
         <s.ButtonArea>
-          <Button width="48%" height="40px" children="이전" onClick={handlePrevious} />
-          <Button width="48%" height="40px" type="main" children="비밀번호 변경" onClick={handleSubmit} />
+          <Button width="48%" height="40px" children="이전" onClick={() => navigate('../../login')} bold="500" />
+          <Button width="48%" height="40px" type="main" children="비밀번호 변경" onClick={handleSubmit} bold="500" />
         </s.ButtonArea>
       </s.ChangePasswordArea>
     </s.Container>

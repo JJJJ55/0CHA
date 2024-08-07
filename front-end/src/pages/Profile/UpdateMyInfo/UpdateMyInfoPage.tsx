@@ -4,6 +4,9 @@ import Input from '../../../components/Common/Input';
 import Button from '../../../components/Common/Button';
 import Text from '../../../components/Common/Text';
 import Header from '../../../components/Common/Header';
+import { useNavigate } from 'react-router';
+import { userData } from '../../../lib/hook/userData';
+import { putMyInfoModify } from '../../../lib/api/main-api';
 
 // 배치 구체화
 
@@ -80,12 +83,11 @@ const s = {
     color: ${(props) => props.theme.textColor};
     margin-bottom: 5px;
     font-size: 16px;
-    border: 1px solid red;
     display: inline-block; /* 콘텐츠 크기에 맞게 너비 조정 */
     white-space: nowrap; /* 줄바꿈 방지 */
   `,
   ErrorText: styled.p`
-    color: red;
+    color: ${(props) => props.theme.mainColor};
     font-size: 12px;
     margin-left: 10px;
     border: 1px solid green;
@@ -370,33 +372,36 @@ interface dataType {
   gender: string;
   height: string;
   weight: string;
-  location1: string;
-  location2: string;
+  district: string;
+  siGunGu: string;
 }
 
 interface User {
   gender: string;
   height: string;
   weight: string;
-  location1: string;
-  location2: string;
+  district: string;
+  siGunGu: string;
 }
 
 const UpdateMyInfoPage = (): JSX.Element => {
-  const [user, setUser] = useState<User>({
-    gender: '',
-    height: '168.7',
-    weight: '60.5',
-    location1: '서울특별시',
-    location2: '중랑구',
-  });
+  const navigate = useNavigate();
+
+  const datas = userData();
+  // const [user, setUser] = useState<User>({
+  //   gender: '',
+  //   height: '168.7',
+  //   weight: '60.5',
+  //   district: '서울특별시',
+  //   siGunGu: '중랑구',
+  // });
 
   const [data, setData] = useState<dataType>({
-    gender: user.gender,
-    height: user.height,
-    weight: user.weight,
-    location1: user.location1,
-    location2: user.location2,
+    gender: datas.gender,
+    height: datas.height,
+    weight: datas.weight,
+    district: datas.district,
+    siGunGu: datas.siGunGu,
   });
 
   const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -409,34 +414,44 @@ const UpdateMyInfoPage = (): JSX.Element => {
     setData({
       ...data,
       [name]: value,
-      // location1이 변경되면 location2 초기화
-      ...(name === 'location1' && { location2: '' }),
+      // district이 변경되면 siGunGu 초기화
+      ...(name === 'district' && { siGunGu: '' }),
     });
   };
 
-  const handleSubmit = () => {
-    // 입력된 정보만 넘겨주면 되므로 별도 확인 절차 필요 없음
-    // 제출 로직 작성
-    console.log('Form submitted:', data);
-    alert('정보가 제출되었습니다.');
+  const handleSubmit = async () => {
+    const param = {
+      height: parseFloat(data.height),
+      weight: parseFloat(data.weight),
+      district: data.district,
+      siGunGu: data.siGunGu,
+    };
+    await putMyInfoModify(
+      param,
+      (resp) => {
+        alert('변경되었습니다.');
+        navigate('../');
+      },
+      (error) => {
+        alert('잠시후 다시 시도해주세요.');
+      },
+    );
   };
 
   const handlePrevious = () => {
-    // 이전 이동
-    console.log('이전 페이지로 이동합니다');
-    alert('이전 페이지로 이동합니다.');
+    navigate(-1);
   };
 
   return (
     <s.Container>
       <Header text="내 정보 수정" />
       <s.PlusInfoArea>
-        {!user.gender && (
+        {!datas.gender && (
           <s.InfoNameBox>
             <s.InputHeader children="성별" />
           </s.InfoNameBox>
         )}
-        {!user.gender && (
+        {!datas.gender && (
           <s.GenderArea>
             <s.GenderOption>
               <input
@@ -470,11 +485,12 @@ const UpdateMyInfoPage = (): JSX.Element => {
           <Input
             type="text"
             height="40px"
-            width="50%"
+            width="130px"
             name="height"
             placeholder="키"
             value={data.height}
             onChange={handleChangeValue}
+            textalian="right"
           />
           <Text type="guide" children="cm" width="30px" />
         </s.MeasurementArea>
@@ -485,11 +501,12 @@ const UpdateMyInfoPage = (): JSX.Element => {
           <Input
             type="text"
             height="40px"
-            width="50%"
+            width="130px"
             name="weight"
             placeholder="체중"
             value={data.weight}
             onChange={handleChangeValue}
+            textalian="right"
           />
           <Text type="guide" children="kg" width="30px" />
         </s.MeasurementArea>
@@ -497,23 +514,31 @@ const UpdateMyInfoPage = (): JSX.Element => {
           <s.InputHeader children="지역" />
         </s.InfoNameBox>
         <s.LocationArea>
-          <s.SelectBox name="location1" value={data.location1} onChange={handleChangeValue}>
+          <s.SelectBox name="district" value={data.district} onChange={handleChangeValue}>
             <s.Option value="" children="시/도" />
             {cities.map((city) => (
               <s.Option key={city} value={city} children={city} />
             ))}
           </s.SelectBox>
-          <s.SelectBox name="location2" value={data.location2} onChange={handleChangeValue} disabled={!data.location1}>
+          <s.SelectBox name="siGunGu" value={data.siGunGu} onChange={handleChangeValue} disabled={!data.district}>
             <s.Option value="" children="시/군/구" />
-            {data.location1 &&
-              districts[data.location1]?.map((district) => (
+            {data.district &&
+              districts[data.district]?.map((district) => (
                 <s.Option key={district} value={district} children={district} />
               ))}
           </s.SelectBox>
         </s.LocationArea>
         <s.SubmitBtnArea>
-          <Button width="48%" height="40px" children="이전" onClick={handlePrevious} margin="5px 0" />
-          <Button width="48%" height="40px" type="main" children="수정완료" onClick={handleSubmit} margin="5px 0 " />
+          <Button width="48%" height="40px" children="이전" onClick={handlePrevious} margin="5px 0" bold="500" />
+          <Button
+            width="48%"
+            height="40px"
+            type="main"
+            children="수정완료"
+            onClick={handleSubmit}
+            margin="5px 0 "
+            bold="500"
+          />
         </s.SubmitBtnArea>
       </s.PlusInfoArea>
     </s.Container>

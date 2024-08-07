@@ -101,6 +101,7 @@ public class JwtUtil {
         if (StringUtils.hasText(bearerToken) ) {
             return bearerToken;
         }
+
         return null;
     }
 }

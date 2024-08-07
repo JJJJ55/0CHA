@@ -49,7 +49,7 @@ public class MainServiceImpl implements MainService {
     }
 
     @Override
-    public int deleteUser(int id, String password) {
-        return mainMapper.deleteUser(id, password);
+    public int deleteUser(int id) {
+        return mainMapper.deleteUser(id);
     }
 }

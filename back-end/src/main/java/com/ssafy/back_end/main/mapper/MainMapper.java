@@ -18,6 +18,6 @@ public interface MainMapper {
     int modifyPassword(@Param("id") int id, @Param("curPassword") String curPassword,
                        @Param("newPassword") String newPassword);   //패스워드 변경
 
-    int deleteUser(@Param("id") int id, @Param("password") String password);   //비밀번호 변경
+    int deleteUser(@Param("id") int id);   //회원탈퇴
 
 }

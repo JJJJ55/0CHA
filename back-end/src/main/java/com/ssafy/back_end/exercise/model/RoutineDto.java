@@ -2,8 +2,9 @@ package com.ssafy.back_end.exercise.model;
 
 import lombok.*;
 
-import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
@@ -15,11 +16,13 @@ public class RoutineDto {
     private int userId;
     private String title;
     private Double sumVolume;
-    private Time sumTime;
+    private int sumTime;
     private Timestamp createdAt;
     private boolean isUpload;
     private boolean isComplete;
     private Timestamp completedAt;
     private boolean isLike;
-    private Timestamp dueDate;
+    private LocalDate dueDate;
+    private List<RoutineDetailDto> details;
 }
+

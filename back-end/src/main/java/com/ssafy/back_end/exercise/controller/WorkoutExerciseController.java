@@ -4,6 +4,7 @@ import com.ssafy.back_end.exercise.model.ExerciseDto;
 import com.ssafy.back_end.exercise.service.WorkoutExerciseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,7 @@ import java.util.List;
 
 @Tag(name = "운동 관련 기능")
 @RestController
-@RequestMapping("/api/workout/exercise")
+@RequestMapping("/api/workout/exercises")
 public class WorkoutExerciseController {
     private final WorkoutExerciseService workoutExerciseService;
 
@@ -23,7 +24,7 @@ public class WorkoutExerciseController {
     }
 
     @Operation(summary = "모든 운동 목록 조회", description = "모든 운동 목록을 조회합니다.")
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<?> getAllExercises() {
         List<ExerciseDto> exercises = workoutExerciseService.getAllExercises();
         if (exercises.isEmpty()) {
@@ -33,8 +34,8 @@ public class WorkoutExerciseController {
     }
 
     @Operation(summary = "특정 운동의 상세 정보 조회", description = "특정 운동의 상세 정보를 조회합니다.")
-    @GetMapping("/{exercise_id}")
-    public ResponseEntity<?> getExerciseById(@PathVariable("exercise_id") int exerciseId) {
+    @GetMapping("/{exercise-id}")
+    public ResponseEntity<?> getExerciseById(@PathVariable("exercise-id") int exerciseId) {
         ExerciseDto exercise = workoutExerciseService.getExerciseById(exerciseId);
         if (exercise != null) {
             return ResponseEntity.ok(exercise);
@@ -44,8 +45,9 @@ public class WorkoutExerciseController {
     }
 
     @Operation(summary = "운동 찜하기", description = "특정 운동을 찜합니다.")
-    @PostMapping("/{exercise_id}/favorite")
-    public ResponseEntity<?> favoriteExercise(@PathVariable("exercise_id") int exerciseId, @RequestHeader("ID") int userId) {
+    @PostMapping("/{exercise-id}/favorite")
+    public ResponseEntity<?> favoriteExercise(HttpServletRequest request, @PathVariable("exercise-id") int exerciseId) {
+        int userId = (Integer) request.getAttribute("userId");
         boolean isFavorite = workoutExerciseService.isFavoriteExercise(exerciseId, userId);
         if (!isFavorite) {
             int result = workoutExerciseService.favoriteExercise(exerciseId, userId);
@@ -60,8 +62,9 @@ public class WorkoutExerciseController {
     }
 
     @Operation(summary = "운동 찜 취소하기", description = "특정 운동의 찜을 취소합니다.")
-    @DeleteMapping("/{exercise_id}/favorite")
-    public ResponseEntity<?> unfavoriteExercise(@PathVariable("exercise_id") int exerciseId, @RequestHeader("ID") int userId) {
+    @DeleteMapping("/{exercise-id}/favorite")
+    public ResponseEntity<?> unfavoriteExercise(HttpServletRequest request, @PathVariable("exercise-id") int exerciseId) {
+        int userId = (Integer) request.getAttribute("userId");
         boolean isFavorite = workoutExerciseService.isFavoriteExercise(exerciseId, userId);
         if (isFavorite) {
             int result = workoutExerciseService.unfavoriteExercise(exerciseId, userId);
@@ -76,15 +79,16 @@ public class WorkoutExerciseController {
     }
 
     @Operation(summary = "운동 찜 여부 확인", description = "특정 운동이 찜되었는지 여부를 확인합니다.")
-    @GetMapping("/{exercise_id}/is_favorite")
-    public ResponseEntity<?> isFavoriteExercise(@PathVariable("exercise_id") int exerciseId, @RequestHeader("ID") int userId) {
+    @GetMapping("/{exercise-id}/is-favorite")
+    public ResponseEntity<?> isFavoriteExercise(HttpServletRequest request, @PathVariable("exercise-id") int exerciseId) {
+        int userId = (Integer) request.getAttribute("userId");
         boolean isFavorite = workoutExerciseService.isFavoriteExercise(exerciseId, userId);
         return ResponseEntity.ok(new IsFavoriteResponse(exerciseId, isFavorite));
     }
 
     private static class IsFavoriteResponse {
-        private int exerciseId;
-        private boolean isFavorite;
+        private final int exerciseId;
+        private final boolean isFavorite;
 
         public IsFavoriteResponse(int exerciseId, boolean isFavorite) {
             this.exerciseId = exerciseId;
@@ -102,7 +106,8 @@ public class WorkoutExerciseController {
 
     @Operation(summary = "사용자가 찜한 운동 목록 조회", description = "사용자가 찜한 운동 목록을 조회합니다.")
     @GetMapping("/favorites")
-    public ResponseEntity<?> getFavoriteExercisesByUserId(@RequestHeader("ID") int userId) {
+    public ResponseEntity<?> getFavoriteExercisesByUserId(HttpServletRequest request) {
+        int userId = (Integer) request.getAttribute("userId");
         List<ExerciseDto> favoriteExercises = workoutExerciseService.getFavoriteExercisesByUserId(userId);
         if (favoriteExercises.isEmpty()) {
             return ResponseEntity.ok("찜한 운동 목록이 비어 있습니다");

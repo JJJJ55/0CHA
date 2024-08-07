@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.back_end.main.mapper.MainMapper">
+
+    <resultMap id="user" type="com.ssafy.back_end.main.model.UserInfoDto">
+        <id property="id" column="id"/>
+        <result property="email" column="email"/>
+        <result property="password" column="password"/>
+        <result property="name" column="name"/>
+        <result property="nickname" column="nickname"/>
+        <result property="phone" column="phone"/>
+        <result property="birth" column="birth"/>
+        <result property="profileImage" column="profile_image"/>
+        <result property="gender" column="gender"/>
+        <result property="height" column="height"/>
+        <result property="weight" column="weight"/>
+        <result property="district" column="district"/>
+        <result property="siGunGu" column="si_gun_gu"/>
+    </resultMap>
+
+    <select id="getUserInfo" resultMap="user">
+        SELECT id,
+               name,
+               email,
+               nickname,
+               phone,
+               birth,
+               profile_image,
+               gender,
+               height,
+               weight,
+               district,
+               si_gun_gu
+        FROM users
+        WHERE id = #{id};
+    </select>
+
+    <update id="modifyProfile">
+        UPDATE users
+        SET nickname      = #{nickname},
+            profile_image = #{profileImage}
+        WHERE id = #{id};
+    </update>
+
+    <select id="checkNickname" parameterType="string" resultType="int">
+        SELECT COUNT(*)
+        FROM users
+        WHERE nickname = #{nickname};
+    </select>
+
+    <update id="modifyUserInfo">
+        UPDATE users
+        SET height    = #{height},
+            weight    = #{weight},
+            district  = #{district},
+            si_gun_gu = #{siGunGu}
+        WHERE id = #{id};
+    </update>
+
+    <update id="modifyPassword">
+        UPDATE users
+        SET password = #{newPassword}
+        WHERE id = #{id}
+          AND password = #{curPassword};
+    </update>
+
+    <delete id="deleteUser">
+        DELETE
+        FROM users
+        WHERE id = #{id}
+          AND password = #{password};
+    </delete>
+
+</mapper>

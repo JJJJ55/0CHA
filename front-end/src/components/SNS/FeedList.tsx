@@ -84,7 +84,14 @@ const FeedList = (props: FeedListProps): JSX.Element => {
   };
   const { onClick } = props;
   return (
+    
+    
     <>
+    {/* {props.data === "피드 0개입니다" ? (
+      <s.AuthorName>피드 0개입니다</s.AuthorName>
+    ) : (
+      <div></div>
+    )} */}
     {props.data?.map((data, index) => (
       <s.FeedItem key={index}>
       <s.AuthorProfileArea>

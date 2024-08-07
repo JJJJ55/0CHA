@@ -79,7 +79,7 @@ const CommentModal = (props: CommentModalProps): JSX.Element => {
   const commentOnSubmit = (event: React.FormEvent<HTMLButtonElement>) => {
     console.log(commentValue)
     console.log(props.feedId)
-    
+
     axios.post(`/api/sns/feed/${props.feedId}/comment`, {
       "comment": commentValue
     }, {

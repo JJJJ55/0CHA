@@ -5,25 +5,27 @@ import test from '../../../asset/img/testImg.png';
 import Header from '../../../components/Common/Header';
 import Input from '../../../components/Common/Input';
 import BottomNav from '../../../components/Common/BottomNav';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
+import { postCheckNickname, putProfileModify } from '../../../lib/api/main-api';
+import { userData } from '../../../lib/hook/userData';
 
 const s = {
   Container: styled.section`
     height: 100%;
     background-color: ${(props) => props.theme.bgColor};
-    display: flex;
-    flex-direction: column;
-
-    align-items: center;
+  `,
+  BinArea: styled.div`
+    width: 100%;
+    height: 60px;
   `,
   ProfileArea: styled.div`
     width: 90%;
-    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 60px 5px 70px;
+    padding: 120px 5px 70px;
+    margin: 0 auto;
   `,
   ProfileImage: styled.img`
     width: 120px;
@@ -91,14 +93,14 @@ interface User {
 
 const UpdateProfilePage = (): JSX.Element => {
   const navigate = useNavigate();
-
+  const data = userData();
   const [user, setUser] = useState<User>({
     nickname: 'it_is_me',
     tempNickname: 'it_is_me',
     profileImage: test,
   });
 
-  const [tempNickname, setTempNickname] = useState<string>(user.nickname);
+  const [tempNickname, setTempNickname] = useState<string>(data.nickname);
   const [isNicknameConfirmed, setIsNicknameConfirmed] = useState<boolean>(false);
   // 닉네임
   const [nicknameError, setNicknameError] = useState('');
@@ -141,15 +143,26 @@ const UpdateProfilePage = (): JSX.Element => {
     }
   };
   // 닉네임 중복 확인 핸들러
-  const handleCheckDuplicate = () => {
+  const handleCheckDuplicate = async () => {
     // 닉네임 중복 확인 로직 (예: API 호출)
     // 중복 확인이 성공적으로 완료되었다면 상태를 true와 현재 닉네임 값 변경
     if (nicknameError === '' && tempNickname.length !== 0) {
-      setIsNicknameConfirmed(true);
-      setUser({ ...user, tempNickname: tempNickname }); // 현재 닉네임 값을 변경
-      alert('사용할 수 있는 닉네임입니다.');
+      // setIsNicknameConfirmed(true);
+      // setUser({ ...user, tempNickname: tempNickname }); // 현재 닉네임 값을 변경
+      // alert('사용할 수 있는 닉네임입니다.');
+
+      await postCheckNickname(
+        tempNickname,
+        (resp) => {
+          setIsNicknameConfirmed(true);
+          alert('사용할 수 있는 닉네임입니다.');
+        },
+        (error) => {
+          alert('사용할 수 없는 닉네임입니다.');
+        },
+      );
     } else {
-      alert('사용할 수 없는 닉네임입니다.');
+      // alert('사용할 수 없는 닉네임입니다.');
     }
   };
 
@@ -157,12 +170,26 @@ const UpdateProfilePage = (): JSX.Element => {
     navigate(-1);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     // 이미지 저장 로직 구현해야 함
     // 이미지 저장 시 행동 로직도 구현해야 함
     if (isNicknameConfirmed) {
       nicknameChanged.current = true; // 변경 상태 초기화
-      setUser({ ...user, nickname: tempNickname }); // 사용자의 닉네임을 변경
+      // setUser({ ...user, nickname: tempNickname }); // 사용자의 닉네임을 변경
+      const param = {
+        nickname: tempNickname,
+        profileImage: null, //이미지는 잠시 보류
+      };
+      await putProfileModify(
+        param,
+        (resp) => {
+          alert('변경되었습니다.');
+          navigate('../../mypage');
+        },
+        (error) => {
+          alert('잠시 후 다시 시도해주세요.');
+        },
+      );
     } else {
       alert('닉네임 중복 확인을 해주세요.');
     }
@@ -171,6 +198,7 @@ const UpdateProfilePage = (): JSX.Element => {
   return (
     <s.Container>
       <Header text="프로필 수정" />
+      <s.BinArea></s.BinArea>
       <s.ProfileArea>
         <label htmlFor="profileImage">
           <s.ProfileImage src={user.profileImage} alt="프로필 이미지" />

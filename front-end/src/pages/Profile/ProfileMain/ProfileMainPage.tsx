@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Button from '../../../components/Common/Button';
 import test from '../../../asset/img/testImg.png';
 import Header from '../../../components/Common/Header';
 import BottomNav from '../../../components/Common/BottomNav';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
+import { logout } from '../../../lib/api/user-api';
+import { delMyDel, getMyInfo } from '../../../lib/api/main-api';
+import { User } from '../../../util/types/axios-main';
 
 const s = {
   Container: styled.section`
@@ -21,6 +24,7 @@ const s = {
     flex-direction: column;
     align-items: center;
     padding: 80px 5px 70px;
+    overflow: auto;
   `,
   ProfileImageArea: styled.div`
     width: 100%;
@@ -102,18 +106,37 @@ const s = {
 };
 
 const ProfileMainPage = (): JSX.Element => {
-  // 사용자 정보 하드코딩 (예시)
-  const user = {
-    name: '성이름',
-    nickname: 'it_is_me',
-    email: 'example@gmail.com',
-    profileImage: test,
-  };
+  // const user = useLocation().state?.data;
   const navigate = useNavigate();
-  const handleMovePage = (path: string): void => {
-    navigate(path);
-  };
-
+  const [user, setUser] = useState<User>({
+    id: 0,
+    email: '',
+    password: '',
+    name: '',
+    nickname: '',
+    phone: '',
+    birth: '',
+    profileImage: '',
+    gender: 0,
+    height: 0,
+    weight: 0,
+    district: '',
+    siGunGu: '',
+  }); // 나중에 리액트쿼리
+  useEffect(() => {
+    getMyInfo(
+      (resp) => {
+        setUser(resp.data);
+        if (localStorage.getItem('user')) {
+          localStorage.removeItem('user');
+          localStorage.setItem('user', JSON.stringify(resp.data));
+        } else {
+          localStorage.setItem('user', JSON.stringify(resp.data));
+        }
+      },
+      (error) => {},
+    );
+  }, []);
   const handleEditProfile = () => {
     navigate('profile');
   };
@@ -126,8 +149,34 @@ const ProfileMainPage = (): JSX.Element => {
     navigate('password');
   };
 
-  const handleDeleteAccount = () => {
-    alert('회원 탈퇴 페이지로 이동');
+  const postLogout = async () => {
+    await logout(
+      (resp) => {
+        console.log(resp.data);
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        navigate('/login');
+      },
+      (error) => {
+        alert('로그아웃 도중 에러가 발생했습니다. 잠시 후 다시 시도해주세요.');
+      },
+    );
+  };
+
+  const handleDeleteAccount = async () => {
+    const password = prompt('정말로 탈퇴하시겠습니까? 탈퇴를 하시려면 "동의합니다." 를 입력해주세요.');
+    if (password === '동의합니다.') {
+      await delMyDel(
+        (resp) => {
+          alert('탈퇴되었습니다. 이용해주셔서 감사합니다.');
+        },
+        (error) => {
+          alert('잠시 후 다시 시도해주세요.');
+        },
+      );
+    } else {
+      alert('입력문구가 맞지않습니다.');
+    }
   };
 
   return (
@@ -155,12 +204,17 @@ const ProfileMainPage = (): JSX.Element => {
             <s.InfoText children="비밀번호 변경" />
             <s.Arrow>›</s.Arrow>
           </s.InfoItem>
+          <s.InfoItem onClick={postLogout}>
+            <s.InfoText children="로그아웃" />
+            <s.Arrow>›</s.Arrow>
+          </s.InfoItem>
           <s.InfoItem onClick={handleDeleteAccount}>
             <s.InfoText children="회원 탈퇴" />
             <s.Arrow>›</s.Arrow>
           </s.InfoItem>
         </s.InfoArea>
       </s.ProfileArea>
+
       <BottomNav />
     </s.Container>
   );

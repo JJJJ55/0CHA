@@ -21,6 +21,7 @@ import { ScriptTarget } from 'typescript';
 
 import { SnsFeedList } from '../../../lib/api/sns-api';
 import { logDOM } from '@testing-library/react';
+import { SnsCommentList } from '../../../lib/api/sns-api';
 
 const s = {
   Container: styled.section`
@@ -82,14 +83,13 @@ type feedData = {
 }
 
 type commentData = {
-  id: number;
-  content: string;
+  comment: string;
   createdAt: string;
-  author: {
-    userId: number;
-    nickname: string;
-    profileImage: string;
-  }
+  feedId: number;
+  id: number;
+  nickname: string;
+  profileImage: string;
+  userId: number;
 }
 
 
@@ -119,26 +119,26 @@ const FeedPage = (): JSX.Element => {
   const [feedId, setFeedId] = useState<number | null>(null);
   const [commentData, setCommentData] = useState<commentData[]>([]);
 
-  const getFeedData = async (page: number) => {
-    if (loading) return;
-    try {
-      setLoading(true);
-      const res = await axios.get(`http://localhost:4000/feedData?_page=${page}&_limit=10`);
-      const data = res.data;
+  // const getFeedData = async (page: number) => {
+  //   if (loading) return;
+  //   try {
+  //     setLoading(true);
+  //     const res = await axios.get(`http://localhost:4000/feedData?_page=${page}&_limit=10`);
+  //     const data = res.data;
 
-      if (data.length === 0) {
-        setIsMoreData(false);
-      } else {
-        setFeedData((prevData) => [...prevData, ...data]);
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  //     if (data.length === 0) {
+  //       setIsMoreData(false);
+  //     } else {
+  //       setFeedData((prevData) => [...prevData, ...data]);
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
-  const testFeed = async () => {
+  const getFeedData = async () => {
     if (loading) return;
     setLoading(true);
 
@@ -153,7 +153,6 @@ const FeedPage = (): JSX.Element => {
           setFeedData((prevData) => [...prevData, ...data]);
         }
         setLoading(false)
-        console.log(data)
       },
       (error) => {
         console.error(error)
@@ -166,7 +165,7 @@ const FeedPage = (): JSX.Element => {
   //   getFeedData(page);
   // }, [page]);
   useEffect(() => {
-    testFeed();
+    getFeedData();
   }, [page]);
 
   const handleScroll = debounce(() => {
@@ -197,20 +196,35 @@ const FeedPage = (): JSX.Element => {
   const handleCommentClick = async (id: number) => {
     setFeedId(id);
     toggleModalComment();
-
-    try {
-      const res = await axios.get(`http://localhost:4000/comment${id}`);
-      const data = res.data;
-      if (data.length === 0) {
+    await SnsCommentList(
+      id,
+      (resp) => {
+        const data = resp.data;
+        console.log(data)
+        if (data === '댓글 0개입니다') {
+          setCommentData([]);
+        } else {
+          setCommentData(data);
+        }
+      },
+      (error) => {
         setCommentData([]);
-      } else {
-        setCommentData(data);
+        console.error(error);
       }
+    );
+    // try {
+    //   const res = await axios.get(`http://localhost:4000/comment${id}`);
+    //   const data = res.data;
+    //   if (data.length === 0) {
+    //     setCommentData([]);
+    //   } else {
+    //     setCommentData(data);
+    //   }
 
-    } catch (error) {
-      setCommentData([]);
-      console.error(error);
-    }
+    // } catch (error) {
+    //   setCommentData([]);
+    //   console.error(error);
+    // }
   }
 
   useModalExitHook();

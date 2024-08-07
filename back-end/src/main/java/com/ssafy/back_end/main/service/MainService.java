@@ -13,5 +13,5 @@ public interface MainService {
 
     int modifyPassword(int id, String curPassword, String newPassword);   //패스워드 변경
 
-    int deleteUser(int id, String password);   //비밀번호 변경
+    int deleteUser(int id);   //회원탈퇴
 }

@@ -116,7 +116,7 @@ public class SnsSocialController {
     }
 
     @Operation (summary = "팔로우 삭제-완")
-    @DeleteMapping ("/follow")
+    @PutMapping ("/follow")
     public ResponseEntity<?> unfollow(HttpServletRequest request, @RequestBody int targetId) {
         int ID = (Integer)request.getAttribute("userId");
         if (ID == targetId) {

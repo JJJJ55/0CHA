@@ -1,4 +1,4 @@
-import axios, { Axios, AxiosRequestConfig } from 'axios';
+import axios, { Axios, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { logout } from '../lib/api/user-api';
 
 export const localAxios = () => {
@@ -16,10 +16,10 @@ export const localAxios = () => {
       if (accessToken) {
         config.headers['Authorization'] = `${accessToken}`;
       }
-      // Refresh 토큰을 보낼 경우 사용하고자 하는 커스텀 인증 헤더를 사용하면 된다.
-      if (refreshToken) {
-        config.headers['x-refresh-token'] = refreshToken;
-      }
+      // // Refresh 토큰을 보낼 경우 사용하고자 하는 커스텀 인증 헤더를 사용하면 된다.
+      // if (refreshToken) {
+      //   config.headers['x-refresh-token'] = refreshToken;
+      // }
 
       return config;
     },
@@ -29,8 +29,17 @@ export const localAxios = () => {
   );
 
   instance.interceptors.response.use(
-    async (response) => {
+    async (response: AxiosResponse) => {
       console.log('인터셉트 리스폰');
+      if (response.headers.authorization) {
+        console.log('토큰있나?');
+        const newAccessToken = response?.headers?.authorization;
+        localStorage.removeItem('accessToken'); // 만료된 access토큰 삭제
+        localStorage.setItem('accessToken', newAccessToken); // 새걸로 교체
+        // response.config.headers = {
+        //   authorization: `${newAccessToken}`,
+        // };
+      }
       return response;
     },
     async (error) => {
@@ -38,21 +47,31 @@ export const localAxios = () => {
         config,
         response: { status, data },
       } = error;
-
-      if (status === 401 && data.message === 'InvalidTokenException') {
+      console.log('0');
+      console.log(error);
+      if (status === 401 && data === 'InvalidTokenException') {
+        console.log('1');
         interceptioLogout();
       }
-      if (status === 401 && data.message === 'TokenExpired') {
+      if (status === 401 && data.message === 'Access token is expired') {
         try {
-          const toeknRefreshResult = await axios.post(`/auth/login/refresh`);
+          const jwt = localAxios();
+          const refreshToken = localStorage.getItem('refreshToken');
+          const toeknRefreshResult = await jwt.post(`/auth/login/refresh`, refreshToken, {
+            headers: {
+              'Content-Type': 'application/text',
+            },
+          });
           if (toeknRefreshResult.status === 200) {
-            const { accessToekn } = toeknRefreshResult.data;
+            const { accessToekn, refreshToken } = toeknRefreshResult.data;
             localStorage.setItem('accessToken', accessToekn);
+            localStorage.setItem('accessToken', refreshToken);
             return axios(config);
           } else {
             interceptioLogout();
           }
         } catch (e) {
+          console.log(e);
           interceptioLogout();
         }
       }
@@ -64,6 +83,7 @@ export const localAxios = () => {
   instance.defaults.headers.common['Authorization'] = '';
   instance.defaults.headers.post['Content-Type'] = 'application/json';
   instance.defaults.headers.patch['Content-Type'] = 'application/json';
+  instance.defaults.headers.delete['Content-Type'] = 'application/html';
   return instance;
 };
 

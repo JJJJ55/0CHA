@@ -55,7 +55,7 @@
     </select>
 
     <select id="getAllUsersRoutines" resultMap="RoutineResultMap">
-        SELECT * FROM routines
+        SELECT * FROM routines ORDER BY id ASC LIMIT 5
     </select>
 
     <update id="completeRoutine" parameterType="map">

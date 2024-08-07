@@ -20,6 +20,7 @@ import { debounce } from 'lodash';
 import { ScriptTarget } from 'typescript';
 
 import { SnsFeedList } from '../../../lib/api/sns-api';
+import { logDOM } from '@testing-library/react';
 
 const s = {
   Container: styled.section`
@@ -72,7 +73,7 @@ type feedData = {
   content: string;
   image: string;
   likeCount: number;
-  comment: number;
+  commentCount: number;
   createdAt: string;
   userId: number;
   nickname: string;
@@ -142,17 +143,17 @@ const FeedPage = (): JSX.Element => {
     setLoading(true);
 
     await SnsFeedList(
-      0,
+      1,
       (resp) => {
         const data = resp.data;
         // if (data.length === 0) {
         if (data === '피드 0개입니다') {
           setIsMoreData(false);
-          console.log('야호')
         } else {
           setFeedData((prevData) => [...prevData, ...data]);
         }
         setLoading(false)
+        console.log(data)
       },
       (error) => {
         console.error(error)

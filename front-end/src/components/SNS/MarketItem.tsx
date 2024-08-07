@@ -97,13 +97,14 @@ const MarketItem = (props: MarketItemProps): JSX.Element => {
 
   return (
     <>
-    {props.data?.map((data, index) => (
-      <>
-        <s.Container key={index}>
+    {props.data?.map(data => (
+      <div key={data.id}>
+        <s.Container>
           <Image width="70px" height="70px" src={data.images[0]} type="rect" />
           <s.ItemInfoArea>
             <s.ItemTopArea onClick={onClick}>
               <s.ItemName>{data.title}</s.ItemName>
+              <s.ItemName>{data.id}</s.ItemName>
               {data.isSold === false ? <s.Available>판매중</s.Available> : <s.Unavailable>판매완료</s.Unavailable>}
             </s.ItemTopArea>
             <s.ItemBottomArea>
@@ -120,7 +121,7 @@ const MarketItem = (props: MarketItemProps): JSX.Element => {
           </s.ItemInfoArea>
         </s.Container>
         <s.Horizon/>
-      </>
+      </div>
     ))}
     </>
   );

@@ -83,7 +83,6 @@ export const localAxios = () => {
   instance.defaults.headers.common['Authorization'] = '';
   instance.defaults.headers.post['Content-Type'] = 'application/json';
   instance.defaults.headers.patch['Content-Type'] = 'application/json';
-  instance.defaults.headers.delete['Content-Type'] = 'application/html';
   return instance;
 };
 

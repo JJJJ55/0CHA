@@ -24,7 +24,6 @@ public class UserModifyController {
         this.userModifyService = userModifyService;
     }
 
-
     @Operation (summary = "이메일 찾기")
     @PostMapping ("/find-email")
     public ResponseEntity<?> findEmail(@RequestBody UserDto userDto) {

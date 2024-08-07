@@ -19,7 +19,7 @@ export const getNotification = async (success: (response: any) => void, fail: (e
 
 // 내 정보
 export const getMyInfo = async (success: (response: any) => void, fail: (error: AxiosError) => void) => {
-  await jwt.get(`/main/user-info`).then(success).catch(fail);
+  await jwt.get(`/main/profile/info`).then(success).catch(fail);
 };
 
 // 내 프로필 정보 수정
@@ -66,6 +66,6 @@ export const putChangePw = async (
 };
 
 // 회원탈퇴
-export const delMyDel = async (password: any, success: (response: any) => void, fail: (error: AxiosError) => void) => {
-  await jwt.delete(`/main/profile`, password).then(success).catch(fail);
+export const delMyDel = async (success: (response: any) => void, fail: (error: AxiosError) => void) => {
+  await jwt.delete(`/main/profile`).then(success).catch(fail);
 };

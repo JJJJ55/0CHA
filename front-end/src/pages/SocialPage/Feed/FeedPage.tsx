@@ -19,6 +19,8 @@ import axios from 'axios';
 import { debounce } from 'lodash';
 import { ScriptTarget } from 'typescript';
 
+import { SnsFeedList } from '../../../lib/api/sns-api';
+
 const s = {
   Container: styled.section`
     height: 100%;
@@ -135,8 +137,35 @@ const FeedPage = (): JSX.Element => {
     }
   };
 
+  const testFeed = async () => {
+    if (loading) return;
+    setLoading(true);
+
+    await SnsFeedList(
+      0,
+      (resp) => {
+        const data = resp.data;
+        // if (data.length === 0) {
+        if (data === '피드 0개입니다') {
+          setIsMoreData(false);
+          console.log('야호')
+        } else {
+          setFeedData((prevData) => [...prevData, ...data]);
+        }
+        setLoading(false)
+      },
+      (error) => {
+        console.error(error)
+      },
+    )
+
+  }
+
+  // useEffect(() => {
+  //   getFeedData(page);
+  // }, [page]);
   useEffect(() => {
-    getFeedData(page);
+    testFeed();
   }, [page]);
 
   const handleScroll = debounce(() => {

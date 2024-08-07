@@ -160,7 +160,7 @@ export const SnsCommentWrite = async (
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
 ) => {
-  await jwt.post(`/sns/feed/${feedId}/comment`, content).then(success).catch(fail);
+  await jwt.post(`/sns/feed/${feedId}/comment`, {"comment": content}).then(success).catch(fail);
 };
 
 // 피드 댓글 수정

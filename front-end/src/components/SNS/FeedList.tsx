@@ -1,13 +1,13 @@
-import React, { MouseEventHandler } from 'react';
+import React, { MouseEventHandler, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import Image from '../Common/Image';
 import IconSvg from '../Common/IconSvg';
 import Button from '../Common/Button';
-import { ReactComponent as likeOn } from '../../asset/img/svg/likeOn.svg';
-import { ReactComponent as likeOff } from '../../asset/img/svg/likeOff.svg';
 import { ReactComponent as comment } from '../../asset/img/svg/comment.svg';
 import { useNavigate } from 'react-router';
+
+import LikeIcon from './LikeIcon';
 
 const s = {
   FeedContentArea: styled.div`
@@ -45,7 +45,6 @@ const s = {
     margin-right: 10px;
     cursor: pointer;
   `,
-
   IconArea: styled.div`
     display: flex;
     align-items: center;
@@ -56,13 +55,12 @@ const s = {
   `
 };
 
-
 type feedData = {
   id: number;
   content: string;
   image: string;
   likeCount: number;
-  comment: number;
+  commentCount: number;
   createdAt: string;
   userId: number;
   nickname: string;
@@ -77,56 +75,42 @@ interface FeedListProps {
 };
 
 
-const FeedList = (props: FeedListProps): JSX.Element => {
+const FeedList = ({data, onClick}: FeedListProps): JSX.Element => {
   const navigate = useNavigate();
   const handleMovePage = (path: string): void => {
     navigate(path);
   };
-  const { onClick } = props;
+
+
   return (
-    
-    
     <>
-    {/* {props.data === "피드 0개입니다" ? (
-      <s.AuthorName>피드 0개입니다</s.AuthorName>
-    ) : (
-      <div></div>
-    )} */}
-    {props.data?.map((data, index) => (
-      <s.FeedItem key={index}>
+    {data?.map((feed) => (
+      <s.FeedItem key={feed.id}>
       <s.AuthorProfileArea>
         <s.AuthorProfileImage
           width="30px"
           height="30px"
-          src={data.profileImage}
+          src={feed.profileImage}
           onClick={() => handleMovePage('../profile/id')}
         />
-        <s.AuthorName onClick={() => handleMovePage('../profile/id')}>{data.nickname}</s.AuthorName>
+        <s.AuthorName onClick={() => handleMovePage('../profile/id')}>{feed.nickname}</s.AuthorName>
       </s.AuthorProfileArea>
       <Image
         width="100%"
         height="auto"
-        src={data.image}
+        src={feed.image}
         type="rect"
       />
       <s.FeedInteractionArea>
-        <s.IconArea>
-          {data.isLike === 1 ? (
-            <IconSvg width="25" height="25" color="#ffffff" Ico={likeOn} />
-          ) : (
-            <IconSvg width="25" height="25" color="#ffffff" Ico={likeOff} />
-          )}
-          <s.FeedCaption>{data.likeCount}</s.FeedCaption>
-        </s.IconArea>
-        {/* <s.IconArea onClick={onClick}> */}
-        <s.IconArea onClick={() => onClick(data.id)}>
+        <LikeIcon feedId={feed.id} isLike={feed.isLike} likeCount={feed.likeCount} />
+        <s.IconArea onClick={() => onClick(feed.id)}>
           <IconSvg
             width="25"
             height="25"
             color="#ccff33"
             Ico={comment}
           />
-          <s.FeedCaption>{data.comment}</s.FeedCaption>
+          <s.FeedCaption>{feed.commentCount}</s.FeedCaption>
         </s.IconArea>
         <s.RoutineButton>
           <Button
@@ -139,8 +123,7 @@ const FeedList = (props: FeedListProps): JSX.Element => {
           />
         </s.RoutineButton>
       </s.FeedInteractionArea>
-      <s.FeedContentArea>{data.content}</s.FeedContentArea>
-      {index + 1 === props.data?.length}
+      <s.FeedContentArea>{feed.content}</s.FeedContentArea>
       </s.FeedItem>
     ))}
     </>

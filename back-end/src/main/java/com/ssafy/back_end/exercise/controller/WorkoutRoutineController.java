@@ -43,17 +43,7 @@ public class WorkoutRoutineController {
     @Operation(summary = "본인의 루틴 목록 조회", description = "사용자의 모든 루틴 목록을 조회합니다.")
     @GetMapping
     public ResponseEntity<?> getAllRoutines(HttpServletRequest request) {
-        String userIdHeader = request.getHeader("ID");
-        if (userIdHeader == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("사용자 ID가 요청 헤더에 없습니다.");
-        }
-
-        int userId;
-        try {
-            userId = Integer.parseInt(userIdHeader);
-        } catch (NumberFormatException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 사용자 ID 형식입니다.");
-        }
+        int userId = (Integer) request.getAttribute("userId");
 
         List<RoutineDto> routines = workoutRoutineService.getAllRoutines(userId);
         if (routines.isEmpty()) {
@@ -68,17 +58,7 @@ public class WorkoutRoutineController {
     @Operation(summary = "특정 루틴의 상세 정보 조회", description = "루틴 ID를 사용하여 특정 루틴의 상세 정보를 조회합니다.")
     @GetMapping("/{routine-id}")
     public ResponseEntity<?> getRoutineById(HttpServletRequest request, @PathVariable("routine-id") int routineId) {
-        String userIdHeader = request.getHeader("ID");
-        if (userIdHeader == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("사용자 ID가 요청 헤더에 없습니다.");
-        }
-
-        int userId;
-        try {
-            userId = Integer.parseInt(userIdHeader);
-        } catch (NumberFormatException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 사용자 ID 형식입니다.");
-        }
+        int userId = (Integer) request.getAttribute("userId");
 
         RoutineDto routine = workoutRoutineService.getRoutineById(routineId, userId);
         if (routine != null) {
@@ -88,33 +68,32 @@ public class WorkoutRoutineController {
         }
     }
 
-
     @Operation(summary = "루틴 생성 및 업데이트", description = "루틴을 생성하거나 업데이트합니다.")
-    @PutMapping("/{routine-id}")
-    public ResponseEntity<?> upsertRoutine(HttpServletRequest request, @PathVariable("routine-id") int routineId, @RequestBody RoutineDto routineDto) {
-        String userIdHeader = request.getHeader("ID");
-        if (userIdHeader == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("사용자 ID가 요청 헤더에 없습니다.");
-        }
+    @PutMapping({"/{routine-id}", ""})
+    public ResponseEntity<?> upsertRoutine(HttpServletRequest request, @PathVariable(value = "routine-id", required = false) Integer routineId, @RequestBody RoutineDto routineDto) {
+        int userId = (Integer) request.getAttribute("userId");
 
-        int userId;
-        try {
-            userId = Integer.parseInt(userIdHeader);
-        } catch (NumberFormatException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 사용자 ID 형식입니다.");
-        }
-
-        routineDto.setId(routineId);
         routineDto.setUserId(userId);
-
         LocalDateTime now = LocalDateTime.now();
+
         if (routineDto.getDueDate() != null && routineDto.getDueDate().isBefore(now.toLocalDate())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("루틴 마감일은 현재 날짜 이후로 설정해야 합니다.");
         }
 
         // 루틴이 새로 생성되는 경우 createdAt 필드를 설정
-        if (routineId == 0) {
+        if (routineId == null) {
             routineDto.setCreatedAt(Timestamp.valueOf(now));
+        } else {
+            routineDto.setId(routineId);
+            // 루틴이 존재하는지 확인
+            RoutineDto existingRoutine = workoutRoutineService.getRoutineById(routineId, userId);
+            if (existingRoutine == null) {
+                // 존재하지 않는 루틴이면 createdAt 필드를 설정
+                routineDto.setCreatedAt(Timestamp.valueOf(now));
+            } else {
+                // 존재하는 루틴이면 createdAt 필드를 유지
+                routineDto.setCreatedAt(existingRoutine.getCreatedAt());
+            }
         }
 
         int result = workoutRoutineService.upsertRoutine(routineDto);
@@ -124,20 +103,11 @@ public class WorkoutRoutineController {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("루틴 저장 또는 업데이트 실패");
     }
 
+
     @Operation(summary = "루틴 삭제", description = "루틴 ID를 사용하여 루틴을 삭제합니다.")
     @DeleteMapping("/{routine-id}")
     public ResponseEntity<?> deleteRoutine(HttpServletRequest request, @PathVariable("routine-id") int routineId) {
-        String userIdHeader = request.getHeader("ID");
-        if (userIdHeader == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("사용자 ID가 요청 헤더에 없습니다.");
-        }
-
-        int userId;
-        try {
-            userId = Integer.parseInt(userIdHeader);
-        } catch (NumberFormatException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 사용자 ID 형식입니다.");
-        }
+        int userId = (Integer) request.getAttribute("userId");
 
         int result = workoutRoutineService.deleteRoutine(routineId, userId);
         if (result != 0) {
@@ -149,17 +119,7 @@ public class WorkoutRoutineController {
     @Operation(summary = "루틴 완료 처리", description = "루틴 ID를 사용하여 루틴을 완료 처리합니다.")
     @PutMapping("/{routine-id}/complete")
     public ResponseEntity<?> completeRoutine(HttpServletRequest request, @PathVariable("routine-id") int routineId) {
-        String userIdHeader = request.getHeader("ID");
-        if (userIdHeader == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("사용자 ID가 요청 헤더에 없습니다.");
-        }
-
-        int userId;
-        try {
-            userId = Integer.parseInt(userIdHeader);
-        } catch (NumberFormatException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 사용자 ID 형식입니다.");
-        }
+        int userId = (Integer) request.getAttribute("userId");
 
         LocalDateTime now = LocalDateTime.now();
         int result = workoutRoutineService.completeRoutine(routineId, userId, now);
@@ -172,17 +132,7 @@ public class WorkoutRoutineController {
     @Operation(summary = "루틴 찜하기/찜 해제", description = "루틴을 찜하거나 찜 해제합니다.")
     @PutMapping("/{routine-id}/like")
     public ResponseEntity<?> toggleLikeRoutine(HttpServletRequest request, @PathVariable("routine-id") int routineId) {
-        String userIdHeader = request.getHeader("ID");
-        if (userIdHeader == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("사용자 ID가 요청 헤더에 없습니다.");
-        }
-
-        int userId;
-        try {
-            userId = Integer.parseInt(userIdHeader);
-        } catch (NumberFormatException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 사용자 ID 형식입니다.");
-        }
+        int userId = (Integer) request.getAttribute("userId");
 
         boolean isLiked = workoutRoutineService.toggleLikeRoutine(routineId, userId);
         if (isLiked) {

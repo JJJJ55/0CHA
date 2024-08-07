@@ -5,6 +5,7 @@ import { FitnessPlanData } from '../../util/TestData';
 import FitnessPlan from '../../components/Fitness/Detail/FitnessPlan';
 import FitnessPlayBottomNav from '../../components/Fitness/Etc/FitnessPlayBottomNav';
 import { useNavigate } from 'react-router';
+import Timer from '../../components/Common/Timer';
 
 const s = {
   Container: styled.section`
@@ -21,6 +22,7 @@ const FitnessPlayPage = (): JSX.Element => {
     <s.Container>
       <Header text="운동" />
       <s.MainArea>
+        <Timer />
         <FitnessPlan exercise={FitnessPlanData.exercise} />
       </s.MainArea>
       <FitnessPlayBottomNav />

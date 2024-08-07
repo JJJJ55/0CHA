@@ -14,7 +14,7 @@ const s = {
   `,
   InputHeader: styled.p`
     text-align: left;
-    width: 90px;
+    /* width: 90px; */
     color: ${(props) => props.theme.textColor};
     margin-bottom: 5px;
     font-size: 16px;
@@ -34,7 +34,7 @@ const s = {
     flex-shrink: 0;
   `,
   ErrorText: styled.p`
-    color: red;
+    color: ${(props) => props.theme.mainColor};
     font-size: 12px;
     margin-left: 10px;
     margin-top: 5px;
@@ -77,7 +77,7 @@ const EmailArea: React.FC<EmailAreaProps> = ({
     <s.Container>
       <s.InfoNameBox>
         <s.InputHeader children="이메일" />
-        {emailError && <s.ErrorText style={{ color: 'red', fontSize: '12px' }}>{emailError}</s.ErrorText>}
+        {emailError && <s.ErrorText>{emailError}</s.ErrorText>}
       </s.InfoNameBox>
       <s.InputArea>
         <s.InputBox>
@@ -98,6 +98,7 @@ const EmailArea: React.FC<EmailAreaProps> = ({
             type={verificationBtnType}
             children={verificationBtnText}
             onClick={onSendVerificationCode}
+            bold="500"
           />
         </s.InputBtn>
       </s.InputArea>
@@ -124,6 +125,7 @@ const EmailArea: React.FC<EmailAreaProps> = ({
             type={confirmBtnType}
             children={confirmBtnText}
             onClick={onCheckVerificationCode}
+            bold="500"
           />
         </s.InputBtn>
       </s.InputArea>

@@ -4,6 +4,10 @@ import Input from '../../../components/Common/Input';
 import Button from '../../../components/Common/Button';
 import Header from '../../../components/Common/Header';
 import PhoneNumberInput from '../../../components/LoginBefore/phoneNumberInput';
+import { findEmail } from '../../../lib/api/user-api';
+import { useLocation, useNavigate } from 'react-router';
+import { useAppDispatch } from '../../../lib/hook/useReduxHook';
+import { pageActions, selectIsEmail } from '../../../store/page';
 
 // 4자리 로직 작성
 
@@ -13,14 +17,14 @@ const s = {
     background-color: ${(props) => props.theme.bgColor};
     overflow: auto;
   `,
+  BinArea: styled.div`
+    width: 100%;
+    height: 60px;
+  `,
   FindEmailArea: styled.div`
     width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 60px 0 80px;
+    padding: 120px 0 80px;
+    overflow: auto;
   `,
   InfoArea: styled.div`
     width: 90%;
@@ -28,6 +32,7 @@ const s = {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    margin: 0 auto;
   `,
   InputArea: styled.div`
     width: 100%;
@@ -38,7 +43,6 @@ const s = {
   `,
   InputHeader: styled.p`
     text-align: left;
-    width: 80px;
     color: ${(props) => props.theme.textColor};
     margin-bottom: 5px;
     font-size: 16px;
@@ -47,10 +51,10 @@ const s = {
     width: 90%;
     display: flex;
     justify-content: space-between;
-    margin-top: 20px;
+    margin: 20px auto 0;
   `,
   ErrorText: styled.p`
-    color: red;
+    color: ${(props) => props.theme.mainColor};
     font-size: 12px;
     margin-left: 10px;
     margin-top: 5px;
@@ -65,6 +69,7 @@ const s = {
     font-size: 12px;
     margin-bottom: 10px;
     width: 90%;
+    margin: 0 auto;
   `,
 };
 
@@ -75,11 +80,16 @@ interface dataType {
 }
 
 const FindEmailPage = (): JSX.Element => {
+  const location = useLocation();
+  console.log(location);
   const [data, setData] = useState<dataType>({
     username: '',
     phonePart2: '',
     phonePart3: '',
   });
+
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   // 유효성 검사 상태
   const [usernameError, setUsernameError] = useState('');
@@ -147,14 +157,27 @@ const FindEmailPage = (): JSX.Element => {
   };
 
   // 제출 처리
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     console.log('Form submitted:', data);
+    const param = {
+      name: data.username,
+      phone: '010' + data.phonePart2 + data.phonePart3,
+    };
     // 모든 정보가 완전하게 입력된 경우이면
     if (data.username.length !== 0 && data.phonePart2.length !== 2 && phoneNumberError === '' && usernameError === '') {
       // 회원정보 탐색 로직
       // 존재하지 않는 경우
-      setEmailMessage('해당 정보로 가입된 이메일이 없습니다.');
-      setIsExisted(false);
+      await findEmail(
+        param,
+        (resp) => {
+          dispatch(pageActions.toogleIsEmail(true));
+          navigate('/find/email', { state: { result: { name: param.name, email: resp.data } } });
+        },
+        (error) => {
+          setEmailMessage('해당 정보로 가입된 이메일이 없습니다.');
+          setIsExisted(false);
+        },
+      );
       // 존재하는 경우
       // setIsExisted(true);
       // setEmailMessage('');
@@ -165,12 +188,12 @@ const FindEmailPage = (): JSX.Element => {
 
   // 이전 페이지로 이동 처리
   const handlePrevious = () => {
-    console.log('Previous button clicked');
-    alert('이전 페이지로 이동합니다.');
+    navigate('/login');
   };
   return (
     <s.Container>
       <Header text="이메일 찾기" />
+      <s.BinArea></s.BinArea>
       <s.FindEmailArea>
         <s.InfoArea>
           <s.InfoNameBox>

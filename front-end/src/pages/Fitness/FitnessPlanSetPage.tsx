@@ -11,6 +11,8 @@ import FitnessPlanSetModal from '../../components/Modal/FitnessPlanSetModal';
 import { useNavigate } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
 import { modalActions, selectModalCalendar } from '../../store/modal';
+import { useModalExitHook } from '../../lib/hook/useModalExitHook';
+import { pageActions } from '../../store/page';
 
 const s = {
   Container: styled.section`
@@ -77,6 +79,17 @@ const FitnessPlanSetPage = (): JSX.Element => {
     dispatch(modalActions.toggleCalendar());
   };
 
+  const handlePlay = (): void => {
+    let count = 0;
+    // setInterval(() => {
+    //   console.log(count + 1);
+    // }, 1000);
+    dispatch(pageActions.toogleIsPlay(true));
+    navigate('/play');
+  };
+
+  useModalExitHook();
+
   return (
     <s.Container>
       <Header text="새루틴">
@@ -115,7 +128,7 @@ const FitnessPlanSetPage = (): JSX.Element => {
             width="170px"
             height="40px"
             children="운동시작"
-            onClick={() => handleClickMove('/play')}
+            onClick={handlePlay}
             bold="500"
             size="14px"
             type="main"

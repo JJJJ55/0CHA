@@ -1,11 +1,14 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import Header from '../../components/Common/Header';
 import ResultModal from '../../components/AI/ResultModal';
-import SettingModal from '../../components/AI/SettingModal';
+import SettingModal from '../../components/AI/SettingModal2';
 import BottomNav from '../../components/Common/BottomNav';
+import '@tensorflow/tfjs';
+import * as tmPose from '@teachablemachine/pose';
 
 const s = {
+  // 스타일 컴포넌트 정의
   Container: styled.section`
     height: 100%;
     background-color: ${(props) => props.theme.bgColor};
@@ -15,12 +18,12 @@ const s = {
   `,
   AIArea: styled.div`
     width: 100%;
-    height: 100vh;
+    /* height: 100vh; min-height로 변경 */
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    /* justify-content: center; */
     align-items: center;
-    padding: 100px 10px 120px;
+    padding: 60px 10px 120px;
   `,
   PageBody: styled.div`
     display: flex;
@@ -28,28 +31,17 @@ const s = {
     align-items: center;
     width: 90%;
   `,
-  CameraBox: styled.div<{ $isError: boolean | null }>`
+  CameraBox: styled.div`
     width: 90%;
-    height: 70%;
+    height: 60vh;
     border: 1px solid red;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 300px;
-    color: ${(props) => props.theme.textColor};
-    ${(props) =>
-      props.$isError === true &&
-      css`
-        color: red;
-      `}
-    ${(props) =>
-      props.$isError === false &&
-      css`
-        color: green;
-      `}
+    background-color: ${(props) => props.theme.textColor2};
   `,
   CameraHeader: styled.h2`
-    font-size: 15px;
+    font-size: 14px;
     color: ${(props) => props.theme.textColor};
     margin: 4px;
   `,
@@ -58,11 +50,16 @@ const s = {
     color: ${(props) => props.theme.btnTextColor};
     border: none;
     padding: 10px 20px;
-    border-radius: 5px;
+    border-radius: 8px;
     font-size: 16px;
     cursor: pointer;
     margin-top: 20px;
     width: 100%;
+  `,
+  SelectedExercise: styled.h3`
+    font-size: 14px;
+    color: ${(props) => props.theme.textColor};
+    margin-top: 10px;
   `,
   BtnArea: styled.div`
     width: 100%;
@@ -71,10 +68,11 @@ const s = {
   `,
   ProgressBar: styled.div`
     width: 100%;
-    background-color: ${(props) => props.theme.subColor};
-    border-radius: 5px;
+    background-color: ${(props) => props.theme.textColor};
+    border-radius: 10px;
     overflow: hidden;
     margin-top: 20px;
+    position: relative; /* 자식 요소인 ProgressText를 상대적으로 배치하기 위해 설정 */
   `,
   Progress: styled.div<{ progress: number }>`
     width: ${(props) => props.progress}%;
@@ -83,130 +81,316 @@ const s = {
     transition: width 0.3s;
   `,
   ProgressText: styled.div`
-    font-size: 16px;
+    position: absolute;
+    width: 100%;
+    top: 0;
+    left: 0;
+    text-align: center;
+    font-size: 14px;
+    color: ${(props) => props.theme.btnTextColor};
+    margin-top: 4px;
+  `,
+  Canvas: styled.canvas`
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover; /* 좌우 혹은 상하로 꽉 채움 */
+  `,
+  LabelContainer: styled.div`
+    margin-top: 20px;
     color: ${(props) => props.theme.textColor};
-    margin-top: 8px;
+  `,
+  CountContainer: styled.div`
+    margin-top: 20px;
+  `,
+  HighlightText: styled.span`
+    color: ${(props) => props.theme.mainColor};
+    font-size: 14px;
+    margin-left: 5px;
   `,
 };
 
+// 포즈 예측 인터페이스
+interface PosePrediction {
+  probability: number;
+  className: string;
+}
+
 const AIMainPage: React.FC = () => {
-  const [isResultModalOpen, setIsResultModalOpen] = useState(false);
-  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [currentResult, setCurrentResult] = useState<{ isError: boolean; message: string } | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null); // 캔버스를 참조하기 위한 ref
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false); // 설정 모달의 열림 상태를 관리
+  const [isResultModalOpen, setIsResultModalOpen] = useState(false); // 결과 모달의 열림 상태를 관리
 
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [progress, setProgress] = useState<number>(0); // 진행 상황을 나타내는 상태
+  const [results, setResults] = useState<{ set: number; isError: boolean; message: string }[]>([]); // 운동 결과를 저장하는 상태
+  const [selectedExercise, setSelectedExercise] = useState<string>(''); // 선택된 운동을 저장하는 상태
+  const [totalCount, setTotalCount] = useState<number>(5); // 운동해야할 횟수를 저장해야하는 상태 변수
+  const [webcam, setWebcam] = useState<tmPose.Webcam | null>(null); // 웹캠 객체를 저장하는 상태
+  const [requestID, setRequestID] = useState<number | null>(null); // 애니메이션 프레임 요청 ID를 저장하는 상태
 
-  const results = [
-    { set: 1, isError: false, message: '좋은 자세입니다.' },
-    { set: 2, isError: true, message: '허리 굽힘이 발생했습니다.' },
-    { set: 3, isError: false, message: '좋은 자세입니다.' },
-    { set: 4, isError: true, message: '더 내려가야 합니다.' },
-    { set: 5, isError: false, message: '좋은 자세입니다.' },
-    { set: 6, isError: false, message: '좋은 자세입니다.' },
-    { set: 7, isError: false, message: '좋은 자세입니다.' },
-    { set: 8, isError: true, message: '더 내려가야 합니다.' },
-    { set: 9, isError: false, message: '좋은 자세입니다.' },
-    { set: 10, isError: false, message: '좋은 자세입니다.' },
-    { set: 11, isError: false, message: '좋은 자세입니다.' },
-    { set: 12, isError: false, message: '좋은 자세입니다.' },
-    { set: 13, isError: false, message: '좋은 자세입니다.' },
-    { set: 14, isError: false, message: '좋은 자세입니다.' },
-  ];
-
-  const handleNext = () => {
-    if (progress < 99) {
-      const nextProgress = progress + 100 / results.length;
-      setProgress(nextProgress);
-      const nextIndex = Math.round((nextProgress * results.length) / 100) - 1;
-      setCurrentResult(results[nextIndex]);
-    }
-  };
-
+  const [model, setModel] = useState<tmPose.CustomPoseNet | null>(null); // 로드된 모델을 저장하는 상태
+  const [correctCount, setCorrectCount] = useState(0); // 올바른 자세 횟수를 저장하는 상태
+  const [inCorrectCount, setInCorrectCount] = useState(0); // 잘못된 자세 횟수를 저장하는 상태
+  const [predictions, setPredictions] = useState<PosePrediction[]>([]); // 예측 결과를 저장하는 상태
+  const [status, setStatus] = useState('middle'); // 운동 상태를 저장하는 상태
   const [cameraStarted, setCameraStarted] = useState(false);
-  const [facingMode, setFacingMode] = useState('user');
-  const [stream, setStream] = useState<MediaStream | null>(null); // 스트림 상태 추가
+  const prevStatusRef = useRef<string>(''); // 이전 운동 상태를 저장하기 위한 ref
+  const [selectedVoice, setSelectedVoice] = useState('아라'); // 선택된 음성을 저장할 상태 변수
+  const [isFinished, setIsFinished] = useState(false); // 운동 종료 여부를 저장할 상태 변수
 
-  const startCamera = () => {
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      const constraints = {
-        video: {
-          facingMode: facingMode,
-        },
-      };
+  // 트레이닝 설정 확인 시 호출되는 함수
+  const handleSettingsConfirm = (exercise: string, count: number) => {
+    setSelectedExercise(exercise); // 선택된 운동 업데이트
+    setResults([]); // 결과 초기화
+    setIsFinished(false); // 운동 종료 상태 초기화
+    setCorrectCount(0);
+    setInCorrectCount(0);
+    setProgress(0);
+    setTotalCount(count); // 총 횟수 업데이트
+    setIsSettingsModalOpen(false); // 설정 모달 닫기
+  };
 
-      navigator.mediaDevices
-        .getUserMedia(constraints)
-        .then((stream) => {
-          if (videoRef.current) {
-            videoRef.current.srcObject = stream;
-            setStream(stream); // 스트림을 상태에 저장
-            setCameraStarted(true);
+  const loadModel = async () => {
+    // 지원 안 하는 모델이면 종료
+    if (selectedExercise !== '테스트모델') {
+      alert('추후 제공 예정입니다.');
+      return;
+    }
+    const modelURL = process.env.PUBLIC_URL + '/my_model/model.json'; // 모델 URL
+    const metadataURL = process.env.PUBLIC_URL + '/my_model/metadata.json'; // 메타데이터 URL
+
+    try {
+      const loadedModel = await tmPose.load(modelURL, metadataURL); // 모델 로드
+      setModel(loadedModel); // 모델 상태 업데이트
+      console.log('Model loaded successfully'); // 성공적으로 로드되었음을 콘솔에 출력
+    } catch (error) {
+      console.error('Error loading the model:', error); // 모델 로드 실패 시 에러 출력
+    }
+  };
+
+  // 운동 세션을 초기화하고 시작하는 함수
+  const init = async () => {
+    if (!model) return; // 모델이 로드되지 않은 경우 종료
+
+    // 운동 상태 초기화
+    setStatus('middle');
+
+    const size = 800; // 웹캠 크기 설정
+    const flip = true; // 좌우 반전 여부 설정
+    const newWebcam = new tmPose.Webcam(size, size, flip); // 웹캠 객체 생성
+    await newWebcam.setup(); // 웹캠 설정
+    await newWebcam.play(); // 웹캠 영상 재생
+    setWebcam(newWebcam); // 웹캠 상태 업데이트
+
+    if (canvasRef.current) {
+      const canvas = canvasRef.current;
+      canvas.style.display = 'block'; // 캔버스 표시
+      canvas.width = size; // 캔버스 너비 설정
+      canvas.height = size; // 캔버스 높이 설정
+      setCameraStarted(true);
+      playAudio('start'); // 시작
+    }
+
+    // 반복적으로 프레임을 갱신하고 예측을 수행하는 루프 함수
+    const loop = async () => {
+      if (!canvasRef.current || !newWebcam || !model) {
+        console.log('Webcam, canvas, or model is not available');
+        return;
+      }
+
+      newWebcam.update(); // 웹캠에서 프레임 업데이트
+      const { pose, posenetOutput } = await model.estimatePose(newWebcam.canvas); // 포즈 추정
+      const prediction = await model.predict(posenetOutput); // 예측 수행
+
+      const context = canvasRef.current.getContext('2d'); // 캔버스의 2D 컨텍스트 가져오기
+      if (context) {
+        context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height); // 캔버스 초기화
+        context.drawImage(newWebcam.canvas, 0, 0); // 웹캠 영상 캔버스에 그리기
+
+        if (pose) {
+          const minPartConfidence = 0.5;
+          tmPose.drawKeypoints(pose.keypoints, minPartConfidence, context); // 관절 점 그리기
+          tmPose.drawSkeleton(pose.keypoints, minPartConfidence, context); // 뼈대 그리기
+        }
+
+        setPredictions(prediction); // 예측 결과 업데이트
+
+        // 텍스트를 중앙에 위치시키기 위한 코드
+        const textSize = canvasRef.current.width * 0.8; // 텍스트 크기를 캔버스 너비의 50%로 설정
+        context.font = `${textSize}px Pretendard`;
+        context.textAlign = 'center'; // 수평 중앙 정렬
+        context.textBaseline = 'middle'; // 수직 중앙 정렬
+
+        const centerX = canvasRef.current.width / 2;
+        const centerY = canvasRef.current.height / 2;
+
+        if (selectedExercise === '테스트모델') {
+          // 테스트 모델 로직
+          // 상태에 따라 운동 상태 업데이트 및 텍스트 그리기
+          if (prediction[5].probability > 0.999 && correctCount + inCorrectCount < totalCount) {
+            setStatus('middle');
           }
-        })
-        .catch((error) => {
-          console.error('카메라 접근 권한이 거부되었습니다:', error);
-        });
+          // 왼쪽 상황
+          if (prediction[0].probability > 0.999) {
+            setStatus('left');
+            context.fillStyle = '#ccff34'; // 색 채우기
+            context.fillText('O', centerX, centerY); // 텍스트 중앙에 그리기
+          } else if (prediction[5].probability > 0.999) {
+            setStatus('middle');
+          }
+
+          if (prediction[3].probability > 0.999) {
+            context.fillStyle = '#ffffff';
+            context.fillText('X', centerX, centerY); // 텍스트 중앙에 그리기
+          }
+        } else {
+          // 예외 처리 후 종료
+          stop('modelNotSupported');
+          return;
+        }
+        console.log(`Drawing on canvas with pose ${status}`);
+      }
+
+      setRequestID(requestAnimationFrame(loop)); // 다음 프레임을 요청
+    };
+    setRequestID(requestAnimationFrame(loop)); // 루프 시작
+    // loop(); // 루프 시작
+  };
+
+  // 컴포넌트 언마운트 시 리소스를 정리하는 useEffect
+  useEffect(() => {
+    return () => {
+      if (requestID) {
+        cancelAnimationFrame(requestID); // 애니메이션 프레임 요청 취소
+      }
+    };
+  }, [requestID, webcam]);
+
+  // 올바른 자세 및 잘못된 자세 카운트가 변경될 때마다 코멘트를 업데이트하는 useEffect
+  useEffect(() => {
+    if (correctCount + inCorrectCount > 0) {
+      setResults((prevResults) => [
+        ...prevResults,
+        { set: correctCount, isError: false, message: '올바른 자세입니다.' },
+      ]);
+      playAudio(correctCount.toString());
+    }
+  }, [correctCount, inCorrectCount]);
+
+  // 목표 횟수에 도달했는지 확인하고 도달 시 세션을 종료하는 useEffect
+  useEffect(() => {
+    if (correctCount + inCorrectCount >= totalCount) {
+      stop(); // 세션 종료
+    }
+  }, [correctCount, inCorrectCount, totalCount]);
+
+  // 운동 상태가 변경될 때 상태를 체크하고 올바른 자세 횟수를 증가시키는 useEffect
+  useEffect(() => {
+    if (selectedExercise === '테스트모델') {
+      if (prevStatusRef.current !== status) {
+        if (status === 'middle' && prevStatusRef.current === 'left') {
+          setCorrectCount((prevCount) => prevCount + 1); // 올바른 자세 카운트 증가
+          const nextProgress = progress + 100 / totalCount; // 상태 바 값
+          setProgress(nextProgress);
+        }
+      }
     } else {
-      alert('이 브라우저는 카메라 접근을 지원하지 않습니다. 다른 브라우저를 사용해 주세요.');
+      console.log('추후 제공 예정입니다');
+    }
+    prevStatusRef.current = status; // 현재 상태를 이전 상태로 업데이트
+  }, [status]);
+
+  // 세션을 종료하는 함수
+  const stop = (reason?: string) => {
+    if (webcam) {
+      try {
+        webcam.stop(); // 웹캠 중지
+        setCameraStarted(false);
+        setIsFinished(true);
+        setModel(null);
+        setSelectedExercise('');
+      } catch (error) {
+        console.error('Error stopping webcam:', error); // 에러 처리
+      }
+    }
+
+    if (requestID) {
+      window.cancelAnimationFrame(requestID); // 애니메이션 프레임 요청 취소
+    }
+
+    if (canvasRef.current) {
+      canvasRef.current.style.display = 'none'; // 캔버스 숨기기
+    }
+    playAudio('finish');
+    setIsResultModalOpen(true); // 세션 종료 시 결과 모달 열기
+
+    // 이유에 따른 추가 작업
+    if (reason) {
+      if (reason === 'modelNotSupported') {
+        alert('어익후 추후 제공 예정이긴 한데 여기까지 오면 안 되는데. 영차!');
+      } else {
+        console.log(`Stop reason: ${reason}`);
+      }
     }
   };
 
-  const stopCamera = () => {
-    if (stream) {
-      stream.getTracks().forEach((track) => track.stop()); // 모든 트랙을 중지
-      setCameraStarted(false);
-      setStream(null); // 스트림 상태를 초기화
-    }
-  };
-
-  const switchCamera = () => {
-    setFacingMode(facingMode === 'user' ? 'environment' : 'user');
-
-    // 카메라를 전환하고 재시작
-    if (cameraStarted) {
-      stopCamera();
-      startCamera();
-    }
+  // 오디오 재생 함수
+  const playAudio = (count: string) => {
+    const audioPath = process.env.PUBLIC_URL + `/audio/${selectedVoice}/${count}.mp3`; // 오디오 파일 경로 설정
+    const audio = new Audio(audioPath); // 새로운 오디오 객체 생성
+    audio.play().catch((err) => console.error('Failed to play audio:', err)); // 오디오 재생, 실패 시 에러 출력
   };
 
   return (
     <s.Container>
       <Header text="AI 트레이너" />
       <s.AIArea>
-        <s.CameraHeader>카메라를 사용자 기준 우측 하단에 위치해 주세요.</s.CameraHeader>
-        <s.CameraBox $isError={currentResult ? currentResult.isError : null}>
-          <video ref={videoRef} autoPlay playsInline width="100%" height="100%" max-height="100%" />
-
-          {currentResult && (currentResult.isError ? 'X' : 'O')}
+        <s.CameraHeader>
+          카메라를 사용자 기준
+          <s.HighlightText>우측 하단</s.HighlightText>에 위치해 주세요.
+        </s.CameraHeader>
+        <s.CameraBox>
+          <s.Canvas id="canvas" ref={canvasRef} />
         </s.CameraBox>
+        <s.SelectedExercise>선택된 운동 : {selectedExercise}</s.SelectedExercise>
         <s.PageBody>
+          {/* 결과 모달이 열려 있는 경우 결과 모달 표시 */}
           {isResultModalOpen && <ResultModal onClose={() => setIsResultModalOpen(false)} results={results} />}
-          {isSettingsModalOpen && <SettingModal onClose={() => setIsSettingsModalOpen(false)} />}
-          <s.SettingBtn onClick={() => setIsSettingsModalOpen(true)}>트레이닝 설정</s.SettingBtn>
-          {progress < 99 ? (
-            <>
-              <s.ProgressBar>
-                <s.Progress progress={progress} />
-              </s.ProgressBar>
+          {/* 설정 모달이 열려 있는 경우 설정 모달 표시 */}
+          {isSettingsModalOpen && (
+            <SettingModal onClose={() => setIsSettingsModalOpen(false)} onConfirm={handleSettingsConfirm} />
+          )}
+          {!model && <s.SettingBtn onClick={() => setIsSettingsModalOpen(true)}>운동 설정</s.SettingBtn>}
+          {/* 카메라 시작 버튼 */}
+          {selectedExercise && !model && <s.SettingBtn onClick={loadModel} children="준비" />}
+          {selectedExercise && model && !cameraStarted && <s.SettingBtn onClick={init} children="카메라 시작" />}
+          {/* 운동 종료 버튼 */}
+          {selectedExercise && cameraStarted && (
+            <s.SettingBtn onClick={() => stop('userStopped')} children="운동 종료" />
+          )}
+          {/* 운동 진행 상태 바 */}
+          {selectedExercise && (
+            <s.ProgressBar>
+              <s.Progress progress={progress} />
               <s.ProgressText>
-                {Math.round((progress * results.length) / 100)} / {results.length}
+                {correctCount} / {totalCount}
               </s.ProgressText>
-              <s.SettingBtn onClick={handleNext}>다음</s.SettingBtn>
-            </>
-          ) : (
-            <s.SettingBtn onClick={() => setIsResultModalOpen(true)}>결과 보기</s.SettingBtn>
+            </s.ProgressBar>
           )}
-          {!cameraStarted && <s.SettingBtn onClick={startCamera} disabled={cameraStarted} children="카메라 시작" />}
-          {cameraStarted && (
-            <s.BtnArea>
-              <s.SettingBtn children="카메라 전환" onClick={switchCamera} />
-              <s.SettingBtn children="카메라 종료" onClick={stopCamera} />
-            </s.BtnArea>
-          )}
+
+          {/* 운동 종료 시 결과 보기 버튼 표시 */}
+          {isFinished && <s.SettingBtn onClick={() => setIsResultModalOpen(true)}>결과 보기</s.SettingBtn>}
+
+          {/* 예측 결과를 표시하는 영역 (추후 없앨 부분)*/}
+          <s.LabelContainer>
+            <p>예측 결과를 표시하는 영역(추후 삭제될 부분)</p>
+            {predictions.map((pred, index) => (
+              <div key={pred.className}>{`${pred.className}: ${Math.round(pred.probability * 100)}%`}</div>
+            ))}
+          </s.LabelContainer>
         </s.PageBody>
       </s.AIArea>
+      {/* 하단 네비게이션 */}
       <BottomNav />
     </s.Container>
   );

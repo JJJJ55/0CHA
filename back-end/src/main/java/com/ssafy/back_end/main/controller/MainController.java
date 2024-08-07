@@ -88,10 +88,9 @@ public class MainController {
 
     @Operation(summary = "회원탈퇴")
     @DeleteMapping("/profile")
-    public ResponseEntity<?> deleteUser(HttpServletRequest request, @RequestBody String password) {
+    public ResponseEntity<?> deleteUser(HttpServletRequest request) {
         int ID = (Integer)request.getAttribute("userId");
-        int result = mainService.deleteUser(ID, password);
-        System.out.println(ID + " " + password + " " + result);
+        int result = mainService.deleteUser(ID);
 
         if (result != 0) {
             return ResponseEntity.ok("회원탈퇴 완료");

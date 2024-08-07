@@ -8,6 +8,8 @@ import Comment from '../SNS/Comment';
 import { useState } from 'react';
 
 import test from '../../asset/img/testImg.png';
+import axios from 'axios';
+
 
 const s = {
   Container: styled.section`
@@ -57,12 +59,40 @@ interface CommentModalProps {
   open: boolean;
   onModal: Function;
   data?: commentData[];
+  feedId: number | null;
 };
+
 
 const CommentModal = (props: CommentModalProps): JSX.Element => {
   const toggleModal = () => {
     props.onModal();
   };
+
+  const [commentValue, setCommentValue] = useState('');
+
+  const commentOnChange = (event:React.FormEvent<HTMLInputElement>) => {
+    const {currentTarget: {value},} = event;
+    setCommentValue(value);
+    
+  };
+
+  const commentOnSubmit = (event: React.FormEvent<HTMLButtonElement>) => {
+    console.log(commentValue)
+    console.log(props.feedId)
+    
+    axios.post(`/api/sns/feed/${props.feedId}/comment`, {
+      "comment": commentValue
+    }, {
+      headers: {
+        "Authorization": "accessToken"
+      }
+    }).then((res) => {
+
+    }).catch((error) => {
+      
+    });
+  }
+
   return (
     <>
       <ReactModal
@@ -86,9 +116,9 @@ const CommentModal = (props: CommentModalProps): JSX.Element => {
             ))}
           </s.CommentArea>
           <s.CreateComment>
-            <Input width="100%" height="40px" placeholder="댓글 작성" />
+            <Input width="100%" height="40px" placeholder="댓글 작성" onChange={commentOnChange}/>
             <s.CreateButton>
-              <Button width="64px" height="40px" type="main" children="작성" size="14px" bold="500" />
+              <Button width="64px" height="40px" type="main" children="작성" size="14px" bold="500" onClick={commentOnSubmit}/>
             </s.CreateButton>
           </s.CreateComment>
         </s.Container>

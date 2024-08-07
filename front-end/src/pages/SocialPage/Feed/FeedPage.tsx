@@ -69,14 +69,13 @@ type feedData = {
   id: number;
   content: string;
   image: string;
-  like: number;
+  likeCount: number;
   comment: number;
   createdAt: string;
-  author: {
-    id: number;
-    nickname: string;
-    profileImage: string;
-  }
+  userId: number;
+  nickname: string;
+  profileImage: string;
+  isLike: number;
 }
 
 type commentData = {
@@ -177,7 +176,6 @@ const FeedPage = (): JSX.Element => {
       } else {
         setCommentData(data);
       }
-      console.log(data)
 
     } catch (error) {
       setCommentData([]);
@@ -194,7 +192,7 @@ const FeedPage = (): JSX.Element => {
       <s.Container ref={containerRef}>
         {/* <FeedList data={feedData} onClick={toggleModalComment} /> */}
         <FeedList data={feedData} onClick={handleCommentClick} />
-        <CommentModal open={isComment} onModal={toggleModalComment} data={commentData}/>
+        <CommentModal open={isComment} onModal={toggleModalComment} data={commentData} feedId={feedId}/>
         <UserSearchModal open={isUserSearch} onModal={toggleModalUserSearch} />
       </s.Container>
       <BottomNav />

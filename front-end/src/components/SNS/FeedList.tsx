@@ -61,14 +61,13 @@ type feedData = {
   id: number;
   content: string;
   image: string;
-  like: number;
+  likeCount: number;
   comment: number;
   createdAt: string;
-  author: {
-    id: number;
-    nickname: string;
-    profileImage: string;
-  };
+  userId: number;
+  nickname: string;
+  profileImage: string;
+  isLike: number;
 };
 
 interface FeedListProps {
@@ -92,10 +91,10 @@ const FeedList = (props: FeedListProps): JSX.Element => {
         <s.AuthorProfileImage
           width="30px"
           height="30px"
-          src={data.author.profileImage}
+          src={data.profileImage}
           onClick={() => handleMovePage('../profile/id')}
         />
-        <s.AuthorName onClick={() => handleMovePage('../profile/id')}>{data.author.nickname}</s.AuthorName>
+        <s.AuthorName onClick={() => handleMovePage('../profile/id')}>{data.nickname}</s.AuthorName>
       </s.AuthorProfileArea>
       <Image
         width="100%"
@@ -105,18 +104,12 @@ const FeedList = (props: FeedListProps): JSX.Element => {
       />
       <s.FeedInteractionArea>
         <s.IconArea>
-          {/* {like === 'true' ? (
+          {data.isLike === 1 ? (
             <IconSvg width="25" height="25" color="#ffffff" Ico={likeOn} />
           ) : (
             <IconSvg width="25" height="25" color="#ffffff" Ico={likeOff} />
-          )} */}
-          <IconSvg
-            width="25"
-            height="25"
-            color="#ccff33"
-            Ico={likeOn}
-          />
-          <s.FeedCaption>{data.like}</s.FeedCaption>
+          )}
+          <s.FeedCaption>{data.likeCount}</s.FeedCaption>
         </s.IconArea>
         {/* <s.IconArea onClick={onClick}> */}
         <s.IconArea onClick={() => onClick(data.id)}>

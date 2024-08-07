@@ -8,11 +8,12 @@ import IconSvg from '../../components/Common/IconSvg';
 import Button from '../../components/Common/Button';
 import BottomNav from '../../components/Common/BottomNav';
 import FitnessPlanSetModal from '../../components/Modal/FitnessPlanSetModal';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
 import { modalActions, selectModalCalendar } from '../../store/modal';
 import { useModalExitHook } from '../../lib/hook/useModalExitHook';
 import { pageActions } from '../../store/page';
+import { CreateRoutine } from '../../util/types/axios-fitness';
 
 const s = {
   Container: styled.section`
@@ -64,6 +65,7 @@ const s = {
 
 const FitnessPlanSetPage = (): JSX.Element => {
   const navigate = useNavigate();
+  const data: CreateRoutine[] = useLocation().state?.add;
   const handleChangeOpen = (): void => {
     dispatch(modalActions.toggleCalendar());
   };
@@ -105,7 +107,13 @@ const FitnessPlanSetPage = (): JSX.Element => {
       <s.ContentArea>
         <s.DateArea onClick={handleChangeOpen}>이름과 날짜를 지정해주세요.</s.DateArea>
         <s.FitnessArea>
-          <FitnessPlan exercise={FitnessPlanData.exercise} />
+          {data.map((data, index) => (
+            <div key={index}>
+              <FitnessPlan exercise={FitnessPlanData.exercise} />
+            </div>
+          ))}
+          {/* 존나어렵네 시발 */}
+          {/* <FitnessPlan exercise={data} /> */}
         </s.FitnessArea>
         <s.FitnessAdd onClick={() => handleClickMove('../list')}>
           운동 추가

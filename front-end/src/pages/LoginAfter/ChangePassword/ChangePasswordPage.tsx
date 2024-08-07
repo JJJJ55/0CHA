@@ -4,23 +4,26 @@ import Input from '../../../components/Common/Input';
 import Button from '../../../components/Common/Button';
 import Header from '../../../components/Common/Header';
 import { useNavigate } from 'react-router';
+import { putChangePw } from '../../../lib/api/main-api';
 
 const s = {
   Container: styled.section`
     height: 100%;
     background-color: ${(props) => props.theme.bgColor};
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  `,
+  BinArea: styled.div`
+    width: 100%;
+    height: 60px;
   `,
   ChangePasswordArea: styled.div`
     width: 90%;
-    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 60px 10px 70px;
+    padding: 120px 10px 70px;
+    overflow: auto;
+    margin: 0 auto;
   `,
   PasswordArea: styled.div`
     width: 100%;
@@ -80,9 +83,6 @@ interface dataType {
 
 const ChangePasswordPage = (): JSX.Element => {
   const navigate = useNavigate();
-  const handleMovePage = (path: string): void => {
-    navigate(path);
-  };
   const [data, setData] = useState<dataType>({
     prePw: '',
     pw: '',
@@ -145,7 +145,7 @@ const ChangePasswordPage = (): JSX.Element => {
     });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // 제출 로직 작성(기존 비밀번호가 맞는지 확인)
     // 기존 비밀번호가 맞는지 확인
     if (
@@ -156,14 +156,29 @@ const ChangePasswordPage = (): JSX.Element => {
       pwCheckError === ''
     ) {
       // 기존 비밀번호 확인 로직
-      if (true) {
-        console.log('Form submitted:', data);
-        alert('비밀번호가 변경되었습니다.');
-        navigate('../');
-      } else {
-        // 틀리면
-        alert('변경 전 비밀번호를 다시 입력해 주세요.');
-      }
+      const param = {
+        curPassword: data.prePw,
+        newPassword: data.pw,
+      };
+      await putChangePw(
+        param,
+        (resp) => {
+          alert('비밀번호가 변경되었습니다.');
+          navigate('../');
+        },
+        (error) => {
+          alert('변경 전 비밀번호를 다시 입력해 주세요.');
+        },
+      );
+
+      // if (true) {
+      //   console.log('Form submitted:', data);
+      //   alert('비밀번호가 변경되었습니다.');
+      //   navigate('../');
+      // } else {
+      //   // 틀리면
+      //   alert('변경 전 비밀번호를 다시 입력해 주세요.');
+      // }
     } else {
       // 조건 미충족시
       alert('값을 모두 입력하지 않았거나 조건에 충족하지 않았습니다.');
@@ -177,6 +192,7 @@ const ChangePasswordPage = (): JSX.Element => {
   return (
     <s.Container>
       <Header text="비밀번호 변경" />
+      <s.BinArea></s.BinArea>
       <s.ChangePasswordArea>
         <s.PasswordArea>
           <s.InfoNameBox>

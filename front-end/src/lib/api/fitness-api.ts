@@ -48,7 +48,8 @@ export const getFitnessJjimCheck = async (
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
 ) => {
-  await jwt.get(`/workout/exercises/${exerciseId}/is-favorite`).then(success).catch(fail);
+  // await jwt.get(`/workout/exercises/${exerciseId}/is-favorite`).then(success).catch(fail);
+  await jwt.get(`/workout/exercises/${exerciseId}/favorite`).then(success).catch(fail);
 };
 
 // 본인루틴조회

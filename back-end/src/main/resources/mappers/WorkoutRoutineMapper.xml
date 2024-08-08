@@ -43,7 +43,10 @@
     </select>
 
     <select id="getRoutineDetailsByRoutineId" parameterType="int" resultMap="RoutineDetailResultMap">
-        SELECT * FROM routine_details WHERE routine_id = #{routineId}
+        SELECT rd.*, e.name as exerciseName
+        FROM routine_details rd
+                 JOIN exercises e ON rd.exercise_id = e.id
+        WHERE rd.routine_id = #{routineId}
     </select>
 
     <select id="getSetsByRoutineDetailId" parameterType="int" resultMap="RoutineSetResultMap">
@@ -83,6 +86,7 @@
         <id property="id" column="id"/>
         <result property="routineId" column="routine_id"/>
         <result property="exerciseId" column="exercise_id"/>
+        <result property="exerciseName" column="exerciseName"/>
         <result property="sequence" column="sequence"/>
         <collection property="sets" ofType="com.ssafy.back_end.exercise.model.RoutineSetDto" column="id" select="getSetsByRoutineDetailId"/>
     </resultMap>

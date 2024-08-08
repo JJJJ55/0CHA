@@ -5,7 +5,8 @@ import Button from '../../../components/Common/Button';
 import Text from '../../../components/Common/Text';
 import TextArea from '../../../components/Common/TextArea';
 import { ReactComponent as Logo } from '../../../asset/img/svg/0CHA.svg';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
+import { putPlusInfo } from '../../../lib/api/user-api';
 
 // 배치 구체화
 
@@ -371,9 +372,7 @@ interface dataType {
 
 const PlusInfoPage = (): JSX.Element => {
   const navigate = useNavigate();
-  const handleMovePage = (): void => {
-    navigate('/login');
-  };
+  const id = useLocation().state?.id;
   const [data, setData] = useState<dataType>({
     gender: '',
     height: '',
@@ -381,6 +380,8 @@ const PlusInfoPage = (): JSX.Element => {
     location1: '',
     location2: '',
   });
+
+  console.log('넘어온 아이디 : ', id);
 
   const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -396,18 +397,28 @@ const PlusInfoPage = (): JSX.Element => {
       ...(name === 'location1' && { location2: '' }),
     });
   };
-  const handleNext = () => {
-    alert('로그인 페이지로 이동합니다.');
-    handleMovePage();
-    // 로그인 페이지로 이동
-  };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // 제출 로직 작성 (API 호출)
     // 입력한 정보만 옮기는 걸로
     console.log('Form submitted:', data);
-    alert('정보가 제출되었습니다.');
-    handleMovePage();
+    const param = {
+      id,
+      gender: parseInt(data.gender),
+      height: parseFloat(data.height),
+      weight: parseFloat(data.weight),
+      district: data.location1,
+      siGunGu: data.location2,
+    };
+    await putPlusInfo(
+      param,
+      (resp) => {
+        alert('정보가 저장되었습니다.');
+        navigate('/login');
+      },
+      (error) => {},
+    );
+    navigate('/login');
   };
 
   return (
@@ -428,8 +439,8 @@ const PlusInfoPage = (): JSX.Element => {
                 type="radio"
                 id="male"
                 name="gender"
-                value="남성"
-                checked={data.gender === '남성'}
+                value={0}
+                checked={data.gender === '0'}
                 onChange={handleChangeValue}
               />
               <label htmlFor="male">남성</label>
@@ -439,8 +450,8 @@ const PlusInfoPage = (): JSX.Element => {
                 type="radio"
                 id="female"
                 name="gender"
-                value="여성"
-                checked={data.gender === '여성'}
+                value={1}
+                checked={data.gender === '1'}
                 onChange={handleChangeValue}
               />
               <label htmlFor="female">여성</label>
@@ -506,7 +517,7 @@ const PlusInfoPage = (): JSX.Element => {
               width="100%"
               height="40px"
               children="다음에 입력하기"
-              onClick={handleNext}
+              onClick={() => navigate('/login')}
               margin="5px 0"
               bold="500"
             />

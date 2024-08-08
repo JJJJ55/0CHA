@@ -22,7 +22,7 @@
     </resultMap>
 
     <resultMap id="commentsList" type="com.ssafy.back_end.sns.model.FeedInteractionDto">
-        <id property="id" column="user_id"/>
+        <id property="id" column="id"/>
         <result property="userId" column="user_id"/>
         <result property="nickname" column="nickname"/>
         <result property="profileImage" column="profile_image"/>

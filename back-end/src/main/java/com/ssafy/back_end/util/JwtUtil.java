@@ -3,7 +3,6 @@ package com.ssafy.back_end.util;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,20 +12,35 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
 
 @Component
 public class JwtUtil {
     private static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
 
+
+//    특정 문자열로부터 키 생성
+//
+//    Base64로 인코딩된 문자열을 바이트 배열로 변환하여 키 생성
+
+
+    private static final String REFRESH_KEY_STRING = "asd890fuyqw089efyasdfasfdasdfwa8efyaw98efhsaf";
+    private static final String SECRET_KEY_STRING = "ad6fs78g6qw0er876das9f87g65sdf9876g5sd987g56sdf";
+
+    private static final Key secretKey = Keys.hmacShaKeyFor(SECRET_KEY_STRING.getBytes());
+    private static final Key refreshKey = Keys.hmacShaKeyFor(REFRESH_KEY_STRING.getBytes());
     //HS256(HMAC SHA-256) 알고리즘으로 키 생성
-    private static final Key secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    private static final Key refreshKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+//    private static final Key secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+//    private static final Key refreshKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     //토큰 만료시간 설정
+//    public final static long ACCESS_TOKEN_VALIDATION_SECOND = 1000L * 10; //액세스 10초
+//    public static final long REFRESH_TOKEN_VALIDATION_SECOND = 1000L * 10*2; //리프레쉬 20초
     public final static long ACCESS_TOKEN_VALIDATION_SECOND = 1000L * 60 * 60; //액세스 1시간
     public static final long REFRESH_TOKEN_VALIDATION_SECOND = 1000L * 60 * 60 * 24 * 7; //리프레쉬 7일
     public static final String AUTHORIZATION_HEADER = "Authorization"; //헤더 이름
+    public static final String REFRESH_HEADER = "RefreshToken"; //헤더 이름
 
     // Access Token 생성 메서드
     public String createAccessToken(int userId) {
@@ -98,10 +112,34 @@ public class JwtUtil {
 
         String bearerToken = httpServletRequest.getHeader(AUTHORIZATION_HEADER);
         System.out.println("accessToken: " + bearerToken);
-        if (StringUtils.hasText(bearerToken) ) {
+
+        //
+        String rt = httpServletRequest.getHeader(REFRESH_HEADER);
+        System.out.println("refreshToken: " + rt);
+        //
+
+        if (StringUtils.hasText(bearerToken)) {
             return bearerToken;
         }
 
         return null;
+    }
+
+    // HttpServletRequest에서 Refresh Token을 추출하는 메서드
+    public String getRefreshToken(HttpServletRequest httpServletRequest) {
+        return httpServletRequest.getHeader(REFRESH_HEADER);
+    }
+
+    public boolean isRefreshTokenExpired(String refreshToken) {
+        try {
+            Jwts.parserBuilder().setSigningKey(refreshKey).build().parseClaimsJws(refreshToken);
+            return false;
+        }
+        catch (ExpiredJwtException e) {
+            return true;
+        }
+        catch (JwtException e) {
+            return false;
+        }
     }
 }

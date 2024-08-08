@@ -2,6 +2,7 @@ import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import navReducer from './nav';
 import modalReducer from './modal';
 import pageReducer from './page';
+import fitnessreducer from './fitness'
 
 import { persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
@@ -12,6 +13,7 @@ const reducers = combineReducers({
   nav: navReducer,
   modal: modalReducer,
   page: pageReducer,
+  fitness : fitnessreducer
 });
 
 const persistConfig = {

@@ -11,7 +11,14 @@ import java.util.List;
 @Mapper
 public interface SnsFeedMapper {
 
-    List<FeedDto> getFeeds(@Param("myId") int myId, @Param ("userId") int userId);   //특정 유저 피드 모두 보기
+    List<FeedDto> getFeeds(@Param ("myId") int myId, @Param ("userId") int userId,
+                           @Param ("offset") int offset, @Param ("limit") int limit);   //특정 유저 피드 모두 보기
+
+//    int getMyRoutine(int userId);   //오늘 내 완료한 루틴 가져오기
+//
+//    SnsRoutineDto getRoutine(int feedId);   //피드에서 루틴 자세히 보기
+//
+//    int saveRoutine(int userId, int routineId);   //피드에서 루틴 저장하기
 
     int writeFeed(FeedDto feedDto);   //피드 작성
 

@@ -8,6 +8,8 @@
         <result property="title" column="title"/>
         <result property="price" column="price"/>
         <result property="isSold" column="is_sold"/>
+        <result property="district" column="district"/>
+        <result property="siGunGu" column="si_gun_gu"/>
         <result property="createdAt" column="created_at"/>
         <result property="likeCount" column="like_count"/>
         <result property="userId" column="user_id"/>
@@ -43,6 +45,8 @@
                i.title                                                                           AS title,
                i.price                                                                           AS price,
                i.is_sold                                                                         AS is_sold,
+               u.district                                                                        AS district,
+               u.si_gun_gu                                                                       AS si_gun_gu,
                i.created_at                                                                      AS created_at,
                u.id                                                                              AS user_id,
                u.nickname                                                                        AS nickname,
@@ -60,7 +64,7 @@
                  LEFT JOIN
              (SELECT item_id, image_url
               FROM item_details
-              WHERE detail_type = 'image') d ON i.id = d.item_id
+              WHERE detail_type = 'image' LIMIT 1) d ON i.id = d.item_id
                  LEFT JOIN item_details il ON i.id = il.item_id
             AND il.user_id = #{myId}
             AND il.detail_type = 'like'
@@ -69,6 +73,8 @@
                   ELSE i.user_id = #{userId}
                   END
         ORDER BY i.created_at DESC
+            LIMIT #{limit}
+        OFFSET #{offset};
     </select>
 
     <select id="getItemDetail" resultMap="itemDetail">
@@ -77,8 +83,8 @@
                i.price                                                                           AS price,
                i.content                                                                         AS content,
                i.is_sold                                                                         AS is_sold,
-               i.district                                                                        AS district,
-               i.si_gun_gu                                                                       AS si_gun_gu,
+               u.district                                                                        AS district,
+               u.si_gun_gu                                                                       AS si_gun_gu,
                i.created_at                                                                      AS created_at,
                (SELECT COUNT(*) FROM item_details WHERE item_id = i.id AND detail_type = 'like') AS like_count,
                u.id                                                                              AS user_id,

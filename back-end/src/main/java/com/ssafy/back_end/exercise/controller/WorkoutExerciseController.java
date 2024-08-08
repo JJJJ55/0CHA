@@ -114,4 +114,15 @@ public class WorkoutExerciseController {
         }
         return ResponseEntity.ok(favoriteExercises);
     }
+
+    @Operation(summary = "운동 이미지 URL 저장", description = "특정 운동의 이미지 URL을 저장합니다.")
+    @PostMapping("/{exercise-id}/image")
+    public ResponseEntity<?> saveExerciseImage(@PathVariable("exercise-id") int exerciseId, @RequestBody String imageUrl) {
+        int result = workoutExerciseService.saveExerciseImage(exerciseId, imageUrl);
+        if (result != 0) {
+            return ResponseEntity.ok("이미지 URL 저장 성공");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("이미지 URL 저장 실패");
+        }
+    }
 }

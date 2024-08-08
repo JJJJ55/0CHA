@@ -4,30 +4,35 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.ssafy.back_end.exercise.mapper.WorkoutExerciseMapper">
+
     <select id="getAllExercises" resultType="com.ssafy.back_end.exercise.model.ExerciseDto">
         SELECT * FROM exercises
     </select>
 
     <select id="getExerciseById" parameterType="int" resultType="com.ssafy.back_end.exercise.model.ExerciseDto">
-        SELECT * FROM exercises WHERE id = #{id}
-    </select>
-
-    <select id="isFavoriteExercise" parameterType="map" resultType="com.ssafy.back_end.exercise.model.ExerciseLikeDto">
-        SELECT * FROM exercise_likes WHERE exercise_id = #{exerciseId} AND user_id = #{userId}
+        SELECT * FROM exercises WHERE id = #{exerciseId}
     </select>
 
     <insert id="favoriteExercise" parameterType="map">
-        INSERT INTO exercise_likes (exercise_id, user_id) VALUES (#{exerciseId}, #{userId})
+        INSERT INTO user_favorites (user_id, exercise_id) VALUES (#{userId}, #{exerciseId})
     </insert>
 
     <delete id="unfavoriteExercise" parameterType="map">
-        DELETE FROM exercise_likes WHERE exercise_id = #{exerciseId} AND user_id = #{userId}
+        DELETE FROM user_favorites WHERE user_id = #{userId} AND exercise_id = #{exerciseId}
     </delete>
 
-    <select id="getFavoriteExercisesByUserId" parameterType="int" resultType="com.ssafy.back_end.exercise.model.ExerciseDto">
-        SELECT e.*
-        FROM exercises e
-                 JOIN exercise_likes el ON e.id = el.exercise_id
-        WHERE el.user_id = #{userId}
+    <select id="isFavoriteExercise" parameterType="map" resultType="boolean">
+        SELECT COUNT(*) > 0 FROM user_favorites WHERE user_id = #{userId} AND exercise_id = #{exerciseId}
     </select>
+
+    <select id="getFavoriteExercisesByUserId" parameterType="int" resultType="com.ssafy.back_end.exercise.model.ExerciseDto">
+        SELECT e.* FROM exercises e
+                            JOIN user_favorites uf ON e.id = uf.exercise_id
+        WHERE uf.user_id = #{userId}
+    </select>
+
+    <update id="saveExerciseImage" parameterType="map">
+        UPDATE exercises SET image = #{imageUrl} WHERE id = #{exerciseId}
+    </update>
+
 </mapper>

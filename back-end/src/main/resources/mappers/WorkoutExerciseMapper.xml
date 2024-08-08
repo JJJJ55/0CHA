@@ -31,21 +31,31 @@
 
     <select id="getFavoriteExercisesByUserId" parameterType="int" resultType="com.ssafy.back_end.exercise.model.ExerciseDto">
         SELECT e.* FROM exercises e
-                            JOIN exercise_likes uf ON e.id = uf.exercise_id
-        WHERE uf.user_id = #{userId}
+                            JOIN exercise_likes el ON e.id = el.exercise_id
+        WHERE el.user_id = #{userId}
     </select>
 
     <update id="saveExerciseImage" parameterType="map">
         UPDATE exercises SET image = #{imageUrl} WHERE id = #{exerciseId}
     </update>
 
-    <select id="getExerciseRecords" resultType="com.ssafy.back_end.exercise.model.ExerciseRecordDto">
-        SELECT rd.exercise_id, e.name, rs.weight, rs.count, r.completed_at AS date
-        FROM routine_sets rs
-            JOIN routine_details rd ON rs.routine_detail_id = rd.id
+    <select id="getRecentExerciseRecords" parameterType="map" resultType="com.ssafy.back_end.exercise.model.ExerciseRecordDto">
+        SELECT
+            r.completed_at AS date,
+            e.name AS exerciseName,
+            SUM(rs.weight * rs.count) AS volume
+        FROM
+            routines r
+            JOIN routine_details rd ON r.id = rd.routine_id
+            JOIN routine_sets rs ON rd.id = rs.routine_detail_id
             JOIN exercises e ON rd.exercise_id = e.id
-            JOIN routines r ON rd.routine_id = r.id
-        WHERE e.id = #{exerciseId} AND r.user_id = #{userId}
+        WHERE
+            r.user_id = #{userId} AND rd.exercise_id = #{exerciseId} AND rs.is_complete = 1
+        GROUP BY
+            r.completed_at, e.name
+        ORDER BY
+            r.completed_at DESC
+            LIMIT 5
     </select>
 
 </mapper>

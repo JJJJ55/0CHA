@@ -5,9 +5,42 @@
 
 <mapper namespace="com.ssafy.back_end.exercise.mapper.WorkoutRoutineMapper">
 
+    <resultMap id="RoutineResultMap" type="com.ssafy.back_end.exercise.model.RoutineDto">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="title" column="title"/>
+        <result property="sumVolume" column="sum_volume"/>
+        <result property="sumTime" column="sum_time"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="completedAt" column="completed_at"/>
+        <result property="dueDate" column="due_date"/>
+        <result property="like" column="is_like"/>
+        <result property="isComplete" column="is_complete"/>
+        <result property="upload" column="is_upload"/>
+        <collection property="details" ofType="com.ssafy.back_end.exercise.model.RoutineDetailDto" column="id" select="getRoutineDetailsByRoutineId"/>
+    </resultMap>
+
+    <resultMap id="RoutineDetailResultMap" type="com.ssafy.back_end.exercise.model.RoutineDetailDto">
+        <id property="id" column="id"/>
+        <result property="routineId" column="routine_id"/>
+        <result property="exerciseId" column="exercise_id"/>
+        <result property="exerciseName" column="exerciseName"/>
+        <result property="sequence" column="sequence"/>
+        <collection property="sets" ofType="com.ssafy.back_end.exercise.model.RoutineSetDto" column="id" select="getSetsByRoutineDetailId"/>
+    </resultMap>
+
+    <resultMap id="RoutineSetResultMap" type="com.ssafy.back_end.exercise.model.RoutineSetDto">
+        <id property="id" column="id"/>
+        <result property="routineDetailId" column="routine_detail_id"/>
+        <result property="sequence" column="sequence"/>
+        <result property="weight" column="weight"/>
+        <result property="count" column="count"/>
+        <result property="complete" column="is_complete"/>
+    </resultMap>
+
     <insert id="createRoutine" parameterType="com.ssafy.back_end.exercise.model.RoutineDto" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO routines (user_id, title, sum_volume, sum_time, created_at, completed_at, due_date, is_like, is_complete, is_upload)
-        VALUES (#{userId}, #{title}, #{sumVolume}, #{sumTime}, #{createdAt}, #{completedAt}, #{dueDate}, #{like}, #{complete}, #{upload})
+        VALUES (#{userId}, #{title}, #{sumVolume}, #{sumTime}, #{createdAt}, #{completedAt}, #{dueDate}, #{like}, #{isComplete}, #{upload})
     </insert>
 
     <insert id="createRoutineDetail" parameterType="com.ssafy.back_end.exercise.model.RoutineDetailDto" useGeneratedKeys="true" keyProperty="id">
@@ -16,13 +49,22 @@
     </insert>
 
     <insert id="createRoutineSet" parameterType="com.ssafy.back_end.exercise.model.RoutineSetDto" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO routine_sets (routine_detail_id, sequence, weight, count, `set`, is_complete)
-        VALUES (#{routineDetailId}, #{sequence}, #{weight}, #{count}, #{set}, #{complete})
+        INSERT INTO routine_sets (routine_detail_id, sequence, weight, count, is_complete)
+        VALUES (#{routineDetailId}, #{sequence}, #{weight}, #{count}, #{complete})
     </insert>
 
     <update id="updateRoutine" parameterType="com.ssafy.back_end.exercise.model.RoutineDto">
         UPDATE routines
-        SET title = #{title}, sum_volume = #{sumVolume}, sum_time = #{sumTime}, created_at = #{createdAt}, completed_at = #{completedAt}, due_date = #{dueDate}, is_like = #{like}, is_complete = #{complete}, is_upload = #{upload}
+        SET
+            title = #{title},
+            sum_volume = #{sumVolume},
+            sum_time = #{sumTime},
+            created_at = #{createdAt},
+            completed_at = #{completedAt},
+            due_date = #{dueDate},
+            is_like = #{like},
+            is_complete = #{isComplete},
+            is_upload = #{upload}
         WHERE id = #{id}
     </update>
 
@@ -66,40 +108,6 @@
         SET is_complete = true, completed_at = #{completedAt}
         WHERE id = #{routineId} AND user_id = #{userId}
     </update>
-
-    <resultMap id="RoutineResultMap" type="com.ssafy.back_end.exercise.model.RoutineDto">
-        <id property="id" column="id"/>
-        <result property="userId" column="user_id"/>
-        <result property="title" column="title"/>
-        <result property="sumVolume" column="sum_volume"/>
-        <result property="sumTime" column="sum_time"/>
-        <result property="createdAt" column="created_at"/>
-        <result property="completedAt" column="completed_at"/>
-        <result property="dueDate" column="due_date"/>
-        <result property="like" column="is_like"/>
-        <result property="complete" column="is_complete"/>
-        <result property="upload" column="is_upload"/>
-        <collection property="details" ofType="com.ssafy.back_end.exercise.model.RoutineDetailDto" column="id" select="getRoutineDetailsByRoutineId"/>
-    </resultMap>
-
-    <resultMap id="RoutineDetailResultMap" type="com.ssafy.back_end.exercise.model.RoutineDetailDto">
-        <id property="id" column="id"/>
-        <result property="routineId" column="routine_id"/>
-        <result property="exerciseId" column="exercise_id"/>
-        <result property="exerciseName" column="exerciseName"/>
-        <result property="sequence" column="sequence"/>
-        <collection property="sets" ofType="com.ssafy.back_end.exercise.model.RoutineSetDto" column="id" select="getSetsByRoutineDetailId"/>
-    </resultMap>
-
-    <resultMap id="RoutineSetResultMap" type="com.ssafy.back_end.exercise.model.RoutineSetDto">
-        <id property="id" column="id"/>
-        <result property="routineDetailId" column="routine_detail_id"/>
-        <result property="sequence" column="sequence"/>
-        <result property="weight" column="weight"/>
-        <result property="count" column="count"/>
-        <result property="set" column="`set`"/>
-        <result property="complete" column="is_complete"/>
-    </resultMap>
 
     <update id="likeRoutine">
         UPDATE routines

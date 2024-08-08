@@ -24,7 +24,6 @@ public interface WorkoutRoutineMapper {
     RoutineDto getRoutineByIdAndUserId(Map<String, Object> params);
     List<RoutineDetailDto> getRoutineDetailsByRoutineId(int routineId);
     List<RoutineSetDto> getSetsByRoutineDetailId(int routineDetailId);
-    String getExerciseNameById(int exerciseId);
 
     List<RoutineDto> getAllRoutines(int userId);
     List<RoutineDto> getAllUsersRoutines();

@@ -27,9 +27,11 @@ public class SnsFeedController {
 
     @Operation (summary = "전체or유저 피드 목록보기-완")
     @GetMapping ("/list")
-    public ResponseEntity<?> getFeeds(HttpServletRequest request, @RequestParam ("user-id") int userId) {
+    public ResponseEntity<?> getFeeds(HttpServletRequest request, @RequestParam (value = "user-id", defaultValue = "0") int userId,
+                                      @RequestParam (value = "offset", defaultValue = "0") int offset,
+                                      @RequestParam (value = "limit", defaultValue = "10") int limit) {
         int ID = (Integer)request.getAttribute("userId");
-        List<FeedDto> feeds = snsFeedService.getFeeds(ID, userId);
+        List<FeedDto> feeds = snsFeedService.getFeeds(ID, userId, offset, limit);
 
         if (feeds != null) {
             if (feeds.isEmpty()) {

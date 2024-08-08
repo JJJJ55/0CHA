@@ -9,7 +9,8 @@ import java.util.List;
 
 @Mapper
 public interface SnsItemMapper {
-    List<ItemDto> getItems(@Param ("myId") int myId, @Param ("userId") int userId);   //특정 유저 중고장터 모두 보기
+    List<ItemDto> getItems(@Param ("myId") int myId, @Param ("userId") int userId,
+                           @Param ("offset") int offset, @Param ("limit") int limit);   //특정 유저 중고장터 모두 보기
 
     ItemDto getItemDetail(@Param ("myId") int myId, @Param ("itemId") int itemId);   //중고장터 자세히 보기
 

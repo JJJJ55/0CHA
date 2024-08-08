@@ -1,8 +1,11 @@
 package com.ssafy.back_end.main.controller;
 
+import com.ssafy.back_end.exercise.model.RoutineDto;
+import com.ssafy.back_end.exercise.model.RoutineSummaryDto;
 import com.ssafy.back_end.main.model.UserInfoDto;
 import com.ssafy.back_end.main.model.UserPasswordDto;
 import com.ssafy.back_end.main.service.MainService;
+import com.ssafy.back_end.exercise.service.WorkoutRoutineService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,15 +14,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Tag(name = "메인페이지")
 @RestController
 @RequestMapping(value = "/api/main")
 public class MainController {
     private final MainService mainService;
+    private final WorkoutRoutineService workoutRoutineService;
 
     @Autowired
-    public MainController(MainService mainService) {
+    public MainController(MainService mainService, WorkoutRoutineService workoutRoutineService) {
         this.mainService = mainService;
+        this.workoutRoutineService = workoutRoutineService;
     }
 
     @Operation (summary = "유저 정보 조회")
@@ -96,5 +104,33 @@ public class MainController {
             return ResponseEntity.ok("회원탈퇴 완료");
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("회원탈퇴 오류");
+    }
+
+    @Operation(summary = "모든 사용자의 루틴 목록 조회", description = "모든 사용자의 루틴 목록을 조회합니다.")
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllUsersRoutines() {
+        List<RoutineDto> routines = workoutRoutineService.getAllUsersRoutines();
+        if (routines.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("루틴 목록이 비어 있습니다");
+        }
+        List<RoutineSummaryDto> summaryRoutines = routines.stream()
+                .map(r -> new RoutineSummaryDto(r.getId(), r.getTitle(), r.getDueDate(), r.isLike()))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(summaryRoutines);
+    }
+
+    @Operation(summary = "본인의 루틴 목록 조회", description = "사용자의 모든 루틴 목록을 조회합니다.")
+    @GetMapping("/routines")
+    public ResponseEntity<?> getAllRoutines(HttpServletRequest request) {
+        int userId = (Integer) request.getAttribute("userId");
+
+        List<RoutineDto> routines = workoutRoutineService.getAllRoutines(userId);
+        if (routines.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("루틴 목록이 비어 있습니다");
+        }
+        List<RoutineSummaryDto> summaryRoutines = routines.stream()
+                .map(r -> new RoutineSummaryDto(r.getId(), r.getTitle(), r.getDueDate(), r.isLike()))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(summaryRoutines);
     }
 }

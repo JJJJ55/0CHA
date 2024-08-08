@@ -23,7 +23,7 @@ public interface WorkoutExerciseMapper {
 
     List<ExerciseDto> getFavoriteExercisesByUserId(@Param("userId") int userId);
 
-    int saveExerciseImage(@Param("exerciseId") int exerciseId, @Param("imageUrl") String imageUrl); // 이미지 URL 저장 메서드 추가
+    int saveExerciseImage(@Param("exerciseId") int exerciseId, @Param("imageUrl") String imageUrl);
 
-    List<ExerciseRecordDto> getExerciseRecords(@Param("exerciseId") int exerciseId, @Param("userId") int userId);
+    List<ExerciseRecordDto> getRecentExerciseRecords(@Param("exerciseId") int exerciseId, @Param("userId") int userId);
 }

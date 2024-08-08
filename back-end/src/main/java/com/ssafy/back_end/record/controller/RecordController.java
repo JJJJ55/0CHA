@@ -1,6 +1,8 @@
 package com.ssafy.back_end.record.controller;
 
+import com.ssafy.back_end.record.model.RecordDto;
 import com.ssafy.back_end.record.model.RecordInbodyDto;
+import com.ssafy.back_end.record.model.RoutineListDto;
 import com.ssafy.back_end.record.service.RecordService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -12,9 +14,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag (name = "기록페이지")
+@Tag(name = "기록페이지")
 @RestController
-@RequestMapping (value = "/api/record")
+@RequestMapping(value = "/api/record")
 public class RecordController {
     private final RecordService recordService;
 
@@ -23,10 +25,10 @@ public class RecordController {
         this.recordService = recordService;
     }
 
-    @Operation (summary = "인바디 결과조회")
-    @GetMapping ("/inbody")
+    @Operation(summary = "인바디 결과조회")
+    @GetMapping("/inbody")
     public ResponseEntity<?> getItems(HttpServletRequest request) {
-        int ID = (Integer)request.getAttribute("userId");
+        int ID = (Integer) request.getAttribute("userId");
         List<RecordInbodyDto> inbody = recordService.getInbody(ID);
 
         if (inbody != null) {
@@ -38,10 +40,10 @@ public class RecordController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("인바디 조회 오류");
     }
 
-    @Operation (summary = "인바디 결과등록")
-    @PostMapping ("/inbody")
+    @Operation(summary = "인바디 결과등록")
+    @PostMapping("/inbody")
     public ResponseEntity<?> insertInbody(HttpServletRequest request, @RequestBody RecordInbodyDto recordInbodyDto) {
-        int ID = (Integer)request.getAttribute("userId");
+        int ID = (Integer) request.getAttribute("userId");
         recordInbodyDto.setUserId(ID);
         int result = recordService.insertInbody(recordInbodyDto);
 
@@ -51,19 +53,19 @@ public class RecordController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("인바디 결과등록 오류");
     }
 
-//    @Operation (summary = "1RM 기록 가져오기")
-//    @GetMapping("/rm")
-//    public ResponseEntity<?> rm(HttpServletRequest request) {
-//        int ID = (Integer)request.getAttribute("userId");
-//
-//
-//
-//        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("불러올 수 없습니다.");
-//    }
+    @Operation(summary = "최근 운동 기록 조회", description = "최근 5개의 운동 기록을 조회합니다.")
+    @GetMapping("/exercise-records")
+    public ResponseEntity<?> getRecentExerciseRecords(HttpServletRequest request) {
+        int userId = (Integer) request.getAttribute("userId");
+        List<RecordDto> records = recordService.getRecentExerciseRecords(userId);
+        return ResponseEntity.ok(records);
+    }
 
-//    @Operation( summary = "해당 운동의 운동량 기록 가져오기")
-//    @GetMapping("/volume/{exercise-id}")
-//    public ResponseEntity<?> getVolume(HttpServletRequest request, @PathVariable int exerciseId) {
-//
-//    }
+    @Operation(summary = "사용자의 루틴 리스트 조회", description = "사용자의 루틴 리스트를 조회합니다.")
+    @GetMapping("/routines")
+    public ResponseEntity<?> getUserRoutines(HttpServletRequest request) {
+        int userId = (Integer) request.getAttribute("userId");
+        List<RoutineListDto> routines = recordService.getUserRoutines(userId);
+        return ResponseEntity.ok(routines);
+    }
 }

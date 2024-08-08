@@ -55,6 +55,25 @@ public class SnsFeedController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("피드 작성 오류");
     }
 
+//    @Operation (summary = "오늘 내가 완료한 루틴 조회")
+//    @GetMapping ("/write")
+//    public ResponseEntity<?> writeFeed(HttpServletRequest request) {
+//        int ID = (Integer)request.getAttribute("userId");
+//
+//        int routine = 0;   /////유저아이디, 오늘날짜, 완료한 내 루틴의 아이디 조회 서비스
+//
+//
+//        feedDto.setUserId(ID);
+//        int result = snsFeedService.writeFeed(feedDto);
+//
+//        if (result != 0) {
+//            return ResponseEntity.ok("피드 작성 성공");
+//        }
+//        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("피드 작성 오류");
+//    }
+
+
+
     @Operation (summary = "피드 글수정-완")
     @PutMapping ("/{feedId}")
     public ResponseEntity<?> updateFeed(@PathVariable int feedId, @RequestBody FeedDto feedDto) {

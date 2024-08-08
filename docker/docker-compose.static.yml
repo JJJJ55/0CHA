@@ -1,4 +1,4 @@
-version: "3.7"
+version: "3"
 
 services:
   mysql:
@@ -63,6 +63,7 @@ services:
       - "${NGINX_BINDING_PORT}:80"
     volumes:
       - ./proxy-nginx/nginx.conf:/etc/nginx/nginx.conf
+      - /var/log/nginx:/var/log/nginx
     restart: always
     networks:
       - app-network

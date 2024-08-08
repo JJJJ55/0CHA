@@ -2,12 +2,19 @@ package com.ssafy.back_end.sns.service;
 
 import com.ssafy.back_end.sns.model.FeedDto;
 import com.ssafy.back_end.sns.model.FeedInteractionDto;
+import com.ssafy.back_end.sns.model.SnsRoutineDto;
 import com.ssafy.back_end.sns.model.UserPageDto;
 
 import java.util.List;
 
 public interface SnsFeedService {
     List<FeedDto> getFeeds(int myId, int userId, int offset, int limit);   //특정 유저 피드 모두 보기
+
+    int getMyRoutine(int userId);   //오늘 내 완료한 루틴 가져오기
+
+    SnsRoutineDto getRoutine(int feedId);   //피드에서 루틴 자세히 보기
+
+    int saveRoutine(int userId, int routineId);   //피드에서 루틴 저장하기
 
     int writeFeed(FeedDto feedDto);   //피드 작성
 

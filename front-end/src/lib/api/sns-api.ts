@@ -66,11 +66,12 @@ export const UserFollowCancel = async (
 
 // 피드 내역 가져오기
 export const SnsFeedList = async (
-  param: number,
+  userId: number,
+  offset: number,
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
 ) => {
-  await jwt.get(`/sns/feed/list?user-id=${param}`).then(success).catch(fail);
+  await jwt.get(`/sns/feed/list?user-id=${userId}&offset=${offset}&limit=10`).then(success).catch(fail);
 };
 
 // 피드 작성
@@ -170,7 +171,7 @@ export const SnsCommentModify = async (
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
 ) => {
-  await jwt.put(`/sns/feed/comment/${commentId}`, content).then(success).catch(fail);
+  await jwt.put(`/sns/feed/comment/${commentId}`, {"comment": content}).then(success).catch(fail);
 };
 
 // 피드 댓글 삭제

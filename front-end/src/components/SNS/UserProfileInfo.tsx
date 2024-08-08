@@ -77,10 +77,10 @@ const s = {
 
 interface UserProfileInfoProps {
   isCurrentUser: boolean;
-  userName: string;
-  postCnt: string;
-  followingCnt: string;
-  followerCnt: string;
+  userName?: string;
+  postCnt?: number;
+  followingCnt?: number;
+  followerCnt?: number;
 }
 
 const UserProfileInfo = (props: UserProfileInfoProps): JSX.Element => {
@@ -131,7 +131,7 @@ const UserProfileInfo = (props: UserProfileInfoProps): JSX.Element => {
           <s.UserStatCnt>{postCnt}</s.UserStatCnt>
         </s.UserStat>
         <s.UserStat>
-          <s.UserStatTitle>팔로우</s.UserStatTitle>
+          <s.UserStatTitle>팔로워</s.UserStatTitle>
           <s.UserStatCnt>{followerCnt}</s.UserStatCnt>
         </s.UserStat>
         <s.UserStat>

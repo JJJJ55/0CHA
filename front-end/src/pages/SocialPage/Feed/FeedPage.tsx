@@ -150,13 +150,14 @@ const FeedPage = (): JSX.Element => {
   //     setLoading(false);
   //   }
   // };
-
-  const getFeedData = async () => {
+  const [offset, setOffset] = useState(0);
+  const getFeedData = async (offset: number) => {
     if (loading) return;
     setLoading(true);
 
     await SnsFeedList(
-      1,
+      0,
+      offset,
       (resp) => {
         const data = resp.data;
         // if (data.length === 0) {
@@ -165,6 +166,7 @@ const FeedPage = (): JSX.Element => {
         } else {
           setFeedData((prevData) => [...prevData, ...data]);
         }
+        console.log(data)
         setLoading(false)
       },
       (error) => {
@@ -178,8 +180,9 @@ const FeedPage = (): JSX.Element => {
   //   getFeedData(page);
   // }, [page]);
   useEffect(() => {
-    getFeedData();
-  }, [page]);
+    getFeedData(offset);
+    console.log('getfeeddata', offset)
+  }, [offset]);
 
   const handleScroll = debounce(() => {
     if (containerRef.current) {
@@ -187,7 +190,8 @@ const FeedPage = (): JSX.Element => {
 
       if ((scrollTop + clientHeight+1000) >= scrollHeight) {
         if (!loading && isMoreData) {
-          setPage((prevPage) => prevPage + 1);
+          setOffset((prevOffset) => prevOffset + 10);
+          // console.log(offset)
         }
       }
     }

@@ -60,7 +60,9 @@ const CommentModal = (props: CommentModalProps): JSX.Element => {
 
   const [commentValue, setCommentValue] = useState('');
   const [comments, setComments] = useState<commentData[]>(data || []);
-  const [userId, setUserId] = useState(null)
+  const [userId, setUserId] = useState(0)
+  const [userNickname, setUserNickname] = useState('')
+  const [userProfileImage, setUserProfileImage] = useState('')
 
   const userStr = localStorage.getItem("user")
 
@@ -68,12 +70,14 @@ const CommentModal = (props: CommentModalProps): JSX.Element => {
     if (userStr) {
       const userTmp = JSON.parse(userStr)
       setUserId(userTmp.id)
-      console.log(userId)
+      setUserNickname(userTmp.nickname)
+      setUserProfileImage(userTmp.profileImage)
     }
   }, [])
 
   useEffect(() => {
     setComments(data || []);
+    console.log(feedId)
   }, [data]);
 
   const toggleModal = () => {
@@ -96,13 +100,12 @@ const CommentModal = (props: CommentModalProps): JSX.Element => {
             // createdAt: new Date().toISOString(),
             createdAt: "방금",
             feedId: feedId,
-            id: 111111111,
-            nickname: '나는누구지', 
-            profileImage: 'path/to/profile/image',
-            userId: 111111111,
+            id: 0,
+            nickname: userNickname, 
+            profileImage: userProfileImage,
+            userId: userId,
           };
 
-          // console.log(newComment)
           setComments([newComment, ...comments]);
           setCommentValue('');
         },
@@ -132,6 +135,7 @@ const CommentModal = (props: CommentModalProps): JSX.Element => {
                 commentContent={data.comment}
                 isUserComment={data.userId === userId}
                 createdAt={data.createdAt}
+                commentId={data.id}
               />
             ))}
           </s.CommentArea>

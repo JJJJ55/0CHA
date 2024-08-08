@@ -91,9 +91,9 @@ const FeedList = ({data, onClick}: FeedListProps): JSX.Element => {
           width="30px"
           height="30px"
           src={feed.profileImage}
-          onClick={() => handleMovePage('../profile/id')}
+          onClick={() => handleMovePage(`../profile/${feed.userId}`)}
         />
-        <s.AuthorName onClick={() => handleMovePage('../profile/id')}>{feed.nickname}</s.AuthorName>
+        <s.AuthorName onClick={() => handleMovePage(`../profile/${feed.userId}`)}>{feed.nickname}</s.AuthorName>
       </s.AuthorProfileArea>
       <Image
         width="100%"

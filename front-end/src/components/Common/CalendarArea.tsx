@@ -52,6 +52,11 @@ const CalendarArea = (props: CalendarProps): JSX.Element => {
         if (props.pick === moment(date).format('YYYY-MM-DD')) {
           return 'pick';
         }
+        // if (view === 'month') {
+        //   if (date < today) {
+        //     return 'past-date';
+        //   }
+        // }
       }}
       tileContent={({ date, view }) => {
         let html = [];

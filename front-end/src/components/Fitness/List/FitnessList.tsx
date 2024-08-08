@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import Image from '../../Common/Image';
 import test from '../../../asset/img/testImg.png';
@@ -9,6 +9,8 @@ import { ReactComponent as jjimOff } from '../../../asset/img/svg/jjimOff.svg';
 import { ReactComponent as addOff } from '../../../asset/img/svg/pickOff.svg';
 import { ReactComponent as addOn } from '../../../asset/img/svg/pickOn.svg';
 import { useNavigate } from 'react-router';
+import { CreateRoutine, FitnessType } from '../../../util/types/axios-fitness';
+import { getFitnessListCategory } from '../../../lib/api/fitness-api';
 
 const s = {
   Container: styled.section`
@@ -55,34 +57,62 @@ const s = {
   `,
 };
 
-type dataType = {
-  src: string;
-  title: string;
-};
-
 interface FitnessListProps {
   text: string;
-  data?: dataType[];
+  add: CreateRoutine[];
+  onAdd: Function;
+  data: FitnessType[];
 }
 
 const FitnessList = (props: FitnessListProps): JSX.Element => {
   const navigate = useNavigate();
-  const handleClickMove = (): void => {
-    navigate('detail');
+  // const [add, setAdd] = useState<number[]>([]);
+  const handleClickMove = async (id: number) => {
+    navigate('detail', { state: { id } });
   };
+
+  // const handleClickAdd = (id: number) => {
+  //   setAdd((prevAdd) => (prevAdd.includes(id) ? prevAdd.filter((itemId) => itemId !== id) : [...prevAdd, id]));
+  // };
+
+  // console.log(add);
+
+  // // 데이터가 비어있는지 확인
+  // if (!props.data || props.data.length === 0) {
+  //   return <div>No data available</div>;
+  // } else {
+  // console.log('넘어온 데이터 : ' + props.data[1].category);
   return (
     <s.Container>
       <s.title>{props.text}</s.title>
-      {props.data?.map((data, index) => (
+      {props.data.map((data, index) => (
         <div key={index}>
           <s.ListArea>
-            <s.ContentArea onClick={handleClickMove}>
-              <Image width="60" height="60" type="" src={test} />
-              <s.FitnessTitle>{data.title}</s.FitnessTitle>
+            <s.ContentArea onClick={() => handleClickMove(data.id)}>
+              <Image width="60" height="60" type="" src={data.image} />
+              <s.FitnessTitle>{data.name}</s.FitnessTitle>
             </s.ContentArea>
             <s.IconArea>
-              <IconSvg width="25" height="25" Ico={jjimOff} color="#ccff33" />
-              <IconSvg width="25" height="25" Ico={addOff} color="#ccff33" />
+              <IconSvg width="25" height="25" Ico={jjimOff} color="#ccff33" cursor="pointer" />
+              {props.add.some((item) => item.id === data.id) ? (
+                <IconSvg
+                  width="25"
+                  height="25"
+                  Ico={addOn}
+                  color="#ccff33"
+                  cursor="pointer"
+                  onClick={() => props.onAdd(data.id, data.name)}
+                />
+              ) : (
+                <IconSvg
+                  width="25"
+                  height="25"
+                  Ico={addOff}
+                  color="#ccff33"
+                  cursor="pointer"
+                  onClick={() => props.onAdd(data.id, data.name)}
+                />
+              )}
             </s.IconArea>
           </s.ListArea>
           {index + 1 === props.data?.length || <s.ListLine />}
@@ -90,6 +120,7 @@ const FitnessList = (props: FitnessListProps): JSX.Element => {
       ))}
     </s.Container>
   );
+  // }
 };
 
 export default FitnessList;

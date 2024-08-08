@@ -5,6 +5,8 @@ import Button from '../../../components/Common/Button';
 import Text from '../../../components/Common/Text';
 import { ReactComponent as Logo } from '../../../asset/img/svg/0CHA.svg';
 import { useNavigate } from 'react-router';
+import { AxiosError, AxiosResponse } from 'axios';
+import { login } from '../../../lib/api/user-api';
 
 const s = {
   Container: styled.section`
@@ -54,13 +56,13 @@ const s = {
 };
 interface dataType {
   email: string;
-  pw: string;
+  password: string;
 }
 
 const LoginPage = (): JSX.Element => {
   const [data, setData] = useState<dataType>({
     email: '',
-    pw: '',
+    password: '',
   });
   const navigate = useNavigate();
 
@@ -70,13 +72,33 @@ const LoginPage = (): JSX.Element => {
       [e.target.name]: e.target.value,
     });
   };
-  const handleClickLogin = (): void => {
-    alert(data.email + ' ' + data.pw);
-    navigate('/main');
-  };
+
   const handleMovePage = (path: string): void => {
     navigate(path);
   };
+
+  // 로그인
+  const postLogin = async () => {
+    login(
+      data,
+      (resp) => {
+        localStorage.setItem('accessToken', resp.data.accessToken);
+        localStorage.setItem('refreshToken', resp.data.refreshToken);
+        navigate('/main');
+      },
+      (error) => {
+        alert('아이디 및 비밀번호를 다시 확인해주세요.');
+      },
+    );
+  };
+
+  // const testLogin = async () => {
+  //   const resp = await user.login(data);
+  //   localStorage.setItem('accessToken', resp.accessToken);
+  //   localStorage.setItem('refreshToken', resp.refreshToken);
+
+  //   navigate('/main');
+  // };
 
   return (
     <s.Container>
@@ -100,8 +122,8 @@ const LoginPage = (): JSX.Element => {
           placeholder="비밀번호"
           margin="5px auto"
           type="password"
-          name="pw"
-          value={data.pw}
+          name="password"
+          value={data.password}
           onChange={handleChangeValue}
         />
         <s.InputArea>
@@ -115,7 +137,7 @@ const LoginPage = (): JSX.Element => {
           display="block"
           margin="30px auto"
           children="로그인"
-          onClick={handleClickLogin}
+          onClick={postLogin}
         />
         <s.TextBtnArea>
           <Text

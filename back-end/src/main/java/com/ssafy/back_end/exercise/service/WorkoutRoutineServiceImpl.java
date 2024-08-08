@@ -52,7 +52,6 @@ public class WorkoutRoutineServiceImpl implements WorkoutRoutineService {
 
     @Override
     public int upsertRoutine(RoutineDto routineDto) {
-        // 루틴 존재 여부 확인
         Map<String, Object> params = new HashMap<>();
         params.put("routineId", routineDto.getId());
         params.put("userId", routineDto.getUserId());
@@ -60,29 +59,29 @@ public class WorkoutRoutineServiceImpl implements WorkoutRoutineService {
         RoutineDto existingRoutine = workoutRoutineMapper.getRoutineByIdAndUserId(params);
 
         if (existingRoutine == null) {
-            // 루틴이 존재하지 않으면 생성
-            workoutRoutineMapper.createRoutine(routineDto);
             routineDto.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
+            workoutRoutineMapper.createRoutine(routineDto);
         } else {
-            // 루틴이 존재하면 업데이트
+            routineDto.setComplete(existingRoutine.isComplete()); // 기존 complete 값 유지
+            routineDto.setCreatedAt(existingRoutine.getCreatedAt());
             workoutRoutineMapper.updateRoutine(routineDto);
             workoutRoutineMapper.deleteRoutineDetailsByRoutineId(routineDto.getId());
             workoutRoutineMapper.deleteRoutineSetsByRoutineId(routineDto.getId());
         }
 
-        int routineId = routineDto.getId(); // 생성된 루틴 ID를 가져옴
+        int routineId = routineDto.getId();
 
         for (RoutineDetailDto detail : routineDto.getDetails()) {
-            detail.setRoutineId(routineId); // 루틴 ID 설정
+            detail.setRoutineId(routineId);
             workoutRoutineMapper.createRoutineDetail(detail);
-            int routineDetailId = detail.getId(); // 생성된 루틴 상세 정보 ID를 가져옴
+            int routineDetailId = detail.getId();
             for (RoutineSetDto set : detail.getSets()) {
-                set.setRoutineDetailId(routineDetailId); // 루틴 상세 정보 ID 설정
+                set.setRoutineDetailId(routineDetailId);
                 workoutRoutineMapper.createRoutineSet(set);
             }
         }
 
-        return 1; // 성공 시 1을 반환
+        return 1;
     }
 
     @Override

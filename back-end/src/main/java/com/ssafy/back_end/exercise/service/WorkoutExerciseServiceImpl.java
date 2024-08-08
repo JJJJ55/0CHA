@@ -60,7 +60,7 @@ public class WorkoutExerciseServiceImpl implements WorkoutExerciseService {
     }
 
     @Override
-    public List<ExerciseRecordDto> getExerciseRecords(int exerciseId, int userId) {
-        return workoutExerciseMapper.getExerciseRecords(exerciseId, userId);
+    public List<ExerciseRecordDto> getRecentExerciseRecords(int exerciseId, int userId) {
+        return workoutExerciseMapper.getRecentExerciseRecords(exerciseId, userId);
     }
 }

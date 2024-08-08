@@ -118,7 +118,7 @@ const FitnessPlanSetModal = (props: FitnessPlanModalProps): JSX.Element => {
           onChangeDate={handleChangeDate}
           Routine={attendDay2}
           RoutineFinish={attendDay}
-          pick={info.date}
+          // pick={info.date}
         />
         <Button
           width="200px"

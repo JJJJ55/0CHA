@@ -13,33 +13,19 @@ public class WebConfig implements WebMvcConfigurer {
 
     private final JwtInterceptor jwtInterceptor;
 
-    private static final String[] ALLOWED_ORIGINS = {
-            "http://localhost:3000",
-            "http://13.124.57.45",
-            "https://13.124.57.45",
-            "http://i11b310.p.ssafy.io/",
-            "https://i11b310.p.ssafy.io/"
-    };
-
-
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedOriginPatterns("*")
-                        .allowedMethods("*")
-                        .allowedHeaders("*")
-                        .allowCredentials(true)
-                        .maxAge(3600);
-            }
-        };
-    }
-
     @Autowired
     public WebConfig(JwtInterceptor jwtInterceptor) {
         this.jwtInterceptor = jwtInterceptor;
+    }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOriginPatterns("*")
+                .allowedMethods("*")
+                .allowedHeaders("*")
+                .allowCredentials(true)
+                .maxAge(3600);
     }
 
     @Override

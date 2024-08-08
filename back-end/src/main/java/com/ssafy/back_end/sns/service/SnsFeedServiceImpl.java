@@ -28,6 +28,9 @@ public class SnsFeedServiceImpl implements SnsFeedService {
     public int writeFeed(FeedDto feedDto) {
         validateImages(feedDto.getImage());
 
+        int routine = 0; ///유저아이디, 오늘날짜, 완료한 내 루틴의 아이디 조회 매퍼
+
+
         FeedDto feed = FeedDto.builder()
                 .content(feedDto.getContent())
                 .image(feedDto.getImage())

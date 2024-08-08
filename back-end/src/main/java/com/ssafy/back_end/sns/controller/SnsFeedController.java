@@ -2,6 +2,7 @@ package com.ssafy.back_end.sns.controller;
 
 import com.ssafy.back_end.sns.model.FeedDto;
 import com.ssafy.back_end.sns.model.FeedInteractionDto;
+import com.ssafy.back_end.sns.model.SnsRoutineDto;
 import com.ssafy.back_end.sns.model.UserPageDto;
 import com.ssafy.back_end.sns.service.SnsFeedServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,6 +43,44 @@ public class SnsFeedController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("피드 조회 오류");
     }
 
+    @Operation (summary = "오늘 내가 완료한 루틴 조회")
+    @GetMapping ("/my-routine")
+    public ResponseEntity<?> getMyRoutine(HttpServletRequest request) {
+        int ID = (Integer)request.getAttribute("userId");
+
+        int routine = snsFeedService.getMyRoutine(ID);   //유저아이디, 오늘날짜, 완료한 내 루틴의 아이디 조회 서비스
+
+        if (routine != 0) {
+            return ResponseEntity.ok(routine);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("오늘 운동 안함");
+    }
+
+    @Operation (summary = "피드에서 루틴 자세히 보기")
+    @GetMapping ("/{feedId}/routine")
+    public ResponseEntity<?> getRoutine(@PathVariable int feedId) {
+
+        SnsRoutineDto routine = snsFeedService.getRoutine(feedId);
+
+        if (routine != null) {
+            return ResponseEntity.ok(routine);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("루틴 조회 실패");
+    }
+
+    @Operation (summary = "피드에서 루틴 저장하기")
+    @PostMapping ("/{routineId}/routine")
+    public ResponseEntity<?> saveRoutine(HttpServletRequest request, @PathVariable int routineId) {
+        int ID = (Integer)request.getAttribute("userId");
+
+        int result = snsFeedService.saveRoutine(ID, routineId);
+
+        if (result > 0) {
+            return ResponseEntity.ok("루틴 저장 성공");
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("루틴 저장 실패");
+    }
+
     @Operation (summary = "피드 글쓰기-완")
     @PostMapping ("/write")
     public ResponseEntity<?> writeFeed(HttpServletRequest request, @RequestBody FeedDto feedDto) {
@@ -54,25 +93,6 @@ public class SnsFeedController {
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("피드 작성 오류");
     }
-
-//    @Operation (summary = "오늘 내가 완료한 루틴 조회")
-//    @GetMapping ("/write")
-//    public ResponseEntity<?> writeFeed(HttpServletRequest request) {
-//        int ID = (Integer)request.getAttribute("userId");
-//
-//        int routine = 0;   /////유저아이디, 오늘날짜, 완료한 내 루틴의 아이디 조회 서비스
-//
-//
-//        feedDto.setUserId(ID);
-//        int result = snsFeedService.writeFeed(feedDto);
-//
-//        if (result != 0) {
-//            return ResponseEntity.ok("피드 작성 성공");
-//        }
-//        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("피드 작성 오류");
-//    }
-
-
 
     @Operation (summary = "피드 글수정-완")
     @PutMapping ("/{feedId}")

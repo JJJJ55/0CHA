@@ -24,8 +24,8 @@ public class JwtUtil {
     private static final Key refreshKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     //토큰 만료시간 설정
-    public final static long ACCESS_TOKEN_VALIDATION_SECOND = 1000L * 60; //액세스 1시간
-    public static final long REFRESH_TOKEN_VALIDATION_SECOND = 1000L * 60*2; //리프레쉬 7일
+    public final static long ACCESS_TOKEN_VALIDATION_SECOND = 1000L * 10; //액세스 1시간
+    public static final long REFRESH_TOKEN_VALIDATION_SECOND = 1000L * 10*2; //리프레쉬 7일
 //    public final static long ACCESS_TOKEN_VALIDATION_SECOND = 1000L * 60 * 60; //액세스 1시간
 //    public static final long REFRESH_TOKEN_VALIDATION_SECOND = 1000L * 60 * 60 * 24 * 7; //리프레쉬 7일
     public static final String AUTHORIZATION_HEADER = "Authorization"; //헤더 이름

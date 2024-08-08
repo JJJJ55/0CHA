@@ -63,7 +63,7 @@ public class SnsChatController {
 
     // 특정 유저를 제외한 모든 유저 리스트 반환
     // 자신을 제외한 채팅 가능한 유저 목록 표시를 위해 사용
-    @Operation(summary = "자신을 제외한 채팅 가능한 유저 목록")
+    @Operation(summary = "자신을 제외한 채팅 가능한 유저 목록 - 완")
     @GetMapping("/users")
     @ResponseBody
     public List<UserDto> getUsers(HttpServletRequest request) {
@@ -78,7 +78,7 @@ public class SnsChatController {
 
     // 채팅방 생성
     // 채팅방이 없으면 채팅방 생성 or 이미 존재하면 해당 채팅방 식별 ID 리턴
-    @Operation(summary = "채팅방이 없으면 채팅방 생성 or 이미 존재하면 해당 채팅방 식별 ID 리턴")
+    @Operation(summary = "채팅방이 없으면 채팅방 생성 or 이미 존재하면 해당 채팅방 식별 ID 리턴 - 완")
     @GetMapping("/createRoom")
     @ResponseBody
     public int createRoom(HttpServletRequest request, @RequestParam int receiverId) {
@@ -92,7 +92,7 @@ public class SnsChatController {
     }
 
     // 특정 채팅방의 메시지 히스토리 가져옴
-    @Operation(summary = "특정 채팅방의 메시지 히스토리 가져오기")
+    @Operation(summary = "특정 채팅방의 메시지 히스토리 가져오기 - 완")
     @GetMapping("/history")
     @ResponseBody
     public List<MessageDto> getMessageHistory(@RequestParam int roomId) {

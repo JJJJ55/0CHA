@@ -161,6 +161,8 @@ const AIMainPage: React.FC = () => {
 
     try {
       const loadedModel = await tmPose.load(modelURL, metadataURL); // 모델 로드
+      console.log('Model loaded:', loadedModel);
+
       setModel(loadedModel); // 모델 상태 업데이트
       console.log('Model loaded successfully'); // 성공적으로 로드되었음을 콘솔에 출력
     } catch (error) {
@@ -321,7 +323,10 @@ const AIMainPage: React.FC = () => {
     if (canvasRef.current) {
       canvasRef.current.style.display = 'none'; // 캔버스 숨기기
     }
-    playAudio('finish');
+    // 1초 지연 후 playAudio('finish') 실행
+    setTimeout(() => {
+      playAudio('finish');
+    }, 1000);
     setIsResultModalOpen(true); // 세션 종료 시 결과 모달 열기
 
     // 이유에 따른 추가 작업

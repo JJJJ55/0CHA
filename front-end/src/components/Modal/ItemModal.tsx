@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import ReactModal from 'react-modal';
 
@@ -7,10 +7,10 @@ import Header from '../Common/Header';
 import Image from '../Common/Image';
 import IconSvg from '../Common/IconSvg';
 import { ReactComponent as likeOn } from '../../asset/img/svg/likeOn.svg';
-import { ReactComponent as likeOff } from '../../asset/img/svg/liekOff.svg';
+import { ReactComponent as likeOff } from '../../asset/img/svg/likeOff.svg';
 
-import test from '../../asset/img/testImg.png';
 import { useNavigate } from 'react-router';
+import { SnsItemDetail, SnsItemLike, SnsItemLikeCancel } from '../../lib/api/sns-api';
 
 const s = {
   Container: styled.section`
@@ -91,41 +91,106 @@ const s = {
   `,
 };
 
+interface Item {
+  id: number;
+  images: string;
+  title: string;
+  price: string;
+  isSold: boolean;
+  likeCount: number;
+  isLike: number;
+  nickname: string;
+  content: string;
+}
+
 interface MarketModalProps {
   open: boolean;
   onModal: Function;
+  itemId: number | null; // 선택된 아이템을 받을 수 있는 프로퍼티 추가
 }
 
 const ItemModal = (props: MarketModalProps): JSX.Element => {
+  const { itemId, open, onModal } = props;
+  const [item, setItem] = useState<Item | null>(null);
+  const [like, setLike] = useState(0);
+  const [likeCount, setLikeCount] = useState(0);
   const navigate = useNavigate();
+
+  const getItemDetail = async () => {
+    if (itemId) {
+      await SnsItemDetail(
+        itemId,
+        (resp) => {
+          console.log(resp.data);
+          setItem(resp.data);
+          setLike(resp.data.isLike);
+          setLikeCount(resp.data.likeCount);
+        },
+        (error) => {
+          console.log(error);
+        },
+      );
+    }
+  };
+
+  const handleLike = async () => {
+    if (like) {
+      await SnsItemLikeCancel(
+        item!.id,
+        (resp) => {
+          setLike(0);
+          setLikeCount(likeCount - 1);
+        },
+        (error) => {
+          console.log(error);
+        },
+      );
+    } else {
+      await SnsItemLike(
+        item!.id,
+        (resp) => {
+          setLike(1);
+          setLikeCount(likeCount + 1);
+        },
+        (error) => {
+          console.log(error);
+        },
+      );
+    }
+  };
+
+  useEffect(() => {
+    getItemDetail();
+  }, [itemId]);
+
   const handleMovePage = (): void => {
-    props.onModal();
+    onModal();
     navigate('../chat/id');
   };
+
   return (
     <ReactModal
-      isOpen={props.open}
+      isOpen={open}
       ariaHideApp={false}
-      onRequestClose={() => props.onModal()}
+      onRequestClose={() => onModal()}
       className="marketModal"
       overlayClassName="Overlay"
     >
       <s.Header>
-        <Header text="거래글 상세" onBack={props.onModal} />
+        <Header text="거래글 상세" onBack={onModal} />
       </s.Header>
       <s.Container>
-        <Image width="100%" height="auto" src={test} type="rect" />
-
+        <Image width="100%" height="auto" src={item?.images || ''} type="rect" />
         <s.SellerInfo>
-          <Image width="34px" height="34px" src={test} />
+          <Image width="34px" height="34px" src={item?.images || ''} />
           <s.SellerNameArea>
-            <s.SellerName>stranger_00</s.SellerName>
+            <s.SellerName>{item?.nickname}</s.SellerName>
             <s.CreatedAt>3시간 전</s.CreatedAt>
           </s.SellerNameArea>
           <s.ButtonArea>
-            <s.LikeArea onClick={() => alert('좋아요')}>
-              <IconSvg width="23" height="23" Ico={likeOn} />
-              <s.LikeCnt>25</s.LikeCnt>
+            <s.LikeArea onClick={handleLike}>
+              <IconSvg width="23" height="23" Ico={like ? likeOn : likeOff} />
+              <s.LikeCnt>{likeCount}</s.LikeCnt>
             </s.LikeArea>
             <Button
               width="80px"
@@ -140,15 +205,11 @@ const ItemModal = (props: MarketModalProps): JSX.Element => {
         </s.SellerInfo>
 
         <s.ItemTitleArea>
-          <s.ItemName>덤벨 40kg</s.ItemName>
-          <s.ItemPrice>50,000원</s.ItemPrice>
+          <s.ItemName>{item?.title}</s.ItemName>
+          <s.ItemPrice>{item?.price}원</s.ItemPrice>
         </s.ItemTitleArea>
         <s.Horizon />
-        <s.ItemContent>
-          40kg 덤벨 판매합니다.
-          무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요무거워요
-        </s.ItemContent>
-        {/* <s.ItemContent>40kg 덤벨 판매합니다. 무거워요</s.ItemContent> */}
+        <s.ItemContent>{item?.content}</s.ItemContent>
       </s.Container>
     </ReactModal>
   );

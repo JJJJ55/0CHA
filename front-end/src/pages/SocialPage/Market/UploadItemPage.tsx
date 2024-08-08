@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
 
 import BottomNav from '../../../components/Common/BottomNav';
@@ -10,7 +10,6 @@ import IconSvg from '../../../components/Common/IconSvg';
 import Image from '../../../components/Common/Image';
 import { ReactComponent as camera } from '../../../asset/img/svg/camera.svg';
 
-import test from '../../../asset/img/testImg.png';
 import { useNavigate } from 'react-router';
 
 const s = {
@@ -51,8 +50,30 @@ const s = {
   ImageArea: styled.div`
     width: 380px;
     display: flex;
-    justify-content: space-between;
+    justify-content: left;
     margin: 0 auto;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  `,
+  ImageWrapper: styled.div`
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-left: 8px;
+    margin-top: 16px;
+  `,
+  DeleteButton: styled.button`
+    background-color: ${(props) => props.theme.subColor};
+    border: none;
+    color: ${(props) => props.theme.textColor};
+    font-size: 12px;
+    padding: 2px 4px;
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    cursor: pointer;
   `,
   Button: styled.div`
     display: flex;
@@ -83,26 +104,55 @@ const s = {
 
 const UploadItemPage = (): JSX.Element => {
   const navigate = useNavigate();
+  const [images, setImages] = useState<string[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      const filesArray = Array.from(event.target.files).slice(0, 5); // 최대 5개
+      const newImages = filesArray.map((file) => URL.createObjectURL(file));
+      setImages((prevImages) => [...prevImages, ...newImages].slice(0, 5)); // 최대 5개까지
+    }
+  };
+
+  const handleUploadClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
   const handleMovePage = (): void => {
     navigate('/sns');
   };
+
+  const handleDeleteImage = (index: number) => {
+    setImages((prevImages) => prevImages.filter((_, i) => i !== index));
+  };
+
   return (
     <>
       <Header text="판매하기" />
       <s.Container>
-        <s.ImageUploadArea>
+        <s.ImageUploadArea onClick={handleUploadClick}>
           <IconSvg width="50" height="50" Ico={camera} color="#ffffff" />
-          <s.ImageText>5/5</s.ImageText>
+          <s.ImageText>{images.length}/5</s.ImageText>
         </s.ImageUploadArea>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          multiple
+          style={{ display: 'none' }}
+          onChange={handleImageUpload}
+        />
         <s.ImageArea>
-          <s.MainImageArea>
-            <s.MainImage width="64px" height="64px" src={test} type="rect" />
-            <s.MainImageCaption>대표</s.MainImageCaption>
-          </s.MainImageArea>
-          <Image width="64px" height="64px" src={test} type="rect" />
-          <Image width="64px" height="64px" src={test} type="rect" />
-          <Image width="64px" height="64px" src={test} type="rect" />
-          <Image width="64px" height="64px" src={test} type="rect" />
+          {images.map((image, index) => (
+            <s.ImageWrapper key={index}>
+              <Image width="64px" height="64px" src={image} type="rect" />
+              {index === 0 && <s.MainImageCaption>대표</s.MainImageCaption>}
+              <s.DeleteButton onClick={() => handleDeleteImage(index)}>X</s.DeleteButton>
+            </s.ImageWrapper>
+          ))}
         </s.ImageArea>
         <s.InputArea>
           <s.InputLabel>제목</s.InputLabel>

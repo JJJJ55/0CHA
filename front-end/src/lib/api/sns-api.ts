@@ -188,7 +188,7 @@ export const SnsItemList = async (
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
 ) => {
-  await jwt.get(`/sns/item/list?user_id=${param}`).then(success).catch(fail);
+  await jwt.get(`/sns/item/list?user-id=${param}`).then(success).catch(fail);
 };
 
 // 물건 상세

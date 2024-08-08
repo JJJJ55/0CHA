@@ -74,24 +74,32 @@ const FitnessPlanSetPage = (): JSX.Element => {
   const [fitness, setFitness] = useState<
     {
       name: string;
-      id: number;
+      exerciseId: number;
+      sequence: number;
       detail: ExerciseDetailType[];
     }[]
-  >(data.map((item) => ({ ...item, detail: [] })));
+  >(data.map((item) => ({ ...item, sequence: 0, detail: [] })));
 
+  const dispatch = useAppDispatch();
+  const isModal = useAppSelector(selectModalCalendar);
+
+  // 날짜 선택 모달 열기
   const handleChangeOpen = (): void => {
     dispatch(modalActions.toggleCalendar());
   };
 
+  // 페이지 이동
   const handleClickMove = (path: string): void => {
     navigate(path);
   };
 
+  // 운동 삭제
   const handleDeleteExercise = (index: number): void => {
     const updatedFitness = fitness.filter((_, idx) => idx !== index);
     setFitness(updatedFitness);
   };
 
+  // 세트 변경
   const handleSetChange = (exerciseIndex: number, updatedSets: ExerciseDetailType[]) => {
     const updatedFitness = fitness.map((exercise, idx) => {
       if (idx === exerciseIndex) {
@@ -100,15 +108,10 @@ const FitnessPlanSetPage = (): JSX.Element => {
       return exercise;
     });
     setFitness(updatedFitness);
+    console.log('Updated fitness:', updatedFitness); // 디버깅 로그
   };
 
-  const isModal = useAppSelector(selectModalCalendar);
-  const dispatch = useAppDispatch();
-
-  const toggleModal = (): void => {
-    dispatch(modalActions.toggleCalendar());
-  };
-
+  // 운동 시작 버튼 클릭
   const handlePlay = (): void => {
     console.log('Current Fitness Data:', fitness); // 콘솔에 현재 데이터를 출력
     // dispatch(pageActions.toogleIsPlay(true));
@@ -149,8 +152,8 @@ const FitnessPlanSetPage = (): JSX.Element => {
             <div key={index}>
               <FitnessPlan
                 exercise={exercise}
-                index={index + 1}
-                onChangeSet={(exerciseIndex, updatedSets) => handleSetChange(exerciseIndex, updatedSets)}
+                index={index}
+                onChangeSet={handleSetChange}
                 onDelete={() => handleDeleteExercise(index)}
               />
             </div>
@@ -186,7 +189,7 @@ const FitnessPlanSetPage = (): JSX.Element => {
         </s.BtnArea>
       </s.ContentArea>
       <BottomNav />
-      <FitnessPlanSetModal open={isModal} onModal={toggleModal} onTitle={setTitle} onDate={setDate} />
+      <FitnessPlanSetModal open={isModal} onModal={handleChangeOpen} onTitle={setTitle} onDate={setDate} />
     </s.Container>
   );
 };

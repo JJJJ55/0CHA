@@ -72,7 +72,7 @@ export interface RoutineListDetailType {
 
 export interface CreateRoutine {
   name: string;
-  id: number;
+  exerciseId: number;
 }
 
 export interface plan {

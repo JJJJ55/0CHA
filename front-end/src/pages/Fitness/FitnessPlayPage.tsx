@@ -23,7 +23,7 @@ const FitnessPlayPage = (): JSX.Element => {
       <Header text="운동" />
       <s.MainArea>
         <Timer />
-        <FitnessPlan exercise={FitnessPlanData.exercise} />
+        {/* <FitnessPlan exercise={FitnessPlanData.exercise} /> */}
       </s.MainArea>
       <FitnessPlayBottomNav />
     </s.Container>

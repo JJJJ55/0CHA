@@ -20,5 +20,5 @@ public interface WorkoutExerciseService {
 
     int saveExerciseImage(int exerciseId, String imageUrl); // 이미지 URL 저장 메서드 추가
 
-    List<ExerciseRecordDto> getExerciseRecords(int exerciseId, int userId);
+    List<ExerciseRecordDto> getRecentExerciseRecords(int exerciseId, int userId);
 }

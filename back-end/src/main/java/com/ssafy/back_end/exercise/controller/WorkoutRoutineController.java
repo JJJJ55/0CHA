@@ -93,6 +93,8 @@ public class WorkoutRoutineController {
             } else {
                 // 존재하는 루틴이면 createdAt 필드를 유지
                 routineDto.setCreatedAt(existingRoutine.getCreatedAt());
+                // 기존 루틴의 complete 정보도 유지
+                routineDto.setComplete(existingRoutine.isComplete());
             }
         }
 
@@ -102,7 +104,6 @@ public class WorkoutRoutineController {
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("루틴 저장 또는 업데이트 실패");
     }
-
 
     @Operation(summary = "루틴 삭제", description = "루틴 ID를 사용하여 루틴을 삭제합니다.")
     @DeleteMapping("/{routine-id}")

@@ -5,9 +5,9 @@ import com.ssafy.back_end.sns.model.ItemDto;
 import java.util.List;
 
 public interface SnsItemService {
-    List<ItemDto> getItems(int myId, int userId);   //특정 유저 중고장터 모두 보기
+    List<ItemDto> getItems(int myId, int userId, int offset, int limit);   //특정 유저 중고장터 모두 보기
 
-    ItemDto getItemDetail(int myId,int itemId);   //중고장터 자세히 보기
+    ItemDto getItemDetail(int myId, int itemId);   //중고장터 자세히 보기
 
     int writeItem(ItemDto item);   //중고장터 작성
 
@@ -21,7 +21,7 @@ public interface SnsItemService {
 
     int dislikeItem(int itemId, int userId);   //중고장터 좋아요 취소
 
-    int soldOut( int itemId);   //판매완료
+    int soldOut(int itemId);   //판매완료
 
     void validateImages(List<String> images);   //이미지 유효성 검사
 }

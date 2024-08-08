@@ -9,6 +9,10 @@
         SELECT * FROM exercises
     </select>
 
+    <select id="isExerciseLiked" parameterType="map" resultType="boolean">
+        SELECT COUNT(*) > 0 FROM exercise_likes WHERE exercise_id = #{exerciseId} AND user_id = #{userId}
+    </select>
+
     <select id="getExerciseById" parameterType="int" resultType="com.ssafy.back_end.exercise.model.ExerciseDto">
         SELECT * FROM exercises WHERE id = #{exerciseId}
     </select>
@@ -34,5 +38,14 @@
     <update id="saveExerciseImage" parameterType="map">
         UPDATE exercises SET image = #{imageUrl} WHERE id = #{exerciseId}
     </update>
+
+    <select id="getExerciseRecords" resultType="com.ssafy.back_end.exercise.model.ExerciseRecordDto">
+        SELECT rd.exercise_id, e.name, rs.weight, rs.count, r.completed_at AS date
+        FROM routine_sets rs
+            JOIN routine_details rd ON rs.routine_detail_id = rd.id
+            JOIN exercises e ON rd.exercise_id = e.id
+            JOIN routines r ON rd.routine_id = r.id
+        WHERE e.id = #{exerciseId} AND r.user_id = #{userId}
+    </select>
 
 </mapper>

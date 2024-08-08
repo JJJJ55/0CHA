@@ -16,14 +16,14 @@ export const localAxios = () => {
       if (accessToken) {
         config.headers['Authorization'] = `${accessToken}`;
       }
-      // // Refresh 토큰을 보낼 경우 사용하고자 하는 커스텀 인증 헤더를 사용하면 된다.
-      // if (refreshToken) {
-      //   config.headers['x-refresh-token'] = refreshToken;
-      // }
+      if (refreshToken) {
+        config.headers['RefreshToken'] = refreshToken;
+      }
 
       return config;
     },
     (error) => {
+      console.log('리퀘스트 오류');
       return Promise.reject(error);
     },
   );
@@ -36,9 +36,6 @@ export const localAxios = () => {
         const newAccessToken = response?.headers?.authorization;
         localStorage.removeItem('accessToken'); // 만료된 access토큰 삭제
         localStorage.setItem('accessToken', newAccessToken); // 새걸로 교체
-        // response.config.headers = {
-        //   authorization: `${newAccessToken}`,
-        // };
       }
       return response;
     },
@@ -47,14 +44,17 @@ export const localAxios = () => {
         config,
         response: { status, data },
       } = error;
-      console.log('0');
+      console.log('리스폰 오류');
       console.log(error);
-      if (status === 401 && data === 'InvalidTokenException') {
-        console.log('1');
-        interceptioLogout();
+      if (status === 401 && data === 'Refresh token is expired, logged out') {
+        console.log('리프 파괴');
+        // interceptioLogout();
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
       }
-      if (status === 401 && data.message === 'Access token is expired') {
+      if (status === 401 && data === 'Access token is expired') {
         try {
+          console.log('액세 파괴');
           const jwt = localAxios();
           const refreshToken = localStorage.getItem('refreshToken');
           const toeknRefreshResult = await jwt.post(`/auth/login/refresh`, refreshToken, {
@@ -63,16 +63,24 @@ export const localAxios = () => {
             },
           });
           if (toeknRefreshResult.status === 200) {
-            const { accessToekn, refreshToken } = toeknRefreshResult.data;
-            localStorage.setItem('accessToken', accessToekn);
-            localStorage.setItem('accessToken', refreshToken);
+            console.log('액세스 리프 교체');
+            const { accessToken, refreshToken } = toeknRefreshResult.data;
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            localStorage.setItem('accessToken', accessToken);
+            localStorage.setItem('refreshToken', refreshToken);
+            console.log('교체완료');
             return axios(config);
           } else {
-            interceptioLogout();
+            console.log('요청했지만 200이 아님');
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
           }
         } catch (e) {
+          console.log('요청실패');
           console.log(e);
-          interceptioLogout();
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
         }
       }
 
@@ -83,7 +91,6 @@ export const localAxios = () => {
   instance.defaults.headers.common['Authorization'] = '';
   instance.defaults.headers.post['Content-Type'] = 'application/json';
   instance.defaults.headers.patch['Content-Type'] = 'application/json';
-  instance.defaults.headers.delete['Content-Type'] = 'application/html';
   return instance;
 };
 
@@ -97,16 +104,4 @@ export const publicAxios = () => {
   publicAxios.defaults.headers.post['Content-Type'] = 'application/json';
   publicAxios.defaults.headers.patch['Content-Type'] = 'application/json';
   return publicAxios;
-};
-
-const interceptioLogout = async () => {
-  await logout(
-    (resp) => {
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-    },
-    (error) => {
-      console.log('intercept 로그아웃 에러 ' + error);
-    },
-  );
 };

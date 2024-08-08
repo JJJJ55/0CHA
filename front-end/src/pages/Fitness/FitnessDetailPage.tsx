@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Header from '../../components/Common/Header';
 import IconSvg from '../../components/Common/IconSvg';
@@ -9,6 +9,14 @@ import Image from '../../components/Common/Image';
 import BottomNav from '../../components/Common/BottomNav';
 import Chart from '../../components/Common/Chart';
 import { exerciseData } from '../../util/TestData';
+import {
+  deleteFitnessJjimCancel,
+  getFitnessJjimCheck,
+  getFitnessListCategory,
+  postFitnessJjim,
+} from '../../lib/api/fitness-api';
+import { useLocation } from 'react-router';
+import { FitnessType } from '../../util/types/axios-fitness';
 
 const s = {
   Container: styled.section`
@@ -50,22 +58,68 @@ const s = {
 
 const FitnessDetailPage = (): JSX.Element => {
   const labels = ['07.14', '07.15', '07.16', '07.17', '07.18', '07.19', '07,20'];
-  const handleClickJjim = () => {
-    alert('클릭');
+  const [fitness, setFieness] = useState<FitnessType>();
+  const [isLike, setIsLike] = useState<boolean>(false);
+  const id = useLocation().state?.id;
+
+  useEffect(() => {
+    getFitnessListCategory(
+      id,
+      (resp) => {
+        setFieness(resp.data);
+      },
+      (error) => {
+        alert('잠시후 다시 시도해주세요.');
+      },
+    );
+    getFitnessJjimCheck(
+      id,
+      (resp) => {
+        resp.data.favorite ? setIsLike(true) : setIsLike(false);
+      },
+      (error) => {
+        alert('잠시후 다시 시도해주세요.');
+      },
+    );
+  }, []);
+  const handleClickJjim = async () => {
+    await postFitnessJjim(
+      id,
+      (resp) => {
+        setIsLike(true);
+      },
+      (error) => {
+        alert('잠시후 다시 시도해주세요.');
+      },
+    );
+  };
+  const handleClickNotJjim = async () => {
+    await deleteFitnessJjimCancel(
+      id,
+      (resp) => {
+        setIsLike(false);
+      },
+      (error) => {
+        alert('잠시후 다시 시도해주세요.');
+      },
+    );
   };
   return (
     <s.Container>
-      <Header text="운동이름">
-        <s.IconArea onClick={handleClickJjim}>
-          <IconSvg width="24" height="24" Ico={jjimOn} />
-        </s.IconArea>
+      <Header text={fitness?.name}>
+        {isLike ? (
+          <s.IconArea onClick={handleClickNotJjim}>
+            <IconSvg width="24" height="24" Ico={jjimOn} />
+          </s.IconArea>
+        ) : (
+          <s.IconArea onClick={handleClickJjim}>
+            <IconSvg width="24" height="24" Ico={jjimOff} />
+          </s.IconArea>
+        )}
       </Header>
       <s.ContentArea>
-        <Image width="100%" src={test} height="50%" type="rect" />
-        <s.FitnessTextArea>
-          덤벨 프론트 레이즈는 어깨 근육, 특히 전면 삼각근을 강화하는 데 효과적인 운동입니다. 이 운동은 어깨의 크기와
-          힘을 증가시키는 데 도움이 됩니다.
-        </s.FitnessTextArea>
+        <Image width="100%" src={fitness?.image} height="50%" type="rect" />
+        <s.FitnessTextArea>{fitness?.description}</s.FitnessTextArea>
         <s.Title>운동이력</s.Title>
         <Chart datas={exerciseData} labels={labels} />
       </s.ContentArea>

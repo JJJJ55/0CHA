@@ -53,17 +53,20 @@ public class JwtInterceptor implements HandlerInterceptor {
             } catch (ExpiredJwtException e) {
 
                 if (refreshToken != null && jwtUtil.isRefreshTokenExpired(refreshToken)) {
-                    
                     int userId = userLoginService.getUserIdByRefreshToken(refreshToken);
+                    System.out.println("리프레쉬 : " + refreshToken);
                     userLoginService.invalidateRefreshToken(userId);
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     response.getWriter().write("Refresh token is expired, logged out");
+                    System.out.println("리프레쉬 : 만료" + refreshToken);
                     return false;
                 }
 
+                System.out.println("액세스 :" + accessToken );
                 logger.debug("만료된 jwt 토큰입니다. uri : {}", requestURI);
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write("Access token is expired");
+                System.out.println("액세스 : 만료" + accessToken);
                 return false;
             } catch (Exception e) {
                 logger.debug("유효하지 않은 jwt 토큰입니다. uri : {}", requestURI);

@@ -19,6 +19,11 @@ public class SnsSocialServiceImpl implements SnsSocialService {
     }
 
     @Override
+    public List<UserPageDto> getAllUsers() {
+        return snsSocialMapper.getAllUsers();
+    }
+
+    @Override
     public UserPageDto getUserPageInfo(int userId) {
         return snsSocialMapper.getUserPageInfo(userId);
     }

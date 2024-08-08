@@ -7,7 +7,7 @@ import com.ssafy.back_end.sns.model.UserPageDto;
 import java.util.List;
 
 public interface SnsFeedService {
-    List<FeedDto> getFeeds(int myId, int userId);   //특정 유저 피드 모두 보기
+    List<FeedDto> getFeeds(int myId, int userId, int offset, int limit);   //특정 유저 피드 모두 보기
 
     int writeFeed(FeedDto feedDto);   //피드 작성
 

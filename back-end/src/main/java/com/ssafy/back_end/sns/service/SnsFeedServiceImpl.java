@@ -20,8 +20,8 @@ public class SnsFeedServiceImpl implements SnsFeedService {
     }
 
     @Override
-    public List<FeedDto> getFeeds(int myId, int userId) {
-        return snsFeedMapper.getFeeds(myId, userId);
+    public List<FeedDto> getFeeds(int myId, int userId, int offset, int limit) {
+        return snsFeedMapper.getFeeds(myId, userId, offset, limit);
     }
 
     @Override

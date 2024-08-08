@@ -39,22 +39,22 @@ export interface RoutineList {
 }
 
 export interface RoutineListDetailType {
-  id: number;
-  title: 'string';
-  sumVolume: 'double';
-  sumTime: 'int';
-  createdAt: 'dateTime';
-  completedAt: 'dateTime';
-  dueDate: 'date';
+  id?: number;
+  title: string;
+  sumVolume: number;
+  sumTime: number;
+  createdAt?: string;
+  completedAt?: string;
+  dueDate: string;
   details: [
     {
-      id: number;
+      id?: number;
       routineId: number;
       exerciseId: number;
       sequence: number;
       sets: [
         {
-          id: number;
+          id?: number;
           routineDetailId: number;
           sequence: number;
           weight: number;
@@ -82,9 +82,38 @@ export interface plan {
 }
 
 export interface ExerciseDetailType {
-  id: number;
+  // id: number;
   set: number;
   weight: number | '';
   count: number | '';
   is_complete: boolean;
+}
+
+export interface axiosCreateRoutine {
+  title: string;
+  sumVolume?: number;
+  sumTime?: number;
+  dueDate: string;
+  details: axiosCreateRoutineDetails[];
+}
+
+export interface axiosCreateRoutineDetails {
+  name: string;
+  exerciseId: number;
+  sequence: number;
+  sets: ExerciseDetailType[];
+}
+
+export interface mainPageRoutine {
+  id: number;
+  title: string;
+  dueDate: string;
+  like: boolean;
+}
+
+export interface FitnessMomenthum {
+  date: string;
+  exerciseName: string;
+  volume: number;
+  totalTime: number;
 }

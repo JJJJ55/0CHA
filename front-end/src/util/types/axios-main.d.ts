@@ -30,3 +30,10 @@ export interface User {
   district: string;
   siGunGu: string;
 }
+
+export interface MainMyRoutine {
+  id: string;
+  title: string;
+  dueDate: string;
+  like: boolean;
+}

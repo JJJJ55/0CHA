@@ -86,10 +86,13 @@ const s = {
     border: 0;
     margin: 30px auto;
   `,
+  hidden: styled.div`
+    display: none;
+  `,
 };
 
 type ExerciseDetailType = {
-  id: number;
+  // id: number;
   set: number;
   weight: number | '';
   count: number | '';
@@ -101,7 +104,7 @@ interface FitnessPlanProps {
     name: string;
     exerciseId: number;
     sequence: number;
-    detail: ExerciseDetailType[];
+    sets: ExerciseDetailType[];
   };
   index: number;
   onDelete: () => void;
@@ -109,11 +112,11 @@ interface FitnessPlanProps {
 }
 
 const FitnessPlan = (props: FitnessPlanProps): JSX.Element => {
-  const [sets, setSets] = useState<ExerciseDetailType[]>(props.exercise.detail);
+  const [sets, setSets] = useState<ExerciseDetailType[]>(props.exercise.sets);
 
   useEffect(() => {
-    setSets(props.exercise.detail);
-  }, [props.exercise.detail]);
+    setSets(props.exercise.sets);
+  }, [props.exercise.sets]);
 
   useEffect(() => {
     console.log(`Sets for exercise ${props.index}:`, sets);
@@ -121,7 +124,7 @@ const FitnessPlan = (props: FitnessPlanProps): JSX.Element => {
 
   const handleAddSet = () => {
     const newSet: ExerciseDetailType = {
-      id: sets.length ? sets[sets.length - 1].id + 1 : 1,
+      // id: sets.length ? sets[sets.length - 1].id + 1 : 1,
       set: sets.length + 1,
       weight: '',
       count: '',
@@ -156,7 +159,8 @@ const FitnessPlan = (props: FitnessPlanProps): JSX.Element => {
   return (
     <s.Container>
       <s.PlanHeaderArea>
-        <span style={{ fontWeight: 600 }}>{props.index + '. ' + props.exercise.name}</span>
+        <s.hidden>{(props.exercise.sequence = props.index + 1)}</s.hidden>
+        <span style={{ fontWeight: 600 }}>{props.index + 1 + '. ' + props.exercise.name}</span>
         <s.DeleteText onClick={props.onDelete}>운동 삭제</s.DeleteText>
       </s.PlanHeaderArea>
       <s.PlanTable>
@@ -170,7 +174,7 @@ const FitnessPlan = (props: FitnessPlanProps): JSX.Element => {
         </s.TableHead>
         <s.TableBody>
           {sets.map((data, index) => (
-            <s.Tr key={data.id}>
+            <s.Tr key={data.set}>
               <s.Td>{data.set}</s.Td>
               <s.Td>
                 <s.ValueInput

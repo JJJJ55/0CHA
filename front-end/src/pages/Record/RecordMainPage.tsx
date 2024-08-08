@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import Header from '../../components/Common/Header';
 import CalendarArea from '../../components/Common/CalendarArea';
@@ -8,6 +8,7 @@ import BottomNav from '../../components/Common/BottomNav';
 import IconSvg from '../../components/Common/IconSvg';
 import { ReactComponent as move } from '../../asset/img/svg/move.svg';
 import { useNavigate } from 'react-router';
+import moment from 'moment';
 const s = {
   Continer: styled.section`
     height: 100%;
@@ -36,7 +37,21 @@ const RecordMainPage = (): JSX.Element => {
   };
   const attendDay = ['2024-07-30', '2024-07-15', '2024-08-12']; // 운동시작 버튼 누른 날
   const attendDay2 = ['2024-07-31', '2024-07-16', '2024-08-13']; // 운동 시작버튼 안누른 날(계획)
-  const handleChangeDate = () => {};
+  const [date, SetDate] = useState<string>('');
+  const handleChangeDate = (newDate: Date) => {
+    const routineDate = moment(newDate).format('YYYY-MM-DD');
+    SetDate(routineDate);
+    // if (attendDay.find((x) => x === routineDate)) {
+    //   alert('운동을 완료한 날입니다.');
+    // } else if (attendDay2.find((x) => x === routineDate)) {
+    //   alert('기존 루틴이 있는 날입니다.');
+    // } else {
+    //   setInfo({ ...info, date: routineDate });
+    //   alert('선택되었습니다.');
+    //   props.onDate(info.date);
+    // }
+    console.log(routineDate);
+  };
 
   return (
     <s.Continer>
@@ -47,16 +62,9 @@ const RecordMainPage = (): JSX.Element => {
           onChangeDate={handleChangeDate}
           Routine={attendDay2}
           RoutineFinish={attendDay}
+          pick={date}
         />
-        <Text
-          children="7월 19일"
-          color="textColor2"
-          bold="500"
-          size="14px"
-          width="80%"
-          display="block"
-          margin="0 auto"
-        />
+        <Text children={date} color="textColor2" bold="500" size="14px" width="80%" display="block" margin="0 auto" />
         <Button
           width="80%"
           height="40px"

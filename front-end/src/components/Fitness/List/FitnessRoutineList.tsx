@@ -5,8 +5,10 @@ import Button from '../../Common/Button';
 import IconSvg from '../../Common/IconSvg';
 import { ReactComponent as jjimOn } from '../../../asset/img/svg/jjimOn.svg';
 import { ReactComponent as jjimOff } from '../../../asset/img/svg/jjimOff.svg';
+import { ReactComponent as trash } from '../../../asset/img/svg/trash.svg';
 import { useNavigate } from 'react-router';
 import { RoutineList } from '../../../util/types/axios-fitness';
+import { delRoutine, putRoutineJjim } from '../../../lib/api/fitness-api';
 
 const s = {
   Container: styled.div`
@@ -53,6 +55,32 @@ const FitnessRoutineList = (props: listType): JSX.Element => {
   const handleClickMove = (id: number): void => {
     navigate('detail', { state: { id } });
   };
+
+  const handleDeleteRoutine = async (id: number) => {
+    if (window.confirm('삭제하시겠습니까?')) {
+      await delRoutine(
+        id,
+        (resp) => {
+          console.log('성공');
+        },
+        (error) => {
+          alert('잠시 후 다시 시도해주세요.');
+        },
+      );
+    }
+  };
+
+  const handleRoutineJjim = async (id: number) => {
+    await putRoutineJjim(
+      id,
+      (resp) => {
+        console.log('성공');
+      },
+      (error) => {
+        alert('잠시 후 다시 시도해주세요.');
+      },
+    );
+  };
   return (
     <s.Container>
       {props.list.map((data, index) => (
@@ -80,13 +108,16 @@ const FitnessRoutineList = (props: listType): JSX.Element => {
             </s.ContentArea>
             {data.isLike ? (
               <s.IconArea>
-                <IconSvg width="25" height="25" Ico={jjimOff} />
+                <IconSvg width="25" height="25" Ico={jjimOn} onClick={() => handleRoutineJjim(data.id)} />
               </s.IconArea>
             ) : (
               <s.IconArea>
-                <IconSvg width="25" height="25" Ico={jjimOff} />
+                <IconSvg width="25" height="25" Ico={jjimOff} onClick={() => handleRoutineJjim(data.id)} />
               </s.IconArea>
             )}
+            <s.IconArea>
+              <IconSvg width="25" height="25" Ico={trash} onClick={() => handleDeleteRoutine(data.id)} />
+            </s.IconArea>
           </s.ListArea>
           {index + 1 === props.list?.length || <s.ListLine />}
           {/* <s.ListLine /> */}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import styled from 'styled-components';
 import Input from '../../components/Common/Input';
 import FitnessListTopNav from '../../components/Fitness/Etc/FitnessListTopNav';
@@ -7,6 +7,9 @@ import { FitnessData } from '../../util/TestData';
 import Button from '../../components/Common/Button';
 import BottomNav from '../../components/Common/BottomNav';
 import { Outlet, useNavigate } from 'react-router';
+import { getFitnessJjimList, getFitnessList } from '../../lib/api/fitness-api';
+import { CreateRoutine, FitnessType } from '../../util/types/axios-fitness';
+import Text from '../../components/Common/Text';
 
 const s = {
   Container: styled.section`
@@ -54,9 +57,49 @@ const s = {
 
 const FitnessListPage = (): JSX.Element => {
   const navigate = useNavigate();
-  const handleClickMove = (): void => {
-    navigate('../plan');
+  const [jjim, setjjim] = useState<FitnessType[]>([]);
+  const [fitness, setFitness] = useState<FitnessType[]>([]);
+  useEffect(() => {
+    getFitnessList(
+      (resp) => {
+        setFitness(resp.data);
+      },
+      (error) => {
+        console.log(error);
+      },
+    );
+    getFitnessJjimList(
+      (resp) => {
+        setjjim(resp.data);
+      },
+      (error) => {
+        console.log(error);
+      },
+    );
+  }, []);
+  // 상태가 업데이트된 후에 실행되는 useEffect
+  useEffect(() => {
+    console.log('Fitness 데이터:', fitness);
+  }, [fitness]);
+
+  const [add, setAdd] = useState<CreateRoutine[]>([]);
+  const handleClickAdd = (id: number, name: string) => {
+    setAdd((prevAdd) => {
+      const existingItem = prevAdd.find((item) => item.id === id);
+      if (existingItem) {
+        // Remove item if it already exists
+        return prevAdd.filter((item) => item.id !== id);
+      } else {
+        // Add new item
+        return [...prevAdd, { id, name }];
+      }
+    });
   };
+  const handleClickMove = (): void => {
+    navigate('../plan', { state: { add } });
+    // console.log(add);
+  };
+
   return (
     <s.Container>
       <s.HeaderArea>
@@ -67,8 +110,8 @@ const FitnessListPage = (): JSX.Element => {
       </s.HeaderArea>
       <s.MainArea>
         <s.FitnessArea>
-          <FitnessList text="즐겨찾기" data={FitnessData} />
-          <FitnessList text="전체" data={FitnessData} />
+          <FitnessList text="즐겨찾기" data={jjim} add={add} onAdd={handleClickAdd} />
+          <FitnessList text="전체" data={fitness} add={add} onAdd={handleClickAdd} />
         </s.FitnessArea>
       </s.MainArea>
       <s.Btn onClick={handleClickMove}>새 루틴에 추가하기</s.Btn>

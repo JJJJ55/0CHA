@@ -97,7 +97,11 @@ const FitnessListPage = (): JSX.Element => {
     });
   };
   const handleClickMove = (): void => {
-    navigate('../plan', { state: { add } });
+    if (add.length !== 0) {
+      navigate('../plan', { state: { add } });
+    } else {
+      alert('루틴에 운동을 추가해주세요.');
+    }
     // console.log(add);
   };
 

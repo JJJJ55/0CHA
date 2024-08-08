@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { ReactComponent as off } from '../../../asset/img/svg/pickOff.svg';
 import { ReactComponent as on } from '../../../asset/img/svg/pickOn.svg';
@@ -46,10 +46,23 @@ const s = {
     font-weight: 700;
     text-align: center;
     padding: 0;
+    border: 1px solid ${(props) => props.theme.textColor};
     color: ${(props) => props.theme.textColor};
     background-color: ${(props) => props.theme.bgColor};
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    /* Firefox  */
+    & input[type='number'] {
+      -moz-appearance: textfield;
+    }
+    &:focus {
+      outline: 1px solid ${(props) => props.theme.mainColor};
+      border: none;
+    }
   `,
-
   SetBtnArea: styled.div`
     width: 50%;
     margin: 20px auto;
@@ -74,68 +87,113 @@ const s = {
     margin: 30px auto;
   `,
 };
-type ExerciseType = {
-  name: string;
-  detail: ExerciseDetailType[];
-};
 
 type ExerciseDetailType = {
   id: number;
   set: number;
-  weight: number;
-  count: number;
+  weight: number | '';
+  count: number | '';
   is_complete: boolean;
 };
-interface FitnessDataProps {
-  exercise: ExerciseType[];
+
+interface FitnessPlanProps {
+  exercise: {
+    name: string;
+    id: number;
+    detail: ExerciseDetailType[];
+  };
+  index: number;
+  onDelete: () => void;
+  onChangeSet: (index: number, updatedSets: ExerciseDetailType[]) => void;
 }
 
-const FitnessPlan = (props: FitnessDataProps): JSX.Element => {
+const FitnessPlan = (props: FitnessPlanProps): JSX.Element => {
+  const [sets, setSets] = useState<ExerciseDetailType[]>(props.exercise.detail);
+
+  useEffect(() => {
+    setSets(props.exercise.detail);
+  }, [props.exercise.detail]);
+
+  const handleAddSet = () => {
+    const newSet: ExerciseDetailType = {
+      id: sets.length + 1,
+      set: sets.length + 1,
+      weight: '',
+      count: '',
+      is_complete: false,
+    };
+    const updatedSets = [...sets, newSet];
+    setSets(updatedSets);
+    props.onChangeSet(props.index, updatedSets);
+  };
+
+  const handleRemoveSet = () => {
+    const updatedSets = sets.slice(0, -1);
+    setSets(updatedSets);
+    props.onChangeSet(props.index, updatedSets);
+  };
+
+  const handleInputChange = (index: number, field: keyof ExerciseDetailType, value: number | '') => {
+    const updatedSets = sets.map((set, idx) => {
+      if (idx === index) {
+        return { ...set, [field]: value };
+      }
+      return set;
+    });
+    setSets(updatedSets);
+    props.onChangeSet(props.index, updatedSets);
+  };
+
   return (
     <>
-      {props.exercise.map((data, index) => (
-        <s.Container key={index}>
-          <s.PlanHeaderArea>
-            <span style={{ fontWeight: 600 }}>{index + 1 + '. ' + data.name}</span>
-            <s.DeleteText>운동 삭제</s.DeleteText>
-          </s.PlanHeaderArea>
-          <s.PlanTable>
-            <s.TableHead>
-              <s.Tr>
-                <s.Th>세트</s.Th>
-                <s.Th>무게</s.Th>
-                <s.Th>횟수</s.Th>
-                <s.Th>완료</s.Th>
+      <s.Container>
+        <s.PlanHeaderArea>
+          <span style={{ fontWeight: 600 }}>{props.index + '. ' + props.exercise.name}</span>
+          <s.DeleteText onClick={props.onDelete}>운동 삭제</s.DeleteText>
+        </s.PlanHeaderArea>
+        <s.PlanTable>
+          <s.TableHead>
+            <s.Tr>
+              <s.Th>세트</s.Th>
+              <s.Th>무게</s.Th>
+              <s.Th>횟수</s.Th>
+              <s.Th>완료</s.Th>
+            </s.Tr>
+          </s.TableHead>
+          <s.TableBody>
+            {sets.map((data, index) => (
+              <s.Tr key={data.id}>
+                <s.Td>{data.set}</s.Td>
+                <s.Td>
+                  <s.ValueInput
+                    type="number"
+                    value={data.weight}
+                    onChange={(e) => handleInputChange(index, 'weight', e.target.value ? Number(e.target.value) : '')}
+                  />
+                </s.Td>
+                <s.Td>
+                  <s.ValueInput
+                    type="number"
+                    value={data.count}
+                    onChange={(e) => handleInputChange(index, 'count', e.target.value ? Number(e.target.value) : '')}
+                  />
+                </s.Td>
+                <s.Td>
+                  {data.is_complete ? (
+                    <IconSvg width="30" height="30" Ico={on} cursor="pointer" />
+                  ) : (
+                    <IconSvg width="30" height="30" Ico={off} cursor="pointer" />
+                  )}
+                </s.Td>
               </s.Tr>
-            </s.TableHead>
-            <s.TableBody>
-              {data.detail.map((detail, index) => (
-                <s.Tr key={index}>
-                  <s.Td>{detail.set}</s.Td>
-                  <s.Td>
-                    <s.ValueInput value={detail.weight} />
-                  </s.Td>
-                  <s.Td>
-                    <s.ValueInput value={detail.count} />
-                  </s.Td>
-                  <s.Td>
-                    {detail.is_complete ? (
-                      <IconSvg width="30" height="30" Ico={on} cursor="pointer" />
-                    ) : (
-                      <IconSvg width="30" height="30" Ico={off} cursor="pointer" />
-                    )}
-                  </s.Td>
-                </s.Tr>
-              ))}
-            </s.TableBody>
-          </s.PlanTable>
-          <s.SetBtnArea>
-            <s.PlanSetBtn>세트 삭제</s.PlanSetBtn>
-            <s.PlanSetBtn>세트 추가</s.PlanSetBtn>
-          </s.SetBtnArea>
-          {index + 1 === props.exercise?.length || <s.ListLine />}
-        </s.Container>
-      ))}
+            ))}
+          </s.TableBody>
+        </s.PlanTable>
+        <s.SetBtnArea>
+          <s.PlanSetBtn onClick={handleRemoveSet}>세트 삭제</s.PlanSetBtn>
+          <s.PlanSetBtn onClick={handleAddSet}>세트 추가</s.PlanSetBtn>
+        </s.SetBtnArea>
+      </s.Container>
     </>
   );
 };

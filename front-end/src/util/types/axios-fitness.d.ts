@@ -74,3 +74,17 @@ export interface CreateRoutine {
   name: string;
   id: number;
 }
+
+export interface plan {
+  name: string;
+  id: number;
+  detail: any[];
+}
+
+export interface ExerciseDetailType {
+  id: number;
+  set: number;
+  weight: number | '';
+  count: number | '';
+  is_complete: boolean;
+}

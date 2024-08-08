@@ -156,7 +156,7 @@ const FeedPage = (): JSX.Element => {
     setLoading(true);
 
     await SnsFeedList(
-      0,
+      10,
       offset,
       (resp) => {
         const data = resp.data;

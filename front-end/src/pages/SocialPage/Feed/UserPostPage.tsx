@@ -53,13 +53,17 @@ const s = {
     margin-top: 3px;
   `,
   ThumbnailArea: styled.div`
+    width: 100%;
     margin: auto;
     display: inline-flex;
     flex-wrap: wrap;
+    
   `,
   Thumbnail: styled.div`
     width: 33%;
+    aspect-ratio: 1;
     padding: 1px;
+    border: 1px #212121 solid;
   `,
 };
 
@@ -83,6 +87,21 @@ const UserPostPage = (): JSX.Element => {
   const switchTabbar = () => {
     setIsFitness(!isFitness);
   };
+
+  const [userId, setUserId] = useState(0)
+  const [userNickname, setUserNickname] = useState('')
+  const [userProfileImage, setUserProfileImage] = useState('')
+
+  const userStr = localStorage.getItem("user")
+
+  useEffect(() => {
+    if (userStr) {
+      const userTmp = JSON.parse(userStr)
+      setUserId(userTmp.id)
+      setUserNickname(userTmp.nickname)
+      setUserProfileImage(userTmp.profileImage)
+    }
+  }, [])
   
   const [userData, setUserData] = useState<userPageData>();
   const [feedData, setFeedData] = useState<userPageFeedData[]>([]);
@@ -112,8 +131,11 @@ const UserPostPage = (): JSX.Element => {
       await UserPageFeed(
         parseInt(feedUserId),
         (resp) => {
-          console.log(resp.data);
-
+          if (resp.data === '피드 0개입니다') {
+            setFeedData([])
+          } else {
+            setFeedData(resp.data);
+          }
         },
         (error) => {
           console.log(error);
@@ -132,7 +154,7 @@ const UserPostPage = (): JSX.Element => {
       <Header text="피드" />
       <s.Container>
         <UserProfileInfo
-          isCurrentUser={true}
+          isCurrentUser={userId === userData?.id}
           userName={userData?.nickname}
           postCnt={userData?.feedCount}
           followerCnt={userData?.followerIdCount}
@@ -152,9 +174,17 @@ const UserPostPage = (): JSX.Element => {
         </s.TabBar>
         <s.testArea>
           <s.ThumbnailArea>
-            <s.Thumbnail>
-              <Image width="100%" height="auto" src={test} type="rect" cursor="pointer" />
-            </s.Thumbnail>
+            {isFitness === true ? (
+              <>
+                {feedData.map((thumbnail) => (
+                  <s.Thumbnail key={thumbnail.id}>
+                    <Image width="100%" height="auto" src={thumbnail.image} type="rect" cursor="pointer" />
+                  </s.Thumbnail>
+                ))}
+              </>
+            ) : (
+              <></>
+            )}      
           </s.ThumbnailArea>
         </s.testArea>
       </s.Container>

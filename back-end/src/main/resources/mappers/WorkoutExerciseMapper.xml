@@ -14,20 +14,20 @@
     </select>
 
     <insert id="favoriteExercise" parameterType="map">
-        INSERT INTO user_favorites (user_id, exercise_id) VALUES (#{userId}, #{exerciseId})
+        INSERT INTO exercise_likes (user_id, exercise_id) VALUES (#{userId}, #{exerciseId})
     </insert>
 
     <delete id="unfavoriteExercise" parameterType="map">
-        DELETE FROM user_favorites WHERE user_id = #{userId} AND exercise_id = #{exerciseId}
+        DELETE FROM exercise_likes WHERE user_id = #{userId} AND exercise_id = #{exerciseId}
     </delete>
 
     <select id="isFavoriteExercise" parameterType="map" resultType="boolean">
-        SELECT COUNT(*) > 0 FROM user_favorites WHERE user_id = #{userId} AND exercise_id = #{exerciseId}
+        SELECT COUNT(*) > 0 FROM exercise_likes WHERE user_id = #{userId} AND exercise_id = #{exerciseId}
     </select>
 
     <select id="getFavoriteExercisesByUserId" parameterType="int" resultType="com.ssafy.back_end.exercise.model.ExerciseDto">
         SELECT e.* FROM exercises e
-                            JOIN user_favorites uf ON e.id = uf.exercise_id
+                            JOIN exercise_likes uf ON e.id = uf.exercise_id
         WHERE uf.user_id = #{userId}
     </select>
 

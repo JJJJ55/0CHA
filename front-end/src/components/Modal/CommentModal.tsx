@@ -60,6 +60,17 @@ const CommentModal = (props: CommentModalProps): JSX.Element => {
 
   const [commentValue, setCommentValue] = useState('');
   const [comments, setComments] = useState<commentData[]>(data || []);
+  const [userId, setUserId] = useState(null)
+
+  const userStr = localStorage.getItem("user")
+
+  useEffect(() => {
+    if (userStr) {
+      const userTmp = JSON.parse(userStr)
+      setUserId(userTmp.id)
+      console.log(userId)
+    }
+  }, [])
 
   useEffect(() => {
     setComments(data || []);
@@ -80,22 +91,20 @@ const CommentModal = (props: CommentModalProps): JSX.Element => {
         feedId,
         commentValue,
         (resp) => {
-          console.log(resp);
-          // 새로운 댓글을 상태에 추가합니다.
           const newComment: commentData = {
             comment: commentValue,
             // createdAt: new Date().toISOString(),
             createdAt: "방금",
             feedId: feedId,
             id: 111111111,
-            nickname: '나는누구지', // 사용자 닉네임을 적절히 설정해주세요.
-            profileImage: 'path/to/profile/image', // 프로필 이미지를 적절히 설정해주세요.
+            nickname: '나는누구지', 
+            profileImage: 'path/to/profile/image',
             userId: 111111111,
           };
 
-          console.log(newComment)
-          setComments([...comments, newComment]);
-          setCommentValue(''); // 입력 필드를 초기화합니다.
+          // console.log(newComment)
+          setComments([newComment, ...comments]);
+          setCommentValue('');
         },
         (error) => {
           console.error(error);
@@ -121,7 +130,7 @@ const CommentModal = (props: CommentModalProps): JSX.Element => {
                 commentProfileImage={data.profileImage}
                 commentAuthor={data.nickname}
                 commentContent={data.comment}
-                isUserComment={false}
+                isUserComment={data.userId === userId}
                 createdAt={data.createdAt}
               />
             ))}

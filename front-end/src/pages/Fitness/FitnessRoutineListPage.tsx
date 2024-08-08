@@ -24,7 +24,7 @@ const FitnessRoutineListPage = (): JSX.Element => {
       },
       (error) => {},
     );
-  });
+  }, []);
   return (
     <>
       <Header text="루틴목록"></Header>

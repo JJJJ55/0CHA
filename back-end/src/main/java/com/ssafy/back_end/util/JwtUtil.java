@@ -3,7 +3,6 @@ package com.ssafy.back_end.util;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,9 +18,20 @@ import java.util.Date;
 public class JwtUtil {
     private static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
 
+
+//    특정 문자열로부터 키 생성
+//
+//    Base64로 인코딩된 문자열을 바이트 배열로 변환하여 키 생성
+
+
+    private static final String REFRESH_KEY_STRING = "asd890fuyqw089efyasdfasfdasdfwa8efyaw98efhsaf";
+    private static final String SECRET_KEY_STRING = "ad6fs78g6qw0er876das9f87g65sdf9876g5sd987g56sdf";
+
+    private static final Key secretKey = Keys.hmacShaKeyFor(SECRET_KEY_STRING.getBytes());
+    private static final Key refreshKey = Keys.hmacShaKeyFor(REFRESH_KEY_STRING.getBytes());
     //HS256(HMAC SHA-256) 알고리즘으로 키 생성
-    private static final Key secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    private static final Key refreshKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+//    private static final Key secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+//    private static final Key refreshKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     //토큰 만료시간 설정
 //    public final static long ACCESS_TOKEN_VALIDATION_SECOND = 1000L * 10; //액세스 10초
@@ -65,16 +75,20 @@ public class JwtUtil {
         try {
             if (isRefreshToken) {
                 Jwts.parserBuilder().setSigningKey(refreshKey).build().parseClaimsJws(token);
-            } else {
+            }
+            else {
                 Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
             }
             return true;
-        } catch (ExpiredJwtException e) {
+        }
+        catch (ExpiredJwtException e) {
             logger.info("토큰이 만료되었습니다.");
             throw e;  // 만료된 토큰일 경우 예외를 던짐
-        } catch (SignatureException e) {
+        }
+        catch (SignatureException e) {
             System.out.println("잘못된 토큰 서명입니다.");
-        } catch (IllegalArgumentException | JwtException e) {
+        }
+        catch (IllegalArgumentException | JwtException e) {
             System.out.println("잘못된 토큰입니다.");
         }
         return false;
@@ -119,9 +133,11 @@ public class JwtUtil {
         try {
             Jwts.parserBuilder().setSigningKey(refreshKey).build().parseClaimsJws(refreshToken);
             return false;
-        } catch (ExpiredJwtException e) {
+        }
+        catch (ExpiredJwtException e) {
             return true;
-        } catch (JwtException e) {
+        }
+        catch (JwtException e) {
             return false;
         }
     }

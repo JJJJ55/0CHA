@@ -52,6 +52,11 @@ const s = {
   `,
   FeedItem: styled.div`
     margin-bottom: 80px;
+  `,
+  ImageArea: styled.div`
+    width: 100%;
+    aspect-ratio: 1;
+    border: red 1px solid;
   `
 };
 
@@ -95,12 +100,14 @@ const FeedList = ({data, onClick}: FeedListProps): JSX.Element => {
         />
         <s.AuthorName onClick={() => handleMovePage(`../profile/${feed.userId}`)}>{feed.nickname}</s.AuthorName>
       </s.AuthorProfileArea>
-      <Image
-        width="100%"
-        height="auto"
-        src={feed.image}
-        type="rect"
-      />
+      <s.ImageArea>
+        <Image
+          width="100%"
+          height="auto"
+          src={feed.image}
+          type="rect"
+        />
+      </s.ImageArea>
       <s.FeedInteractionArea>
         <LikeIcon feedId={feed.id} isLike={feed.isLike} likeCount={feed.likeCount} />
         <s.IconArea onClick={() => onClick(feed.id)}>

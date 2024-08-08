@@ -76,7 +76,7 @@ const s = {
 };
 
 interface UserProfileInfoProps {
-  isCurrentUser: boolean;
+  isCurrentUser?: boolean;
   userName?: string;
   postCnt?: number;
   followingCnt?: number;
@@ -118,9 +118,22 @@ const UserProfileInfo = (props: UserProfileInfoProps): JSX.Element => {
               />
             )}
             {isCurrentUser === true ? (
-              <Button width="48%" height="30px" children="내 정보" size="14px" bold="500" />
+              <Button
+                width="48%"
+                height="30px"
+                children="내 정보"
+                size="14px"
+                bold="500"
+                onClick={() => handleMovePage(`../../../mypage`)}
+              />
             ) : (
-              <Button width="48%" height="30px" children="팔로우" size="14px" bold="500" />
+              <Button
+                width="48%"
+                height="30px"
+                children="팔로우"
+                size="14px"
+                bold="500"
+              />
             )}
           </s.ProfileButton>
         </s.ProfileButtonArea>

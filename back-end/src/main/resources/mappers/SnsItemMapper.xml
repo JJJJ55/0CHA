@@ -69,6 +69,8 @@
                   ELSE i.user_id = #{userId}
                   END
         ORDER BY i.created_at DESC
+            LIMIT ${limit}
+        OFFSET ${offset};
     </select>
 
     <select id="getItemDetail" resultMap="itemDetail">

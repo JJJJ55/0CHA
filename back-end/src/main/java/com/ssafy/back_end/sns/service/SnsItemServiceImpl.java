@@ -19,8 +19,8 @@ public class SnsItemServiceImpl implements SnsItemService {
     }
 
     @Override
-    public List<ItemDto> getItems(int myId, int userId) {
-        return snsItemMapper.getItems(myId, userId);
+    public List<ItemDto> getItems(int myId, int userId, int offset, int limit) {
+        return snsItemMapper.getItems(myId, userId, offset, limit);
     }
 
     @Override

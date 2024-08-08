@@ -2,6 +2,7 @@ package com.ssafy.back_end.exercise.service.impl;
 
 import com.ssafy.back_end.exercise.model.ExerciseDto;
 import com.ssafy.back_end.exercise.mapper.WorkoutExerciseMapper;
+import com.ssafy.back_end.exercise.model.ExerciseRecordDto;
 import com.ssafy.back_end.exercise.service.WorkoutExerciseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,8 +20,13 @@ public class WorkoutExerciseServiceImpl implements WorkoutExerciseService {
     }
 
     @Override
-    public List<ExerciseDto> getAllExercises() {
-        return workoutExerciseMapper.getAllExercises();
+    public List<ExerciseDto> getAllExercises(int userId) {
+        List<ExerciseDto> exercises = workoutExerciseMapper.getAllExercises();
+        exercises.forEach(exercise -> {
+            boolean isLike = workoutExerciseMapper.isExerciseLiked(exercise.getId(), userId);
+            exercise.setLike(isLike);
+        });
+        return exercises;
     }
 
     @Override
@@ -51,5 +57,10 @@ public class WorkoutExerciseServiceImpl implements WorkoutExerciseService {
     @Override
     public int saveExerciseImage(int exerciseId, String imageUrl) {
         return workoutExerciseMapper.saveExerciseImage(exerciseId, imageUrl);
+    }
+
+    @Override
+    public List<ExerciseRecordDto> getExerciseRecords(int exerciseId, int userId) {
+        return workoutExerciseMapper.getExerciseRecords(exerciseId, userId);
     }
 }

@@ -4,13 +4,16 @@ import com.ssafy.back_end.auth.model.UserDto;
 import com.ssafy.back_end.sns.model.MessageDto;
 import com.ssafy.back_end.sns.service.SnsChatService;
 import com.ssafy.back_end.redis.service.RedisMessagePublisher;
+import com.ssafy.back_end.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +29,8 @@ public class SnsChatController {
 
     private final Logger logger = LoggerFactory.getLogger(SnsChatController.class);
 
+    private final JwtUtil jwtUtil = new JwtUtil();
+
     @Autowired
     private SnsChatService snsChatService;
 
@@ -39,9 +44,19 @@ public class SnsChatController {
     // 나중에 토큰을 받고, 토큰이 맞으면 해당 토큰에서 유저 ID를 반환
     @MessageMapping("/connect")
     @SendTo("/topic/connect")
-    public int connect(HttpServletRequest request) {
-        int userId = (Integer)request.getAttribute("userId");
+    public int connect(@Header("Authorization") String token, SimpMessageHeaderAccessor headerAccessor) {
+        if (token == null || token.isEmpty()) {
+            throw new IllegalArgumentException("Authorization token is missing or empty");
+        }
+        logger.info("token: {}", token);
+
+        // JWT 유틸리티 클래스를 사용하여 토큰에서 사용자 ID 추출
+        int userId = jwtUtil.getUserIdFromAccessToken(token);
+
         logger.info("User connected with ID: {}", userId);
+
+        // 세션에 토큰 저장
+        headerAccessor.getSessionAttributes().put("Authorization", token);
 
         return userId;
     }
@@ -113,4 +128,5 @@ public class SnsChatController {
         messagingTemplate.convertAndSend("/queue/messages/room/" + message.getRoomId(), savedMessage);
         logger.info("Sent message to room {}: {}", message.getRoomId(), savedMessage);
     }
+
 }

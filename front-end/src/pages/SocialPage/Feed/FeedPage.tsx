@@ -119,6 +119,19 @@ const FeedPage = (): JSX.Element => {
   const [feedId, setFeedId] = useState<number | null>(null);
   const [commentData, setCommentData] = useState<commentData[]>([]);
 
+
+  // const [userId, setUserId] = useState(null)
+
+  // const userStr = localStorage.getItem("user")
+
+  // useEffect(() => {
+  //   if (userStr) {
+  //     const userObj = JSON.parse(userStr)
+  //     // const userId = userObj.id
+  //     setUserId(userObj.id)
+  //     console.log(userObj.id)
+  //   }
+  // }, [])
   // const getFeedData = async (page: number) => {
   //   if (loading) return;
   //   try {
@@ -200,7 +213,7 @@ const FeedPage = (): JSX.Element => {
       id,
       (resp) => {
         const data = resp.data;
-        console.log(data)
+        // console.log(data)
         if (data === '댓글 0개입니다') {
           setCommentData([]);
         } else {

@@ -60,7 +60,7 @@
                  LEFT JOIN
              (SELECT item_id, image_url
               FROM item_details
-              WHERE detail_type = 'image') d ON i.id = d.item_id
+              WHERE detail_type = 'image' LIMIT 1) d ON i.id = d.item_id
                  LEFT JOIN item_details il ON i.id = il.item_id
             AND il.user_id = #{myId}
             AND il.detail_type = 'like'
@@ -69,8 +69,8 @@
                   ELSE i.user_id = #{userId}
                   END
         ORDER BY i.created_at DESC
-            LIMIT ${limit}
-        OFFSET ${offset};
+            LIMIT #{limit}
+        OFFSET #{offset};
     </select>
 
     <select id="getItemDetail" resultMap="itemDetail">

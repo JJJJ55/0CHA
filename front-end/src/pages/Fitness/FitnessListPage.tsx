@@ -84,15 +84,15 @@ const FitnessListPage = (): JSX.Element => {
   }, [fitness]);
 
   const [add, setAdd] = useState<CreateRoutine[]>([]);
-  const handleClickAdd = (id: number, name: string) => {
+  const handleClickAdd = (exerciseId: number, name: string) => {
     setAdd((prevAdd) => {
-      const existingItem = prevAdd.find((item) => item.id === id);
+      const existingItem = prevAdd.find((item) => item.exerciseId === exerciseId);
       if (existingItem) {
         // Remove item if it already exists
-        return prevAdd.filter((item) => item.id !== id);
+        return prevAdd.filter((item) => item.exerciseId !== exerciseId);
       } else {
         // Add new item
-        return [...prevAdd, { id, name }];
+        return [...prevAdd, { exerciseId, name }];
       }
     });
   };

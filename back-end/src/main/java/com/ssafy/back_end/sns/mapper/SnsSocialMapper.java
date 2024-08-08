@@ -9,6 +9,8 @@ import java.util.List;
 
 @Mapper
 public interface SnsSocialMapper {
+    List<UserPageDto> getAllUsers();   //유저정보 전체조회
+
     UserPageDto getUserPageInfo(@Param ("userId") int userId);   //유저페이지 기본정보
 
     List<UserPageListDto> getUserPageFeeds(@Param ("userId") int userId);   //유저페이지 피드 썸네일

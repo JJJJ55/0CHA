@@ -24,6 +24,13 @@
         <result property="image" column="image"/>
     </resultMap>
 
+    <select id="getAllUsers" resultMap="userFollowList">
+        SELECT id,
+               nickname,
+               profile_image
+        FROM users;
+    </select>
+
     <select id="getUserPageInfo" resultMap="userPageInfo">
         SELECT id,
                nickname,

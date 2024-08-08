@@ -6,6 +6,8 @@ import com.ssafy.back_end.sns.model.UserPageListDto;
 import java.util.List;
 
 public interface SnsSocialService {
+    List<UserPageDto> getAllUsers();   //유저 전체 조회
+
     UserPageDto getUserPageInfo(int userId);   //유저페이지 기본정보
 
     List<UserPageListDto> getUserPageFeeds(int userId);   //유저페이지 피드 썸네일

@@ -1,10 +1,12 @@
-import React, { MouseEventHandler } from 'react';
+import React, { MouseEventHandler, useState } from 'react';
 import styled from 'styled-components';
 
 import Image from '../Common/Image';
 import IconSvg from '../Common/IconSvg';
 import { ReactComponent as likeOn } from '../../asset/img/svg/likeOn.svg';
 import { ReactComponent as likeOff } from '../../asset/img/svg/likeOff.svg';
+
+import { SnsItemLike, SnsItemLikeCancel } from '../../lib/api/sns-api';
 
 const s = {
   Container: styled.section`
@@ -67,17 +69,52 @@ const s = {
 };
 
 interface MarketItemProps {
-  itemImage: string;
-  itemName: string;
-  itemPrice: string;
-  isOnSale: boolean;
-  itemLike: string;
-  isLiked: boolean;
+  itemId: number; // 상품 id
+  itemImage: string; // 상품 이미지 url
+  itemName: string; // 상품명
+  itemPrice: string; // 가격
+  isOnSale: boolean; // 판매중여부
+  itemLike: number; // 좋아요 수
+  isLike: number; // 내가 좋아요 했는지
   onClick: MouseEventHandler<HTMLElement>;
 }
 
 const MarketItem = (props: MarketItemProps): JSX.Element => {
-  const { itemImage, itemName, itemPrice, isOnSale, itemLike, isLiked, onClick } = props;
+  const { itemId, itemImage, itemName, itemPrice, isOnSale, itemLike, isLike, onClick } = props;
+  const [like, setLike] = useState(props.isLike);
+  const [likeCount, setLikeCount] = useState(itemLike); // 좋아요 수 상태 추가
+
+  const handleLike = async (id: number, event: React.MouseEvent<HTMLDivElement>) => {
+    console.log(like);
+    event.stopPropagation(); // 부모 요소로의 이벤트 버블링을 막음
+    if (like) {
+      // 이미 좋아요인 경우
+      await SnsItemLikeCancel(
+        id,
+        (resp) => {
+          console.log(resp.data);
+          setLike(0);
+          setLikeCount(likeCount - 1);
+        },
+        (error) => {
+          console.log(error);
+        },
+      );
+    } else {
+      // 좋아요가 아닌 경우
+      await SnsItemLike(
+        id,
+        (resp) => {
+          console.log(resp.data);
+          setLike(1);
+          setLikeCount(likeCount + 1); // 좋아요 수 업데이트
+        },
+        (error) => {
+          console.log(error);
+        },
+      );
+    }
+  };
 
   return (
     <s.Container>
@@ -88,14 +125,14 @@ const MarketItem = (props: MarketItemProps): JSX.Element => {
           {isOnSale === true ? <s.Available>판매중</s.Available> : <s.Unavailable>판매완료</s.Unavailable>}
         </s.ItemTopArea>
         <s.ItemBottomArea>
-          <s.ItemPrice>{itemPrice}</s.ItemPrice>
-          <s.ItemLikeArea onClick={() => alert('클릭')}>
-            {isLiked === true ? (
+          <s.ItemPrice>{itemPrice}원</s.ItemPrice>
+          <s.ItemLikeArea onClick={(event) => handleLike(itemId, event)}>
+            {like === 1 ? (
               <IconSvg width="23" height="23" Ico={likeOn} />
             ) : (
               <IconSvg width="23" height="23" Ico={likeOff} />
             )}
-            <s.ItemLike>{itemLike}</s.ItemLike>
+            <s.ItemLike>{likeCount}</s.ItemLike>
           </s.ItemLikeArea>
         </s.ItemBottomArea>
       </s.ItemInfoArea>

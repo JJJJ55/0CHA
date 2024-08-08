@@ -6,6 +6,7 @@ import IconSvg from '../../Common/IconSvg';
 import { ReactComponent as jjimOn } from '../../../asset/img/svg/jjimOn.svg';
 import { ReactComponent as jjimOff } from '../../../asset/img/svg/jjimOff.svg';
 import { useNavigate } from 'react-router';
+import { RoutineList } from '../../../util/types/axios-fitness';
 
 const s = {
   Container: styled.div`
@@ -44,25 +45,23 @@ const s = {
     border: 0;
   `,
 };
-
-interface RoutineListProps {
-  num: number;
+interface listType {
+  list: RoutineList[];
 }
-
-const FitnessRoutineList = (props: RoutineListProps): JSX.Element => {
+const FitnessRoutineList = (props: listType): JSX.Element => {
   const navigate = useNavigate();
-  const handleClickMove = (): void => {
-    navigate('detail');
+  const handleClickMove = (id: number): void => {
+    navigate('detail', { state: { id } });
   };
   return (
     <s.Container>
-      {[...Array(props.num)].map((n, index) => (
+      {props.list.map((data, index) => (
         <s.ListBoxArea key={index}>
           <s.ListArea>
-            <s.ContentArea onClick={handleClickMove}>
+            <s.ContentArea onClick={() => handleClickMove(data.id)}>
               <Text
                 width="100%"
-                children="가슴루틴"
+                children={data.title}
                 color="textColor"
                 size="16px"
                 bold="700"
@@ -71,7 +70,7 @@ const FitnessRoutineList = (props: RoutineListProps): JSX.Element => {
               />
               <Text
                 width="100%"
-                children="07.16"
+                children={data.dueDate}
                 color="textColor2"
                 size="14px"
                 bold="700"
@@ -79,12 +78,18 @@ const FitnessRoutineList = (props: RoutineListProps): JSX.Element => {
                 cursor="pointer"
               />
             </s.ContentArea>
-            <s.IconArea>
-              <IconSvg width="25" height="25" Ico={jjimOff} />
-            </s.IconArea>
+            {data.isLike ? (
+              <s.IconArea>
+                <IconSvg width="25" height="25" Ico={jjimOff} />
+              </s.IconArea>
+            ) : (
+              <s.IconArea>
+                <IconSvg width="25" height="25" Ico={jjimOff} />
+              </s.IconArea>
+            )}
           </s.ListArea>
-          {/* {index + 1 === props.data?.length || <s.ListLine />} */}
-          <s.ListLine />
+          {index + 1 === props.list?.length || <s.ListLine />}
+          {/* <s.ListLine /> */}
         </s.ListBoxArea>
       ))}
     </s.Container>

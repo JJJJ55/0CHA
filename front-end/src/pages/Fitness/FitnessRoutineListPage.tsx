@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import FitnessRoutineList from '../../components/Fitness/List/FitnessRoutineList';
 import Header from '../../components/Common/Header';
 import BottomNav from '../../components/Common/BottomNav';
 import Button from '../../components/Common/Button';
+import { getRoutineList } from '../../lib/api/fitness-api';
+import { RoutineList } from '../../util/types/axios-fitness';
 
 const s = {
   Container: styled.section`
@@ -14,11 +16,20 @@ const s = {
 };
 
 const FitnessRoutineListPage = (): JSX.Element => {
+  const [routine, setRoutine] = useState<RoutineList[]>([]);
+  useEffect(() => {
+    getRoutineList(
+      (resp) => {
+        setRoutine(resp.data);
+      },
+      (error) => {},
+    );
+  });
   return (
     <>
       <Header text="루틴목록"></Header>
       <s.Container>
-        <FitnessRoutineList num={10} />
+        <FitnessRoutineList list={routine} />
         <BottomNav />
       </s.Container>
     </>

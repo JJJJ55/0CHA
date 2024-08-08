@@ -18,7 +18,7 @@ const s = {
 interface ImgProps {
   width: string;
   height: string;
-  src: string;
+  src?: string;
   type?: string;
   cursor?: string;
   onClick?: Function;

@@ -24,9 +24,12 @@ public class JwtUtil {
     private static final Key refreshKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     //토큰 만료시간 설정
-    public final static long ACCESS_TOKEN_VALIDATION_SECOND = 1000L * 60 * 60; //액세스 1시간
-    public static final long REFRESH_TOKEN_VALIDATION_SECOND = 1000L * 60 * 60 * 24 * 7; //리프레쉬 7일
+    public final static long ACCESS_TOKEN_VALIDATION_SECOND = 1000L * 60; //액세스 1시간
+    public static final long REFRESH_TOKEN_VALIDATION_SECOND = 1000L * 60*2; //리프레쉬 7일
+//    public final static long ACCESS_TOKEN_VALIDATION_SECOND = 1000L * 60 * 60; //액세스 1시간
+//    public static final long REFRESH_TOKEN_VALIDATION_SECOND = 1000L * 60 * 60 * 24 * 7; //리프레쉬 7일
     public static final String AUTHORIZATION_HEADER = "Authorization"; //헤더 이름
+    public static final String REFRESH_HEADER = "RefreshToken"; //헤더 이름
 
     // Access Token 생성 메서드
     public String createAccessToken(int userId) {
@@ -62,20 +65,16 @@ public class JwtUtil {
         try {
             if (isRefreshToken) {
                 Jwts.parserBuilder().setSigningKey(refreshKey).build().parseClaimsJws(token);
-            }
-            else {
+            } else {
                 Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
             }
             return true;
-        }
-        catch (ExpiredJwtException e) {
+        } catch (ExpiredJwtException e) {
             logger.info("토큰이 만료되었습니다.");
             throw e;  // 만료된 토큰일 경우 예외를 던짐
-        }
-        catch (SignatureException e) {
+        } catch (SignatureException e) {
             System.out.println("잘못된 토큰 서명입니다.");
-        }
-        catch (IllegalArgumentException | JwtException e) {
+        } catch (IllegalArgumentException | JwtException e) {
             System.out.println("잘못된 토큰입니다.");
         }
         return false;
@@ -98,10 +97,32 @@ public class JwtUtil {
 
         String bearerToken = httpServletRequest.getHeader(AUTHORIZATION_HEADER);
         System.out.println("accessToken: " + bearerToken);
-        if (StringUtils.hasText(bearerToken) ) {
+
+        //
+        String rt = httpServletRequest.getHeader(REFRESH_HEADER);
+        System.out.println("refreshToken: " + rt);
+        //
+
+        if (StringUtils.hasText(bearerToken)) {
             return bearerToken;
         }
 
         return null;
+    }
+
+    // HttpServletRequest에서 Refresh Token을 추출하는 메서드
+    public String getRefreshToken(HttpServletRequest httpServletRequest) {
+        return httpServletRequest.getHeader(REFRESH_HEADER);
+    }
+
+    public boolean isRefreshTokenExpired(String refreshToken) {
+        try {
+            Jwts.parserBuilder().setSigningKey(refreshKey).build().parseClaimsJws(refreshToken);
+            return false;
+        } catch (ExpiredJwtException e) {
+            return true;
+        } catch (JwtException e) {
+            return false;
+        }
     }
 }

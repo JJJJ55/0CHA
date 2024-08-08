@@ -233,6 +233,10 @@
 .routine {
   color: #666666;
 }
+/* 선택할 날 */
+.pick {
+  color: red;
+}
 
 /* 오늘 */
 .react-calendar__tile--now:enabled:hover,

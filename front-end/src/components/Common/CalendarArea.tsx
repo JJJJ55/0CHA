@@ -22,6 +22,7 @@ type CalendarProps = {
   className?: string;
   RoutineFinish?: string[];
   Routine?: string[];
+  pick?: string;
   onChangeDate?: OnClickFunc;
 };
 
@@ -47,6 +48,9 @@ const CalendarArea = (props: CalendarProps): JSX.Element => {
         }
         if (props.Routine?.find((x) => x === moment(date).format('YYYY-MM-DD'))) {
           return 'routine';
+        }
+        if (props.pick === moment(date).format('YYYY-MM-DD')) {
+          return 'pick';
         }
       }}
       tileContent={({ date, view }) => {

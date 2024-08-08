@@ -73,7 +73,8 @@ const FitnessListPage = (): JSX.Element => {
         setjjim(resp.data);
       },
       (error) => {
-        console.log(error);
+        // console.log(error);
+        console.log('없음');
       },
     );
   }, []);
@@ -100,6 +101,7 @@ const FitnessListPage = (): JSX.Element => {
     // console.log(add);
   };
 
+  // alert(jjim);
   return (
     <s.Container>
       <s.HeaderArea>
@@ -110,6 +112,11 @@ const FitnessListPage = (): JSX.Element => {
       </s.HeaderArea>
       <s.MainArea>
         <s.FitnessArea>
+          {/* {!jjim || jjim.length === 0 ? (
+            ''
+          ) : (
+            <FitnessList text="즐겨찾기" data={jjim} add={add} onAdd={handleClickAdd} />
+          )} */}
           <FitnessList text="즐겨찾기" data={jjim} add={add} onAdd={handleClickAdd} />
           <FitnessList text="전체" data={fitness} add={add} onAdd={handleClickAdd} />
         </s.FitnessArea>

@@ -53,7 +53,8 @@ public class JwtInterceptor implements HandlerInterceptor {
             } catch (ExpiredJwtException e) {
 
                 if (refreshToken != null && jwtUtil.isRefreshTokenExpired(refreshToken)) {
-                    int userId = jwtUtil.getUserIdFromRefreshToken(refreshToken);
+                    
+                    int userId = userLoginService.getUserIdByRefreshToken(refreshToken);
                     userLoginService.invalidateRefreshToken(userId);
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     response.getWriter().write("Refresh token is expired, logged out");

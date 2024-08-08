@@ -51,4 +51,19 @@ public class RecordController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("인바디 결과등록 오류");
     }
 
+//    @Operation (summary = "1RM 기록 가져오기")
+//    @GetMapping("/rm")
+//    public ResponseEntity<?> rm(HttpServletRequest request) {
+//        int ID = (Integer)request.getAttribute("userId");
+//
+//
+//
+//        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("불러올 수 없습니다.");
+//    }
+
+//    @Operation( summary = "해당 운동의 운동량 기록 가져오기")
+//    @GetMapping("/volume/{exercise-id}")
+//    public ResponseEntity<?> getVolume(HttpServletRequest request, @PathVariable int exerciseId) {
+//
+//    }
 }

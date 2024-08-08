@@ -4,6 +4,8 @@ import com.ssafy.back_end.auth.model.UserDto;
 import com.ssafy.back_end.sns.model.MessageDto;
 import com.ssafy.back_end.sns.service.SnsChatService;
 import com.ssafy.back_end.redis.service.RedisMessagePublisher;
+import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +17,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 @Controller
 @RequestMapping("/api/sns/chat")
@@ -37,16 +35,70 @@ public class SnsChatController {
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
-    private final List<Integer> dummyUserIds = Arrays.asList(1, 2, 3); // 더미 유저 ID 목록
-    private final Random random = new Random();
+    // 연결 요청 시 더미 유저 ID 반환
+    // 나중에 토큰을 받고, 토큰이 맞으면 해당 토큰에서 유저 ID를 반환
+    @MessageMapping("/connect")
+    @SendTo("/topic/connect")
+    public int connect(HttpServletRequest request) {
+        int userId = (Integer)request.getAttribute("userId");
+        logger.info("User connected with ID: {}", userId);
+
+        return userId;
+    }
+
+    // 특정 유저를 제외한 모든 유저 리스트 반환
+    // 자신을 제외한 채팅 가능한 유저 목록 표시를 위해 사용
+    @Operation(summary = "자신을 제외한 채팅 가능한 유저 목록")
+    @GetMapping("/users")
+    @ResponseBody
+    public List<UserDto> getUsers(HttpServletRequest request) {
+        int excludeUserId = (Integer)request.getAttribute("userId");
+        logger.info("Fetching users excluding userId: {}", excludeUserId);
+
+        List<UserDto> users = snsChatService.getUsersExcludeMe(excludeUserId);
+        logger.info("Retrieved users excluding userId {}: {}", excludeUserId, users);
+
+        return users;
+    }
+
+    // 채팅방 생성
+    // 채팅방이 없으면 채팅방 생성 or 이미 존재하면 해당 채팅방 식별 ID 리턴
+    @Operation(summary = "채팅방이 없으면 채팅방 생성 or 이미 존재하면 해당 채팅방 식별 ID 리턴")
+    @GetMapping("/createRoom")
+    @ResponseBody
+    public int createRoom(HttpServletRequest request, @RequestParam int receiverId) {
+        int senderId = (Integer)request.getAttribute("userId");
+        logger.info("Creating room with senderId: {} and receiverId: {}", senderId, receiverId);
+
+        int roomId = snsChatService.getOrCreateRoom(senderId, receiverId);
+        logger.info("Room created or retrieved with ID: {}", roomId);
+
+        return roomId;
+    }
+
+    // 특정 채팅방의 메시지 히스토리 가져옴
+    @Operation(summary = "특정 채팅방의 메시지 히스토리 가져오기")
+    @GetMapping("/history")
+    @ResponseBody
+    public List<MessageDto> getMessageHistory(@RequestParam int roomId) {
+        logger.info("Fetching message history for roomId: {}", roomId);
+
+        List<MessageDto> history = snsChatService.getMessageHistory(roomId);
+        logger.info("Retrieved message history for roomId {}: {}", roomId, history);
+
+        return history;
+    }
 
     // 메시지 수신 및 발송
     @MessageMapping("/message")
-    public void sendMessage(MessageDto message) {
+    public void sendMessage(HttpServletRequest request, MessageDto message) {
+        int senderId = (Integer)request.getAttribute("userId");
+        logger.info("senderId : {}", senderId);
         logger.info("Received message: {}", message);
+
         // 메시지 저장
         MessageDto savedMessage = snsChatService.saveMessage(
-                message.getSenderId(),
+                senderId,
                 message.getRoomId(),
                 message.getMessage()
         );
@@ -60,47 +112,5 @@ public class SnsChatController {
         // 채팅방의 채널로 메시지 발송
         messagingTemplate.convertAndSend("/queue/messages/room/" + message.getRoomId(), savedMessage);
         logger.info("Sent message to room {}: {}", message.getRoomId(), savedMessage);
-    }
-
-    // 특정 채팅방의 메시지 히스토리 가져옴
-    @GetMapping("/history")
-    @ResponseBody
-    public List<MessageDto> getMessageHistory(@RequestParam int roomId) {
-        logger.info("Fetching message history for roomId: {}", roomId);
-        List<MessageDto> history = snsChatService.getMessageHistory(roomId);
-        logger.info("Retrieved message history for roomId {}: {}", roomId, history);
-        return history;
-    }
-
-    // 연결 요청 시 더미 유저 ID 반환
-    // 나중에 토큰을 받고, 토큰이 맞으면 해당 토큰에서 유저 ID를 반환
-    @MessageMapping("/connect")
-    @SendTo("/topic/connect")
-    public int connect() {
-        int userId = dummyUserIds.get(random.nextInt(dummyUserIds.size()));
-        logger.info("User connected with dummy ID: {}", userId);
-        return userId;
-    }
-
-    // 특정 유저를 제외한 모든 유저 리스트 반환
-    // 자신을 제외한 채팅 가능한 유저 목록 표시를 위해 사용
-    @GetMapping("/users")
-    @ResponseBody
-    public List<UserDto> getUsers(@RequestParam int excludeUserId) {
-        logger.info("Fetching users excluding userId: {}", excludeUserId);
-        List<UserDto> users = snsChatService.getUsersExcludeMe(excludeUserId);
-        logger.info("Retrieved users excluding userId {}: {}", excludeUserId, users);
-        return users;
-    }
-
-    // 채팅방 생성
-    // 채팅방이 없으면 채팅방 생성 or 이미 존재하면 해당 채팅방 식별 ID 리턴
-    @GetMapping("/createRoom")
-    @ResponseBody
-    public int createRoom(@RequestParam int senderId, @RequestParam int receiverId) {
-        logger.info("Creating room with senderId: {} and receiverId: {}", senderId, receiverId);
-        int roomId = snsChatService.getOrCreateRoom(senderId, receiverId);
-        logger.info("Room created or retrieved with ID: {}", roomId);
-        return roomId;
     }
 }

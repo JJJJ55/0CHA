@@ -1,6 +1,7 @@
 package com.ssafy.back_end.exercise.controller;
 
 import com.ssafy.back_end.exercise.model.ExerciseDto;
+import com.ssafy.back_end.exercise.model.ExerciseRecordDto;
 import com.ssafy.back_end.exercise.service.WorkoutExerciseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,8 +26,9 @@ public class WorkoutExerciseController {
 
     @Operation(summary = "모든 운동 목록 조회", description = "모든 운동 목록을 조회합니다.")
     @GetMapping
-    public ResponseEntity<?> getAllExercises() {
-        List<ExerciseDto> exercises = workoutExerciseService.getAllExercises();
+    public ResponseEntity<?> getAllExercises(HttpServletRequest request) {
+        int userId = (Integer) request.getAttribute("userId");
+        List<ExerciseDto> exercises = workoutExerciseService.getAllExercises(userId);
         if (exercises.isEmpty()) {
             return ResponseEntity.ok("운동 목록이 비어 있습니다");
         }
@@ -124,5 +126,13 @@ public class WorkoutExerciseController {
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("이미지 URL 저장 실패");
         }
+    }
+
+    @Operation(summary = "특정 운동의 운동량과 수행 일자 조회", description = "특정 운동의 운동량과 수행 일자를 조회합니다.")
+    @GetMapping("/{exercise-id}/records")
+    public ResponseEntity<?> getExerciseRecords(HttpServletRequest request, @PathVariable("exercise-id") int exerciseId) {
+        int userId = (Integer) request.getAttribute("userId");
+        List<ExerciseRecordDto> records = workoutExerciseService.getExerciseRecords(exerciseId, userId);
+        return ResponseEntity.ok(records);
     }
 }

@@ -1,9 +1,6 @@
 package com.ssafy.back_end.sns.controller;
 
-import com.ssafy.back_end.sns.model.FeedDto;
-import com.ssafy.back_end.sns.model.FeedInteractionDto;
-import com.ssafy.back_end.sns.model.SnsRoutineDto;
-import com.ssafy.back_end.sns.model.UserPageDto;
+import com.ssafy.back_end.sns.model.*;
 import com.ssafy.back_end.sns.service.SnsFeedServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -48,9 +45,9 @@ public class SnsFeedController {
     public ResponseEntity<?> getMyRoutine(HttpServletRequest request) {
         int ID = (Integer)request.getAttribute("userId");
 
-        int routine = snsFeedService.getMyRoutine(ID);   //유저아이디, 오늘날짜, 완료한 내 루틴의 아이디 조회 서비스
+        SnsRoutineDto routine = snsFeedService.getMyRoutine(ID);   //유저아이디, 오늘날짜, 완료한 내 루틴의 아이디 조회 서비스
 
-        if (routine != 0) {
+        if (routine != null) {
             return ResponseEntity.ok(routine);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("오늘 운동 안함");

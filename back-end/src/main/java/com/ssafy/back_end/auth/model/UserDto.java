@@ -2,7 +2,7 @@ package com.ssafy.back_end.auth.model;
 
 import lombok.*;
 
-import java.util.Date;
+import java.sql.Date;
 
 @Getter
 @Setter

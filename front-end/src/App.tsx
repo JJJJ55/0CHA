@@ -2,11 +2,7 @@ import React from 'react';
 import styled, { ThemeProvider } from 'styled-components';
 import { darkTheme } from './styles/theme';
 import GlobalStyle from './styles/global-styles';
-import Input from './components/Common/Input';
-import Button from './components/Common/Button';
-import Text from './components/Common/Text';
 import LoginPage from './pages/LoginBefore/Login/LoginPage';
-import BottomNav from './components/Common/BottomNav';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { PrivateRoute, PublicRoute } from './pages/IsLoginPage';
 import SignUpPage from './pages/LoginBefore/SignUp/SignUpPage';
@@ -45,8 +41,9 @@ import UploadItemPage from './pages/SocialPage/Market/UploadItemPage';
 import ChatListPage from './pages/SocialPage/Feed/ChatListPage';
 import ChatPage from './pages/SocialPage/Feed/ChatPage';
 import NotificationPage from './pages/SocialPage/Feed/NotificationPage';
+import ErrorPage from './pages/ErrorPage';
 import { useAppSelector } from './lib/hook/useReduxHook';
-import { selectSnsType } from './store/page';
+import { selectIsEmail, selectIsFinish, selectIsPlay, selectIsPw, selectIsScan, selectIsSign } from './store/page';
 
 const s = {
   Background: styled.section`
@@ -75,7 +72,12 @@ const s = {
 };
 
 function App() {
-  const snsType = useAppSelector(selectSnsType);
+  const isSign = useAppSelector(selectIsSign);
+  const isEmail = useAppSelector(selectIsEmail);
+  const isPw = useAppSelector(selectIsPw);
+  const isPlay = useAppSelector(selectIsPlay);
+  const isFinish = useAppSelector(selectIsFinish);
+  const isScan = useAppSelector(selectIsScan);
   return (
     <>
       <ThemeProvider theme={darkTheme}>
@@ -88,38 +90,27 @@ function App() {
                 <Route path="/" element={<SplashPage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/signup">
-                  <Route index element={<SignUpPage />} />
-                  <Route path="ok" element={<PlusInfoPage />} />
+                  {isSign ? <Route index element={<PlusInfoPage />} /> : <Route index element={<SignUpPage />} />}
                 </Route>
                 <Route path="/find">
                   <Route path="email">
-                    <Route path="" element={<FindEmailPage />} />
-                    <Route path="" element={<FindEmailResultPage />} />
+                    {isEmail ? (
+                      <Route index element={<FindEmailResultPage />} />
+                    ) : (
+                      <Route index element={<FindEmailPage />} />
+                    )}
                   </Route>
                   <Route path="password">
-                    <Route path="" element={<FindPasswordPage />} />
-                    <Route path="" element={<ResetPasswordPage />} />
+                    {isPw ? (
+                      <Route index element={<ResetPasswordPage />} />
+                    ) : (
+                      <Route index element={<FindPasswordPage />} />
+                    )}
                   </Route>
                 </Route>
               </Route>
               <Route element={<PrivateRoute />}>
                 <Route path="/main" element={<MainPage />} />
-                {/* <Route path="/fitness">
-                  <Route index element={<Navigate to="list" />} />
-                  <Route path="list">
-                    <Route index element={<FitnessListPage />} />
-                    <Route path="detail" element={<FitnessDetailPage />} />
-                  </Route>
-                  <Route path="plan" element={<FitnessPlanSetPage />} />
-                  <Route path="history">
-                    <Route index element={<FitnessRoutineListPage />} />
-                    <Route path="detail" element={<FitnessRoutineDetatilPage />} />
-                  </Route>
-                  <Route path="play">
-                    <Route path="" element={<FitnessPlayPage />} />
-                    <Route path="" element={<FitnessFinishPage />} />
-                  </Route>
-                </Route> */}
                 {/* fitness */}
                 <Route path="/fitness" element={<FitnessPage />}>
                   <Route index element={<Navigate to="list" replace />} />
@@ -133,30 +124,28 @@ function App() {
                     <Route path="detail" element={<FitnessRoutineDetatilPage />} />
                   </Route>
                 </Route>
-                <Route path="/play">
-                  <Route path="" element={<FitnessPlayPage />} />
-                  <Route path="" element={<FitnessFinishPage />} />
-                </Route>
-                {/* record */}
-                {/* <Route path="/record">
-                  <Route index element={<Navigate to={'main'} />} />
-                  <Route path="main" element={<RecordMainPage />} />
-                  <Route path="inbody">
-                    <Route path="scan">
-                      <Route path="" element={<RecordInBodyScanPage />} />
-                      <Route path="" element={<RecordInBodyScanResultPage />} />
-                    </Route>
-                    <Route path="data" element={<RecordInBodyChartPage />} />
+                {isPlay ? (
+                  <Route path="/play">
+                    {isFinish ? (
+                      <Route index element={<FitnessFinishPage />} />
+                    ) : (
+                      <Route index element={<FitnessPlayPage />} />
+                    )}
                   </Route>
-                  <Route path="data" element={<RecordFitnessChartPage />} />
-                </Route> */}
+                ) : (
+                  ''
+                )}
+                {/* record */}
                 <Route path="/record" element={<RecordPage />}>
                   <Route index element={<Navigate to={'main'} replace />} />
                   <Route path="main" element={<RecordMainPage />} />
                   <Route path="inbody">
                     <Route path="scan">
-                      <Route path="" index element={<RecordInBodyScanPage />} />
-                      <Route path="" element={<RecordInBodyScanResultPage />} />
+                      {isScan ? (
+                        <Route index element={<RecordInBodyScanResultPage />} />
+                      ) : (
+                        <Route index element={<RecordInBodyScanPage />} />
+                      )}
                     </Route>
                     <Route path="data" element={<RecordInBodyChartPage />} />
                   </Route>
@@ -187,12 +176,13 @@ function App() {
                 </Route>
                 {/* mypage */}
                 <Route path="/mypage">
-                  <Route path="" element={<ProfileMainPage />} />
+                  <Route index element={<ProfileMainPage />} />
                   <Route path="info" element={<UpdateMyInfoPage />} />
                   <Route path="profile" element={<UpdateProfilePage />} />
                   <Route path="password" element={<ChangePasswordPage />} />
                 </Route>
               </Route>
+              <Route path="*" element={<ErrorPage />} />
             </Routes>
           </BrowserRouter>
         </s.Container>

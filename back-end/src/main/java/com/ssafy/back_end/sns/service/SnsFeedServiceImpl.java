@@ -3,6 +3,7 @@ package com.ssafy.back_end.sns.service;
 import com.ssafy.back_end.sns.mapper.SnsFeedMapper;
 import com.ssafy.back_end.sns.model.FeedDto;
 import com.ssafy.back_end.sns.model.FeedInteractionDto;
+import com.ssafy.back_end.sns.model.SnsRoutineDto;
 import com.ssafy.back_end.sns.model.UserPageDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,8 +21,23 @@ public class SnsFeedServiceImpl implements SnsFeedService {
     }
 
     @Override
-    public List<FeedDto> getFeeds(int myId, int userId) {
-        return snsFeedMapper.getFeeds(myId, userId);
+    public List<FeedDto> getFeeds(int myId, int userId, int offset, int limit) {
+        return snsFeedMapper.getFeeds(myId, userId, offset, limit);
+    }
+
+    @Override
+    public int getMyRoutine(int userId) {
+        return 0;   //매퍼실행
+    }
+
+    @Override
+    public SnsRoutineDto getRoutine(int feedId) {
+        return null;   //피드 아이디로 루틴아이디로 루틴을 찾는 매퍼 실행, 타입 Dto로 변경필요
+    }
+
+    @Override
+    public int saveRoutine(int userId, int routineId) {
+        return 0;   //루틴에 유저 아이디 추가해서 저장하기
     }
 
     @Override

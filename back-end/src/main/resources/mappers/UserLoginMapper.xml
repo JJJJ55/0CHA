@@ -22,6 +22,12 @@
         WHERE id = #{id}
     </update>
 
+    <select id="getUserIdByRefreshToken" resultType="int">
+        SELECT id
+        FROM users
+        WHERE refresh_token = #{refreshToken};
+    </select>
+
     <select id="social">
 
     </select>

@@ -128,11 +128,11 @@ public class WorkoutExerciseController {
         }
     }
 
-    @Operation(summary = "특정 운동의 운동량과 수행 일자 조회", description = "특정 운동의 운동량과 수행 일자를 조회합니다.")
+    @Operation(summary = "특정 운동의 기록 조회", description = "해당 운동에 대한 사용자의 기록을 조회합니다.")
     @GetMapping("/{exercise-id}/records")
     public ResponseEntity<?> getExerciseRecords(HttpServletRequest request, @PathVariable("exercise-id") int exerciseId) {
         int userId = (Integer) request.getAttribute("userId");
-        List<ExerciseRecordDto> records = workoutExerciseService.getExerciseRecords(exerciseId, userId);
+        List<ExerciseRecordDto> records = workoutExerciseService.getRecentExerciseRecords(exerciseId, userId);
         return ResponseEntity.ok(records);
     }
 }

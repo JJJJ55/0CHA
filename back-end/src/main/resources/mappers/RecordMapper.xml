@@ -39,4 +39,34 @@
                 #{muscleLeftLeg}, #{muscleRightLeg}, #{bmi}, #{bodyFatPercent}, NOW());
     </insert>
 
+    <select id="getRecentExerciseRecords" parameterType="int" resultType="com.ssafy.back_end.record.model.RecordDto">
+        SELECT
+            r.completed_at AS date,
+            MAX(rs.weight) AS maxWeight, -- 1RM (가장 높은 무게)
+            SUM(rs.weight * rs.count) AS totalVolume, -- 총 운동량
+            SUM(rs.count) AS totalTime -- 총 운동 시간 (세트 수)
+        FROM
+            routines r
+            JOIN routine_details rd ON r.id = rd.routine_id
+            JOIN routine_sets rs ON rd.id = rs.routine_detail_id
+        WHERE
+            r.user_id = #{userId}
+        GROUP BY
+            r.completed_at
+        ORDER BY
+            r.completed_at DESC
+            LIMIT 5
+    </select>
+
+    <select id="getUserRoutines" parameterType="int" resultType="com.ssafy.back_end.record.model.RoutineListDto">
+        SELECT
+            r.id AS routineId,
+            r.title AS routineName,
+            r.due_date AS dueDate,
+            r.is_complete AS isCompleted
+        FROM
+            routines r
+        WHERE
+            r.user_id = #{userId}
+    </select>
 </mapper>

@@ -73,25 +73,27 @@ public class SnsItemController {
     @Operation(summary = "중고장터 글쓰기-완")
     @PostMapping("/write")
     public ResponseEntity<?> writeItem(HttpServletRequest request,
-                                       @ModelAttribute ItemDto item,
-                                       @RequestParam("images") MultipartFile[] images) {
+                                       @RequestPart("item") ItemDto item,
+                                       @RequestPart("images") List<MultipartFile> images) {
 
 
         int userID = (Integer) request.getAttribute("userId");
         item.setUserId(userID);
+        item.setImages(images);
 
         log.debug("item : {}", item.toString());
 
         // 작성된 게시글 번호
         int itemID = snsItemService.writeItem(item);
+        log.debug("itemID : {}", itemID);
 
         // 받은 이미지로 서버에 저장하고 저장된 경로를 list로 반환
         List<String> savedImagePath = new ArrayList<>();
 
         String uploadDir = "/home/ubuntu/images/item/";
 
-        for (int i = 0; i < images.length; i++) {
-            MultipartFile image = images[i];
+        for (int i = 0; i < images.size(); i++) {
+            MultipartFile image = images.get(i);
             if (!image.isEmpty()) {
                 try {
                     String originalImageName = image.getOriginalFilename();
@@ -105,12 +107,16 @@ public class SnsItemController {
                     // 고유한 파일 이름 생성
                     // 사용자 ID-게시물 번호-해당 게시물에서 이미지 순서.확장자
                     String newFileName = userID + "-" + itemID + "-" + i + imageExtension;
+                    log.debug("newFileName : {}", newFileName);
 
                     // 파일 저장
                     image.transferTo(new File(uploadDir + newFileName));
+//                    image.transferTo(new File("C:\\Users\\pswlo\\OneDrive\\문서\\home\\ubuntu\\images\\item\\" + newFileName));
 
                     // 이미지 정보 DB에 저장
                     String imageUrl = uploadDir + newFileName;
+                    log.debug("imageUrl : {}", imageUrl);
+
                     snsItemService.saveImageDetail(itemID, userID, imageUrl, originalImageName, newFileName);
 
                 } catch (IOException e) {

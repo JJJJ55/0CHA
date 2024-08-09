@@ -46,6 +46,7 @@ services:
       - "${JENKINS_AGENT_PORT}:50000"
     volumes:
       - "${JENKINS_VOLUME_PATH}:/var/jenkins_home"
+      - /home/ubuntu/S11P12B310/docker/data:/host_data
       - /var/run/docker.sock:/var/run/docker.sock
       - /usr/bin/docker:/usr/bin/docker
     environment:

@@ -14,6 +14,8 @@ public interface WorkoutRoutineService {
 
     RoutineDto getRoutineById(int routineId, int userId);
 
+    RoutineDto getRoutine(int routineId);
+
     int upsertRoutine(RoutineDto routineDto);
 
     int deleteRoutine(int routineId, int userId);

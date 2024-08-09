@@ -84,6 +84,10 @@
         SELECT * FROM routines WHERE id = #{routineId} AND user_id = #{userId}
     </select>
 
+    <select id="getRoutineById" resultMap="RoutineResultMap">
+        SELECT * FROM routines WHERE id = #{routineId}
+    </select>
+
     <select id="getRoutineDetailsByRoutineId" parameterType="int" resultMap="RoutineDetailResultMap">
         SELECT rd.*, e.name as exerciseName
         FROM routine_details rd

@@ -29,6 +29,11 @@
         <result property="comment" column="comment"/>
         <result property="createdAt" column="created_at"/>
     </resultMap>
+    
+    <resultMap id="routineDetails" type="com.ssafy.back_end.sns.model.SnsRoutineDetailDto">
+        <result property="exerciseName" column="exercise_name" />
+        <result property="setCount" column="set_count" />
+    </resultMap>
 
     <select id="getFeeds" resultMap="feed">
         SELECT f.id                                 AS id,
@@ -66,6 +71,37 @@
         OFFSET #{offset};
 
     </select>
+
+
+    <select id="getMyRoutine" resultType="Integer">
+        SELECT id
+        FROM routines
+        WHERE user_id = #{userId} AND is_complete = 1 AND DATE(completed_at) = CURDATE();
+    </select>
+
+    <select id="getRoutineId" resultType="Integer">
+        SELECT routine_id
+        FROM feeds
+        WHERE id = #{feedId};
+    </select>
+
+    <select id="getRoutine" resultMap="routineDetails">
+        SELECT rd.id,
+               e.name                               AS exercise_name,
+               (SELECT COUNT(*)
+                FROM routine_sets rs
+                WHERE rs.routine_detail_id = rd.id) AS set_count
+        FROM routine_details rd
+                 JOIN exercises e ON rd.exercise_id = e.id
+        WHERE rd.routine_id = #{routineId};
+    </select>
+
+<!--    <insert id="saveRoutine">-->
+<!--    </insert>-->
+
+
+
+
 
     <insert id="writeFeed">
         INSERT INTO feeds (content, image, routine_id, user_id)

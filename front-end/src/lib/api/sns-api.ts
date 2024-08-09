@@ -190,7 +190,7 @@ export const SnsItemList = async (
 ) => {
   await jwt
     .get(
-      `/sns/item/list?user-id=${param.userId}&page=${param.page}&limit=${param.limit}&district=${param.district}&si_gun_gu=${param.siGunGu}&title=${param.title}`,
+      `/sns/item/list?user-id=${param.userId}&page=${param.page}&limit=${param.limit}&district=${param.district}&si-gun-gu=${param.siGunGu}&title=${param.title}`,
     )
     .then(success)
     .catch(fail);

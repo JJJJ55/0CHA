@@ -463,7 +463,8 @@ const SignUpPage = (): JSX.Element => {
         (resp) => {
           dispatch(pageActions.OnPageChange());
           alert('가입성공');
-          navigate('/signup', { state: { id: resp.data.id } });
+          console.log('뱉은 값 : ' + resp.data);
+          navigate('/signup', { state: { id: resp.data } });
         },
         (error) => {
           alert('가입도중 오류가 발생하였습니다. 잠시후 다시 시도해주세요.');

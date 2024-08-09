@@ -33,13 +33,11 @@ const s = {
   `,
 };
 
-const FitnessPlayBottomNav = (): JSX.Element => {
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
+interface PlayProps {
+  onFinish: Function;
+}
 
-  const handleFinish = (): void => {
-    dispatch(pageActions.toogleIsFinish(true));
-  };
+const FitnessPlayBottomNav = (props: PlayProps): JSX.Element => {
   return (
     <s.Container>
       <s.MainArea>
@@ -52,7 +50,7 @@ const FitnessPlayBottomNav = (): JSX.Element => {
           <Text width="100%" children="00:00" bold="700" size="16px" textalian="center" />
         </s.ContentArea>
       </s.MainArea>
-      <Button width="40%" height="40px" children="운동 종료" bold="500" type="main" onClick={handleFinish} />
+      <Button width="40%" height="40px" children="운동 종료" bold="500" type="main" onClick={() => props.onFinish()} />
     </s.Container>
   );
 };

@@ -119,12 +119,27 @@ public class MainController {
         return ResponseEntity.ok(summaryRoutines);
     }
 
-    @Operation(summary = "본인의 루틴 목록 조회", description = "사용자의 모든 루틴 목록을 조회합니다.")
-    @GetMapping("/routines")
+    @Operation(summary = "본인의 모든 루틴 목록 조회", description = "사용자의 모든 루틴 목록을 조회합니다.")
+    @GetMapping("/routines/all")
     public ResponseEntity<?> getAllRoutines(HttpServletRequest request) {
         int userId = (Integer) request.getAttribute("userId");
 
         List<RoutineDto> routines = workoutRoutineService.getAllRoutines(userId);
+        if (routines.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("루틴 목록이 비어 있습니다");
+        }
+        List<RoutineSummaryDto> summaryRoutines = routines.stream()
+                .map(r -> new RoutineSummaryDto(r.getId(), r.getTitle(), r.getDueDate(), r.isLike()))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(summaryRoutines);
+    }
+
+    @Operation(summary = "본인의 최근 5개 루틴 목록 조회", description = "사용자의 최근 5개 루틴 목록을 조회합니다.")
+    @GetMapping("/routines")
+    public ResponseEntity<?> getAllRoutinesLimit(HttpServletRequest request) {
+        int userId = (Integer) request.getAttribute("userId");
+
+        List<RoutineDto> routines = workoutRoutineService.getAllRoutinesLimit(userId);
         if (routines.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("루틴 목록이 비어 있습니다");
         }

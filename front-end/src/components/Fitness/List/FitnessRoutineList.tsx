@@ -64,11 +64,12 @@ const FitnessRoutineList = (): JSX.Element => {
   }, []);
 
   const handleDeleteRoutine = async (id: number) => {
-    if (window.confirm('삭제하시겠습니까?')) {
+    if (window.confirm('해당 루틴으로 오운완 피드를 올리셨다면 피드도 같이 삭제됩니다. 그래도 삭제하시겠습니까?')) {
       await delRoutine(
         id,
         (resp) => {
           console.log('성공');
+          setRoutine((prevRoutine) => prevRoutine.filter((item) => item.id !== id));
         },
         (error) => {
           alert('잠시 후 다시 시도해주세요.');
@@ -82,6 +83,7 @@ const FitnessRoutineList = (): JSX.Element => {
       id,
       (resp) => {
         console.log('성공');
+        setRoutine((prevRoutine) => prevRoutine.map((item) => (item.id === id ? { ...item, like: !item.like } : item)));
       },
       (error) => {
         alert('잠시 후 다시 시도해주세요.');

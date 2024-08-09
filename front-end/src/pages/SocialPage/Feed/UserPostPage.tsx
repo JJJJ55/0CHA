@@ -15,6 +15,7 @@ import { useParams } from 'react-router';
 
 import { UserPage } from '../../../lib/api/sns-api';
 import { UserPageFeed } from '../../../lib/api/sns-api';
+import { UserPageItem } from '../../../lib/api/sns-api';
 
 const s = {
   Container: styled.section`
@@ -75,12 +76,17 @@ type userPageData = {
   itemCount: number;
   followedIdCount: number;
   followerIdCount: number;
-}
+};
 
 type userPageFeedData = {
   id: number;
   image: string;
-}
+};
+
+type userPageMarketData = {
+  id: number;
+  image: string;
+};
 
 const UserPostPage = (): JSX.Element => {
   const [isFitness, setIsFitness] = useState(true);
@@ -105,6 +111,7 @@ const UserPostPage = (): JSX.Element => {
   
   const [userData, setUserData] = useState<userPageData>();
   const [feedData, setFeedData] = useState<userPageFeedData[]>([]);
+  const [marketData, setMarketData] = useState<userPageMarketData[]>([]);
   const params = useParams()
   const feedUserId = params.id
 
@@ -142,11 +149,30 @@ const UserPostPage = (): JSX.Element => {
         }
       );
     }
+  };
+
+  const getUserPageMarket = async () => {
+    if (feedUserId) {
+      await UserPageItem(
+        parseInt(feedUserId),
+        (resp) => {
+          if (resp.data === '중고거래 0개입니다') {
+            setMarketData([]);
+          } else {
+            setMarketData(resp.data);
+          }
+        },
+        (error) => {
+          console.log(error);
+        }
+      )
+    }
   }
 
   useEffect(() => {
     getUserPage();
     getUserPageFeed();
+    getUserPageMarket();
   }, [])
 
   return (
@@ -154,9 +180,11 @@ const UserPostPage = (): JSX.Element => {
       <Header text="피드" />
       <s.Container>
         <UserProfileInfo
+          profileUserId={userData?.id}
           isCurrentUser={userId === userData?.id}
           userName={userData?.nickname}
           postCnt={userData?.feedCount}
+          marketCnt={userData?.itemCount}
           followerCnt={userData?.followerIdCount}
           followingCnt={userData?.followedIdCount}
         />
@@ -183,7 +211,13 @@ const UserPostPage = (): JSX.Element => {
                 ))}
               </>
             ) : (
-              <></>
+              <>
+                {marketData.map((thumbnail) => (
+                  <s.Thumbnail key={thumbnail.id}>
+                    <Image width="100%" height="auto" src={thumbnail.image} type="rect" cursor="pointer" />
+                  </s.Thumbnail>
+                ))}
+              </>
             )}      
           </s.ThumbnailArea>
         </s.testArea>

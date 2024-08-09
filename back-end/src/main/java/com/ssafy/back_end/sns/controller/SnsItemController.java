@@ -70,12 +70,9 @@ public class SnsItemController {
     @Operation(summary = "중고장터 글쓰기-완")
     @PostMapping("/write")
     public ResponseEntity<?> writeItem(HttpServletRequest request,
-                                       @RequestParam("item") String itemData,
+                                       @ModelAttribute ItemDto item,
                                        @RequestParam("images") MultipartFile[] images) throws JsonProcessingException {
 
-        // JSON 데이터 처리
-        // 예시: JSON 데이터를 객체로 변환
-        ItemDto item = new ObjectMapper().readValue(itemData, ItemDto.class);
 
         int userID = (Integer) request.getAttribute("userId");
         item.setUserId(userID);

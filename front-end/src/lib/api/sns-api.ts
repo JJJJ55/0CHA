@@ -46,22 +46,32 @@ export const UserPageFollowing = async (
   await jwt.get(`/sns/social/user-page/followings?user-id=${param}`).then(success).catch(fail);
 };
 
+// 팔로우하는 유저인지 조회
+export const IsFollowingUser = async (
+  targetUserId: number,
+  success: (response: any) => void,
+  fail: (error: AxiosError) => void,
+) => {
+  await jwt.get(`/sns/social/is-following?target-id=${targetUserId}`).then(success).catch(fail);
+};
+
 // 팔로우
 export const UserFollow = async (
   targetUserId: number,
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
+  
 ) => {
   await jwt.post(`/sns/social/follow`, targetUserId).then(success).catch(fail);
 };
 
 // 팔로우 삭제 (number 타입가질 시 에러남)
 export const UserFollowCancel = async (
-  targetUserId: any,
+  targetUserId: number,
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
 ) => {
-  await jwt.delete(`/sns/social/follow`, targetUserId).then(success).catch(fail);
+  await jwt.put(`/sns/social/follow`, targetUserId).then(success).catch(fail);
 };
 
 // 피드 내역 가져오기
@@ -289,3 +299,11 @@ export const SnsChatOff = async (
 ) => {
   await jwt.delete(`/sns/chat/connect/${connectionId}`).then(success).catch(fail);
 };
+
+// 유저전체조회(검색)
+export const UserSearch = async (
+  success: (response: any) => void,
+  fail: (error: AxiosError) => void,
+) => {
+  await jwt.get(`/sns/social/search`).then(success).catch(fail);
+}

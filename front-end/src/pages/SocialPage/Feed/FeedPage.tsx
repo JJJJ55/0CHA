@@ -166,7 +166,6 @@ const FeedPage = (): JSX.Element => {
         } else {
           setFeedData((prevData) => [...prevData, ...data]);
         }
-        console.log(data)
         setLoading(false)
       },
       (error) => {
@@ -176,9 +175,6 @@ const FeedPage = (): JSX.Element => {
 
   }
 
-  // useEffect(() => {
-  //   getFeedData(page);
-  // }, [page]);
   useEffect(() => {
     getFeedData(offset);
     console.log('getfeeddata', offset)

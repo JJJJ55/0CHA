@@ -56,7 +56,7 @@ const s = {
   ImageArea: styled.div`
     width: 100%;
     aspect-ratio: 1;
-    border: red 1px solid;
+    border: #212121 1px solid;
   `
 };
 

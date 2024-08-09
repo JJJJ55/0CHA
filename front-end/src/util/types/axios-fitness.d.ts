@@ -35,10 +35,12 @@ export interface RoutineList {
   id: number;
   title: string;
   dueDate: string;
-  isLike: boolean;
+  like: boolean;
 }
 
-export interface RoutineListDetailType {
+// 아래는 루틴불러오기
+
+export interface RoutineListDetail {
   id?: number;
   title: string;
   sumVolume: number;
@@ -46,32 +48,30 @@ export interface RoutineListDetailType {
   createdAt?: string;
   completedAt?: string;
   dueDate: string;
-  details: [
-    {
-      id?: number;
-      routineId: number;
-      exerciseId: number;
-      sequence: number;
-      sets: [
-        {
-          id?: number;
-          routineDetailId: number;
-          sequence: number;
-          weight: number;
-          count: number;
-          set: number;
-          complete: boolean;
-        },
-      ];
-    },
-  ];
+  details: RoutineDetails[];
   like: boolean;
   complete: boolean;
   upload: boolean;
 }
 
+export interface RoutineDetails {
+  exerciseId: number;
+  exerciseName: string;
+  sequence: number;
+  sets: RoutineSets[];
+}
+
+export interface RoutineSets {
+  sequence: number;
+  weight: number | '';
+  count: number | '';
+  complete: boolean;
+}
+
+// 아래는 루틴 생성
+
 export interface CreateRoutine {
-  name: string;
+  exerciseName: string;
   exerciseId: number;
 }
 
@@ -81,15 +81,8 @@ export interface plan {
   detail: any[];
 }
 
-export interface ExerciseDetailType {
-  // id: number;
-  set: number;
-  weight: number | '';
-  count: number | '';
-  is_complete: boolean;
-}
-
 export interface axiosCreateRoutine {
+  id?: number;
   title: string;
   sumVolume?: number;
   sumTime?: number;
@@ -98,10 +91,17 @@ export interface axiosCreateRoutine {
 }
 
 export interface axiosCreateRoutineDetails {
-  name: string;
+  exerciseName: string;
   exerciseId: number;
   sequence: number;
   sets: ExerciseDetailType[];
+}
+
+export interface ExerciseDetailType {
+  sequence: number;
+  weight: number | '';
+  count: number | '';
+  complete: boolean;
 }
 
 export interface mainPageRoutine {
@@ -116,4 +116,10 @@ export interface FitnessMomenthum {
   exerciseName: string;
   volume: number;
   totalTime: number;
+}
+
+export interface FinishProps {
+  date: string;
+  volume: number;
+  time: number;
 }

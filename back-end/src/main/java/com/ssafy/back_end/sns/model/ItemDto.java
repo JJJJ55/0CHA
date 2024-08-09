@@ -1,6 +1,7 @@
 package com.ssafy.back_end.sns.model;
 
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -25,6 +26,6 @@ public class ItemDto {
     private int likeCount;
     private String nickname;
     private String profileImage;
-    private List<String> images;
+    private List<MultipartFile> images;
     private int isLike;
 }

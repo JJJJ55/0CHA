@@ -4,6 +4,7 @@ import com.ssafy.back_end.sns.model.ItemDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -18,7 +19,7 @@ public interface SnsItemMapper {
     @Options (useGeneratedKeys = true, keyProperty = "id")
     int insertItem(ItemDto item);   // 중고장터 글 작성
 
-    int insertItemImages(@Param ("itemId") int itemId, @Param ("userId") int userId, @Param ("images") List<String> images);   // 중고장터 이미지 등록
+    int insertItemImages(@Param ("itemId") int itemId, @Param ("userId") int userId, @Param ("images") List<MultipartFile> images);   // 중고장터 이미지 등록
 
     int deleteItemImages(@Param ("itemId") int itemId);   // 중고장터 이미지 삭제
 

@@ -4,7 +4,8 @@ import { ReactComponent as finish } from '../../asset/img/svg/finish.svg';
 import Text from '../../components/Common/Text';
 import IconSvg from '../../components/Common/IconSvg';
 import Button from '../../components/Common/Button';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
+import { FinishProps } from '../../util/types/axios-fitness';
 const s = {
   Container: styled.section`
     height: 100%;
@@ -40,10 +41,26 @@ const s = {
 
 const FitnessFinishPage = (): JSX.Element => {
   const navigate = useNavigate();
+  const data: FinishProps = useLocation().state.data;
 
   const handleClickMove = (path: string): void => {
     navigate(path);
   };
+
+  const formatSecondsToHHMMSS = (seconds: number): string => {
+    // 시 계산
+    const hours = Math.floor(seconds / 3600);
+    // 남은 초를 이용하여 분 계산
+    const minutes = Math.floor((seconds % 3600) / 60);
+    // 남은 초 계산
+    const secs = seconds % 60;
+
+    // 두 자리 수로 변환하여 HH:MM:SS 형식으로 문자열 반환
+    return `${hours.toString().padStart(2, '0')}:${minutes
+      .toString()
+      .padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+  const time = formatSecondsToHHMMSS(data.time);
   return (
     <s.Container>
       <s.MainArea>
@@ -81,7 +98,7 @@ const FitnessFinishPage = (): JSX.Element => {
         <Text
           width="280px"
           textalian="left"
-          children="07.18."
+          children={data.date}
           size="16px"
           color="textColor2"
           display="block"
@@ -89,11 +106,18 @@ const FitnessFinishPage = (): JSX.Element => {
         />
         <s.ContentArea>
           <Text width="50%" textalian="left" children="운동 시간" size="18px" color="textColor" />
-          <Text width="50%" textalian="right" children="1:00:05" size="18px" color="textColor" bold="bold" />
+          <Text width="50%" textalian="right" children={time} size="18px" color="textColor" bold="bold" />
         </s.ContentArea>
         <s.ContentArea>
           <Text width="50%" textalian="left" children="운동량" size="18px" color="textColor" />
-          <Text width="50%" textalian="right" children={'6300' + 'kg'} size="18px" color="textColor" bold="bold" />
+          <Text
+            width="50%"
+            textalian="right"
+            children={`${data.volume} 'kg'`}
+            size="18px"
+            color="textColor"
+            bold="bold"
+          />
         </s.ContentArea>
       </s.MainArea>
       <s.BtnArea>

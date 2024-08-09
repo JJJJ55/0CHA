@@ -92,16 +92,15 @@ const s = {
 };
 
 type ExerciseDetailType = {
-  // id: number;
-  set: number;
+  sequence: number;
   weight: number | '';
   count: number | '';
-  is_complete: boolean;
+  complete: boolean;
 };
 
 interface FitnessPlanProps {
   exercise: {
-    name: string;
+    exerciseName: string;
     exerciseId: number;
     sequence: number;
     sets: ExerciseDetailType[];
@@ -125,10 +124,10 @@ const FitnessPlan = (props: FitnessPlanProps): JSX.Element => {
   const handleAddSet = () => {
     const newSet: ExerciseDetailType = {
       // id: sets.length ? sets[sets.length - 1].id + 1 : 1,
-      set: sets.length + 1,
+      sequence: sets.length + 1,
       weight: '',
       count: '',
-      is_complete: false,
+      complete: false,
     };
     const updatedSets = [...sets, newSet];
     setSets(updatedSets);
@@ -160,7 +159,7 @@ const FitnessPlan = (props: FitnessPlanProps): JSX.Element => {
     <s.Container>
       <s.PlanHeaderArea>
         <s.hidden>{(props.exercise.sequence = props.index + 1)}</s.hidden>
-        <span style={{ fontWeight: 600 }}>{props.index + 1 + '. ' + props.exercise.name}</span>
+        <span style={{ fontWeight: 600 }}>{props.index + 1 + '. ' + props.exercise.exerciseName}</span>
         <s.DeleteText onClick={props.onDelete}>운동 삭제</s.DeleteText>
       </s.PlanHeaderArea>
       <s.PlanTable>
@@ -174,8 +173,8 @@ const FitnessPlan = (props: FitnessPlanProps): JSX.Element => {
         </s.TableHead>
         <s.TableBody>
           {sets.map((data, index) => (
-            <s.Tr key={data.set}>
-              <s.Td>{data.set}</s.Td>
+            <s.Tr key={data.sequence}>
+              <s.Td>{data.sequence}</s.Td>
               <s.Td>
                 <s.ValueInput
                   type="number"
@@ -191,7 +190,7 @@ const FitnessPlan = (props: FitnessPlanProps): JSX.Element => {
                 />
               </s.Td>
               <s.Td>
-                {data.is_complete ? (
+                {data.complete ? (
                   <IconSvg width="30" height="30" Ico={on} cursor="pointer" />
                 ) : (
                   <IconSvg width="30" height="30" Ico={off} cursor="pointer" />

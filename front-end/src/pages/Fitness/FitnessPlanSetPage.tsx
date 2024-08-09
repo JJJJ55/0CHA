@@ -74,7 +74,7 @@ const FitnessPlanSetPage = (): JSX.Element => {
   const data: CreateRoutine[] = useLocation().state?.add || [];
   const [fitness, setFitness] = useState<
     {
-      name: string;
+      exerciseName: string;
       exerciseId: number;
       sequence: number;
       sets: ExerciseDetailType[];

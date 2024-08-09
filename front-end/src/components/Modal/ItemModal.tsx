@@ -10,7 +10,9 @@ import { ReactComponent as likeOn } from '../../asset/img/svg/likeOn.svg';
 import { ReactComponent as likeOff } from '../../asset/img/svg/likeOff.svg';
 
 import { useNavigate } from 'react-router';
-import { SnsItemDetail, SnsItemLike, SnsItemLikeCancel } from '../../lib/api/sns-api';
+import { SnsItemDetail, SnsItemLike, SnsItemLikeCancel, SnsItemDel, SnsItemSell } from '../../lib/api/sns-api';
+import testImg from '../../asset/img/testImg.png';
+import ImageCarousel from '../SNS/ImageCarousel';
 
 const s = {
   Container: styled.section`
@@ -89,11 +91,29 @@ const s = {
     padding: 0 20px;
     margin: 20px 0;
   `,
+  ActionButtons: styled.div`
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px 20px;
+    gap: 10px;
+  `,
+  ItemStatus: styled.div<{ available: string }>`
+    color: ${(props) => (props.available === 'true' ? props.theme.mainColor : '#666666')};
+    width: 90%;
+    margin: 0 auto;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: right;
+  `,
 };
+
+interface ItemStatusProps {
+  available: boolean;
+}
 
 interface Item {
   id: number;
-  images: string;
+  images: string[];
   title: string;
   price: string;
   isSold: boolean;
@@ -101,21 +121,36 @@ interface Item {
   isLike: number;
   nickname: string;
   content: string;
+  userId: number;
+  createdAt: string;
 }
 
 interface MarketModalProps {
   open: boolean;
   onModal: Function;
-  itemId: number | null; // 선택된 아이템을 받을 수 있는 프로퍼티 추가
+  itemId: number | null;
+  onDelete: () => void;
+  onItemUpdate: (updatedItem: Item) => void;
 }
 
 const ItemModal = (props: MarketModalProps): JSX.Element => {
-  const { itemId, open, onModal } = props;
+  const { itemId, open, onModal, onDelete, onItemUpdate } = props;
   const [item, setItem] = useState<Item | null>(null);
   const [like, setLike] = useState(0);
   const [likeCount, setLikeCount] = useState(0);
+  const [userId, setUserId] = useState<number | null>(null);
+  const [relativeTime, setRelativeTime] = useState<string>('');
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      const userTmp = JSON.parse(userStr);
+      setUserId(userTmp.id);
+    }
+  }, []);
+
+  // 상세 정보를 불러오는 함수
   const getItemDetail = async () => {
     if (itemId) {
       await SnsItemDetail(
@@ -125,6 +160,7 @@ const ItemModal = (props: MarketModalProps): JSX.Element => {
           setItem(resp.data);
           setLike(resp.data.isLike);
           setLikeCount(resp.data.likeCount);
+          calculateRelativeTime(resp.data.createdAt);
         },
         (error) => {
           console.log(error);
@@ -133,39 +169,118 @@ const ItemModal = (props: MarketModalProps): JSX.Element => {
     }
   };
 
-  const handleLike = async () => {
-    if (like) {
-      await SnsItemLikeCancel(
-        item!.id,
-        (resp) => {
-          setLike(0);
-          setLikeCount(likeCount - 1);
-        },
-        (error) => {
-          console.log(error);
-        },
-      );
+  const calculateRelativeTime = (createdAt: string) => {
+    const now = new Date();
+    const createdDate = new Date(createdAt);
+    const diffInSeconds = 9 * 3600 + (now.getTime() - createdDate.getTime()) / 1000;
+    if (diffInSeconds < 60) {
+      setRelativeTime('방금 전');
+    } else if (diffInSeconds < 3600) {
+      setRelativeTime(`${Math.floor(diffInSeconds / 60)}분 전`);
+    } else if (diffInSeconds < 86400) {
+      setRelativeTime(`${Math.floor(diffInSeconds / 3600)}시간 전`);
+    } else if (diffInSeconds < 2592000) {
+      setRelativeTime(`${Math.floor(diffInSeconds / 86400)}일 전`);
+    } else if (diffInSeconds < 31104000) {
+      setRelativeTime(`${Math.floor(diffInSeconds / 2592000)}개월 전`);
     } else {
-      await SnsItemLike(
-        item!.id,
-        (resp) => {
-          setLike(1);
-          setLikeCount(likeCount + 1);
-        },
-        (error) => {
-          console.log(error);
-        },
-      );
+      setRelativeTime(`${Math.floor(diffInSeconds / 31104000)}년 전`);
     }
   };
 
+  // 좋아요
+  const handleLike = async () => {
+    if (item) {
+      if (like) {
+        console.log('좋아요인 경우 취소해야겠지?');
+        await SnsItemLikeCancel(
+          item.id,
+          (resp) => {
+            console.log(resp.data);
+            const updatedItem = { ...item, isLike: 0, likeCount: likeCount - 1 };
+            setLike(0);
+            setLikeCount(likeCount - 1);
+            setItem(updatedItem);
+            onItemUpdate(updatedItem); // 변경된 좋아요 상태를 부모 컴포넌트로 전달
+          },
+          (error) => {
+            console.log(error);
+          },
+        );
+      } else {
+        console.log('좋아요가 아닌 경우 좋아요해야겠지?');
+        await SnsItemLike(
+          item.id,
+          (resp) => {
+            console.log(resp.data);
+            const updatedItem = { ...item, isLike: 1, likeCount: likeCount + 1 };
+            setLike(1);
+            setLikeCount(likeCount + 1);
+            setItem(updatedItem);
+            onItemUpdate(updatedItem); // 변경된 좋아요 상태를 부모 컴포넌트로 전달
+          },
+          (error) => {
+            console.log(error);
+          },
+        );
+      }
+    }
+  };
+  // 마운트시 실행될 함수
   useEffect(() => {
-    getItemDetail();
-  }, [itemId]);
+    if (open && itemId) {
+      getItemDetail();
+    }
+  }, [open, itemId]);
 
   const handleMovePage = (): void => {
     onModal();
     navigate('../chat/id');
+  };
+  // 게시글 수정
+  const handleUpdate = () => {
+    console.log('수정 페이지로 이동');
+    if (item) {
+      navigate(`../market/update/${item.id}`, { state: { item } });
+    }
+  };
+  // 게시글 삭제
+  const handleDelete = async () => {
+    if (window.confirm('정말 삭제하시겠습니까?')) {
+      if (itemId) {
+        await SnsItemDel(
+          itemId,
+          (resp) => {
+            onDelete();
+            navigate('../market');
+          },
+          (err) => {
+            console.log(err);
+          },
+        );
+      }
+    } else {
+      return;
+    }
+  };
+
+  const handleStatusChange = async () => {
+    if (item && !item.isSold) {
+      if (window.confirm('판매완료로 전환하면 다시 판매 중으로 바꿀 수 없습니다. 판매완료가 맞습니까?')) {
+        const newStatus = true;
+        await SnsItemSell(
+          item.id,
+          (resp) => {
+            const updatedItem = { ...item, isSold: newStatus };
+            setItem(updatedItem);
+            onItemUpdate(updatedItem);
+          },
+          (error) => {
+            console.log(error);
+          },
+        );
+      }
+    }
   };
 
   return (
@@ -180,12 +295,21 @@ const ItemModal = (props: MarketModalProps): JSX.Element => {
         <Header text="거래글 상세" onBack={onModal} />
       </s.Header>
       <s.Container>
-        <Image width="100%" height="auto" src={item?.images || ''} type="rect" />
+        {/* 이미지 캐러셀 추가 */}
+        {item?.images && item.images.length > 0 ? (
+          <ImageCarousel images={item.images} />
+        ) : (
+          <Image width="100%" height="auto" src={testImg} type="rect" />
+        )}
+        {/* 1. images배열의 image들이 들어가야 할 부분 */}
+        {/* <Image width="100%" height="auto" src={item?.images[0]} type="rect" /> */}
+        {/* <Image width="100%" height="auto" src={testImg} type="rect" /> */}
         <s.SellerInfo>
-          <Image width="34px" height="34px" src={item?.images || ''} />
+          {/* <Image width="34px" height="34px" src={item?.profileImage || ''} /> */}
+          <Image width="34px" height="34px" src={testImg} />
           <s.SellerNameArea>
             <s.SellerName>{item?.nickname}</s.SellerName>
-            <s.CreatedAt>3시간 전</s.CreatedAt>
+            <s.CreatedAt>{relativeTime}</s.CreatedAt>
           </s.SellerNameArea>
           <s.ButtonArea>
             <s.LikeArea onClick={handleLike}>
@@ -203,13 +327,48 @@ const ItemModal = (props: MarketModalProps): JSX.Element => {
             />
           </s.ButtonArea>
         </s.SellerInfo>
-
+        <s.ItemStatus available={(!item?.isSold).toString()}>{item?.isSold ? '판매완료' : '판매중'}</s.ItemStatus>
         <s.ItemTitleArea>
           <s.ItemName>{item?.title}</s.ItemName>
-          <s.ItemPrice>{item?.price}원</s.ItemPrice>
+          <s.ItemPrice>{Number(item?.price).toLocaleString()}원</s.ItemPrice>
         </s.ItemTitleArea>
         <s.Horizon />
         <s.ItemContent>{item?.content}</s.ItemContent>
+        {item?.userId === userId && (
+          <s.ActionButtons>
+            {!item.isSold && (
+              <Button
+                width="60px"
+                height="30px"
+                children="수정"
+                type="main"
+                size="14px"
+                bold="500"
+                onClick={handleUpdate}
+              />
+            )}
+            <Button
+              width="60px"
+              height="30px"
+              children="삭제"
+              type="danger"
+              size="14px"
+              bold="500"
+              onClick={handleDelete}
+            />
+            {!item.isSold && (
+              <Button
+                width="80px"
+                height="30px"
+                children="판매완료"
+                type="main"
+                size="14px"
+                bold="500"
+                onClick={handleStatusChange}
+              />
+            )}
+          </s.ActionButtons>
+        )}
       </s.Container>
     </ReactModal>
   );

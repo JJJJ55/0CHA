@@ -34,6 +34,7 @@ interface TextAreaProps {
   bold?: string;
   placeColor?: string;
   size?: string;
+  value?: string;
 }
 
 const TextArea = (props: TextAreaProps): JSX.Element => {

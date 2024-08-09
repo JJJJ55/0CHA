@@ -272,33 +272,37 @@ interface dataType {
   location2: string;
 }
 
-const LocationDropdown = (): JSX.Element => {
-  const [data, setData] = useState<dataType>({
-    location1: '',
-    location2: '',
-  });
+interface LocationDropdownProps {
+  location1: string;
+  setLocation1: React.Dispatch<React.SetStateAction<string>>;
+  location2: string;
+  setLocation2: React.Dispatch<React.SetStateAction<string>>;
+}
 
+const LocationDropdown = ({ location1, setLocation1, location2, setLocation2 }: LocationDropdownProps): JSX.Element => {
   const handleChangeValue = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
 
-    setData({
-      ...data,
-      [name]: value,
-    });
+    if (name === 'location1') {
+      setLocation1(value);
+      setLocation2(''); // location1 변경 시 location2 초기화
+    } else {
+      setLocation2(value);
+    }
   };
 
   return (
     <s.Container>
-      <s.LocationSelect name="location1" value={data.location1} onChange={handleChangeValue}>
+      <s.LocationSelect name="location1" value={location1} onChange={handleChangeValue}>
         <s.LocationOption value="" children="전체" />
         {cities.map((city) => (
           <s.LocationOption key={city} value={city} children={city} />
         ))}
       </s.LocationSelect>
-      <s.LocationSelect name="location2" value={data.location2} onChange={handleChangeValue} disabled={!data.location1}>
+      <s.LocationSelect name="location2" value={location2} onChange={handleChangeValue} disabled={!location1}>
         <s.LocationOption value="" children="전체" />
-        {data.location1 &&
-          districts[data.location1]?.map((district) => (
+        {location1 &&
+          districts[location1]?.map((district) => (
             <s.LocationOption key={district} value={district} children={district} />
           ))}
       </s.LocationSelect>

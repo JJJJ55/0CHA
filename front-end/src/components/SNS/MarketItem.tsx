@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, useState } from 'react';
+import React, { MouseEventHandler, useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 import Image from '../Common/Image';
@@ -7,6 +7,7 @@ import { ReactComponent as likeOn } from '../../asset/img/svg/likeOn.svg';
 import { ReactComponent as likeOff } from '../../asset/img/svg/likeOff.svg';
 
 import { SnsItemLike, SnsItemLikeCancel } from '../../lib/api/sns-api';
+import testImg from '../../asset/img/testImg.png';
 
 const s = {
   Container: styled.section`
@@ -116,16 +117,23 @@ const MarketItem = (props: MarketItemProps): JSX.Element => {
     }
   };
 
+  useEffect(() => {
+    console.log('isLike prop has changed:', isLike, itemLike);
+    setLike(isLike);
+    setLikeCount(itemLike);
+  }, [isLike, itemLike]);
+
   return (
     <s.Container>
-      <Image width="70px" height="70px" src={itemImage} type="rect" />
+      {/* <Image width="70px" height="70px" src={itemImage} type="rect" /> */}
+      <Image width="70px" height="70px" src={testImg} type="rect" />
       <s.ItemInfoArea>
         <s.ItemTopArea onClick={onClick}>
           <s.ItemName>{itemName}</s.ItemName>
           {isOnSale === true ? <s.Available>판매중</s.Available> : <s.Unavailable>판매완료</s.Unavailable>}
         </s.ItemTopArea>
         <s.ItemBottomArea>
-          <s.ItemPrice>{itemPrice}원</s.ItemPrice>
+          <s.ItemPrice>{Number(itemPrice).toLocaleString()}원</s.ItemPrice>
           <s.ItemLikeArea onClick={(event) => handleLike(itemId, event)}>
             {like === 1 ? (
               <IconSvg width="23" height="23" Ico={likeOn} />

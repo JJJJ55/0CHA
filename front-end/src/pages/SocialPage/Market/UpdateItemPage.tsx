@@ -1,4 +1,5 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 import BottomNav from '../../../components/Common/BottomNav';
@@ -10,8 +11,7 @@ import IconSvg from '../../../components/Common/IconSvg';
 import Image from '../../../components/Common/Image';
 import { ReactComponent as camera } from '../../../asset/img/svg/camera.svg';
 
-import { useNavigate } from 'react-router';
-import { SnsItemWrite } from '../../../lib/api/sns-api';
+import { SnsItemWrite, SnsItemDetail, SnsItemModify } from '../../../lib/api/sns-api';
 
 const s = {
   ImageText: styled.span`
@@ -110,24 +110,63 @@ const s = {
   MainImage: styled(Image)``,
 };
 
-// 바이트 길이 계산 함수
 const getByteLength = (str: string) => new Blob([str]).size;
 
-const UploadItemPage = (): JSX.Element => {
-  const navigate = useNavigate();
-  // const [images, setImages] = useState<string[]>([]);
-  const [images, setImages] = useState<File[]>([]); // 파일 배열로 변경
+interface Item {
+  id: number;
+  images: string[];
+  title: string;
+  price: number;
+  content: string;
+}
 
-  const [title, setTitle] = useState<string>('');
-  const [price, setPrice] = useState<string>('');
-  const [content, setContent] = useState<string>('');
+interface LocationState {
+  item: Item;
+}
+
+const UpdateItemPage = (): JSX.Element => {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const state = location.state as LocationState | undefined;
+
+  const [images, setImages] = useState<string[]>(state?.item.images || []);
+  const [title, setTitle] = useState<string>(state?.item.title || '');
+  const [price, setPrice] = useState<string>(state?.item.price.toString() || '');
+  const [content, setContent] = useState<string>(state?.item.content || '');
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  useEffect(() => {
+    if (!state) {
+      // State가 없는 경우, 아이템 ID로 서버에서 데이터를 가져옴
+      if (id) {
+        const fetchItemDetail = async () => {
+          await SnsItemDetail(
+            parseInt(id, 10),
+            (resp) => {
+              const item = resp.data;
+              setImages(item.images);
+              setTitle(item.title);
+              setPrice(item.price.toString());
+              setContent(item.content);
+            },
+            (err) => {
+              console.error('아이템 정보를 가져오는 중 오류 발생:', err);
+            },
+          );
+        };
+
+        fetchItemDetail();
+      }
+    }
+  }, [id, state]);
+
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
-      const filesArray = Array.from(event.target.files).slice(0, 5); // 최대 5개
-      setImages((prevImages) => [...prevImages, ...filesArray].slice(0, 5)); // 최대 5개까지
+      const filesArray = Array.from(event.target.files).slice(0, 5);
+      const newImages = filesArray.map((file) => URL.createObjectURL(file));
+      setImages((prevImages) => [...prevImages, ...newImages].slice(0, 5));
     }
   };
 
@@ -137,12 +176,7 @@ const UploadItemPage = (): JSX.Element => {
     }
   };
 
-  // 작성완료
   const handleMovePage = async () => {
-    console.log(title);
-    console.log(price);
-    console.log(content);
-    console.log(images);
     if (!title.trim()) {
       alert('제목을 작성해 주세요.');
       return;
@@ -156,70 +190,58 @@ const UploadItemPage = (): JSX.Element => {
       alert('이미지를 한 장 이상 입력해 주세요');
       return;
     }
-    // FormData 객체 생성
-    const formData = new FormData();
-    const itemData = {
-      title: title,
-      price: parseInt(price),
-      content: content,
-    };
 
-    // ItemDto 데이터 추가
-    formData.append('item', new Blob([JSON.stringify(itemData)], { type: 'multipart/form-data' }));
+    const processedImages = images.map((image) => (image.startsWith('blob:') ? image.slice(5) : image));
 
-    images.forEach((image) => {
-      console.log(image);
-      formData.append('images', image); // 파일 추가
-    });
+    if (id) {
+      const param = {
+        title,
+        price: parseInt(price),
+        content,
+        images: processedImages,
+      };
 
-    await SnsItemWrite(
-      formData,
-      (resp) => {
-        console.log('중고장터 게시글이 작성되었습니다.');
-        navigate('/sns');
-        console.log(resp);
-      },
-      (err) => {
-        console.log('자 문제 발생');
-        console.log(err);
-        console.log('두 번째', formData.getAll('item'));
-        console.log('두 번째', formData.getAll('images'));
-        console.log('두 번째', formData.values());
-        formData.forEach((value, key) => {
-          console.log(key, value);
-        });
-      },
-    );
+      await SnsItemModify(
+        parseInt(id, 10),
+        param,
+        (resp) => {
+          console.log('중고장터 게시글이 수정되었습니다.');
+          navigate('/sns');
+        },
+        (err) => {
+          console.log('문제 발생', err);
+        },
+      );
+    }
   };
 
-  // 제목 유효성
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     if (getByteLength(value) <= 50) {
       setTitle(value);
     }
   };
-  // 내용 유효성
+
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
     if (getByteLength(value) <= 1000) {
       setContent(value);
     }
   };
-  // 가격 유효성
+
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     const filteredValue = value.replace(/[^0-9]/g, ''); // 숫자만 입력되도록 필터링
     setPrice(filteredValue);
   };
-  // 이미지 삭제
+
   const handleDeleteImage = (index: number) => {
     setImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
   return (
     <>
-      <Header text="판매하기" />
+      <Header text="수정하기" />
       <s.Container>
         <s.ImageUploadArea onClick={handleUploadClick}>
           <IconSvg width="50" height="50" Ico={camera} color="#ffffff" />
@@ -237,7 +259,7 @@ const UploadItemPage = (): JSX.Element => {
           <s.ImageArea>
             {images.map((image, index) => (
               <s.ImageWrapper key={index}>
-                <Image width="64px" height="64px" src={URL.createObjectURL(image)} type="rect" />
+                <Image width="64px" height="64px" src={image} type="rect" />
                 {index === 0 && <s.MainImageCaption>대표</s.MainImageCaption>}
                 <s.DeleteButton onClick={() => handleDeleteImage(index)}>X</s.DeleteButton>
               </s.ImageWrapper>
@@ -259,7 +281,7 @@ const UploadItemPage = (): JSX.Element => {
             size="14px"
             type="main"
             bold="500"
-            children="작성완료"
+            children="수정 완료"
             onClick={handleMovePage}
           />
         </s.Button>
@@ -269,4 +291,4 @@ const UploadItemPage = (): JSX.Element => {
   );
 };
 
-export default UploadItemPage;
+export default UpdateItemPage;

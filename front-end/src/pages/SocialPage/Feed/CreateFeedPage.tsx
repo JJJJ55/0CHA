@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import BottomNav from '../../../components/Common/BottomNav';
@@ -60,6 +60,24 @@ const CreateFeedPage = (): JSX.Element => {
   const handleMovePage = (): void => {
     navigate('/sns');
   };
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [image, setImage] = useState<string>('');
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      const filesArray = Array.from(event.target.files).slice(0, 5);
+      const file = Array.from(event.target.files).slice(0, 5);
+      const file2 = event.target.files;
+      const nnnnn= file.map((tmp) => URL.createObjectURL(tmp));
+      // setImages((prevImages) => [...prevImages, ...newImages].slice(0, 5));
+      console.log(file2)
+      console.log(nnnnn)
+    }
+  };
+// 작성완료
+  
+  
   return (
     <>
       <s.Container>
@@ -80,7 +98,15 @@ const CreateFeedPage = (): JSX.Element => {
           </s.ImageArea>
           <s.SelectPicture>
             <Button width="49%" height="40px" size="14px" bold="500" children="사진 촬영" />
-            <Button width="49%" height="40px" size="14px" bold="500" children="갤러리" />
+            <Button width="49%" height="40px" size="14px" bold="500" children="갤러리" onClick={() => {fileInputRef.current?.click()}}/>
+            <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          multiple
+          style={{ display: 'none' }}
+          onChange={handleImageUpload}
+        />
           </s.SelectPicture>
           <TextArea width="90%" height="180px" margin="0 auto" display="block" />
         </s.MainArea>

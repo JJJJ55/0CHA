@@ -6,6 +6,8 @@ import com.jcraft.jsch.Session;
 import com.ssafy.back_end.sns.mapper.SnsItemMapper;
 import com.ssafy.back_end.sns.model.ItemDetailDto;
 import com.ssafy.back_end.sns.model.ItemDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +21,7 @@ import java.util.List;
 @Service
 public class SnsItemServiceImpl implements SnsItemService {
 
+    private static final Logger log = LoggerFactory.getLogger(SnsItemServiceImpl.class);
     private final SnsItemMapper snsItemMapper;
 
     @Autowired
@@ -48,25 +51,28 @@ public class SnsItemServiceImpl implements SnsItemService {
                 .userId(item.getUserId())
                 .build();
 
+        log.debug(String.valueOf(item));
+
         snsItemMapper.insertItem(itemBuilder);
-        if (item.getImages() != null && !item.getImages().isEmpty()) {
-            snsItemMapper.insertItemImages(itemBuilder.getId(), item.getUserId(), item.getImages());
-        }
+//        if (item.getImages() != null && !item.getImages().isEmpty()) {
+//            snsItemMapper.insertItemImages(itemBuilder.getId(), item.getUserId(), item.getImages());
+//        }
 
         return itemBuilder.getId();
     }
 
     @Override
-    public void saveImageDetails(int itemId, int userId, String imageUrl, String originName, String saveName) {
+    public void saveImageDetail(int itemId, int userId, String imageUrl, String originName, String saveName) {
         ItemDetailDto itemDetailDto = ItemDetailDto.builder()
                 .itemId(itemId)
                 .userId(userId)
+                .detailType("image")
                 .imageUrl(imageUrl)
                 .originName(originName)
                 .saveName(saveName)
                 .build();
 
-
+        snsItemMapper.insertItemImage(itemDetailDto);
     }
 
 
@@ -85,10 +91,10 @@ public class SnsItemServiceImpl implements SnsItemService {
 
         snsItemMapper.updateItem(itemBuilder);
 
-        if (item.getImages() != null && !item.getImages().isEmpty()) {
-            snsItemMapper.deleteItemImages(item.getId());
-            snsItemMapper.insertItemImages(item.getId(), item.getUserId(), item.getImages());
-        }
+//        if (item.getImages() != null && !item.getImages().isEmpty()) {
+//            snsItemMapper.deleteItemImages(item.getId());
+//            snsItemMapper.insertItemImages(item.getId(), item.getUserId(), item.getImages());
+//        }
 
         return item.getId();
     }

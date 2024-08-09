@@ -5,7 +5,7 @@ import com.ssafy.back_end.sns.model.ItemDto;
 import java.util.List;
 
 public interface SnsItemService {
-    List<ItemDto> getItems(int myId, int userId, int offset, int limit);   //특정 유저 중고장터 모두 보기
+    List<ItemDto> getItems(int myId, int userId,String district, String siGunGu, String title, int offset, int limit);   //특정 유저 중고장터 모두 보기
 
     ItemDto getItemDetail(int myId, int itemId);   //중고장터 자세히 보기
 

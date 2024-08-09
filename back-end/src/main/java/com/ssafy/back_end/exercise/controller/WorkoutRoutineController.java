@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Tag(name = "루틴 설정 기능")
@@ -100,9 +102,13 @@ public class WorkoutRoutineController {
 
         int result = workoutRoutineService.upsertRoutine(routineDto);
         if (result != 0) {
-            return ResponseEntity.ok("루틴 저장 또는 업데이트 성공");
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "루틴 저장 또는 업데이트 성공");
+            response.put("routineId", routineDto.getId());  // 새로 생성된 또는 업데이트된 루틴 ID
+            return ResponseEntity.ok(response);
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("루틴 저장 또는 업데이트 실패");
+
     }
 
     @Operation(summary = "루틴 삭제", description = "루틴 ID를 사용하여 루틴을 삭제합니다.")

@@ -381,6 +381,8 @@ const PlusInfoPage = (): JSX.Element => {
     location2: '',
   });
 
+  console.log('넘어온 아이디 : ', id);
+
   const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     // 키 - 체중 필드에 대해 제약조건 규정
@@ -405,8 +407,8 @@ const PlusInfoPage = (): JSX.Element => {
       gender: parseInt(data.gender),
       height: parseFloat(data.height),
       weight: parseFloat(data.weight),
-      district: data.location2,
-      siGunGu: data.location1,
+      district: data.location1,
+      siGunGu: data.location2,
     };
     await putPlusInfo(
       param,

@@ -44,6 +44,7 @@ import NotificationPage from './pages/SocialPage/Feed/NotificationPage';
 import ErrorPage from './pages/ErrorPage';
 import { useAppSelector } from './lib/hook/useReduxHook';
 import { selectIsEmail, selectIsFinish, selectIsPlay, selectIsPw, selectIsScan, selectIsSign } from './store/page';
+import TestPlanSetPage from './pages/Fitness/TestPlanSetPage';
 
 const s = {
   Background: styled.section`
@@ -118,10 +119,12 @@ function App() {
                     <Route index element={<FitnessListPage />} />
                     <Route path="detail" element={<FitnessDetailPage />} />
                   </Route>
+                  <Route path="testplan" element={<TestPlanSetPage />} />
                   <Route path="plan" element={<FitnessPlanSetPage />} />
                   <Route path="history">
                     <Route index element={<FitnessRoutineListPage />} />
                     <Route path="detail" element={<FitnessRoutineDetatilPage />} />
+                    <Route path="test" element={<TestPlanSetPage />} />
                   </Route>
                 </Route>
                 {isPlay ? (

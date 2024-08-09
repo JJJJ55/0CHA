@@ -79,7 +79,7 @@ public class SnsFeedController {
     public ResponseEntity<?> saveRoutine(HttpServletRequest request, @PathVariable int routineId) {
         int ID = (Integer)request.getAttribute("userId");
 
-        RoutineDto routine = workoutRoutineService.getRoutineById(routineId, ID);
+        RoutineDto routine = workoutRoutineService.getRoutine(routineId );
 
         if (routine != null) {
             routine.setUserId(ID);

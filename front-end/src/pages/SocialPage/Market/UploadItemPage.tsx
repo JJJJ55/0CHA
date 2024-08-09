@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
 
 import BottomNav from '../../../components/Common/BottomNav';
@@ -10,8 +10,8 @@ import IconSvg from '../../../components/Common/IconSvg';
 import Image from '../../../components/Common/Image';
 import { ReactComponent as camera } from '../../../asset/img/svg/camera.svg';
 
-import test from '../../../asset/img/testImg.png';
 import { useNavigate } from 'react-router';
+import { SnsItemWrite } from '../../../lib/api/sns-api';
 
 const s = {
   ImageText: styled.span`
@@ -48,11 +48,40 @@ const s = {
     align-items: center;
     cursor: pointer;
   `,
-  ImageArea: styled.div`
-    width: 380px;
+  ImageOutBox: styled.div`
+    width: 90%;
     display: flex;
-    justify-content: space-between;
+    align-items: center;
+    justify-content: center;
     margin: 0 auto;
+  `,
+  ImageArea: styled.div`
+    width: 90%;
+    display: flex;
+    justify-content: left;
+    margin: 0 auto;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  `,
+  ImageWrapper: styled.div`
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-left: 8px;
+    margin-top: 16px;
+  `,
+  DeleteButton: styled.button`
+    background-color: ${(props) => props.theme.subColor};
+    border: none;
+    color: ${(props) => props.theme.textColor};
+    font-size: 12px;
+    padding: 2px 4px;
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    cursor: pointer;
   `,
   Button: styled.div`
     display: flex;
@@ -81,36 +110,147 @@ const s = {
   MainImage: styled(Image)``,
 };
 
+// 바이트 길이 계산 함수
+const getByteLength = (str: string) => new Blob([str]).size;
+
 const UploadItemPage = (): JSX.Element => {
   const navigate = useNavigate();
-  const handleMovePage = (): void => {
-    navigate('/sns');
+  // const [images, setImages] = useState<string[]>([]);
+  const [images, setImages] = useState<File[]>([]); // 파일 배열로 변경
+
+  const [title, setTitle] = useState<string>('');
+  const [price, setPrice] = useState<string>('');
+  const [content, setContent] = useState<string>('');
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      const filesArray = Array.from(event.target.files).slice(0, 5); // 최대 5개
+      setImages((prevImages) => [...prevImages, ...filesArray].slice(0, 5)); // 최대 5개까지
+    }
   };
+
+  const handleUploadClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  // 작성완료
+  const handleMovePage = async () => {
+    console.log(title);
+    console.log(price);
+    console.log(content);
+    console.log(images);
+    if (!title.trim()) {
+      alert('제목을 작성해 주세요.');
+      return;
+    } else if (!price) {
+      alert('가격을 입력해 주세요.');
+      return;
+    } else if (!content.trim()) {
+      alert('내용을 입력해 주세요.');
+      return;
+    } else if (images.length === 0) {
+      alert('이미지를 한 장 이상 입력해 주세요');
+      return;
+    }
+    // FormData 객체 생성
+    const formData = new FormData();
+    const itemData = {
+      title: title,
+      price: parseInt(price),
+      content: content,
+    };
+
+    // ItemDto 데이터 추가
+    formData.append('item', new Blob([JSON.stringify(itemData)], { type: 'multipart/form-data' }));
+
+    images.forEach((image) => {
+      console.log(image);
+      formData.append('images', image); // 파일 추가
+    });
+
+    await SnsItemWrite(
+      formData,
+      (resp) => {
+        console.log('중고장터 게시글이 작성되었습니다.');
+        navigate('/sns');
+        console.log(resp);
+      },
+      (err) => {
+        console.log('자 문제 발생');
+        console.log(err);
+        console.log('두 번째', formData.getAll('item'));
+        console.log('두 번째', formData.getAll('images'));
+        console.log('두 번째', formData.values());
+        formData.forEach((value, key) => {
+          console.log(key, value);
+        });
+      },
+    );
+  };
+
+  // 제목 유효성
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (getByteLength(value) <= 50) {
+      setTitle(value);
+    }
+  };
+  // 내용 유효성
+  const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    if (getByteLength(value) <= 1000) {
+      setContent(value);
+    }
+  };
+  // 가격 유효성
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const filteredValue = value.replace(/[^0-9]/g, ''); // 숫자만 입력되도록 필터링
+    setPrice(filteredValue);
+  };
+  // 이미지 삭제
+  const handleDeleteImage = (index: number) => {
+    setImages((prevImages) => prevImages.filter((_, i) => i !== index));
+  };
+
   return (
     <>
       <Header text="판매하기" />
       <s.Container>
-        <s.ImageUploadArea>
+        <s.ImageUploadArea onClick={handleUploadClick}>
           <IconSvg width="50" height="50" Ico={camera} color="#ffffff" />
-          <s.ImageText>5/5</s.ImageText>
+          <s.ImageText>{images.length}/5</s.ImageText>
         </s.ImageUploadArea>
-        <s.ImageArea>
-          <s.MainImageArea>
-            <s.MainImage width="64px" height="64px" src={test} type="rect" />
-            <s.MainImageCaption>대표</s.MainImageCaption>
-          </s.MainImageArea>
-          <Image width="64px" height="64px" src={test} type="rect" />
-          <Image width="64px" height="64px" src={test} type="rect" />
-          <Image width="64px" height="64px" src={test} type="rect" />
-          <Image width="64px" height="64px" src={test} type="rect" />
-        </s.ImageArea>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          multiple
+          style={{ display: 'none' }}
+          onChange={handleImageUpload}
+        />
+        <s.ImageOutBox>
+          <s.ImageArea>
+            {images.map((image, index) => (
+              <s.ImageWrapper key={index}>
+                <Image width="64px" height="64px" src={URL.createObjectURL(image)} type="rect" />
+                {index === 0 && <s.MainImageCaption>대표</s.MainImageCaption>}
+                <s.DeleteButton onClick={() => handleDeleteImage(index)}>X</s.DeleteButton>
+              </s.ImageWrapper>
+            ))}
+          </s.ImageArea>
+        </s.ImageOutBox>
         <s.InputArea>
           <s.InputLabel>제목</s.InputLabel>
-          <Input width="100%" height="40px" />
+          <Input width="100%" height="40px" value={title} onChange={handleTitleChange} />
           <s.InputLabel>가격</s.InputLabel>
-          <Input width="100%" height="40px" />
+          <Input width="100%" height="40px" value={price} onChange={handlePriceChange} />
           <s.InputLabel>상품 설명</s.InputLabel>
-          <TextArea width="100%" height="180px" />
+          <TextArea width="100%" height="180px" value={content} onChange={handleContentChange} />
         </s.InputArea>
         <s.Button>
           <Button

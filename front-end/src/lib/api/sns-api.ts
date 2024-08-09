@@ -1,6 +1,6 @@
 import { AxiosError } from 'axios';
 import { localAxios, publicAxios } from '../../util/axios-setting';
-import { snsFeedWrite, snsItemWrite } from '../../util/types/axios-sns';
+import { snsFeedWrite, snsItemList, snsItemWrite } from '../../util/types/axios-sns';
 
 const local = publicAxios();
 const jwt = localAxios();
@@ -195,11 +195,16 @@ export const SnsCommentDel = async (
 
 // 중고마켓 목록 조회
 export const SnsItemList = async (
-  param: number,
+  param: snsItemList,
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
 ) => {
-  await jwt.get(`/sns/item/list?user_id=${param}`).then(success).catch(fail);
+  await jwt
+    .get(
+      `/sns/item/list?user-id=${param.userId}&page=${param.page}&limit=${param.limit}&district=${param.district}&si-gun-gu=${param.siGunGu}&title=${param.title}`,
+    )
+    .then(success)
+    .catch(fail);
 };
 
 // 물건 상세
@@ -231,11 +236,18 @@ export const SnsItemLikeCancel = async (
 
 // 물건 판매 작성
 export const SnsItemWrite = async (
-  param: snsItemWrite,
+  param: FormData,
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
 ) => {
-  await jwt.post(`/sns/item/write`, param).then(success).catch(fail);
+  await jwt
+    .post(`/sns/item/write`, param, {
+      headers: {
+        'Content-Type': 'multipart/form-data', // FormData에 맞는 Content-Type 설정
+      },
+    })
+    .then(success)
+    .catch(fail);
 };
 
 // 물건 판매 수정
@@ -245,7 +257,14 @@ export const SnsItemModify = async (
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
 ) => {
-  await jwt.put(`/sns/item/${itemId}`, param).then(success).catch(fail);
+  await jwt
+    .put(`/sns/item/${itemId}`, param, {
+      headers: {
+        'Content-Type': 'multipart/form-data', // FormData에 맞는 Content-Type 설정
+      },
+    })
+    .then(success)
+    .catch(fail);
 };
 
 // 물건 판매 삭제

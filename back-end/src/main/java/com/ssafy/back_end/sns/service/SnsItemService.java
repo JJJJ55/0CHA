@@ -12,6 +12,8 @@ public interface SnsItemService {
 
     int writeItem(ItemDto item);   //중고장터 작성
 
+    void saveImageDetails(int itemId, int userId, String imageUrl, String originalName, String saveName);  //게시글 이미지 등록
+    
     int updateItem(ItemDto item);   //중고장터 수정
 
     int deleteItem(int itemId);   //중고장터 삭제
@@ -25,6 +27,4 @@ public interface SnsItemService {
     int soldOut(int itemId);   //판매완료
 
     void validateImages(List<MultipartFile> images);   //이미지 유효성 검사
-
-    List<String> uploadImages(int id, List<MultipartFile> files, String remoteDir);
 }

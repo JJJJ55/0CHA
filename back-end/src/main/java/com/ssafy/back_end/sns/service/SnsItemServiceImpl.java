@@ -49,24 +49,25 @@ public class SnsItemServiceImpl implements SnsItemService {
                 .build();
 
         snsItemMapper.insertItem(itemBuilder);
-        if (item.getImages() != null && !item.getImages().isEmpty()) {
-            snsItemMapper.insertItemImages(itemBuilder.getId(), item.getUserId(), item.getImages());
-        }
+//        if (item.getImages() != null && !item.getImages().isEmpty()) {
+//            snsItemMapper.insertItemImages(itemBuilder.getId(), item.getUserId(), item.getImages());
+//        }
 
         return itemBuilder.getId();
     }
 
     @Override
-    public void saveImageDetails(int itemId, int userId, String imageUrl, String originName, String saveName) {
+    public void saveImageDetail(int itemId, int userId, String imageUrl, String originName, String saveName) {
         ItemDetailDto itemDetailDto = ItemDetailDto.builder()
                 .itemId(itemId)
                 .userId(userId)
+                .detailType("image")
                 .imageUrl(imageUrl)
                 .originName(originName)
                 .saveName(saveName)
                 .build();
 
-
+        snsItemMapper.insertItemImage(itemDetailDto);
     }
 
 
@@ -85,10 +86,10 @@ public class SnsItemServiceImpl implements SnsItemService {
 
         snsItemMapper.updateItem(itemBuilder);
 
-        if (item.getImages() != null && !item.getImages().isEmpty()) {
-            snsItemMapper.deleteItemImages(item.getId());
-            snsItemMapper.insertItemImages(item.getId(), item.getUserId(), item.getImages());
-        }
+//        if (item.getImages() != null && !item.getImages().isEmpty()) {
+//            snsItemMapper.deleteItemImages(item.getId());
+//            snsItemMapper.insertItemImages(item.getId(), item.getUserId(), item.getImages());
+//        }
 
         return item.getId();
     }

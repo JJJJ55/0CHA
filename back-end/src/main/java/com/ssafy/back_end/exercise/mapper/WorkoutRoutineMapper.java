@@ -22,6 +22,7 @@ public interface WorkoutRoutineMapper {
     int deleteRoutineSetsByRoutineId(int routineId);
 
     RoutineDto getRoutineByIdAndUserId(Map<String, Object> params);
+    RoutineDto getRoutineById(@Param("routineId") int routineId);
     List<RoutineDetailDto> getRoutineDetailsByRoutineId(int routineId);
     List<RoutineSetDto> getSetsByRoutineDetailId(int routineDetailId);
 

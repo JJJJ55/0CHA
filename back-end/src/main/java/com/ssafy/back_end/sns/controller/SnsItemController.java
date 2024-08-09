@@ -67,7 +67,7 @@ public class SnsItemController {
 
     @Operation(summary = "중고장터 글쓰기-완")
     @PostMapping("/write")
-    public ResponseEntity<?> writeItem(HttpServletRequest request, @RequestBody ItemDto item) {
+    public ResponseEntity<?> writeItem(HttpServletRequest request, @RequestPart ItemDto item, @RequestParam("images") List<MultipartFile> images) {
         int userID = (Integer) request.getAttribute("userId");
         item.setUserId(userID);
 
@@ -76,7 +76,7 @@ public class SnsItemController {
 
         // 받은 이미지로 서버에 저장하고 저장된 경로를 list로 반환
         List<String> savedImagePath = new ArrayList<>();
-        List<MultipartFile> images = item.getImages();
+
         String uploadDir = "/home/ubuntu/images/item/";
 
         for (int i = 0; i < images.size(); i++) {

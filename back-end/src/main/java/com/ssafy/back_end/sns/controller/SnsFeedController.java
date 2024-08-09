@@ -1,6 +1,11 @@
 package com.ssafy.back_end.sns.controller;
 
-import com.ssafy.back_end.sns.model.*;
+import com.ssafy.back_end.exercise.model.RoutineDto;
+import com.ssafy.back_end.exercise.service.WorkoutRoutineService;
+import com.ssafy.back_end.sns.model.FeedDto;
+import com.ssafy.back_end.sns.model.FeedInteractionDto;
+import com.ssafy.back_end.sns.model.SnsRoutineDto;
+import com.ssafy.back_end.sns.model.UserPageDto;
 import com.ssafy.back_end.sns.service.SnsFeedServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -10,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Tag (name = "SNS피드")
@@ -17,10 +24,12 @@ import java.util.List;
 @RequestMapping (value = "/api/sns/feed")
 public class SnsFeedController {
     private final SnsFeedServiceImpl snsFeedService;
+    private final WorkoutRoutineService workoutRoutineService;
 
     @Autowired
-    public SnsFeedController(SnsFeedServiceImpl snsFeedService) {
+    public SnsFeedController(SnsFeedServiceImpl snsFeedService, WorkoutRoutineService workoutRoutineService) {
         this.snsFeedService = snsFeedService;
+        this.workoutRoutineService = workoutRoutineService;
     }
 
     @Operation (summary = "전체or유저 피드 목록보기-완")
@@ -70,12 +79,26 @@ public class SnsFeedController {
     public ResponseEntity<?> saveRoutine(HttpServletRequest request, @PathVariable int routineId) {
         int ID = (Integer)request.getAttribute("userId");
 
-        int result = snsFeedService.saveRoutine(ID, routineId);
+        RoutineDto routine = workoutRoutineService.getRoutineById(routineId, ID);
 
-        if (result > 0) {
-            return ResponseEntity.ok("루틴 저장 성공");
+        if (routine != null) {
+            routine.setUserId(ID);
+            LocalDateTime now = LocalDateTime.now();
+
+            if (routine.getDueDate() != null && routine.getDueDate().isBefore(now.toLocalDate())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("루틴 마감일은 현재 날짜 이후로 설정해야 합니다.");
+            }
+            routine.setCreatedAt(Timestamp.valueOf(now));
+
+            int result = workoutRoutineService.upsertRoutine(routine);
+            if (result != 0) {
+                return ResponseEntity.ok("루틴 저장 성공");
+            }
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("루틴 저장 실패");
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("루틴 저장 실패");
+        else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("루틴을 찾을 수 없습니다");
+        }
     }
 
     @Operation (summary = "피드 글쓰기-완")

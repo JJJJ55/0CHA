@@ -99,6 +99,10 @@
         SELECT * FROM routines WHERE user_id = #{userId}
     </select>
 
+    <select id="getAllRoutinesLimit" parameterType="int" resultMap="RoutineResultMap">
+        SELECT * FROM routines WHERE user_id = #{userId} ORDER BY created_at DESC LIMIT 5
+    </select>
+
     <select id="getAllUsersRoutines" resultMap="RoutineResultMap">
         SELECT * FROM routines ORDER BY id ASC LIMIT 5
     </select>

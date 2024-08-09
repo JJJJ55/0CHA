@@ -15,8 +15,6 @@ import { useAppDispatch, useAppSelector } from '../../../lib/hook/useReduxHook';
 import { modalActions, selectModalMarket, selectModalUserSearch } from '../../../store/modal';
 import { useModalExitHook } from '../../../lib/hook/useModalExitHook';
 import UserSearchModal from '../../../components/Modal/UserSearchModal';
-import axios from 'axios';
-import { debounce } from 'lodash';
 
 import { SnsItemList } from '../../../lib/api/sns-api';
 
@@ -104,20 +102,6 @@ interface Item {
   isLike: number;
 }
 
-type marketItem = {
-  id: number;
-  title: string;
-  price: number;
-  isSold: boolean;
-  createdAt: string;
-  userId: number;
-  nickname: string;
-  profileImage: string;
-  likeCount: number;
-  isLike: number;
-  images: Array<string>;
-};
-
 const MarketPage = (): JSX.Element => {
   const [items, setItems] = useState<Item[]>([]); // 아이템 리스트 상태 관리
   const [selectedItem, setSelectedItem] = useState<number | null>(null); // 선택된 아이템 상태 관리
@@ -146,37 +130,6 @@ const MarketPage = (): JSX.Element => {
   const toggleUserSearch = (): void => {
     dispatch(modalActions.toggleUserSearch());
   };
-
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  const [marketItem, setMarketItem] = useState<marketItem[]>([]);
-  const [page1, setPage1] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [isMoreData, setIsMoreData] = useState(true);
-
-  const handleScroll = debounce(() => {
-    if (containerRef.current) {
-      const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
-
-      if (scrollTop + clientHeight + 1000 >= scrollHeight) {
-        if (!loading && isMoreData) {
-          setPage((prevPage) => prevPage + 1);
-        }
-      }
-    }
-  }, 300);
-
-  useEffect(() => {
-    const container = containerRef.current;
-    if (container) {
-      container.addEventListener('scroll', handleScroll);
-    }
-    return () => {
-      if (container) {
-        container.removeEventListener('scroll', handleScroll);
-      }
-    };
-  }, [handleScroll]);
 
   useModalExitHook();
 

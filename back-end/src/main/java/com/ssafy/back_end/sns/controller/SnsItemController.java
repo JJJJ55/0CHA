@@ -10,7 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Tag (name = "SNS중고장터")
@@ -61,18 +65,57 @@ public class SnsItemController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("중고장터 세부조회 오류");
     }
 
-    @Operation (summary = "중고장터 글쓰기-완")
-    @PostMapping ("/write")
+    @Operation(summary = "중고장터 글쓰기-완")
+    @PostMapping("/write")
     public ResponseEntity<?> writeItem(HttpServletRequest request, @RequestBody ItemDto item) {
-        int ID = (Integer)request.getAttribute("userId");
-        item.setUserId(ID);
-        int id = snsItemService.writeItem(item);
+        int userID = (Integer) request.getAttribute("userId");
+        item.setUserId(userID);
 
-        if (id > 0) {
+        // 작성된 게시글 번호
+        int itemID = snsItemService.writeItem(item);
+
+        // 받은 이미지로 서버에 저장하고 저장된 경로를 list로 반환
+        List<String> savedImagePath = new ArrayList<>();
+        List<MultipartFile> images = item.getImages();
+        String uploadDir = "/home/ubuntu/images/item/";
+
+        for (int i = 0; i < images.size(); i++) {
+            MultipartFile image = images.get(i);
+            if (!image.isEmpty()) {
+                try {
+                    String originalImageName = image.getOriginalFilename();
+                    String imageExtension = "";
+
+                    // 파일 확장자 추출
+                    if (originalImageName != null && originalImageName.contains(".")) {
+                        imageExtension = originalImageName.substring(originalImageName.lastIndexOf("."));
+                    }
+
+                    // 고유한 파일 이름 생성
+                    // 사용자 ID-게시물 번호-해당 게시물에서 이미지 순서.확장자
+                    String newFileName = userID + "-" + itemID + "-" + i + imageExtension;
+
+                    // 파일 저장
+                    image.transferTo(new File(uploadDir + newFileName));
+
+                    // 파일 저장한 경로 저장
+                    savedImagePath.add(uploadDir + newFileName);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("이미지 업로드 오류");
+                }
+            }
+        }
+
+        // 이미지 경로 DB에 저장 (필요 시 코드 추가)
+        // insert into(userId, type, itemId, itemID, uploadDir, originalImageName, newFileName);
+
+        if (itemID > 0) {
             return ResponseEntity.ok("중고마켓 작성 성공");
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("중고마켓 작성 오류");
     }
+
 
     @Operation (summary = "중고장터 글수정-완")
     @PutMapping ("/{itemId}")

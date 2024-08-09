@@ -8,6 +8,8 @@ import com.ssafy.back_end.sns.service.SnsItemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,7 @@ import java.util.List;
 @RestController
 @RequestMapping (value = "/api/sns/item")
 public class SnsItemController {
+    private static final Logger log = LoggerFactory.getLogger(SnsItemController.class);
     private final SnsItemService snsItemService;
 
     @Autowired
@@ -71,11 +74,13 @@ public class SnsItemController {
     @PostMapping("/write")
     public ResponseEntity<?> writeItem(HttpServletRequest request,
                                        @ModelAttribute ItemDto item,
-                                       @RequestParam("images") MultipartFile[] images) throws JsonProcessingException {
+                                       @RequestParam("images") MultipartFile[] images) {
 
 
         int userID = (Integer) request.getAttribute("userId");
         item.setUserId(userID);
+
+        log.debug("item : {}", item.toString());
 
         // 작성된 게시글 번호
         int itemID = snsItemService.writeItem(item);
@@ -106,7 +111,7 @@ public class SnsItemController {
 
                     // 이미지 정보 DB에 저장
                     String imageUrl = uploadDir + newFileName;
-                    snsItemService.saveImageDetails(itemID, userID, imageUrl, originalImageName, newFileName);
+                    snsItemService.saveImageDetail(itemID, userID, imageUrl, originalImageName, newFileName);
 
                 } catch (IOException e) {
                     e.printStackTrace();

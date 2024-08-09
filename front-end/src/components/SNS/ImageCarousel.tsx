@@ -70,8 +70,8 @@ const ImageCarousel: React.FC<CarouselProps> = ({ images }) => {
       <s.CarouselWrapper translatex={-currentIndex * 100}>
         {images.map((img, index) => (
           <s.ImageContainer key={index}>
-            <s.Image src={img || testImg} alt={`carousel-image-${index}`} />
-            {/* <s.Image src={testImg} alt={`carousel-image-${index}`} /> */}
+            {/* <s.Image src={img || testImg} alt={`carousel-image-${index}`} /> */}
+            <s.Image src={testImg} alt={`carousel-image-${index}`} />
           </s.ImageContainer>
         ))}
       </s.CarouselWrapper>

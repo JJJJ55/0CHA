@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Button from '../../../components/Common/Button';
+import Input from '../../../components/Common/Input';
 
 import SnsHeader from '../../../components/SNS/SnsHeader';
 import SnsNavigation from '../../../components/SNS/SnsNavigation';
@@ -33,10 +34,12 @@ const s = {
     display: flex;
     justify-content: center;
     margin: 20px 0;
+    color: ${(props) => props.theme.textColor};
+    align-items: center;
   `,
   PageButton: styled(Button)`
-    width: 100px;
-    height: 40px;
+    width: 40px;
+    height: 30px;
     font-size: 14px;
     font-weight: bold;
     margin: 0 5px;
@@ -46,6 +49,46 @@ const s = {
       background-color: ${(props) => props.theme.mainColor};
       color: ${(props) => props.theme.btnTextColor};
     }
+  `,
+  PageInputForm: styled.form`
+    display: flex;
+    align-items: center;
+    color: ${(props) => props.theme.textColor};
+    font-size: 14px;
+  `,
+  PageInput: styled(Input)`
+    width: 40px;
+    height: 30px;
+    font-size: 14px;
+    text-align: center;
+    margin: 0 10px;
+  `,
+  PageSpan: styled.span`
+    color: ${(props) => props.theme.textColor};
+    font-size: 14px;
+  `,
+  PageNumber: styled.span<{ active: boolean }>`
+    margin: 40px 15px;
+    font-weight: 500;
+    color: ${(props) => (props.active ? props.theme.mainColor : props.theme.textColor)};
+    cursor: pointer;
+    font-size: 14px;
+  `,
+  SearchArea: styled.div`
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    justify-content: flex-start;
+    gap: 10px;
+  `,
+  LocationDropdownWrapper: styled.div`
+    display: flex;
+    align-items: center;
+  `,
+  SearchInput: styled(Input)`
+    flex: 1;
+    max-width: 400px;
+    min-width: 100px;
   `,
 };
 
@@ -66,6 +109,9 @@ const MarketPage = (): JSX.Element => {
   const [page, setPage] = useState<number>(1); // 현재 페이지 번호
   const [limit] = useState<number>(10); // 페이지당 아이템 수
   const [totalPages, setTotalPages] = useState<number>(1); // 전체 페이지 수
+
+  const [currentRange, setCurrentRange] = useState<number>(0); // 현재 페이지 그룹 범위(0, 5, 10,...)
+  const [searchQuery, setSearchQuery] = useState<string>(''); // 검색어 상태
 
   const isMarket = useAppSelector(selectModalMarket);
   const isUserSearch = useAppSelector(selectModalUserSearch);
@@ -95,15 +141,19 @@ const MarketPage = (): JSX.Element => {
       limit: limit,
       district: location1,
       siGunGu: location2,
-      title: '',
+      title: searchQuery,
     };
     await SnsItemList(
       param,
       (resp) => {
         // 중고장터 0개입니다 뜨면
-        setItems(resp.data.items); // 서버에서 받은 데이터를 상태로 설정
-        setTotalPages(Math.ceil(resp.data.size / limit)); // 전체 페이지 수 설정
-        console.log(resp.data);
+        if (resp.data === '중고장터 0개입니다') {
+          setItems([]);
+        } else {
+          setItems(resp.data.items); // 서버에서 받은 데이터를 상태로 설정
+          setTotalPages(Math.ceil(resp.data.size / limit)); // 전체 페이지 수 설정
+          console.log(resp.data);
+        }
       },
       (error) => {
         console.log(error);
@@ -133,28 +183,52 @@ const MarketPage = (): JSX.Element => {
     toggleMarket(); // 모달 닫기
   };
 
-  const handlePreviousPage = () => {
-    if (page > 1) {
-      setPage(page - 1);
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handlePreviousRange = () => {
+    if (currentRange > 0) {
+      setCurrentRange(currentRange - 5);
+      setPage(currentRange - 4); // 이전 그룹의 첫 번째 페이지로 이동
     }
   };
 
-  const handleNextPage = () => {
-    if (page < totalPages) {
-      setPage(page + 1);
+  const handleNextRange = () => {
+    if (currentRange + 5 < totalPages) {
+      setCurrentRange(currentRange + 5);
+      setPage(currentRange + 6); // 다음 그룹의 첫 번째 페이지로 이동
     }
   };
+
+  const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleSearch = () => {
+    setPage(1);
+    getItemList();
+  };
+
   return (
     <>
       <s.Container>
         <SnsHeader />
         <SnsNavigation />
-        <LocationDropdown
-          location1={location1}
-          setLocation1={setLocation1}
-          location2={location2}
-          setLocation2={setLocation2}
-        />
+        <s.SearchArea>
+          <s.LocationDropdownWrapper>
+            <LocationDropdown
+              location1={location1}
+              setLocation1={setLocation1}
+              location2={location2}
+              setLocation2={setLocation2}
+            />
+          </s.LocationDropdownWrapper>
+          <s.SearchInput value={searchQuery} onChange={handleSearchInputChange} placeholder="Search items..." />
+          <Button type="main" onClick={handleSearch}>
+            검색
+          </Button>
+        </s.SearchArea>
         {items.map((item) => (
           <React.Fragment key={item.id}>
             <MarketItem
@@ -171,14 +245,17 @@ const MarketPage = (): JSX.Element => {
           </React.Fragment>
         ))}
         <s.PaginationButtons>
-          <s.PageButton type="main" onClick={handlePreviousPage}>
-            이전
-          </s.PageButton>
-          <s.PageButton type="main" onClick={handleNextPage}>
-            다음
-          </s.PageButton>
+          {currentRange !== 0 && <s.PageButton type="main" onClick={handlePreviousRange} children="이전" />}
+          {Array.from({ length: Math.min(5, totalPages - currentRange) }).map((_, index) => {
+            const pageIndex = currentRange + index + 1;
+            return (
+              <s.PageNumber key={pageIndex} active={pageIndex === page} onClick={() => handlePageChange(pageIndex)}>
+                {pageIndex}
+              </s.PageNumber>
+            );
+          })}
+          {currentRange + 5 < totalPages && <s.PageButton type="main" onClick={handleNextRange} children="다음" />}
         </s.PaginationButtons>
-        <s.Horizon />
         <ItemModal
           open={isMarket}
           onModal={toggleMarket}

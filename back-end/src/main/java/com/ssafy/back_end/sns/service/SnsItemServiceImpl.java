@@ -6,6 +6,8 @@ import com.jcraft.jsch.Session;
 import com.ssafy.back_end.sns.mapper.SnsItemMapper;
 import com.ssafy.back_end.sns.model.ItemDetailDto;
 import com.ssafy.back_end.sns.model.ItemDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +21,7 @@ import java.util.List;
 @Service
 public class SnsItemServiceImpl implements SnsItemService {
 
+    private static final Logger log = LoggerFactory.getLogger(SnsItemServiceImpl.class);
     private final SnsItemMapper snsItemMapper;
 
     @Autowired
@@ -47,6 +50,8 @@ public class SnsItemServiceImpl implements SnsItemService {
                 .content(item.getContent())
                 .userId(item.getUserId())
                 .build();
+
+        log.debug(String.valueOf(item));
 
         snsItemMapper.insertItem(itemBuilder);
 //        if (item.getImages() != null && !item.getImages().isEmpty()) {

@@ -84,7 +84,7 @@ const FitnessListPage = (): JSX.Element => {
   }, [fitness]);
 
   const [add, setAdd] = useState<CreateRoutine[]>([]);
-  const handleClickAdd = (exerciseId: number, name: string) => {
+  const handleClickAdd = (exerciseId: number, exerciseName: string) => {
     setAdd((prevAdd) => {
       const existingItem = prevAdd.find((item) => item.exerciseId === exerciseId);
       if (existingItem) {
@@ -92,13 +92,13 @@ const FitnessListPage = (): JSX.Element => {
         return prevAdd.filter((item) => item.exerciseId !== exerciseId);
       } else {
         // Add new item
-        return [...prevAdd, { exerciseId, name }];
+        return [...prevAdd, { exerciseId, exerciseName }];
       }
     });
   };
   const handleClickMove = (): void => {
     if (add.length !== 0) {
-      navigate('../plan', { state: { add } });
+      navigate('../testplan', { state: { add } });
     } else {
       alert('루틴에 운동을 추가해주세요.');
     }

@@ -7,6 +7,7 @@ import Input from '../../Common/Input';
 import Text from '../../Common/Text';
 import { getRoutineDetail } from '../../../lib/api/fitness-api';
 import { useLocation } from 'react-router';
+import { RoutineDetails } from '../../../util/types/axios-fitness';
 
 const s = {
   Container: styled.section`
@@ -68,23 +69,27 @@ const s = {
     margin: 20px auto;
   `,
 };
-type ExerciseType = {
-  name: string;
-  detail: ExerciseDetailType[];
-};
+// type ExerciseType = {
+//   name: string;
+//   detail: ExerciseDetailType[];
+// };
 
-type ExerciseDetailType = {
-  id: number;
-  set: number;
-  weight: number;
-  count: number;
-  is_complete: boolean;
-};
-interface FitnessDataProps {
-  exercise: ExerciseType[];
+// type ExerciseDetailType = {
+//   id: number;
+//   set: number;
+//   weight: number;
+//   count: number;
+//   is_complete: boolean;
+// };
+// interface FitnessDataProps {
+//   exercise: ExerciseType[];
+// }
+
+interface RoutineDetailProps {
+  exercise: RoutineDetails[];
 }
 
-const FitnessRoutineListDetail = (props: FitnessDataProps): JSX.Element => {
+const FitnessRoutineListDetail = (props: RoutineDetailProps): JSX.Element => {
   const id = useLocation().state?.id;
   useEffect(() => {
     getRoutineDetail(
@@ -98,7 +103,7 @@ const FitnessRoutineListDetail = (props: FitnessDataProps): JSX.Element => {
       {props.exercise.map((data, index) => (
         <s.Container key={index}>
           <Text
-            children={index + 1 + '. ' + data.name}
+            children={index + 1 + '. ' + data.exerciseName}
             width="85%"
             size="18px"
             bold="600"
@@ -115,17 +120,17 @@ const FitnessRoutineListDetail = (props: FitnessDataProps): JSX.Element => {
               </s.Tr>
             </s.TableHead>
             <s.TableBody>
-              {data.detail.map((detail, index) => (
+              {data.sets.map((data, index) => (
                 <s.Tr key={index}>
-                  <s.Td>{detail.set}</s.Td>
+                  <s.Td>{data.sequence}</s.Td>
                   <s.Td>
-                    <Text children={detail.weight} width="50px" size="18px" bold="700" textalian="center" />
+                    <Text children={data.weight} width="50px" size="18px" bold="700" textalian="center" />
                   </s.Td>
                   <s.Td>
-                    <Text children={detail.count} width="50px" size="18px" bold="700" textalian="center" />
+                    <Text children={data.count} width="50px" size="18px" bold="700" textalian="center" />
                   </s.Td>
                   <s.Td>
-                    {detail.is_complete ? (
+                    {data.complete ? (
                       <IconSvg width="30" height="30" Ico={on} cursor="pointer" />
                     ) : (
                       <IconSvg width="30" height="30" Ico={off} cursor="pointer" />

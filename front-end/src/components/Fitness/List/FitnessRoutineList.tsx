@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Text from '../../Common/Text';
 import Button from '../../Common/Button';
@@ -8,7 +8,7 @@ import { ReactComponent as jjimOff } from '../../../asset/img/svg/jjimOff.svg';
 import { ReactComponent as trash } from '../../../asset/img/svg/trash.svg';
 import { useNavigate } from 'react-router';
 import { RoutineList } from '../../../util/types/axios-fitness';
-import { delRoutine, putRoutineJjim } from '../../../lib/api/fitness-api';
+import { delRoutine, getRoutineList, putRoutineJjim } from '../../../lib/api/fitness-api';
 
 const s = {
   Container: styled.div`
@@ -47,14 +47,21 @@ const s = {
     border: 0;
   `,
 };
-interface listType {
-  list: RoutineList[];
-}
-const FitnessRoutineList = (props: listType): JSX.Element => {
+const FitnessRoutineList = (): JSX.Element => {
   const navigate = useNavigate();
+  const [routine, setRoutine] = useState<RoutineList[]>([]);
   const handleClickMove = (id: number): void => {
     navigate('detail', { state: { id } });
   };
+
+  useEffect(() => {
+    getRoutineList(
+      (resp) => {
+        setRoutine(resp.data);
+      },
+      (error) => {},
+    );
+  }, []);
 
   const handleDeleteRoutine = async (id: number) => {
     if (window.confirm('삭제하시겠습니까?')) {
@@ -83,7 +90,7 @@ const FitnessRoutineList = (props: listType): JSX.Element => {
   };
   return (
     <s.Container>
-      {props.list.map((data, index) => (
+      {routine.map((data, index) => (
         <s.ListBoxArea key={index}>
           <s.ListArea>
             <s.ContentArea onClick={() => handleClickMove(data.id)}>
@@ -106,7 +113,7 @@ const FitnessRoutineList = (props: listType): JSX.Element => {
                 cursor="pointer"
               />
             </s.ContentArea>
-            {data.isLike ? (
+            {data.like ? (
               <s.IconArea>
                 <IconSvg width="25" height="25" Ico={jjimOn} onClick={() => handleRoutineJjim(data.id)} />
               </s.IconArea>
@@ -119,7 +126,7 @@ const FitnessRoutineList = (props: listType): JSX.Element => {
               <IconSvg width="25" height="25" Ico={trash} onClick={() => handleDeleteRoutine(data.id)} />
             </s.IconArea>
           </s.ListArea>
-          {index + 1 === props.list?.length || <s.ListLine />}
+          {index + 1 === routine?.length || <s.ListLine />}
           {/* <s.ListLine /> */}
         </s.ListBoxArea>
       ))}

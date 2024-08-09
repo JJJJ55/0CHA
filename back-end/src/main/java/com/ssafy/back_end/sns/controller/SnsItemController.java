@@ -1,5 +1,7 @@
 package com.ssafy.back_end.sns.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.back_end.sns.model.ItemDto;
 import com.ssafy.back_end.sns.model.ItemListDto;
 import com.ssafy.back_end.sns.service.SnsItemService;
@@ -67,7 +69,11 @@ public class SnsItemController {
 
     @Operation(summary = "중고장터 글쓰기-완")
     @PostMapping("/write")
-    public ResponseEntity<?> writeItem(HttpServletRequest request, @RequestPart ItemDto item, @RequestParam("images") List<MultipartFile> images) {
+    public ResponseEntity<?> writeItem(HttpServletRequest request,
+                                       @ModelAttribute ItemDto item,
+                                       @RequestParam("images") MultipartFile[] images) throws JsonProcessingException {
+
+
         int userID = (Integer) request.getAttribute("userId");
         item.setUserId(userID);
 
@@ -79,8 +85,8 @@ public class SnsItemController {
 
         String uploadDir = "/home/ubuntu/images/item/";
 
-        for (int i = 0; i < images.size(); i++) {
-            MultipartFile image = images.get(i);
+        for (int i = 0; i < images.length; i++) {
+            MultipartFile image = images[i];
             if (!image.isEmpty()) {
                 try {
                     String originalImageName = image.getOriginalFilename();
@@ -98,8 +104,10 @@ public class SnsItemController {
                     // 파일 저장
                     image.transferTo(new File(uploadDir + newFileName));
 
-                    // 파일 저장한 경로 저장
-                    savedImagePath.add(uploadDir + newFileName);
+                    // 이미지 정보 DB에 저장
+                    String imageUrl = uploadDir + newFileName;
+                    snsItemService.saveImageDetails(itemID, userID, imageUrl, originalImageName, newFileName);
+
                 } catch (IOException e) {
                     e.printStackTrace();
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("이미지 업로드 오류");
@@ -108,7 +116,9 @@ public class SnsItemController {
         }
 
         // 이미지 경로 DB에 저장 (필요 시 코드 추가)
-        // insert into(userId, type, itemId, itemID, uploadDir, originalImageName, newFileName);
+        // insert into item_details(item_id, detail_type, user_id, image_url, origin_name, save_name)
+        // value(itemId, 'image', userId, uploadDir+newFileName, originalImageName, newFileName);
+
 
         if (itemID > 0) {
             return ResponseEntity.ok("중고마켓 작성 성공");

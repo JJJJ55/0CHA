@@ -260,7 +260,7 @@ const MarketPage = (): JSX.Element => {
           open={isMarket}
           onModal={toggleMarket}
           itemId={selectedItem}
-          onDelete={handleItemDeleted} // 삭제 후 호출될 콜백 함수 전달 (1)
+          onDelete={handleItemDeleted} // 삭제 후 호출될 콜백 함수 전달
           onItemUpdate={handleItemUpdated} // 아이템 업데이트 후 호출될 콜백 함수 전달
         />
         <UserSearchModal open={isUserSearch} onModal={toggleUserSearch} />

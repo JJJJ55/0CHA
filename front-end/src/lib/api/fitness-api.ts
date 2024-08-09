@@ -87,7 +87,7 @@ export const putNewRoutine = async (
 // 루틴업데이트
 export const putUpdateRoutine = async (
   routineId: number,
-  param: Routine,
+  param: axiosCreateRoutine,
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
 ) => {

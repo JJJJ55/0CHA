@@ -10,11 +10,12 @@ import { useLocation, useNavigate } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
 import { modalActions, selectModalCalendar } from '../../store/modal';
 import { useModalExitHook } from '../../lib/hook/useModalExitHook';
-import { pageActions } from '../../store/page';
-import FitnessPlan from '../../components/Fitness/Detail/FitnessPlan';
 import { axiosCreateRoutine, CreateRoutine, ExerciseDetailType } from '../../util/types/axios-fitness';
 import Text from '../../components/Common/Text';
 import { putNewRoutine } from '../../lib/api/fitness-api';
+import { RoutineListDetail, RoutineDetails } from '../../util/types/axios-fitness';
+import TestPlan from '../../components/Fitness/Detail/TestPlan';
+import { pageActions } from '../../store/page';
 
 const s = {
   Container: styled.section`
@@ -67,19 +68,22 @@ const s = {
   `,
 };
 
-const FitnessPlanSetPage = (): JSX.Element => {
+const TestPlanSetPage = (): JSX.Element => {
   const navigate = useNavigate();
-  const [title, setTitle] = useState('이름과 날짜를 지정해주세요.');
-  const [date, setDate] = useState('');
-  const data: CreateRoutine[] = useLocation().state?.add || [];
-  const [fitness, setFitness] = useState<
-    {
-      exerciseName: string;
-      exerciseId: number;
-      sequence: number;
-      sets: ExerciseDetailType[];
-    }[]
-  >(data.map((item) => ({ ...item, sequence: 0, sets: [] })));
+  const locationState = useLocation().state;
+  const historyData = locationState?.data as RoutineListDetail;
+
+  // Fallback to user-provided data if historyData is not available
+  const data: CreateRoutine[] = locationState?.add || [];
+
+  // Set initial title and date based on historyData or default values
+  const [title, setTitle] = useState(historyData?.title || '이름과 날짜를 지정해주세요.');
+  const [date, setDate] = useState(historyData?.dueDate || '');
+
+  // Initialize fitness based on historyData or map data to desired structure
+  const [fitness, setFitness] = useState<RoutineDetails[]>(
+    historyData?.details || data.map((item) => ({ ...item, sequence: 0, sets: [] })),
+  );
 
   const dispatch = useAppDispatch();
   const isModal = useAppSelector(selectModalCalendar);
@@ -152,6 +156,7 @@ const FitnessPlanSetPage = (): JSX.Element => {
       console.log('Current Fitness Data:', fitness); // 콘솔에 현재 데이터를 출력
 
       const param: axiosCreateRoutine = {
+        id: historyData?.id,
         title: title,
         dueDate: date,
         details: fitness,
@@ -162,7 +167,10 @@ const FitnessPlanSetPage = (): JSX.Element => {
       await putNewRoutine(
         param,
         (resp) => {
-          alert('저장완료');
+          dispatch(pageActions.toogleIsPlay(true));
+          param.id = resp.data.routineId;
+          // navigate('/play', { state: { fitnessData: fitness } }); // 데이터를 운동 페이지로 전달
+          navigate('../../play', { state: { data: param } });
         },
         (error) => {
           alert('저장 중 오류');
@@ -170,9 +178,6 @@ const FitnessPlanSetPage = (): JSX.Element => {
         },
       );
     }
-
-    // dispatch(pageActions.toogleIsPlay(true));
-    // navigate('/play', { state: { fitnessData: fitness } }); // 데이터를 운동 페이지로 전달
   };
 
   useModalExitHook();
@@ -207,7 +212,7 @@ const FitnessPlanSetPage = (): JSX.Element => {
         <s.FitnessArea>
           {fitness.map((exercise, index) => (
             <div key={index}>
-              <FitnessPlan
+              <TestPlan
                 exercise={exercise}
                 index={index}
                 onChangeSet={handleSetChange}
@@ -248,4 +253,4 @@ const FitnessPlanSetPage = (): JSX.Element => {
   );
 };
 
-export default FitnessPlanSetPage;
+export default TestPlanSetPage;

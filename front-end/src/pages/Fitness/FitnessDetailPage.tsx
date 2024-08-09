@@ -13,10 +13,12 @@ import {
   deleteFitnessJjimCancel,
   getFitnessJjimCheck,
   getFitnessListCategory,
+  getFitnessMomentum,
   postFitnessJjim,
 } from '../../lib/api/fitness-api';
 import { useLocation } from 'react-router';
-import { FitnessType } from '../../util/types/axios-fitness';
+import { FitnessMomenthum, FitnessType } from '../../util/types/axios-fitness';
+import Text from '../../components/Common/Text';
 
 const s = {
   Container: styled.section`
@@ -60,6 +62,9 @@ const FitnessDetailPage = (): JSX.Element => {
   const labels = ['07.14', '07.15', '07.16', '07.17', '07.18', '07.19', '07,20'];
   const [fitness, setFieness] = useState<FitnessType>();
   const [isLike, setIsLike] = useState<boolean>(false);
+  const [momenthum, setMomenthum] = useState<FitnessMomenthum[]>([]);
+  let volumes: number[] = [];
+  let dates: string[] = [];
   const id = useLocation().state?.id;
 
   useEffect(() => {
@@ -79,6 +84,20 @@ const FitnessDetailPage = (): JSX.Element => {
       },
       (error) => {
         alert('잠시후 다시 시도해주세요.');
+      },
+    );
+    getFitnessMomentum(
+      id,
+      (resp) => {
+        console.log('운동량');
+        setMomenthum(resp.data);
+        dates = momenthum.map(({ date }) => date);
+
+        // volume 배열 추출
+        volumes = momenthum.map(({ volume }) => volume);
+      },
+      (error) => {
+        console.log(error);
       },
     );
   }, []);
@@ -121,7 +140,19 @@ const FitnessDetailPage = (): JSX.Element => {
         <Image width="100%" src={fitness?.image} height="50%" type="rect" />
         <s.FitnessTextArea>{fitness?.description}</s.FitnessTextArea>
         <s.Title>운동이력</s.Title>
-        <Chart datas={exerciseData} labels={labels} />
+        {momenthum.length === 0 ? (
+          <Text
+            children="기록이 없습니다."
+            margin="30px auto"
+            display="block"
+            width="80%"
+            size="16px"
+            bold="500"
+            textalian="center"
+          />
+        ) : (
+          <Chart datas={volumes} labels={dates} />
+        )}
       </s.ContentArea>
       <BottomNav />
     </s.Container>

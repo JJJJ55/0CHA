@@ -18,13 +18,14 @@ const s = {
     /* z-index: 100; */
   `,
   BasicArea: styled.div`
-    width: 200px;
+    width: 70%;
     height: 100%;
     margin: 0 10px;
     display: flex;
     align-items: center;
   `,
   Title: styled.span`
+    width: 100%;
     color: ${(props) => props.theme.textColor};
     font-size: 18px;
     font-weight: bold;

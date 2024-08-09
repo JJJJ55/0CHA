@@ -16,20 +16,11 @@ const s = {
 };
 
 const FitnessRoutineListPage = (): JSX.Element => {
-  const [routine, setRoutine] = useState<RoutineList[]>([]);
-  useEffect(() => {
-    getRoutineList(
-      (resp) => {
-        setRoutine(resp.data);
-      },
-      (error) => {},
-    );
-  });
   return (
     <>
       <Header text="루틴목록"></Header>
       <s.Container>
-        <FitnessRoutineList list={routine} />
+        <FitnessRoutineList />
         <BottomNav />
       </s.Container>
     </>

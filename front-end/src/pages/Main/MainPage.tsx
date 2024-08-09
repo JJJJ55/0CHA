@@ -7,8 +7,9 @@ import BottomNav from '../../components/Common/BottomNav';
 import Button from '../../components/Common/Button';
 import { useBottomNavHook } from '../../lib/hook/useBottomNavHook';
 import { useNavigate } from 'react-router';
-import { getMyInfo } from '../../lib/api/main-api';
-import { Profile, User } from '../../util/types/axios-main';
+import { getMainRoutineAll, getMyInfo, getMyRoutine } from '../../lib/api/main-api';
+import { MainMyRoutine, Profile, User } from '../../util/types/axios-main';
+import { mainPageRoutine } from '../../util/types/axios-fitness';
 // import { user } from '../../lib/api/user-api';
 
 const s = {
@@ -182,7 +183,7 @@ const s = {
 };
 
 interface HorizontalScrollProps {
-  items: { name: string; image: string }[];
+  items: mainPageRoutine[];
 }
 
 const HorizontalScroll: React.FC<HorizontalScrollProps> = ({ items }) => {
@@ -215,8 +216,9 @@ const HorizontalScroll: React.FC<HorizontalScrollProps> = ({ items }) => {
       <s.ScrollArea ref={scrollWrapperRef}>
         {items.map((item, index) => (
           <s.Item key={index} onClick={() => handleMovePage('/fitness/history/detail')}>
-            <s.ItemImage src={item.image} alt={item.name} />
-            <s.ItemText>{item.name}</s.ItemText>
+            <s.ItemImage src={testImage} alt={item.title} />
+            {/* 이미지 일단 덤벨 */}
+            <s.ItemText>{item.title}</s.ItemText>
           </s.Item>
         ))}
       </s.ScrollArea>
@@ -227,6 +229,8 @@ const HorizontalScroll: React.FC<HorizontalScrollProps> = ({ items }) => {
 const MainPage = (): JSX.Element => {
   const navigate = useNavigate();
   const [user, setUser] = useState<User>();
+  const [main, setMain] = useState<mainPageRoutine[]>([]);
+  const [mainMyRoutine, setMainMyRoutine] = useState<MainMyRoutine[]>([]);
   useEffect(() => {
     getMyInfo(
       (resp) => {
@@ -240,15 +244,23 @@ const MainPage = (): JSX.Element => {
       },
       (error) => {},
     );
+    getMainRoutineAll(
+      (resp) => {
+        setMain(resp.data);
+      },
+      (error) => {
+        console.log(error);
+      },
+    );
+    getMyRoutine(
+      (resp) => {
+        setMainMyRoutine(resp.data);
+      },
+      (error) => {
+        console.log(error);
+      },
+    );
   }, []);
-  const items = [
-    { name: '월요일 추천 루틴', image: testImage },
-    { name: '헬스 꿀팁 300선', image: testImage },
-    { name: '홈트레이닝 맛있게', image: testImage },
-    { name: '치킨을 먹기 위해', image: testImage },
-    { name: '걸어서 집 가기 싫은 날', image: testImage },
-    { name: '인간의 진화 이전 모습을 보고 싶다면', image: testImage },
-  ];
 
   const routineItems = [
     { date: '07월 14일', name: '07월 14일 루틴' },
@@ -285,7 +297,7 @@ const MainPage = (): JSX.Element => {
     <s.Container>
       <PageHeader />
       <s.PageBody>
-        <HorizontalScroll items={items} />
+        <HorizontalScroll items={main} />
         <s.BtnArea>
           <s.LiveBtn children="진행 중인 운동" onClick={handleLiveExercise} />
         </s.BtnArea>
@@ -295,11 +307,11 @@ const MainPage = (): JSX.Element => {
             <s.MoreBtn onClick={() => navigate('/fitness/history')} children="더보기" />
           </s.SectionTitleContainer>
           <s.RoutineList>
-            {routineItems.map((routine, index) => (
+            {mainMyRoutine.map((routine, index) => (
               <s.RoutineItem key={index}>
                 <s.RoutineInfo>
-                  <s.RoutineName children={routine.name} />
-                  <s.RoutineDate children={routine.date} />
+                  <s.RoutineName children={routine.title} />
+                  <s.RoutineDate children={routine.dueDate} />
                 </s.RoutineInfo>
                 <s.RoutineBtn children="상세보기" onClick={() => navigate('/fitness/history/detail')} />
               </s.RoutineItem>

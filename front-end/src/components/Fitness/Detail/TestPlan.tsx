@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { ReactComponent as off } from '../../../asset/img/svg/pickOff.svg';
-import { ReactComponent as on } from '../../../asset/img/svg/pickOn.svg';
+import { ReactComponent as Off } from '../../../asset/img/svg/pickOff.svg';
+import { ReactComponent as On } from '../../../asset/img/svg/pickOn.svg';
 import IconSvg from '../../Common/IconSvg';
+import { useLocation } from 'react-router';
 
 const s = {
   Container: styled.section`
@@ -110,8 +111,9 @@ interface FitnessPlanProps {
   onChangeSet: (index: number, updatedSets: ExerciseDetailType[]) => void;
 }
 
-const FitnessPlan = (props: FitnessPlanProps): JSX.Element => {
+const TestPlan = (props: FitnessPlanProps): JSX.Element => {
   const [sets, setSets] = useState<ExerciseDetailType[]>(props.exercise.sets);
+  const path = useLocation().pathname;
 
   useEffect(() => {
     setSets(props.exercise.sets);
@@ -123,7 +125,6 @@ const FitnessPlan = (props: FitnessPlanProps): JSX.Element => {
 
   const handleAddSet = () => {
     const newSet: ExerciseDetailType = {
-      // id: sets.length ? sets[sets.length - 1].id + 1 : 1,
       sequence: sets.length + 1,
       weight: '',
       count: '',
@@ -153,6 +154,20 @@ const FitnessPlan = (props: FitnessPlanProps): JSX.Element => {
     setSets(updatedSets);
     props.onChangeSet(props.index, updatedSets);
     console.log(`Updated set ${index} for exercise ${props.index}:`, updatedSets[index]);
+  };
+
+  const handleCompleteToggle = (index: number) => {
+    if (path === '/play') {
+      const updatedSets = sets.map((set, idx) => {
+        if (idx === index) {
+          return { ...set, complete: !set.complete };
+        }
+        return set;
+      });
+      setSets(updatedSets);
+      props.onChangeSet(props.index, updatedSets);
+      console.log(`Toggled completion for set ${index} of exercise ${props.index}`);
+    }
   };
 
   return (
@@ -191,9 +206,21 @@ const FitnessPlan = (props: FitnessPlanProps): JSX.Element => {
               </s.Td>
               <s.Td>
                 {data.complete ? (
-                  <IconSvg width="30" height="30" Ico={on} cursor="pointer" />
+                  <IconSvg
+                    width="30"
+                    height="30"
+                    Ico={On}
+                    cursor="pointer"
+                    onClick={() => handleCompleteToggle(index)}
+                  />
                 ) : (
-                  <IconSvg width="30" height="30" Ico={off} cursor="pointer" />
+                  <IconSvg
+                    width="30"
+                    height="30"
+                    Ico={Off}
+                    cursor="pointer"
+                    onClick={() => handleCompleteToggle(index)}
+                  />
                 )}
               </s.Td>
             </s.Tr>
@@ -208,4 +235,4 @@ const FitnessPlan = (props: FitnessPlanProps): JSX.Element => {
   );
 };
 
-export default FitnessPlan;
+export default TestPlan;

@@ -16,20 +16,17 @@ const s = {
     background-color: ${(props) => props.theme.bgColor};
     overflow: auto;
   `,
-  InfoHeader: styled.div`
-    height: 100px;
-    display: flex;
-    flex-direction: column;
-    padding-left: 10%;
+  BinArea: styled.div`
+    width: 100%;
+    height: 60px;
   `,
   PlusInfoArea: styled.div`
     width: 100%;
-    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 60px 0 70px;
+    padding: 120px 0 70px;
   `,
 
   MeasurementArea: styled.div`
@@ -369,15 +366,6 @@ const districts: Record<string, string[]> = {
 };
 
 interface dataType {
-  gender: string;
-  height: string;
-  weight: string;
-  district: string;
-  siGunGu: string;
-}
-
-interface User {
-  gender: string;
   height: string;
   weight: string;
   district: string;
@@ -388,16 +376,8 @@ const UpdateMyInfoPage = (): JSX.Element => {
   const navigate = useNavigate();
 
   const datas = userData();
-  // const [user, setUser] = useState<User>({
-  //   gender: '',
-  //   height: '168.7',
-  //   weight: '60.5',
-  //   district: '서울특별시',
-  //   siGunGu: '중랑구',
-  // });
 
   const [data, setData] = useState<dataType>({
-    gender: datas.gender,
     height: datas.height,
     weight: datas.weight,
     district: datas.district,
@@ -445,39 +425,8 @@ const UpdateMyInfoPage = (): JSX.Element => {
   return (
     <s.Container>
       <Header text="내 정보 수정" />
+      <s.BinArea></s.BinArea>
       <s.PlusInfoArea>
-        {!datas.gender && (
-          <s.InfoNameBox>
-            <s.InputHeader children="성별" />
-          </s.InfoNameBox>
-        )}
-        {!datas.gender && (
-          <s.GenderArea>
-            <s.GenderOption>
-              <input
-                type="radio"
-                id="male"
-                name="gender"
-                value="남성"
-                checked={data.gender === '남성'}
-                onChange={handleChangeValue}
-              />
-              <label htmlFor="male">남성</label>
-            </s.GenderOption>
-            <s.GenderOption>
-              <input
-                type="radio"
-                id="female"
-                name="gender"
-                value="여성"
-                checked={data.gender === '여성'}
-                onChange={handleChangeValue}
-              />
-              <label htmlFor="female">여성</label>
-            </s.GenderOption>
-          </s.GenderArea>
-        )}
-
         <s.InfoNameBox>
           <s.InputHeader children="키" />
         </s.InfoNameBox>

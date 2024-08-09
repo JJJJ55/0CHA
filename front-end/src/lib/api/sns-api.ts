@@ -46,31 +46,42 @@ export const UserPageFollowing = async (
   await jwt.get(`/sns/social/user-page/followings?user-id=${param}`).then(success).catch(fail);
 };
 
+// 팔로우하는 유저인지 조회
+export const IsFollowingUser = async (
+  targetUserId: number,
+  success: (response: any) => void,
+  fail: (error: AxiosError) => void,
+) => {
+  await jwt.get(`/sns/social/is-following?target-id=${targetUserId}`).then(success).catch(fail);
+};
+
 // 팔로우
 export const UserFollow = async (
   targetUserId: number,
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
+  
 ) => {
   await jwt.post(`/sns/social/follow`, targetUserId).then(success).catch(fail);
 };
 
 // 팔로우 삭제 (number 타입가질 시 에러남)
 export const UserFollowCancel = async (
-  targetUserId: any,
+  targetUserId: number,
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
 ) => {
-  await jwt.delete(`/sns/social/follow`, targetUserId).then(success).catch(fail);
+  await jwt.put(`/sns/social/follow`, targetUserId).then(success).catch(fail);
 };
 
 // 피드 내역 가져오기
 export const SnsFeedList = async (
-  param: number,
+  userId: number,
+  offset: number,
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
 ) => {
-  await jwt.get(`/sns/feed/list?user-id=${param}`).then(success).catch(fail);
+  await jwt.get(`/sns/feed/list?user-id=${userId}&offset=${offset}&limit=10`).then(success).catch(fail);
 };
 
 // 피드 작성
@@ -160,7 +171,7 @@ export const SnsCommentWrite = async (
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
 ) => {
-  await jwt.post(`/sns/feed/${feedId}/comment`, content).then(success).catch(fail);
+  await jwt.post(`/sns/feed/${feedId}/comment`, {"comment": content}).then(success).catch(fail);
 };
 
 // 피드 댓글 수정
@@ -170,7 +181,7 @@ export const SnsCommentModify = async (
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
 ) => {
-  await jwt.put(`/sns/feed/comment/${commentId}`, content).then(success).catch(fail);
+  await jwt.put(`/sns/feed/comment/${commentId}`, {"comment": content}).then(success).catch(fail);
 };
 
 // 피드 댓글 삭제
@@ -307,3 +318,11 @@ export const SnsChatOff = async (
 ) => {
   await jwt.delete(`/sns/chat/connect/${connectionId}`).then(success).catch(fail);
 };
+
+// 유저전체조회(검색)
+export const UserSearch = async (
+  success: (response: any) => void,
+  fail: (error: AxiosError) => void,
+) => {
+  await jwt.get(`/sns/social/search`).then(success).catch(fail);
+}

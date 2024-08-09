@@ -111,6 +111,7 @@ export const signup = async (
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
 ) => {
+  console.log('넘어온 값 : ' + param);
   await local.post(`/auth/register/signup`, param).then(success).catch(fail);
 };
 

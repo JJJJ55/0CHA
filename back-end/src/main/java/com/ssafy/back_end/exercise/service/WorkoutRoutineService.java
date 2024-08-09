@@ -10,6 +10,8 @@ public interface WorkoutRoutineService {
 
     List<RoutineDto> getAllRoutines(int userId);
 
+    List<RoutineDto> getAllRoutinesLimit(int userId);
+
     RoutineDto getRoutineById(int routineId, int userId);
 
     int upsertRoutine(RoutineDto routineDto);

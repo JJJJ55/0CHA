@@ -20,7 +20,7 @@ public interface SnsItemMapper {
     @Options (useGeneratedKeys = true, keyProperty = "id")
     int insertItem(ItemDto item);   // 중고장터 글 작성
 
-    int insertItemImage(@Param ("itemId") ItemDetailDto itemDetailDto);   // 중고장터 이미지 등록
+    int insertItemImage(ItemDetailDto itemDetailDto);   // 중고장터 이미지 등록
 
     int deleteItemImages(@Param ("itemId") int itemId);   // 중고장터 이미지 삭제
 

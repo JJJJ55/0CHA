@@ -51,17 +51,27 @@ public class SnsItemServiceImpl implements SnsItemService {
                 .userId(item.getUserId())
                 .build();
 
-        log.debug(String.valueOf(item));
+        log.info("Item details: {}", itemBuilder);
 
+        // 데이터베이스에 삽입 후 ID 반환
         snsItemMapper.insertItem(itemBuilder);
+
+        // insertItem 메서드가 실행된 후, itemBuilder 객체의 ID가 제대로 설정되었는지 확인
+        int itemId = itemBuilder.getId();
+        if (itemId == 0) {
+            throw new IllegalStateException("Item ID 생성 실패");
+        }
+
+        // 이미지가 있으면 이미지 삽입 로직 처리
 //        if (item.getImages() != null && !item.getImages().isEmpty()) {
-//            snsItemMapper.insertItemImages(itemBuilder.getId(), item.getUserId(), item.getImages());
+//            snsItemMapper.insertItemImages(itemId, item.getUserId(), item.getImages());
 //        }
 
         return itemBuilder.getId();
     }
 
     @Override
+    @Transactional
     public void saveImageDetail(int itemId, int userId, String imageUrl, String originName, String saveName) {
         ItemDetailDto itemDetailDto = ItemDetailDto.builder()
                 .itemId(itemId)

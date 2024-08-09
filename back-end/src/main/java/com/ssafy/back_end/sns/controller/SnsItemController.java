@@ -1,5 +1,7 @@
 package com.ssafy.back_end.sns.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.back_end.sns.model.ItemDto;
 import com.ssafy.back_end.sns.model.ItemListDto;
 import com.ssafy.back_end.sns.service.SnsItemService;
@@ -67,7 +69,14 @@ public class SnsItemController {
 
     @Operation(summary = "중고장터 글쓰기-완")
     @PostMapping("/write")
-    public ResponseEntity<?> writeItem(HttpServletRequest request, @RequestPart("item") ItemDto item, @RequestParam("images") List<MultipartFile> images) {
+    public ResponseEntity<?> writeItem(HttpServletRequest request,
+                                       @RequestParam("item") String itemData,
+                                       @RequestParam("images") MultipartFile[] images) throws JsonProcessingException {
+
+        // JSON 데이터 처리
+        // 예시: JSON 데이터를 객체로 변환
+        ItemDto item = new ObjectMapper().readValue(itemData, ItemDto.class);
+
         int userID = (Integer) request.getAttribute("userId");
         item.setUserId(userID);
 
@@ -79,8 +88,8 @@ public class SnsItemController {
 
         String uploadDir = "/home/ubuntu/images/item/";
 
-        for (int i = 0; i < images.size(); i++) {
-            MultipartFile image = images.get(i);
+        for (int i = 0; i < images.length; i++) {
+            MultipartFile image = images[i];
             if (!image.isEmpty()) {
                 try {
                     String originalImageName = image.getOriginalFilename();

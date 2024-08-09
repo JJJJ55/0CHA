@@ -1,5 +1,6 @@
 package com.ssafy.back_end.sns.mapper;
 
+import com.ssafy.back_end.sns.model.ItemDetailDto;
 import com.ssafy.back_end.sns.model.ItemDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
@@ -19,7 +20,7 @@ public interface SnsItemMapper {
     @Options (useGeneratedKeys = true, keyProperty = "id")
     int insertItem(ItemDto item);   // 중고장터 글 작성
 
-    int insertItemImages(@Param ("itemId") int itemId, @Param ("userId") int userId, @Param ("images") List<MultipartFile> images);   // 중고장터 이미지 등록
+    int insertItemImage(@Param ("itemId") ItemDetailDto itemDetailDto);   // 중고장터 이미지 등록
 
     int deleteItemImages(@Param ("itemId") int itemId);   // 중고장터 이미지 삭제
 

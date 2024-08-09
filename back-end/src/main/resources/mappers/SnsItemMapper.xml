@@ -120,12 +120,9 @@
         VALUES (#{title}, #{price}, #{content}, #{userId}, NOW())
     </insert>
 
-    <insert id="insertItemImages">
-        INSERT INTO item_details (item_id, user_id, detail_type, image_url, uploaded_at)
-        VALUES
-        <foreach collection="images" item="image" separator=",">
-            (#{itemId}, #{userId}, 'image', #{image}, NOW())
-        </foreach>
+    <insert id="insertItemImage">
+        INSERT INTO item_details (item_id, user_id, detail_type, image_url, origin_name, save_name, uploaded_at)
+        VALUES(#{itemId}, #{userId}, 'image', #{imageUrl}, #{originName}, #{saveName}, NOW())
     </insert>
 
     <delete id="deleteItemImages">

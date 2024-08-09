@@ -12,7 +12,7 @@ public interface SnsItemService {
 
     int writeItem(ItemDto item);   //중고장터 작성
 
-    void saveImageDetails(int itemId, int userId, String imageUrl, String originalName, String saveName);  //게시글 이미지 등록
+    void saveImageDetail(int itemId, int userId, String imageUrl, String originalName, String saveName);  //게시글 이미지 등록
     
     int updateItem(ItemDto item);   //중고장터 수정
 

@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { styled } from 'styled-components';
 import Header from '../../components/Common/Header';
 import Button from '../../components/Common/Button';
 import Text from '../../components/Common/Text';
 import RecordInbodyInput from '../../components/Record/Inbody/RecordInbodyInput';
 import BottomNav from '../../components/Common/BottomNav';
+import { useNavigate } from 'react-router';
+import { postInbody } from '../../lib/api/record-api';
+import { Inbody } from '../../util/types/axios-record';
 
 const s = {
   Container: styled.section`
@@ -47,6 +50,18 @@ const s = {
 };
 
 const RecordInBodyScanResultPage = (): JSX.Element => {
+  const [inbody, setInbody] = useState<Inbody>();
+  const navigate = useNavigate();
+
+  const changeInbodyInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInbody({
+      ...inbody,
+      [e.target.name]: parseInt(e.target.value),
+    });
+  };
+  const handleSaveData = async () => {
+    // postInbody();
+  };
   return (
     <s.Container>
       <Header text="인바디 스캔" />
@@ -131,6 +146,7 @@ const RecordInBodyScanResultPage = (): JSX.Element => {
           height="40px"
           type="main"
           width="90%"
+          onClick={handleSaveData}
         />
       </s.MainArea>
       {/* <BottomNav /> */}

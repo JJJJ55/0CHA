@@ -73,7 +73,8 @@ const FitnessListPage = (): JSX.Element => {
         setjjim(resp.data);
       },
       (error) => {
-        console.log(error);
+        // console.log(error);
+        console.log('없음');
       },
     );
   }, []);
@@ -83,23 +84,28 @@ const FitnessListPage = (): JSX.Element => {
   }, [fitness]);
 
   const [add, setAdd] = useState<CreateRoutine[]>([]);
-  const handleClickAdd = (id: number, name: string) => {
+  const handleClickAdd = (exerciseId: number, exerciseName: string) => {
     setAdd((prevAdd) => {
-      const existingItem = prevAdd.find((item) => item.id === id);
+      const existingItem = prevAdd.find((item) => item.exerciseId === exerciseId);
       if (existingItem) {
         // Remove item if it already exists
-        return prevAdd.filter((item) => item.id !== id);
+        return prevAdd.filter((item) => item.exerciseId !== exerciseId);
       } else {
         // Add new item
-        return [...prevAdd, { id, name }];
+        return [...prevAdd, { exerciseId, exerciseName }];
       }
     });
   };
   const handleClickMove = (): void => {
-    navigate('../plan', { state: { add } });
+    if (add.length !== 0) {
+      navigate('../testplan', { state: { add } });
+    } else {
+      alert('루틴에 운동을 추가해주세요.');
+    }
     // console.log(add);
   };
 
+  // alert(jjim);
   return (
     <s.Container>
       <s.HeaderArea>
@@ -110,6 +116,11 @@ const FitnessListPage = (): JSX.Element => {
       </s.HeaderArea>
       <s.MainArea>
         <s.FitnessArea>
+          {/* {!jjim || jjim.length === 0 ? (
+            ''
+          ) : (
+            <FitnessList text="즐겨찾기" data={jjim} add={add} onAdd={handleClickAdd} />
+          )} */}
           <FitnessList text="즐겨찾기" data={jjim} add={add} onAdd={handleClickAdd} />
           <FitnessList text="전체" data={fitness} add={add} onAdd={handleClickAdd} />
         </s.FitnessArea>

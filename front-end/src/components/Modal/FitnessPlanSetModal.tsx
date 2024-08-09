@@ -34,6 +34,8 @@ const s = {
 interface FitnessPlanModalProps {
   open: boolean;
   onModal: Function;
+  onTitle: Function;
+  onDate: Function;
 }
 interface FitnessRoutineProps {
   title: string;
@@ -59,12 +61,13 @@ const FitnessPlanSetModal = (props: FitnessPlanModalProps): JSX.Element => {
   const handleChangeDate = (newDate: Date) => {
     const routineDate = moment(newDate).format('YYYY-MM-DD');
     if (attendDay.find((x) => x === routineDate)) {
-      alert('운동을 완료했습니다.');
+      alert('운동을 완료한 날입니다.');
     } else if (attendDay2.find((x) => x === routineDate)) {
       alert('기존 루틴이 있는 날입니다.');
     } else {
       setInfo({ ...info, date: routineDate });
-      alert(routineDate);
+      alert('선택되었습니다.');
+      props.onDate(info.date);
     }
   };
 
@@ -72,7 +75,9 @@ const FitnessPlanSetModal = (props: FitnessPlanModalProps): JSX.Element => {
     if (info.title === '' || info.date === '') {
       alert('제목 및 날짜를 선택하십시오.');
     } else {
-      alert(info.title + ' ' + info.date);
+      alert('설정되었습니다.');
+      props.onTitle(info.title);
+      props.onDate(info.date);
       props.onModal();
     }
   };
@@ -113,6 +118,7 @@ const FitnessPlanSetModal = (props: FitnessPlanModalProps): JSX.Element => {
           onChangeDate={handleChangeDate}
           Routine={attendDay2}
           RoutineFinish={attendDay}
+          pick={info.date}
         />
         <Button
           width="200px"

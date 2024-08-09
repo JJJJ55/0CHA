@@ -67,6 +67,25 @@ const s = {
     display: flex;
     align-items: center;
   `,
+  Horizon: styled.hr`
+    margin: 0 15px;
+    min-width: 250px;
+    border-color: #212121;
+  `,
+};
+
+type marketItem = {
+  id: number;
+  title: string;
+  price: number;
+  isSold: boolean;
+  createdAt: string;
+  userId: number;
+  nickname: string;
+  profileImage: string;
+  likeCount: number;
+  isLike: number;
+  images: Array<string>;
 };
 
 interface MarketItemProps {

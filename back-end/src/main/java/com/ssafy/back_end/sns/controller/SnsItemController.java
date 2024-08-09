@@ -71,7 +71,7 @@ public class SnsItemController {
     @PostMapping("/write")
     public ResponseEntity<?> writeItem(HttpServletRequest request,
                                        @ModelAttribute ItemDto item,
-                                       @RequestParam("images") MultipartFile[] images) throws JsonProcessingException {
+                                       @RequestParam("images") MultipartFile[] images) {
 
 
         int userID = (Integer) request.getAttribute("userId");
@@ -106,7 +106,7 @@ public class SnsItemController {
 
                     // 이미지 정보 DB에 저장
                     String imageUrl = uploadDir + newFileName;
-                    snsItemService.saveImageDetails(itemID, userID, imageUrl, originalImageName, newFileName);
+                    snsItemService.saveImageDetail(itemID, userID, imageUrl, originalImageName, newFileName);
 
                 } catch (IOException e) {
                     e.printStackTrace();

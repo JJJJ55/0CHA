@@ -1,6 +1,7 @@
 package com.ssafy.back_end.sns.service;
 
 import com.ssafy.back_end.sns.model.ItemDto;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -23,5 +24,7 @@ public interface SnsItemService {
 
     int soldOut(int itemId);   //판매완료
 
-    void validateImages(List<String> images);   //이미지 유효성 검사
+    void validateImages(List<MultipartFile> images);   //이미지 유효성 검사
+
+    List<String> uploadImages(int id, List<MultipartFile> files, String remoteDir);
 }

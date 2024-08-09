@@ -262,15 +262,6 @@ const MainPage = (): JSX.Element => {
     );
   }, []);
 
-  const routineItems = [
-    { date: '07월 14일', name: '07월 14일 루틴' },
-    { date: '07월 13일', name: '토요일 루틴' },
-    { date: '07월 12일', name: '금요일 루틴' },
-    { date: '07월 11일', name: '금요일 루틴' },
-    { date: '07월 10일', name: '금요일 루틴' },
-    { date: '07월 09일', name: '금요일 루틴' },
-  ];
-
   const PageHeader = () => (
     <s.Header>
       <s.Title children="홈" />
@@ -291,6 +282,9 @@ const MainPage = (): JSX.Element => {
   const handleLiveExercise = () => {
     alert('진행중인 운동 페이지로 이동합니다.');
     navigate('/play');
+  };
+  const handleClickMove = (id: number): void => {
+    navigate('../fitness/history/detail', { state: { id } });
   };
 
   return (
@@ -313,7 +307,7 @@ const MainPage = (): JSX.Element => {
                   <s.RoutineName children={routine.title} />
                   <s.RoutineDate children={routine.dueDate} />
                 </s.RoutineInfo>
-                <s.RoutineBtn children="상세보기" onClick={() => navigate('/fitness/history/detail')} />
+                <s.RoutineBtn children="상세보기" onClick={() => handleClickMove(routine.id)} />
               </s.RoutineItem>
             ))}
           </s.RoutineList>

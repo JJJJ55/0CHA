@@ -32,7 +32,7 @@ export interface User {
 }
 
 export interface MainMyRoutine {
-  id: string;
+  id: number;
   title: string;
   dueDate: string;
   like: boolean;

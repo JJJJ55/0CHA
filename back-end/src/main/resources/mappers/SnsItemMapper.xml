@@ -68,10 +68,19 @@
                  LEFT JOIN item_details il ON i.id = il.item_id
             AND il.user_id = #{myId}
             AND il.detail_type = 'like'
-        WHERE CASE
-                  WHEN #{userId} = 0 THEN TRUE
-                  ELSE i.user_id = #{userId}
-                  END
+        WHERE 1=1
+        <if test="userId != 0">
+            AND i.user_id = #{userId}
+        </if>
+        <if test="district != null and district != ''">
+            AND u.district = #{district}
+        </if>
+        <if test="siGunGu != null and siGunGu != ''">
+            AND u.si_gun_gu = #{siGunGu}
+        </if>
+        <if test="title != null and title != ''">
+            AND i.title LIKE CONCAT('%', #{title}, '%')
+        </if>
         ORDER BY i.created_at DESC
             LIMIT #{limit}
         OFFSET #{offset};

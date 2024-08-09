@@ -1,6 +1,7 @@
 package com.ssafy.back_end.sns.controller;
 
 import com.ssafy.back_end.sns.model.ItemDto;
+import com.ssafy.back_end.sns.model.ItemListDto;
 import com.ssafy.back_end.sns.service.SnsItemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,17 +27,24 @@ public class SnsItemController {
     @Operation (summary = "전체or유저 중고장터 목록보기-완")
     @GetMapping ("/list")
     public ResponseEntity<?> getItems(HttpServletRequest request, @RequestParam (value = "user-id", defaultValue = "0") int userId,
+                                      @RequestParam (value = "district", defaultValue = "") String district,
+                                      @RequestParam (value = "si-gun-gu", defaultValue = "") String siGunGu,
+                                      @RequestParam (value = "title", defaultValue = "") String title,
                                       @RequestParam (value = "page", defaultValue = "1") int page,
                                       @RequestParam (value = "limit", defaultValue = "20") int limit) {
         int ID = (Integer)request.getAttribute("userId");
         int offset = (page - 1) * limit;
-        List<ItemDto> items = snsItemService.getItems(ID, userId, offset, limit);
+
+        ItemListDto list = new ItemListDto();
+        List<ItemDto> items = snsItemService.getItems(ID, userId, district, siGunGu, title, offset, limit);
+        list.setSize(snsItemService.getItems(ID, userId, district, siGunGu, title, 0, 9999999).size());
+        list.setItems(items);
 
         if (items != null) {
             if (items.isEmpty()) {
                 return ResponseEntity.ok("중고장터 0개입니다");
             }
-            return ResponseEntity.ok(items);
+            return ResponseEntity.ok(list);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("중고장터 조회 오류");
     }

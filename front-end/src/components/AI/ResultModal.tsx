@@ -25,25 +25,23 @@ const s = {
     overflow: hidden;
   `,
   ModalTitle: styled.h2`
-    margin-bottom: 20px;
+    margin-bottom: 30px;
     color: ${(props) => props.theme.mainColor};
-  `,
-  ResultList: styled.div`
-    margin-bottom: 20px;
-    text-align: left;
-  `,
-  ResultItem: styled.div<{ $isError: boolean }>`
-    margin: 5px 0;
-    /* 양호, 불량에 대한 스타일링 */
-    ${(props) =>
-      props.$isError
-        ? css`
-            color: ${(props) => props.theme.textColor};
-          `
-        : css`
-            color: ${(props) => props.theme.mainColor};
-          `}
     font-size: 14px;
+  `,
+  ResultTable: styled.table`
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    font-size: 14px;
+  `,
+  TableRow: styled.tr`
+    background-color: ${(props) => props.theme.bgColor}; /* 모든 행의 배경색을 동일하게 설정 */
+  `,
+  TableCell: styled.td<{ $isError?: boolean }>`
+    padding: 5px;
+    color: ${(props) => (props.$isError ? props.theme.mainColor : props.theme.textColor)};
+    font-weight: ${(props) => (props.$isError ? 'bold' : 'normal')};
   `,
   ConfirmBtn: styled.button`
     background-color: ${(props) => props.theme.mainColor};
@@ -51,7 +49,7 @@ const s = {
     border: none;
     padding: 10px 20px;
     border-radius: 5px;
-    font-size: 16px;
+    font-size: 14px;
     cursor: pointer;
     margin-top: 20px;
   `,
@@ -78,14 +76,22 @@ const ResultModal: React.FC<ResultModalProps> = ({ onClose, results }) => {
   return (
     <s.ModalOverlay onClick={handleOverlayClick}>
       <s.ModalContent onClick={(e) => e.stopPropagation()}>
-        <s.ModalTitle children="실행 결과" />
-        <s.ResultList>
-          {results.map((result) => (
-            <s.ResultItem key={result.set} $isError={result.isError}>
-              {result.set}회차 {result.isError ? 'X' : 'O'} {result.message}
-            </s.ResultItem>
-          ))}
-        </s.ResultList>
+        <s.ModalTitle children="트레이닝 결과" />
+        <s.ResultTable>
+          <tbody>
+            {results.map((result) => (
+              <s.TableRow key={result.set}>
+                <s.TableCell width="20%" style={{ textAlign: 'right' }}>
+                  {result.set}회차
+                </s.TableCell>
+                <s.TableCell width="10%">{result.isError ? 'X' : 'O'}</s.TableCell>
+                <s.TableCell width="65%" style={{ textAlign: 'left' }} $isError={result.isError}>
+                  {result.message}
+                </s.TableCell>
+              </s.TableRow>
+            ))}
+          </tbody>
+        </s.ResultTable>
         <s.ConfirmBtn onClick={onClose}>확인</s.ConfirmBtn>
       </s.ModalContent>
     </s.ModalOverlay>

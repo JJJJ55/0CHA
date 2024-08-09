@@ -45,6 +45,7 @@ import ErrorPage from './pages/ErrorPage';
 import { useAppSelector } from './lib/hook/useReduxHook';
 import { selectIsEmail, selectIsFinish, selectIsPlay, selectIsPw, selectIsScan, selectIsSign } from './store/page';
 import TestPlanSetPage from './pages/Fitness/TestPlanSetPage';
+import UpdateItemPage from './pages/SocialPage/Market/UpdateItemPage';
 
 const s = {
   Background: styled.section`
@@ -170,6 +171,7 @@ function App() {
                   <Route path="market">
                     <Route index element={<MarketPage />} />
                     <Route path="write" element={<UploadItemPage />} />
+                    <Route path="update/:id" element={<UpdateItemPage />} />
                   </Route>
                   <Route path="chat">
                     <Route index element={<ChatListPage />} />

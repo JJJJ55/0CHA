@@ -167,15 +167,25 @@ public class SnsItemController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("중고마켓 수정 오류");
     }
 
-    @Operation (summary = "중고장터 글삭제-완")
-    @DeleteMapping ("/{itemId}")
-    public ResponseEntity<?> deleteItem(@PathVariable int itemId) {
-        int result = snsItemService.deleteItem(itemId);
+    @Operation(summary = "중고장터 글삭제-완")
+    @DeleteMapping("/{itemId}")
+    public ResponseEntity<String> deleteItem(@PathVariable int itemId) {
+        try {
+            log.info("컨트롤러: 중고장터 삭제 요청 받음: itemId={}", itemId);
 
-        if (result != 0) {
-            return ResponseEntity.ok("중고장터 삭제 성공");
+            int result = snsItemService.deleteItem(itemId);
+
+            if (result != 0) {
+                log.info("컨트롤러: 중고장터 삭제 성공: itemId={}", itemId);
+                return ResponseEntity.ok("중고장터 삭제 성공");
+            } else {
+                log.warn("컨트롤러: 중고장터 삭제 실패, 항목을 찾을 수 없음: itemId={}", itemId);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("삭제할 항목이 없습니다.");
+            }
+        } catch (Exception e) {
+            log.error("컨트롤러: 중고장터 삭제 중 오류 발생: itemId={}, error={}", itemId, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류로 삭제 실패");
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("중고장터 삭제 오류");
     }
 
     @Operation (summary = "중고장터 좋아요-완")

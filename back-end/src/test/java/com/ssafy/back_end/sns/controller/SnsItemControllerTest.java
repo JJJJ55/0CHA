@@ -14,6 +14,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+
 @SpringBootTest
 public class SnsItemControllerTest {
 
@@ -29,7 +31,7 @@ public class SnsItemControllerTest {
 
         // Mock 이미지 파일 생성
         MockMultipartFile imageFile = new MockMultipartFile(
-                "images", // 요청 파라미터 이름
+                "images", // 요청 파라미터 이름s
                 "0CHA.png", // 파일 이름
                 MediaType.IMAGE_PNG_VALUE, // 파일의 MIME 타입
                 "Test Image Content".getBytes() // 파일 내용
@@ -67,7 +69,8 @@ public class SnsItemControllerTest {
                         .requestAttr("userId", 1)) // 요청 속성에 userId를 설정합니다.
                 .andDo(printResult()) // 결과를 콘솔에 출력합니다.
                 .andExpect(MockMvcResultMatchers.status().isOk()) // 응답 상태가 200 OK인지 확인합니다.
-                .andExpect(MockMvcResultMatchers.content().string("중고마켓 작성 성공")); // 응답 본문이 기대한 문자열과 일치하는지 확인합니다.
+                .andExpect(jsonPath("$.message").value("중고마켓 작성 성공")) // 응답 JSON의 message 값이 "중고마켓 작성 성공"인지 확인합니다.
+                .andExpect(jsonPath("$.itemID").exists()); // 응답 JSON에 itemID가 존재하는지 확인합니다.
     }
 
     public static ResultHandler printResult() {

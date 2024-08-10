@@ -78,21 +78,33 @@ public class SnsItemController {
                                        @RequestPart("item") ItemDto item,
                                        @RequestPart("images") List<MultipartFile> images) {
 
+        log.debug("[SnsItemController] writeItem - 시작");
 
         int userID = (Integer) request.getAttribute("userId");
         item.setUserId(userID);
         item.setImages(images);
 
-        log.debug("item : {}", item.toString());
+        log.debug("[SnsItemController] item 정보: {}", item.toString());
 
         // 작성된 게시글 번호
         int itemID = snsItemService.writeItem(item);
-        log.debug("itemID : {}", itemID);
-
-        // 받은 이미지로 서버에 저장하고 저장된 경로를 list로 반환
-        List<String> savedImagePath = new ArrayList<>();
+        log.debug("[SnsItemController] itemID : {}", itemID);
 
         String uploadDir = "/home/ubuntu/images/item/";
+        File uploadDirectory = new File(uploadDir);
+
+        // 디렉토리가 존재하지 않으면 생성
+        if (!uploadDirectory.exists()) {
+            log.debug("[SnsItemController] 디렉토리 {} 가 존재하지 않음", uploadDirectory.getAbsolutePath());
+            boolean isCreated = uploadDirectory.mkdirs();
+            if (!isCreated) {
+                log.debug("[SnsItemController] 디렉토리 {} 생성 실패", uploadDirectory.getAbsolutePath());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("디렉토리 생성 실패");
+            } else {
+                log.debug("[SnsItemController] 디렉토리 {} 생성 완료", uploadDirectory.getAbsolutePath());
+            }
+        }
+        log.debug("[SnsItemController] 디렉토리 {} 가 존재함", uploadDirectory.getAbsolutePath());
 
         for (int i = 0; i < images.size(); i++) {
             MultipartFile image = images.get(i);
@@ -109,39 +121,36 @@ public class SnsItemController {
                     // 고유한 파일 이름 생성
                     // 사용자 ID-게시물 번호-해당 게시물에서 이미지 순서.확장자
                     String newFileName = userID + "-" + itemID + "-" + i + imageExtension;
-                    log.debug("newFileName : {}", newFileName);
+                    log.debug("[SnsItemController] 새 파일 이름 생성: {}", newFileName);
 
                     // 파일 저장
                     image.transferTo(new File(uploadDir + newFileName));
-//                    image.transferTo(new File("C:\\Users\\pswlo\\OneDrive\\문서\\home\\ubuntu\\images\\item\\" + newFileName));
 
                     // 이미지 정보 DB에 저장
                     String imageUrl = uploadDir + newFileName;
-                    log.debug("imageUrl : {}", imageUrl);
+                    log.debug("[SnsItemController] 이미지 저장 경로: {}", imageUrl);
 
                     snsItemService.saveImageDetail(itemID, userID, imageUrl, originalImageName, newFileName);
-                    log.debug("이미지 업로드 성공");
+                    log.debug("[SnsItemController] 이미지 업로드 성공: {}", newFileName);
 
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    log.error("[SnsItemController] 이미지 업로드 오류", e);
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("이미지 업로드 오류");
                 }
             }
         }
 
-        // 이미지 경로 DB에 저장 (필요 시 코드 추가)
-        // insert into item_details(item_id, detail_type, user_id, image_url, origin_name, save_name)
-        // value(itemId, 'image', userId, uploadDir+newFileName, originalImageName, newFileName);
-
-
         if (itemID > 0) {
             Map<String, Object> response = new HashMap<>();
             response.put("message", "중고마켓 작성 성공");
             response.put("itemID", itemID);
+            log.debug("[SnsItemController] 중고마켓 작성 성공, itemID: {}", itemID);
             return ResponseEntity.ok(response);
         }
+        log.debug("[SnsItemController] 중고마켓 작성 오류");
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("중고마켓 작성 오류");
     }
+
 
 
     @Operation (summary = "중고장터 글수정-완")

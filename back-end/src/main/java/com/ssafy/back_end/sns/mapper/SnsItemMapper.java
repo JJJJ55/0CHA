@@ -28,6 +28,10 @@ public interface SnsItemMapper {
 
     int deleteItem(@Param ("id") int itemId);   //중고장터 삭제
 
+    List<String> getImagePathsByItemId(@Param("itemId") int itemId);   // 삭제할 게시물의 이미지 경로 가져옴
+
+    int deleteItemDetail(@Param("itemId") int itemId); // 해당 게시물 좋아요 및 이미지 정보 삭제
+
     int isLike(@Param ("itemId") int itemId, @Param ("userId") int userId);   //내가 좋아요 눌렀는지 확 인
 
     int likeItem(@Param ("itemId") int itemId, @Param ("userId") int userId);   //중고장터 좋아요

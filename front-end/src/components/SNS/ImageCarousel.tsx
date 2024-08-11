@@ -20,6 +20,9 @@ const s = {
   ImageContainer: styled.div`
     min-width: 100%;
     box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   `,
   Image: styled.img`
     width: 100%;
@@ -65,13 +68,20 @@ const ImageCarousel: React.FC<CarouselProps> = ({ images }) => {
     setCurrentIndex((prevIndex) => (prevIndex === images.length - 1 ? 0 : prevIndex + 1));
   };
 
+  const basicUrl = 'https://i11b310.p.ssafy.io/images/';
+
+  // 이미지 경로를 파싱하여 basicUrl과 결합하는 함수
+  const getParsedImageUrl = (imagePath: string) => {
+    const relativePath = imagePath.split('/home/ubuntu/images/')[1];
+    return basicUrl + relativePath;
+  };
+
   return (
     <s.CarouselContainer>
       <s.CarouselWrapper translatex={-currentIndex * 100}>
         {images.map((img, index) => (
           <s.ImageContainer key={index}>
-            {/* <s.Image src={img || testImg} alt={`carousel-image-${index}`} /> */}
-            <s.Image src={testImg} alt={`carousel-image-${index}`} />
+            <s.Image src={getParsedImageUrl(img)} alt="이미지가 안 떠요" />
           </s.ImageContainer>
         ))}
       </s.CarouselWrapper>

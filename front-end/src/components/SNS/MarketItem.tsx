@@ -142,14 +142,26 @@ const MarketItem = (props: MarketItemProps): JSX.Element => {
     setLikeCount(itemLike);
   }, [isLike, itemLike]);
 
+  const basicUrl = 'https://i11b310.p.ssafy.io/images/';
+
+  // 이미지 경로를 파싱하여 basicUrl과 결합하는 함수
+  const getParsedImageUrl = (imagePath: string) => {
+    if (imagePath) {
+      const relativePath = imagePath.split('/home/ubuntu/images/')[1];
+      return basicUrl + relativePath;
+    } else {
+      return testImg;
+    }
+  };
+
   return (
     <s.Container>
       {/* <Image width="70px" height="70px" src={itemImage} type="rect" /> */}
-      <Image width="70px" height="70px" src={testImg} type="rect" />
+      <Image width="70px" height="70px" src={getParsedImageUrl(itemImage)} type="rect" />
       <s.ItemInfoArea>
         <s.ItemTopArea onClick={onClick}>
           <s.ItemName>{itemName}</s.ItemName>
-          {isOnSale === true ? <s.Available>판매중</s.Available> : <s.Unavailable>판매완료</s.Unavailable>}
+          {isOnSale === true ? <s.Available>판매중</s.Available> : <s.Unavailable>판매완료 </s.Unavailable>}
         </s.ItemTopArea>
         <s.ItemBottomArea>
           <s.ItemPrice>{Number(itemPrice).toLocaleString()}원</s.ItemPrice>

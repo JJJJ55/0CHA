@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.security.Key;
-import java.util.Base64;
 import java.util.Date;
 
 @Component
@@ -25,8 +24,8 @@ public class JwtUtil {
 //    Base64로 인코딩된 문자열을 바이트 배열로 변환하여 키 생성
 
 
-    private static final String REFRESH_KEY_STRING = "asd890fuyqw089efyasdfasfdasdfwa8efyaw98efhsaf";
     private static final String SECRET_KEY_STRING = "ad6fs78g6qw0er876das9f87g65sdf9876g5sd987g56sdf";
+    private static final String REFRESH_KEY_STRING = "asd890fuyqw089efyasdfasfdasdfwa8efyaw98efhsaf";
 
     private static final Key secretKey = Keys.hmacShaKeyFor(SECRET_KEY_STRING.getBytes());
     private static final Key refreshKey = Keys.hmacShaKeyFor(REFRESH_KEY_STRING.getBytes());

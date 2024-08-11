@@ -74,7 +74,16 @@
                  item_id
             ) il ON i.id = il.item_id
                 LEFT JOIN
-            item_details d ON i.id = d.item_id AND d.detail_type = 'image'
+            (SELECT
+                 item_id,
+                 MIN(image_url) AS image_url  -- 가장 첫 번째 이미지만 선택
+             FROM
+                 item_details
+             WHERE
+                 detail_type = 'image'
+             GROUP BY
+                 item_id
+            ) d ON i.id = d.item_id
         ORDER BY
             i.created_at DESC
         LIMIT #{limit}

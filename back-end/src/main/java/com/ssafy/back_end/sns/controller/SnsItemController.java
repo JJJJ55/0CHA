@@ -48,8 +48,8 @@ public class SnsItemController {
         int offset = (page - 1) * limit;
 
         // 로그 추가
-        log.info("User ID: {}, District: {}, SiGunGu: {}, Title: {}, Page: {}, Limit: {}",
-                userId, district, siGunGu, title, page, limit);
+        log.info("User ID: {}, District: {}, SiGunGu: {}, Title: {}, Page: {}, Limit: {}, Offset: {}",
+                userId, district, siGunGu, title, page, limit, offset);
         log.info("Requesting user ID: {}", ID);
 
         ItemListDto list = new ItemListDto();

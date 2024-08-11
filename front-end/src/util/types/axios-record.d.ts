@@ -1,4 +1,6 @@
 export interface Inbody {
+  id?: number;
+  userId?: number;
   height?: number;
   weight?: number;
   bodyWater?: number;

@@ -103,7 +103,7 @@ interface FitnessPlanProps {
   exercise: {
     exerciseName: string;
     exerciseId: number;
-    sequence: number;
+    sequence?: number;
     sets: ExerciseDetailType[];
   };
   index: number;

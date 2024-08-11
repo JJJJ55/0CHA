@@ -53,6 +53,9 @@ const s = {
     cursor: pointer;
     margin-top: 20px;
   `,
+  TableBody: styled.tbody`
+    /* 추가적인 스타일이 필요한 경우 여기서 정의 */
+  `,
 };
 // 결과
 interface Result {
@@ -78,7 +81,7 @@ const ResultModal: React.FC<ResultModalProps> = ({ onClose, results }) => {
       <s.ModalContent onClick={(e) => e.stopPropagation()}>
         <s.ModalTitle children="트레이닝 결과" />
         <s.ResultTable>
-          <tbody>
+          <s.TableBody>
             {results.map((result) => (
               <s.TableRow key={result.set}>
                 <s.TableCell width="20%" style={{ textAlign: 'right' }} $isError={result.isError}>
@@ -92,7 +95,7 @@ const ResultModal: React.FC<ResultModalProps> = ({ onClose, results }) => {
                 </s.TableCell>
               </s.TableRow>
             ))}
-          </tbody>
+          </s.TableBody>
         </s.ResultTable>
         <s.ConfirmBtn onClick={onClose}>확인</s.ConfirmBtn>
       </s.ModalContent>

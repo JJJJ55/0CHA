@@ -139,11 +139,16 @@ const AIMainPage: React.FC = () => {
   const [selectedVoice, setSelectedVoice] = useState('아라'); // 선택된 음성을 저장할 상태 변수
   const [isFinished, setIsFinished] = useState(false); // 운동 종료 여부를 저장할 상태 변수
 
+  const pushStopRef = useRef(false); // 운동 종료 버튼(중도 하차)을 누른 경우를 관리하는 ref
+  const [showStopButton, setShowStopButton] = useState(false); // 운동 종료 버튼을 표시할지 여부를 관리하는 상태
+
   // 트레이닝 설정 확인 시 호출되는 함수
   const handleSettingsConfirm = (exercise: string, count: number) => {
+    pushStopRef.current = false; // 운동 중단 여부 초기화
     setSelectedExercise(exercise); // 선택된 운동 업데이트
     setResults([]); // 결과 초기화
     setIsFinished(false); // 운동 종료 상태 초기화
+    setShowStopButton(false);
     setCorrectCount(0);
     setInCorrectCount(0);
     setProgress(0);
@@ -213,7 +218,6 @@ const AIMainPage: React.FC = () => {
       canvas.width = size; // 캔버스 너비 설정
       canvas.height = size; // 캔버스 높이 설정
       setCameraStarted(true);
-      playAudio('start'); // 시작
     }
 
     // 5초의 대기 시간을 추가하고 그동안 캔버스에 카운트다운을 표시
@@ -236,8 +240,14 @@ const AIMainPage: React.FC = () => {
       await new Promise((resolve) => setTimeout(resolve, 1000)); // 1초 대기
     }
 
+    setShowStopButton(true);
+    playAudio('start'); // 시작
+
     // 반복적으로 프레임을 갱신하고 예측을 수행하는 루프 함수
     const loop = async () => {
+      if (pushStopRef.current) {
+        return;
+      }
       if (!canvasRef.current || !newWebcam || !model) {
         console.log('Webcam, canvas, or model is not available');
         return;
@@ -465,18 +475,6 @@ const AIMainPage: React.FC = () => {
     prevStatusRef.current = status; // 현재 상태를 이전 상태로 업데이트
   }, [status]);
 
-  // // 올바른 자세 및 잘못된 자세 카운트가 변경될 때마다 코멘트를 업데이트하는 useEffect
-  // useEffect(() => {
-  //   if (correctCount + inCorrectCount > 0) {
-  //     setResults((prevResults) => [
-  //       ...prevResults,
-  //       { set: correctCount, isError: false, message: '올바른 자세입니다.' },
-  //     ]);
-  //     playAudio(correctCount.toString());
-  //   }
-  // }, [correctCount, inCorrectCount]);
-
-  // 목표 횟수에 도달했는지 확인하고 도달 시 세션을 종료하는 useEffect
   useEffect(() => {
     if (correctCount + inCorrectCount >= totalCount) {
       stop(); // 세션 종료
@@ -486,23 +484,25 @@ const AIMainPage: React.FC = () => {
   // 세션을 종료하는 함수
   const stop = (reason?: string) => {
     if (webcam) {
+      console.log('웹캠 중지');
       try {
         webcam.stop(); // 웹캠 중지
         setCameraStarted(false);
         setIsFinished(true);
         setModel(null);
         setSelectedExercise('');
+        setShowStopButton(false);
       } catch (error) {
         console.error('Error stopping webcam:', error); // 에러 처리
       }
     }
 
     if (requestID) {
+      console.log('애니메이션 요청 프레임 취소');
       window.cancelAnimationFrame(requestID); // 애니메이션 프레임 요청 취소
     }
 
     if (canvasRef.current) {
-      console.log('수행됨');
       canvasRef.current.style.display = 'none'; // 캔버스 숨기기
       // canvasRef.current = null; // 캔버스 참조 해제
     }
@@ -562,8 +562,14 @@ const AIMainPage: React.FC = () => {
           {selectedExercise && !model && <s.SettingBtn onClick={loadModel} children="준비" />}
           {selectedExercise && model && !cameraStarted && <s.SettingBtn onClick={init} children="카메라 시작" />}
           {/* 운동 종료 버튼 */}
-          {selectedExercise && cameraStarted && (
-            <s.SettingBtn onClick={() => stop('userStopped')} children="운동 종료" />
+          {selectedExercise && showStopButton && (
+            <s.SettingBtn
+              onClick={() => {
+                pushStopRef.current = true;
+                stop();
+              }}
+              children="운동 종료"
+            />
           )}
           {/* 운동 진행 상태 바 */}
           {selectedExercise && (

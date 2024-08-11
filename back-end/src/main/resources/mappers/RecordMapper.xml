@@ -27,7 +27,7 @@
         SELECT *
         FROM inbody_records
         WHERE user_id = #{userId}
-        ORDER BY measured_at DESC LIMIT 10;
+        ORDER BY measured_at ASC LIMIT 10;
     </select>
 
     <insert id="insertInbody" parameterType="recordInbodyDto">

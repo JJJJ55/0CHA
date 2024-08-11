@@ -3,6 +3,11 @@ import styled from 'styled-components';
 import testImage from '../../asset/img/testImg.png';
 import IconSvg from '../../components/Common/IconSvg';
 import { ReactComponent as alarm } from '../../asset/img/svg/alram.svg';
+import { ReactComponent as main1 } from '../../asset/img/svg/main1.svg';
+import { ReactComponent as main2 } from '../../asset/img/svg/main2.svg';
+import { ReactComponent as main3 } from '../../asset/img/svg/main3.svg';
+import { ReactComponent as main4 } from '../../asset/img/svg/main4.svg';
+import { ReactComponent as main5 } from '../../asset/img/svg/main5.svg';
 import BottomNav from '../../components/Common/BottomNav';
 import Button from '../../components/Common/Button';
 import { useBottomNavHook } from '../../lib/hook/useBottomNavHook';
@@ -73,15 +78,24 @@ const s = {
     border-radius: 10px;
     cursor: pointer;
   `,
-  ItemText: styled.div`
+  ItemText1: styled.div`
     position: absolute;
     bottom: 10px;
     left: 10px;
     right: 10px;
-    color: ${(props) => props.theme.textColor};
     font-size: 16px;
-    font-weight: bold;
-    background-color: rgba(0, 0, 0, 0.5);
+    font-weight: 800;
+    padding: 5px;
+    border-radius: 5px;
+    cursor: default;
+  `,
+  ItemText2: styled.div`
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    font-size: 16px;
+    font-weight: 800;
     padding: 5px;
     border-radius: 5px;
     cursor: default;
@@ -182,6 +196,27 @@ const s = {
   `,
 };
 
+const Text1 = styled(s.ItemText1)`
+  text-align: right;
+  color: ${(props) => props.theme.mainColor};
+`;
+const Text2 = styled(s.ItemText2)`
+  text-align: left;
+  color: ${(props) => props.theme.textColor};
+`;
+const Text3 = styled(s.ItemText1)`
+  text-align: right;
+  color: ${(props) => props.theme.mainColor};
+`;
+const Text4 = styled(s.ItemText1)`
+  text-align: right;
+  color: ${(props) => props.theme.mainColor};
+`;
+const Text5 = styled(s.ItemText2)`
+  text-align: left;
+  color: ${(props) => props.theme.textColor};
+`;
+
 interface HorizontalScrollProps {
   items: mainPageRoutine[];
 }
@@ -194,6 +229,7 @@ const HorizontalScroll: React.FC<HorizontalScrollProps> = ({ items }) => {
   const handleMovePage = (path: string): void => {
     navigate(path);
   };
+  const img = [main1, main2, main3, main4, main5];
   useEffect(() => {
     const scrollWrapper = scrollWrapperRef.current;
     if (scrollWrapper) {
@@ -214,13 +250,32 @@ const HorizontalScroll: React.FC<HorizontalScrollProps> = ({ items }) => {
     <s.ScrollContainer>
       <s.SectionTitle children="추천 루틴" />
       <s.ScrollArea ref={scrollWrapperRef}>
-        {items.map((item, index) => (
+        {/* {items.map((item, index) => (
           <s.Item key={index} onClick={() => handleMovePage('/fitness/history/detail')}>
-            <s.ItemImage src={testImage} alt={item.title} />
-            {/* 이미지 일단 덤벨 */}
+            <IconSvg Ico={img[index]} height="100%" width="100%" cursor="pointer" />
             <s.ItemText>{item.title}</s.ItemText>
           </s.Item>
-        ))}
+        ))} */}
+        <s.Item onClick={() => navigate('/fitness/history/detail', { state: { id: items[0].id } })}>
+          <IconSvg Ico={img[0]} height="100%" width="100%" cursor="pointer" />
+          <Text1>{items[0]?.title}</Text1>
+        </s.Item>
+        <s.Item onClick={() => navigate('/fitness/history/detail', { state: { id: items[1].id } })}>
+          <IconSvg Ico={img[1]} height="100%" width="100%" cursor="pointer" />
+          <Text2>{items[1]?.title}</Text2>
+        </s.Item>
+        <s.Item onClick={() => navigate('/fitness/history/detail', { state: { id: items[2].id } })}>
+          <IconSvg Ico={img[2]} height="100%" width="100%" cursor="pointer" />
+          <Text3>{items[2]?.title}</Text3>
+        </s.Item>
+        <s.Item onClick={() => navigate('/fitness/history/detail', { state: { id: items[3].id } })}>
+          <IconSvg Ico={img[3]} height="100%" width="100%" cursor="pointer" />
+          <Text4>{items[3]?.title}</Text4>
+        </s.Item>
+        <s.Item onClick={() => navigate('/fitness/history/detail', { state: { id: items[4].id } })}>
+          <IconSvg Ico={img[4]} height="100%" width="100%" cursor="pointer" />
+          <Text5>{items[4]?.title}</Text5>
+        </s.Item>
       </s.ScrollArea>
     </s.ScrollContainer>
   );

@@ -26,6 +26,7 @@
         <id property="id" column="id"/>
         <result property="title" column="title"/>
         <result property="price" column="price"/>
+        <result property="content" column="content"/>
         <result property="isSold" column="is_sold"/>
         <result property="district" column="district"/>
         <result property="siGunGu" column="si_gun_gu"/>

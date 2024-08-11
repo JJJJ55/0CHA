@@ -1,9 +1,8 @@
-package com.ssafy.back_end.exercise.service.impl;
+package com.ssafy.back_end.exercise.service;
 
 import com.ssafy.back_end.exercise.model.ExerciseDto;
 import com.ssafy.back_end.exercise.mapper.WorkoutExerciseMapper;
 import com.ssafy.back_end.exercise.model.ExerciseRecordDto;
-import com.ssafy.back_end.exercise.service.WorkoutExerciseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

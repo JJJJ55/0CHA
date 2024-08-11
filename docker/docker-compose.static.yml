@@ -72,6 +72,17 @@ services:
     networks:
       - app-network
 
+  images-nginx:
+    image: nginx:alpine
+    container_name: images-nginx-container
+    ports:
+      - "2000:80"
+    volumes:
+      - /home/ubuntu/images:/usr/share/nginx/html/images
+    restart: always
+    networks:
+      - app-network
+
   certbot:
     image: certbot/certbot
     volumes:

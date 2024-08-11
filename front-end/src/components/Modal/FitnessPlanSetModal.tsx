@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import ReactModal from 'react-modal';
 import moment from 'moment';
@@ -8,6 +8,8 @@ import Button from '../Common/Button';
 import Text from '../Common/Text';
 import CalendarArea from '../Common/CalendarArea';
 import { useModalExitHook } from '../../lib/hook/useModalExitHook';
+import { getFitnessCalendar } from '../../lib/api/record-api';
+import { FitnessDay } from '../../util/types/axios-record';
 
 const s = {
   Container: styled.div`
@@ -45,7 +47,7 @@ interface FitnessRoutineProps {
 const FitnessPlanSetModal = (props: FitnessPlanModalProps): JSX.Element => {
   const attendDay = ['2024-07-30', '2024-07-15', '2024-08-12']; // 운동시작 버튼 누른 날
   const attendDay2 = ['2024-07-31', '2024-07-16', '2024-08-13']; // 운동 시작버튼 안누른 날(계획)
-
+  const [fitness, setFitness] = useState<FitnessDay[]>([]);
   const [info, setInfo] = useState<FitnessRoutineProps>({
     title: '',
     date: '',
@@ -58,15 +60,23 @@ const FitnessPlanSetModal = (props: FitnessPlanModalProps): JSX.Element => {
     });
   };
 
+  useEffect(() => {
+    getFitnessCalendar(
+      (resp) => {
+        setFitness(resp.data);
+      },
+      (error) => {
+        console.log('잠시 후 다시 시도해주세요.');
+      },
+    );
+  }, []);
+
   const handleChangeDate = (newDate: Date) => {
     const routineDate = moment(newDate).format('YYYY-MM-DD');
-    if (attendDay.find((x) => x === routineDate)) {
-      alert('운동을 완료한 날입니다.');
-    } else if (attendDay2.find((x) => x === routineDate)) {
-      alert('기존 루틴이 있는 날입니다.');
+    if (fitness.find((x) => x.dueDate === routineDate)) {
+      alert('해당 날은 루틴이 이미 존재합니다.');
     } else {
       setInfo({ ...info, date: routineDate });
-      alert('선택되었습니다.');
       props.onDate(info.date);
     }
   };
@@ -116,9 +126,11 @@ const FitnessPlanSetModal = (props: FitnessPlanModalProps): JSX.Element => {
         <CalendarArea
           className="react-calendar"
           onChangeDate={handleChangeDate}
-          Routine={attendDay2}
-          RoutineFinish={attendDay}
-          // pick={info.date}
+<<<<<<< front-end/src/components/Modal/FitnessPlanSetModal.tsx
+          // Routine={attendDay2}
+          // RoutineFinish={attendDay}
+          FitnessDay={fitness}
+          pick={info.date}
         />
         <Button
           width="200px"

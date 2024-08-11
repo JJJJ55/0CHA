@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Button from '../../../components/Common/Button';
-import test from '../../../asset/img/testImg.png';
+import basic from '../../../asset/img/basic.png';
 import Header from '../../../components/Common/Header';
 import BottomNav from '../../../components/Common/BottomNav';
 import { useLocation, useNavigate } from 'react-router';
@@ -194,7 +194,7 @@ const ProfileMainPage = (): JSX.Element => {
       <Header text="내 프로필" />
       <s.ProfileArea>
         <s.ProfileImageArea>
-          <s.ProfileImage src={user.profileImage} alt="프로필 이미지" />
+          <s.ProfileImage src={user.profileImage ?? basic} alt="프로필 이미지" />
           <s.ProfileDetails>
             <s.MainDetail children={user.name} />
             <s.SubDetail children={user.nickname} />

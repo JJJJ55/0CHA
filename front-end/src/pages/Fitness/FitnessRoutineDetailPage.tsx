@@ -26,7 +26,7 @@ const FitnessRoutineDetatilPage = (): JSX.Element => {
   const id = useLocation().state?.id;
   const handleClickMove = (): void => {
     // console.log(routine);
-    navigate('../test', { state: { data: routine } });
+    navigate('../../plan', { state: { data: routine } });
   };
 
   useEffect(() => {

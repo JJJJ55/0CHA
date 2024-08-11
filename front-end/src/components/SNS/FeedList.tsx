@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, useEffect, useState } from 'react';
+import React, { MouseEventHandler, useEffect, useId, useState } from 'react';
 import styled from 'styled-components';
 
 import Image from '../Common/Image';
@@ -8,6 +8,8 @@ import { ReactComponent as comment } from '../../asset/img/svg/comment.svg';
 import { useNavigate } from 'react-router';
 
 import LikeIcon from './LikeIcon';
+
+import { SnsFeedDel } from '../../lib/api/sns-api';
 
 const s = {
   FeedContentArea: styled.div`
@@ -30,7 +32,21 @@ const s = {
   AuthorProfileArea: styled.div`
     display: flex;
     align-items: center;
+    justify-content: space-between;
     margin: 15px 15px 10px 15px;
+  `,
+  AuthorProfile: styled.div`
+    display: flex;
+    align-items: center;
+  `,
+  MyFeedMenuArea: styled.div`
+    display: flex;
+  `,
+  MyFeedMenu: styled.div`
+    color: ${(props) => props.theme.textColor};
+    font-size: 12px;
+    cursor: pointer;
+    margin-left: 20px;
   `,
   FeedInteractionArea: styled.div`
     display: flex;
@@ -50,8 +66,9 @@ const s = {
     align-items: center;
     cursor: pointer;
   `,
-  FeedItem: styled.div`
+  FeedItem: styled.div<FeedDeleteProps>`
     margin-bottom: 80px;
+    display: ${(props) => (props.$isdelete === false ? '' : 'none')};
   `,
   ImageArea: styled.div`
     width: 100%;
@@ -74,50 +91,98 @@ type feedData = {
 };
 
 interface FeedListProps {
-  data?: feedData[];
+  feedId: number;
+  content: string;
+  image: string;
+  likeCount: number;
+  commentCount: number;
+  createdAt: string;
+  userId: number;
+  nickname: string;
+  profileImage: string;
+  isLike: number;
   // onClick: MouseEventHandler<HTMLDivElement>;
   onClick: (id: number) => void;
+  loginUser: number;
 };
 
+interface FeedDeleteProps {
+  $isdelete?: boolean;
+}
 
-const FeedList = ({data, onClick}: FeedListProps): JSX.Element => {
+
+
+const FeedList = (props: FeedListProps): JSX.Element => {
+  
+// const FeedList = ({data, onClick}: FeedListProps): JSX.Element => {
   const navigate = useNavigate();
   const handleMovePage = (path: string): void => {
     navigate(path);
   };
 
+  
+
+
+  // 피드 삭제
+  const [isDelete, setIsDelete] = useState(false);
+
+  const feedDelOnClick = async (feedId: number) => {
+    console.log(feedId, 'feedId')
+    console.log(props.userId, '로그인유저')
+    SnsFeedDel(
+      feedId,
+      (resp) => {
+        console.log(resp.data);
+        setIsDelete(true);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  };
 
   return (
     <>
-    {data?.map((feed) => (
-      <s.FeedItem key={feed.id}>
+
+      <s.FeedItem key={props.feedId} $isdelete={isDelete}>
       <s.AuthorProfileArea>
-        <s.AuthorProfileImage
-          width="30px"
-          height="30px"
-          src={feed.profileImage}
-          onClick={() => handleMovePage(`../profile/${feed.userId}`)}
-        />
-        <s.AuthorName onClick={() => handleMovePage(`../profile/${feed.userId}`)}>{feed.nickname}</s.AuthorName>
+        <s.AuthorProfile>
+          <s.AuthorProfileImage
+            width="30px"
+            height="30px"
+            src={props.profileImage}
+            onClick={() => handleMovePage(`../profile/${props.userId}`)}
+          />
+          <s.AuthorName onClick={() => handleMovePage(`../profile/${props.userId}`)}>{props.nickname}</s.AuthorName>
+        </s.AuthorProfile>
+        {props.userId === props.loginUser ? (
+          <s.MyFeedMenuArea>
+            <s.MyFeedMenu>수정</s.MyFeedMenu>
+            <s.MyFeedMenu onClick={() => {feedDelOnClick(props.feedId)}}>삭제</s.MyFeedMenu>
+          </s.MyFeedMenuArea>
+        ) : (
+          <></>
+        )}
+        
       </s.AuthorProfileArea>
       <s.ImageArea>
         <Image
           width="100%"
-          height="auto"
-          src={feed.image}
+          height="100%"
+          src={props.image}
           type="rect"
         />
       </s.ImageArea>
       <s.FeedInteractionArea>
-        <LikeIcon feedId={feed.id} isLike={feed.isLike} likeCount={feed.likeCount} />
-        <s.IconArea onClick={() => onClick(feed.id)}>
+        <LikeIcon feedId={props.feedId} isLike={props.isLike} likeCount={props.likeCount} />
+        <s.IconArea onClick={() => props.onClick(props.feedId)}>
           <IconSvg
             width="25"
             height="25"
             color="#ccff33"
             Ico={comment}
           />
-          <s.FeedCaption>{feed.commentCount}</s.FeedCaption>
+          <s.FeedCaption>{props.commentCount}</s.FeedCaption>
         </s.IconArea>
         <s.RoutineButton>
           <Button
@@ -130,9 +195,8 @@ const FeedList = ({data, onClick}: FeedListProps): JSX.Element => {
           />
         </s.RoutineButton>
       </s.FeedInteractionArea>
-      <s.FeedContentArea>{feed.content}</s.FeedContentArea>
-      </s.FeedItem>
-    ))}
+      <s.FeedContentArea>{props.content}</s.FeedContentArea>
+      </s.FeedItem>    
     </>
   );
 };

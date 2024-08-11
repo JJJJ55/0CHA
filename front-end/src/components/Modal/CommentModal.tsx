@@ -77,7 +77,6 @@ const CommentModal = (props: CommentModalProps): JSX.Element => {
 
   useEffect(() => {
     setComments(data || []);
-    console.log(feedId)
   }, [data]);
 
   const toggleModal = () => {
@@ -106,7 +105,9 @@ const CommentModal = (props: CommentModalProps): JSX.Element => {
             userId: userId,
           };
 
-          setComments([newComment, ...comments]);
+          // setComments([newComment, ...comments]);
+          setComments([...comments, newComment]);
+          // setComments([newComment, ...comments]);
           setCommentValue('');
         },
         (error) => {
@@ -115,6 +116,10 @@ const CommentModal = (props: CommentModalProps): JSX.Element => {
       );
     }
   };
+
+  useEffect(() => {
+    console.log(commentValue)
+  }, [commentValue])
 
   return (
     <>

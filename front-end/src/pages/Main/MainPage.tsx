@@ -15,6 +15,8 @@ import { useNavigate } from 'react-router';
 import { getMainRoutineAll, getMyInfo, getMyRoutine } from '../../lib/api/main-api';
 import { MainMyRoutine, Profile, User } from '../../util/types/axios-main';
 import { mainPageRoutine } from '../../util/types/axios-fitness';
+import { useAppSelector } from '../../lib/hook/useReduxHook';
+import { selectIsPlay } from '../../store/page';
 // import { user } from '../../lib/api/user-api';
 
 const s = {
@@ -283,6 +285,7 @@ const HorizontalScroll: React.FC<HorizontalScrollProps> = ({ items }) => {
 
 const MainPage = (): JSX.Element => {
   const navigate = useNavigate();
+  const isPlay = useAppSelector(selectIsPlay);
   const [user, setUser] = useState<User>();
   const [main, setMain] = useState<mainPageRoutine[]>([]);
   const [mainMyRoutine, setMainMyRoutine] = useState<MainMyRoutine[]>([]);
@@ -335,8 +338,7 @@ const MainPage = (): JSX.Element => {
   );
 
   const handleLiveExercise = () => {
-    alert('진행중인 운동 페이지로 이동합니다.');
-    navigate('/play');
+    isPlay ? navigate('/play') : alert('진행중인 운동이 존재하지 않습니다.');
   };
   const handleClickMove = (id: number): void => {
     navigate('../fitness/history/detail', { state: { id } });

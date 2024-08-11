@@ -113,7 +113,7 @@ const FitnessFinishPage = (): JSX.Element => {
           <Text
             width="50%"
             textalian="right"
-            children={`${data.volume} 'kg'`}
+            children={`${data.volume} kg`}
             size="18px"
             color="textColor"
             bold="bold"

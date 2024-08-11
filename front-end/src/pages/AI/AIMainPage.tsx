@@ -6,6 +6,7 @@ import SettingModal from '../../components/AI/SettingModal2';
 import BottomNav from '../../components/Common/BottomNav';
 import '@tensorflow/tfjs';
 import * as tmPose from '@teachablemachine/pose';
+import { useBottomNavHook } from '../../lib/hook/useBottomNavHook';
 
 const s = {
   // 스타일 컴포넌트 정의
@@ -537,6 +538,8 @@ const AIMainPage: React.FC = () => {
       }
     };
   }, [requestID, webcam]);
+
+  useBottomNavHook('ai');
 
   return (
     <s.Container>

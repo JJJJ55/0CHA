@@ -42,7 +42,7 @@ public class SnsItemServiceImpl implements SnsItemService {
     @Override
     @Transactional
     public int writeItem(ItemDto item) {
-        validateImages(item.getImages());
+//        validateImages(item.getImages());
 
         ItemDto itemBuilder = ItemDto.builder()
                 .title(item.getTitle())
@@ -89,7 +89,7 @@ public class SnsItemServiceImpl implements SnsItemService {
     @Override
     @Transactional
     public int updateItem(ItemDto item) {
-        validateImages(item.getImages());
+        validateImages(item.getImages().size());
 
         ItemDto itemBuilder = ItemDto.builder()
                 .title(item.getTitle())
@@ -169,11 +169,11 @@ public class SnsItemServiceImpl implements SnsItemService {
     }
 
     @Override
-    public void validateImages(List<String> images) {
-        if (images == null || images.isEmpty()) {
+    public void validateImages(int imageN) {
+        if (imageN <= 0) {
             throw new IllegalArgumentException("At least one image is required.");
         }
-        if (images.size() >= 5) {
+        if (imageN >= 5) {
             throw new IllegalArgumentException("A maximum of 5 images are allowed.");
         }
     }

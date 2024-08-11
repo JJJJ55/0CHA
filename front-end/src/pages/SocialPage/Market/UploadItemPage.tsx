@@ -108,6 +108,16 @@ const s = {
     top: 44px;
   `,
   MainImage: styled(Image)``,
+  ImageSizeInfo: styled.div`
+    position: absolute;
+    bottom: -8px;
+    right: -8px;
+    background-color: ${(props) => props.theme.bgColor};
+    color: ${(props) => props.theme.textColor};
+    font-size: 10px;
+    padding: 2px 4px;
+    border-radius: 4px;
+  `,
 };
 
 // 바이트 길이 계산 함수
@@ -116,6 +126,7 @@ const getByteLength = (str: string) => new Blob([str]).size;
 const UploadItemPage = (): JSX.Element => {
   const navigate = useNavigate();
   const [images, setImages] = useState<File[]>([]); // 파일 배열로 변경
+  const [totalImageSize, setTotalImageSize] = useState<number>(0); // 총 이미지 용량 상태 추가
 
   const [title, setTitle] = useState<string>('');
   const [price, setPrice] = useState<string>('');
@@ -125,8 +136,17 @@ const UploadItemPage = (): JSX.Element => {
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
-      const filesArray = Array.from(event.target.files).slice(0, 5); // 최대 5개
-      setImages((prevImages) => [...prevImages, ...filesArray].slice(0, 5)); // 최대 5개까지
+      const newFilesArray = Array.from(event.target.files);
+      const newTotalSize = newFilesArray.reduce((acc, file) => acc + file.size, 0) + totalImageSize;
+
+      if (newTotalSize > 1024 * 1024) {
+        // 1MB
+        alert('총 이미지 용량이 1MB를 초과할 수 없습니다.');
+        return;
+      }
+
+      setImages((prevImages) => [...prevImages, ...newFilesArray].slice(0, 5)); // 최대 5개까지
+      setTotalImageSize(newTotalSize); // 총 이미지 용량 업데이트
     }
   };
 
@@ -213,7 +233,18 @@ const UploadItemPage = (): JSX.Element => {
   };
   // 이미지 삭제
   const handleDeleteImage = (index: number) => {
-    setImages((prevImages) => prevImages.filter((_, i) => i !== index));
+    setImages((prevImages) => {
+      const updatedImages = prevImages.filter((_, i) => i !== index);
+      const deletedImageSize = prevImages[index].size;
+      setTotalImageSize(totalImageSize - deletedImageSize);
+      return updatedImages;
+    });
+  };
+
+  const formatBytes = (bytes: number) => {
+    if (bytes < 1024) return `${bytes} B`;
+    else if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(2)} KB`;
+    else return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
   };
 
   return (
@@ -239,6 +270,7 @@ const UploadItemPage = (): JSX.Element => {
                 <Image width="64px" height="64px" src={URL.createObjectURL(image)} type="rect" />
                 {index === 0 && <s.MainImageCaption>대표</s.MainImageCaption>}
                 <s.DeleteButton onClick={() => handleDeleteImage(index)}>X</s.DeleteButton>
+                <s.ImageSizeInfo>{formatBytes(image.size)}</s.ImageSizeInfo>
               </s.ImageWrapper>
             ))}
           </s.ImageArea>
@@ -248,7 +280,7 @@ const UploadItemPage = (): JSX.Element => {
           <Input width="100%" height="40px" value={title} onChange={handleTitleChange} />
           <s.InputLabel>가격</s.InputLabel>
           <Input width="100%" height="40px" value={price} onChange={handlePriceChange} />
-          <s.InputLabel>상품 설명</s.InputLabel>
+          <s.InputLabel>상품 설명 </s.InputLabel>
           <TextArea width="100%" height="180px" value={content} onChange={handleContentChange} />
         </s.InputArea>
         <s.Button>

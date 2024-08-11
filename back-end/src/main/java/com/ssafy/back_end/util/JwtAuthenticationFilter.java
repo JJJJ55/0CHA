@@ -29,6 +29,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
+        String uri = request.getRequestURI();
+
+        // Swagger 경로에 대한 요청은 필터링에서 제외
+        if (uri.startsWith("/swagger-ui/") || uri.startsWith("/v3/api-docs/")) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         String accessToken = jwtUtil.getAccessToken(request); // 헤더에서 액세스 토큰을 가져옴
         String refreshToken = jwtUtil.getRefreshToken(request); // 추가된 부분
 

@@ -44,7 +44,7 @@
             r.completed_at AS date,
             MAX(rs.weight) AS maxWeight, -- 1RM (가장 높은 무게)
             SUM(rs.weight * rs.count) AS totalVolume, -- 총 운동량
-            SUM(rs.count) AS totalTime -- 총 운동 시간 (세트 수)
+            r.sum_time AS totalTime -- 총 운동 시간
         FROM
             routines r
             JOIN routine_details rd ON r.id = rd.routine_id
@@ -52,7 +52,7 @@
         WHERE
             r.user_id = #{userId}
         GROUP BY
-            r.completed_at
+            r.completed_at, r.sum_time
         ORDER BY
             r.completed_at DESC
             LIMIT 5

@@ -26,5 +26,5 @@ public interface SnsItemService {
 
     int soldOut(int itemId);   //판매완료
 
-    void validateImages(List<String> images);   //이미지 유효성 검사
+    void validateImages(int imageN);   //이미지 유효성 검사
 }

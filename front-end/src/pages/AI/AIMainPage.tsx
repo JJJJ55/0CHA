@@ -131,18 +131,24 @@ const AIMainPage: React.FC = () => {
   const [model, setModel] = useState<tmPose.CustomPoseNet | null>(null); // 로드된 모델을 저장하는 상태
   const [correctCount, setCorrectCount] = useState(0); // 올바른 자세 횟수를 저장하는 상태
   const [inCorrectCount, setInCorrectCount] = useState(0); // 잘못된 자세 횟수를 저장하는 상태
+
   const [predictions, setPredictions] = useState<PosePrediction[]>([]); // 예측 결과를 저장하는 상태
   const [status, setStatus] = useState('middle'); // 운동 상태를 저장하는 상태
-  const [cameraStarted, setCameraStarted] = useState(false);
   const prevStatusRef = useRef<string>(''); // 이전 운동 상태를 저장하기 위한 ref
+  const [cameraStarted, setCameraStarted] = useState(false);
   const [selectedVoice, setSelectedVoice] = useState('아라'); // 선택된 음성을 저장할 상태 변수
   const [isFinished, setIsFinished] = useState(false); // 운동 종료 여부를 저장할 상태 변수
 
+  const pushStopRef = useRef(false); // 운동 종료 버튼(중도 하차)을 누른 경우를 관리하는 ref
+  const [showStopButton, setShowStopButton] = useState(false); // 운동 종료 버튼을 표시할지 여부를 관리하는 상태
+
   // 트레이닝 설정 확인 시 호출되는 함수
   const handleSettingsConfirm = (exercise: string, count: number) => {
+    pushStopRef.current = false; // 운동 중단 여부 초기화
     setSelectedExercise(exercise); // 선택된 운동 업데이트
     setResults([]); // 결과 초기화
     setIsFinished(false); // 운동 종료 상태 초기화
+    setShowStopButton(false);
     setCorrectCount(0);
     setInCorrectCount(0);
     setProgress(0);
@@ -151,13 +157,22 @@ const AIMainPage: React.FC = () => {
   };
 
   const loadModel = async () => {
+    let exerciseUrl = '';
     // 지원 안 하는 모델이면 종료
-    if (selectedExercise !== '테스트모델') {
+    if (selectedExercise === '테스트모델') {
+      exerciseUrl = '/my_model';
+    } else if (selectedExercise === '스쿼트') {
+      exerciseUrl = '/squart';
+    } else if (selectedExercise === '벤치프레스') {
+      exerciseUrl = '/benchpress';
+    } else if (selectedExercise === '데드리프트') {
+      exerciseUrl = '/deadlift';
+    } else {
       alert('추후 제공 예정입니다.');
       return;
     }
-    const modelURL = process.env.PUBLIC_URL + '/my_model/model.json'; // 모델 URL
-    const metadataURL = process.env.PUBLIC_URL + '/my_model/metadata.json'; // 메타데이터 URL
+    const modelURL = process.env.PUBLIC_URL + exerciseUrl + '/model.json'; // 모델 URL
+    const metadataURL = process.env.PUBLIC_URL + exerciseUrl + '/metadata.json'; // 메타데이터 URL
 
     try {
       const loadedModel = await tmPose.load(modelURL, metadataURL); // 모델 로드
@@ -173,9 +188,22 @@ const AIMainPage: React.FC = () => {
   // 운동 세션을 초기화하고 시작하는 함수
   const init = async () => {
     if (!model) return; // 모델이 로드되지 않은 경우 종료
-
-    // 운동 상태 초기화
-    setStatus('middle');
+    // 운동상태 초기화 부
+    if (selectedExercise === '테스트모델') {
+      // 테스트 모델
+      setStatus('middle');
+    } else if (selectedExercise === '스쿼트') {
+      // 스쿼트 모델
+      setStatus('middle');
+    } else if (selectedExercise === '데드리프트') {
+      // 데드리프트 모델
+      setStatus('middle');
+    } else if (selectedExercise === '벤치프레스') {
+      // 벤치프레스 모델
+      setStatus('middle');
+    } else {
+      return;
+    }
 
     const size = 800; // 웹캠 크기 설정
     const flip = true; // 좌우 반전 여부 설정
@@ -190,11 +218,36 @@ const AIMainPage: React.FC = () => {
       canvas.width = size; // 캔버스 너비 설정
       canvas.height = size; // 캔버스 높이 설정
       setCameraStarted(true);
-      playAudio('start'); // 시작
     }
+
+    // 5초의 대기 시간을 추가하고 그동안 캔버스에 카운트다운을 표시
+    for (let i = 5; i > 0; i--) {
+      if (canvasRef.current) {
+        const context = canvasRef.current?.getContext('2d');
+        if (context) {
+          context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height); // 캔버스 초기화
+          context.fillStyle = '#ffffff'; // 텍스트 색상 설정
+          context.font = `${canvasRef.current.width * 0.5}px Pretendard`; // 텍스트 크기 설정
+          context.textAlign = 'center'; // 수평 중앙 정렬
+          context.textBaseline = 'middle'; // 수직 중앙 정렬
+
+          const centerX = canvasRef.current.width / 2;
+          const centerY = canvasRef.current.height / 2;
+          context.fillText(i.toString(), centerX, centerY); // 캔버스 중앙에 카운트다운 숫자 표시
+        }
+      }
+      playAudio(i.toString()); // 카운트다운 숫자를 음성으로 재생
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // 1초 대기
+    }
+
+    setShowStopButton(true);
+    playAudio('start'); // 시작
 
     // 반복적으로 프레임을 갱신하고 예측을 수행하는 루프 함수
     const loop = async () => {
+      if (pushStopRef.current) {
+        return;
+      }
       if (!canvasRef.current || !newWebcam || !model) {
         console.log('Webcam, canvas, or model is not available');
         return;
@@ -204,7 +257,7 @@ const AIMainPage: React.FC = () => {
       const { pose, posenetOutput } = await model.estimatePose(newWebcam.canvas); // 포즈 추정
       const prediction = await model.predict(posenetOutput); // 예측 수행
 
-      const context = canvasRef.current.getContext('2d'); // 캔버스의 2D 컨텍스트 가져오기
+      const context = canvasRef.current?.getContext('2d'); // 캔버스의 2D 컨텍스트 가져오기
       if (context) {
         context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height); // 캔버스 초기화
         context.drawImage(newWebcam.canvas, 0, 0); // 웹캠 영상 캔버스에 그리기
@@ -226,6 +279,7 @@ const AIMainPage: React.FC = () => {
         const centerX = canvasRef.current.width / 2;
         const centerY = canvasRef.current.height / 2;
 
+        // 알고리즘 부
         if (selectedExercise === '테스트모델') {
           // 테스트 모델 로직
           // 상태에 따라 운동 상태 업데이트 및 텍스트 그리기
@@ -239,11 +293,88 @@ const AIMainPage: React.FC = () => {
             context.fillText('O', centerX, centerY); // 텍스트 중앙에 그리기
           } else if (prediction[5].probability > 0.999) {
             setStatus('middle');
+          } else if (prediction[3].probability > 0.9) {
+            setStatus('leftRock');
           }
 
           if (prediction[3].probability > 0.999) {
             context.fillStyle = '#ffffff';
-            context.fillText('X', centerX, centerY); // 텍스트 중앙에 그리기
+            context.fillText('X', centerX, centerY);
+          }
+        } else if (selectedExercise === '스쿼트') {
+          // 스쿼트 로직
+          if (prediction[2].probability > 0.9) {
+            setStatus('stand'); // 선 자세
+            context.fillStyle = '#ccff34'; // 색 채우기
+            context.fillText('O', centerX, centerY); // 텍스트 중앙에 그리기
+          } else if (prediction[4].probability > 0.9) {
+            setStatus('frontStand'); // 전방으로 서있는 자세(잘못됨)'
+            context.fillStyle = '#ffffff';
+            context.fillText('X', centerX, centerY);
+          } else if (prediction[0].probability > 0.99) {
+            setStatus('sit'); // 내려간 상태
+            context.fillStyle = '#ccff34'; // 색 채우기
+            context.fillText('O', centerX, centerY); // 텍스트 중앙에 그리기
+          } else if (prediction[1].probability > 0.99) {
+            setStatus('squart'); // 굽힘 상태
+            context.fillStyle = '#ccff34'; // 색 채우기
+            context.fillText('O', centerX, centerY); // 텍스트 중앙에 그리기
+          } else if (prediction[3].probability > 0.99) {
+            setStatus('frontSquart'); // 전방 굽힘 상태(잘못됨)
+            context.fillStyle = '#ffffff';
+            context.fillText('X', centerX, centerY);
+          }
+        } else if (selectedExercise === '데드리프트') {
+          // 데드리프트 로직
+          if (prediction[2].probability > 0.9) {
+            setStatus('stand'); // 선 자세
+            context.fillStyle = '#ccff34'; // 색 채우기
+            context.fillText('O', centerX, centerY); // 텍스트 중앙에 그리기
+          } else if (prediction[5].probability > 0.9) {
+            setStatus('babelStand'); // 바벨에서 너무 멀리 떨어진 상태로 서 있음(잘못됨)
+            context.fillStyle = '#ffffff';
+            context.fillText('X', centerX, centerY);
+          } else if (prediction[0].probability > 0.99) {
+            setStatus('bottom'); // 아래로 내려간 상태
+            context.fillStyle = '#ccff34'; // 색 채우기
+            context.fillText('O', centerX, centerY); // 텍스트 중앙에 그리기
+          } else if (prediction[1].probability > 0.99) {
+            setStatus('squart'); // 굽힌 상태
+            context.fillStyle = '#ccff34'; // 색 채우기
+            context.fillText('O', centerX, centerY); // 텍스트 중앙에 그리기
+          } else if (prediction[3].probability > 0.99) {
+            setStatus('waistCurl'); // 허리 말린 상태(잘못됨)
+            context.fillStyle = '#ffffff';
+            context.fillText('X', centerX, centerY);
+          } else if (prediction[4].probability > 0.99) {
+            setStatus('babelCurl'); // 바벨에서 너무 떨어진 상태(잘못됨)
+            context.fillStyle = '#ffffff';
+            context.fillText('X', centerX, centerY);
+          }
+        } else if (selectedExercise === '벤치프레스') {
+          // 벤치프레스 로직
+          if (prediction[2].probability > 0.9) {
+            setStatus('push'); // 완전히 뻗은 단계
+            context.fillStyle = '#ccff34'; // 색 채우기
+            context.fillText('O', centerX, centerY); // 텍스트 중앙에 그리기
+          } else if (prediction[5].probability > 0.9) {
+            setStatus('stomachPush'); // 배쪽에 뻗은 단계(잘못됨)
+          } else if (prediction[0].probability > 0.99) {
+            setStatus('bottom'); // 몸에 닿은 단계
+            context.fillStyle = '#ccff34'; // 색 채우기
+            context.fillText('O', centerX, centerY); // 텍스트 중앙에 그리기
+          } else if (prediction[1].probability > 0.99) {
+            setStatus('curl'); // 중간 단계
+            context.fillStyle = '#ccff34'; // 색 채우기
+            context.fillText('O', centerX, centerY); // 텍스트 중앙에 그리기
+          } else if (prediction[3].probability > 0.99) {
+            setStatus('stomachBottom'); // 배쪽에 닿은 단계(잘못됨)
+            context.fillStyle = '#ffffff';
+            context.fillText('X', centerX, centerY);
+          } else if (prediction[4].probability > 0.99) {
+            setStatus('stomachCurl'); // 배쪽에 중간 단계(잘못됨)
+            context.fillStyle = '#ffffff';
+            context.fillText('X', centerX, centerY);
           }
         } else {
           // 예외 처리 후 종료
@@ -259,42 +390,84 @@ const AIMainPage: React.FC = () => {
     // loop(); // 루프 시작
   };
 
-  // 컴포넌트 언마운트 시 리소스를 정리하는 useEffect
-  useEffect(() => {
-    return () => {
-      if (requestID) {
-        cancelAnimationFrame(requestID); // 애니메이션 프레임 요청 취소
-      }
-    };
-  }, [requestID, webcam]);
+  // 결과 메시지를 업데이트하는 함수
+  const updateResults = (newMessage: string, isCorrect: boolean) => {
+    setResults((prevResults) => [
+      ...prevResults,
+      { set: correctCount + inCorrectCount + 1, isError: !isCorrect, message: newMessage },
+    ]);
+    playAudio((correctCount + inCorrectCount + 1).toString());
 
-  // 올바른 자세 및 잘못된 자세 카운트가 변경될 때마다 코멘트를 업데이트하는 useEffect
-  useEffect(() => {
-    if (correctCount + inCorrectCount > 0) {
-      setResults((prevResults) => [
-        ...prevResults,
-        { set: correctCount, isError: false, message: '올바른 자세입니다.' },
-      ]);
-      playAudio(correctCount.toString());
+    if (isCorrect) {
+      setCorrectCount((prevCount) => prevCount + 1);
+    } else {
+      setInCorrectCount((prevCount) => prevCount + 1);
     }
-  }, [correctCount, inCorrectCount]);
+    const nextProgress = progress + 100 / totalCount;
+    setProgress(nextProgress);
+  };
 
-  // 목표 횟수에 도달했는지 확인하고 도달 시 세션을 종료하는 useEffect
-  useEffect(() => {
-    if (correctCount + inCorrectCount >= totalCount) {
-      stop(); // 세션 종료
-    }
-  }, [correctCount, inCorrectCount, totalCount]);
-
-  // 운동 상태가 변경될 때 상태를 체크하고 올바른 자세 횟수를 증가시키는 useEffect
+  // 운동 상태가 변경될 때 상태를 체크하고 올바른 자세 횟수나 올바르지 않은 자세 횟수를 증가시키는 useEffect
   useEffect(() => {
     if (selectedExercise === '테스트모델') {
       if (prevStatusRef.current !== status) {
         if (status === 'middle' && prevStatusRef.current === 'left') {
-          setCorrectCount((prevCount) => prevCount + 1); // 올바른 자세 카운트 증가
-          const nextProgress = progress + 100 / totalCount; // 상태 바 값
-          setProgress(nextProgress);
+          updateResults('올바른 자세입니다.', true);
+        } else if (status === 'middle' && prevStatusRef.current === 'leftRock') {
+          updateResults('왼 주먹 내리세요', false);
         }
+      }
+    } else if (selectedExercise === '스쿼트') {
+      if (prevStatusRef.current !== status) {
+        // 올바른 자세로 온 경우 (스쿼트 자세에서 선 자세로)
+        if (status === 'stand' && prevStatusRef.current === 'squart') {
+          updateResults('올바른 자세입니다.', true);
+          // 올바르지 않은 자세로 온 경우 1 (앞스쿼트 자세에서 선 자세로)
+        } else if (status === 'stand' && prevStatusRef.current === 'frontSquart') {
+          updateResults('스쿼트 시 상체가 앞으로 기울었습니다.', false);
+          // 올바르지 않은 자세로 온 경우 2 (스쿼트 혹은 앞스쿼트 자세에서 앞으로 선 자세로)
+        } else if (
+          status === 'frontStand' &&
+          (prevStatusRef.current === 'squart' || prevStatusRef.current === 'frontSquart')
+        ) {
+          updateResults('스탠드 시 상체가 앞으로 기울었습니다.', false);
+        }
+      }
+    } else if (selectedExercise === '데드리프트') {
+      // 올바른 자세로 온 경우 (스쿼트 자세에서 선 자세로)
+      if (status === 'stand' && prevStatusRef.current === 'squart') {
+        updateResults('올바른 자세입니다.', true);
+        // 올바르지 않은 자세로 온 경우 1(허리가 말린 뒤 올라온 경우)
+      } else if (status === 'stand' && prevStatusRef.current === 'waistCurl') {
+        updateResults('허리가 말려 있습니다.', false);
+        // 올바르지 않은 자세로 온 경우 2(바벨에서 너무 멀리 떨어진채 올라온 경우)
+      } else if (status === 'stand' && prevStatusRef.current === 'babelCurl') {
+        updateResults('바벨에서 너무 멀리 떨어져 있습니다.', false);
+        // 올바르지 않은 자세로 온 경우 3(올라온 자세가 바벨을 멀리 잡은 경우)
+      } else if (
+        status === 'babelStand' &&
+        (prevStatusRef.current === 'squart' || prevStatusRef.current === 'waistCurl')
+      ) {
+        updateResults('허리도 말려 있고 바벨을 너무 멀리 잡았습니다.', false);
+      } else if (
+        status === 'babelStand' &&
+        (prevStatusRef.current === 'squart' || prevStatusRef.current === 'babelCurl')
+      ) {
+        updateResults('바벨을 너무 멀리 잡았습니다.', false);
+      }
+    } else if (selectedExercise === '벤치프레스') {
+      // 올바른 자세로 온 경우
+      if (status === 'push' && prevStatusRef.current === 'curl') {
+        updateResults('완벽합니다! 잘 하셨습니다.', true);
+        // 올바르지 않은 자세로 온 경우 1(배쪽에 놓고 올라온 경우)
+      } else if (status === 'push' && prevStatusRef.current === 'stomachCurl') {
+        updateResults('바벨이 너무 배 쪽에 가깝습니다.', false);
+        // 올바르지 않은 자세로 온 경우 2(바벨을 배쪽으로 뻗은 경우)
+      } else if (
+        status === 'stomachPush' &&
+        (prevStatusRef.current === 'curl' || prevStatusRef.current === 'stomachCurl')
+      ) {
+        updateResults('바벨을 배쪽으로 뻗으셨습니다.', false);
       }
     } else {
       console.log('추후 제공 예정입니다');
@@ -302,26 +475,36 @@ const AIMainPage: React.FC = () => {
     prevStatusRef.current = status; // 현재 상태를 이전 상태로 업데이트
   }, [status]);
 
+  useEffect(() => {
+    if (correctCount + inCorrectCount >= totalCount) {
+      stop(); // 세션 종료
+    }
+  }, [correctCount, inCorrectCount, totalCount]);
+
   // 세션을 종료하는 함수
   const stop = (reason?: string) => {
     if (webcam) {
+      console.log('웹캠 중지');
       try {
         webcam.stop(); // 웹캠 중지
         setCameraStarted(false);
         setIsFinished(true);
         setModel(null);
         setSelectedExercise('');
+        setShowStopButton(false);
       } catch (error) {
         console.error('Error stopping webcam:', error); // 에러 처리
       }
     }
 
     if (requestID) {
+      console.log('애니메이션 요청 프레임 취소');
       window.cancelAnimationFrame(requestID); // 애니메이션 프레임 요청 취소
     }
 
     if (canvasRef.current) {
       canvasRef.current.style.display = 'none'; // 캔버스 숨기기
+      // canvasRef.current = null; // 캔버스 참조 해제
     }
     // 1초 지연 후 playAudio('finish') 실행
     setTimeout(() => {
@@ -345,6 +528,15 @@ const AIMainPage: React.FC = () => {
     const audio = new Audio(audioPath); // 새로운 오디오 객체 생성
     audio.play().catch((err) => console.error('Failed to play audio:', err)); // 오디오 재생, 실패 시 에러 출력
   };
+
+  // 컴포넌트 언마운트 시 리소스를 정리하는 useEffect
+  useEffect(() => {
+    return () => {
+      if (requestID) {
+        cancelAnimationFrame(requestID); // 애니메이션 프레임 요청 취소
+      }
+    };
+  }, [requestID, webcam]);
 
   return (
     <s.Container>
@@ -370,15 +562,21 @@ const AIMainPage: React.FC = () => {
           {selectedExercise && !model && <s.SettingBtn onClick={loadModel} children="준비" />}
           {selectedExercise && model && !cameraStarted && <s.SettingBtn onClick={init} children="카메라 시작" />}
           {/* 운동 종료 버튼 */}
-          {selectedExercise && cameraStarted && (
-            <s.SettingBtn onClick={() => stop('userStopped')} children="운동 종료" />
+          {selectedExercise && showStopButton && (
+            <s.SettingBtn
+              onClick={() => {
+                pushStopRef.current = true;
+                stop();
+              }}
+              children="운동 종료"
+            />
           )}
           {/* 운동 진행 상태 바 */}
           {selectedExercise && (
             <s.ProgressBar>
               <s.Progress progress={progress} />
               <s.ProgressText>
-                {correctCount} / {totalCount}
+                {correctCount + inCorrectCount} / {totalCount}
               </s.ProgressText>
             </s.ProgressBar>
           )}

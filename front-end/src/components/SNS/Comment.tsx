@@ -134,10 +134,10 @@ const Comment = (props: CommentProps): JSX.Element => {
     await SnsCommentDel(
       commentId,
       (resp) => {
-        setIsDelete(true)
+        setIsDelete(true);
       },
       (error) => {
-        console.error(error)
+        console.error(error);
       }
     );
   };

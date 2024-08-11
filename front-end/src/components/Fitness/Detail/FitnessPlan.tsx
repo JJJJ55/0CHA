@@ -86,21 +86,24 @@ const s = {
     border: 0;
     margin: 30px auto;
   `,
+  hidden: styled.div`
+    display: none;
+  `,
 };
 
 type ExerciseDetailType = {
-  id: number;
-  set: number;
+  sequence: number;
   weight: number | '';
   count: number | '';
-  is_complete: boolean;
+  complete: boolean;
 };
 
 interface FitnessPlanProps {
   exercise: {
-    name: string;
-    id: number;
-    detail: ExerciseDetailType[];
+    exerciseName: string;
+    exerciseId: number;
+    sequence: number;
+    sets: ExerciseDetailType[];
   };
   index: number;
   onDelete: () => void;
@@ -108,29 +111,36 @@ interface FitnessPlanProps {
 }
 
 const FitnessPlan = (props: FitnessPlanProps): JSX.Element => {
-  const [sets, setSets] = useState<ExerciseDetailType[]>(props.exercise.detail);
+  const [sets, setSets] = useState<ExerciseDetailType[]>(props.exercise.sets);
 
   useEffect(() => {
-    setSets(props.exercise.detail);
-  }, [props.exercise.detail]);
+    setSets(props.exercise.sets);
+  }, [props.exercise.sets]);
+
+  useEffect(() => {
+    console.log(`Sets for exercise ${props.index}:`, sets);
+  }, [sets, props.index]);
 
   const handleAddSet = () => {
     const newSet: ExerciseDetailType = {
-      id: sets.length + 1,
-      set: sets.length + 1,
+      // id: sets.length ? sets[sets.length - 1].id + 1 : 1,
+      sequence: sets.length + 1,
       weight: '',
       count: '',
-      is_complete: false,
+      complete: false,
     };
     const updatedSets = [...sets, newSet];
     setSets(updatedSets);
     props.onChangeSet(props.index, updatedSets);
+    console.log(`Added set to exercise ${props.index}:`, newSet);
   };
 
   const handleRemoveSet = () => {
+    if (sets.length === 0) return;
     const updatedSets = sets.slice(0, -1);
     setSets(updatedSets);
     props.onChangeSet(props.index, updatedSets);
+    console.log(`Removed last set from exercise ${props.index}`);
   };
 
   const handleInputChange = (index: number, field: keyof ExerciseDetailType, value: number | '') => {
@@ -142,59 +152,59 @@ const FitnessPlan = (props: FitnessPlanProps): JSX.Element => {
     });
     setSets(updatedSets);
     props.onChangeSet(props.index, updatedSets);
+    console.log(`Updated set ${index} for exercise ${props.index}:`, updatedSets[index]);
   };
 
   return (
-    <>
-      <s.Container>
-        <s.PlanHeaderArea>
-          <span style={{ fontWeight: 600 }}>{props.index + '. ' + props.exercise.name}</span>
-          <s.DeleteText onClick={props.onDelete}>운동 삭제</s.DeleteText>
-        </s.PlanHeaderArea>
-        <s.PlanTable>
-          <s.TableHead>
-            <s.Tr>
-              <s.Th>세트</s.Th>
-              <s.Th>무게</s.Th>
-              <s.Th>횟수</s.Th>
-              <s.Th>완료</s.Th>
+    <s.Container>
+      <s.PlanHeaderArea>
+        <s.hidden>{(props.exercise.sequence = props.index + 1)}</s.hidden>
+        <span style={{ fontWeight: 600 }}>{props.index + 1 + '. ' + props.exercise.exerciseName}</span>
+        <s.DeleteText onClick={props.onDelete}>운동 삭제</s.DeleteText>
+      </s.PlanHeaderArea>
+      <s.PlanTable>
+        <s.TableHead>
+          <s.Tr>
+            <s.Th>세트</s.Th>
+            <s.Th>무게</s.Th>
+            <s.Th>횟수</s.Th>
+            <s.Th>완료</s.Th>
+          </s.Tr>
+        </s.TableHead>
+        <s.TableBody>
+          {sets.map((data, index) => (
+            <s.Tr key={data.sequence}>
+              <s.Td>{data.sequence}</s.Td>
+              <s.Td>
+                <s.ValueInput
+                  type="number"
+                  value={data.weight}
+                  onChange={(e) => handleInputChange(index, 'weight', e.target.value ? Number(e.target.value) : '')}
+                />
+              </s.Td>
+              <s.Td>
+                <s.ValueInput
+                  type="number"
+                  value={data.count}
+                  onChange={(e) => handleInputChange(index, 'count', e.target.value ? Number(e.target.value) : '')}
+                />
+              </s.Td>
+              <s.Td>
+                {data.complete ? (
+                  <IconSvg width="30" height="30" Ico={on} cursor="pointer" />
+                ) : (
+                  <IconSvg width="30" height="30" Ico={off} cursor="pointer" />
+                )}
+              </s.Td>
             </s.Tr>
-          </s.TableHead>
-          <s.TableBody>
-            {sets.map((data, index) => (
-              <s.Tr key={data.id}>
-                <s.Td>{data.set}</s.Td>
-                <s.Td>
-                  <s.ValueInput
-                    type="number"
-                    value={data.weight}
-                    onChange={(e) => handleInputChange(index, 'weight', e.target.value ? Number(e.target.value) : '')}
-                  />
-                </s.Td>
-                <s.Td>
-                  <s.ValueInput
-                    type="number"
-                    value={data.count}
-                    onChange={(e) => handleInputChange(index, 'count', e.target.value ? Number(e.target.value) : '')}
-                  />
-                </s.Td>
-                <s.Td>
-                  {data.is_complete ? (
-                    <IconSvg width="30" height="30" Ico={on} cursor="pointer" />
-                  ) : (
-                    <IconSvg width="30" height="30" Ico={off} cursor="pointer" />
-                  )}
-                </s.Td>
-              </s.Tr>
-            ))}
-          </s.TableBody>
-        </s.PlanTable>
-        <s.SetBtnArea>
-          <s.PlanSetBtn onClick={handleRemoveSet}>세트 삭제</s.PlanSetBtn>
-          <s.PlanSetBtn onClick={handleAddSet}>세트 추가</s.PlanSetBtn>
-        </s.SetBtnArea>
-      </s.Container>
-    </>
+          ))}
+        </s.TableBody>
+      </s.PlanTable>
+      <s.SetBtnArea>
+        <s.PlanSetBtn onClick={handleRemoveSet}>세트 삭제</s.PlanSetBtn>
+        <s.PlanSetBtn onClick={handleAddSet}>세트 추가</s.PlanSetBtn>
+      </s.SetBtnArea>
+    </s.Container>
   );
 };
 

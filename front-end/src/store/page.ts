@@ -10,6 +10,9 @@ interface PageState {
   isPlay: boolean;
   isFinish: boolean;
   isScan: boolean;
+  recordType1: string;
+  recordType2: string;
+  recordType3: string;
 }
 
 const initialState: PageState = {
@@ -20,6 +23,9 @@ const initialState: PageState = {
   isPlay: false,
   isFinish: false,
   isScan: false,
+  recordType1: 'bodyFat',
+  recordType2: 'muscleMass',
+  recordType3: 'muscleLeftArm',
 };
 
 export const pageSlice = createSlice({
@@ -50,6 +56,15 @@ export const pageSlice = createSlice({
     toogleIsScan: (state, action: PayloadAction<boolean>) => {
       state.isScan = action.payload;
     },
+    changeChart1: (state, action: PayloadAction<string>) => {
+      state.recordType1 = action.payload;
+    },
+    changeChart2: (state, action: PayloadAction<string>) => {
+      state.recordType2 = action.payload;
+    },
+    changeChart3: (state, action: PayloadAction<string>) => {
+      state.recordType3 = action.payload;
+    },
   },
 });
 
@@ -61,4 +76,7 @@ export const selectIsPw = (state: RootState) => state.page.isPw;
 export const selectIsPlay = (state: RootState) => state.page.isPlay;
 export const selectIsFinish = (state: RootState) => state.page.isFinish;
 export const selectIsScan = (state: RootState) => state.page.isScan;
+export const selectType1 = (state: RootState) => state.page.recordType1;
+export const selectType2 = (state: RootState) => state.page.recordType2;
+export const selectType3 = (state: RootState) => state.page.recordType3;
 export default pageSlice.reducer;

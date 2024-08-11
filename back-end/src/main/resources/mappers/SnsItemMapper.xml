@@ -147,6 +147,19 @@
         WHERE id = #{id};
     </delete>
 
+    <select id="getImagePathsByItemId" resultType="string">
+        SELECT image_url
+        FROM item_details
+        where item_id = #{itemId}
+        and detail_type = 'image'
+    </select>
+
+    <delete id="deleteItemDetail">
+        delete
+        from item_details
+        where item_id = #{itemId};
+    </delete>
+
     <select id="isLike" resultType="int">
         SELECT COUNT(*)
         FROM item_details

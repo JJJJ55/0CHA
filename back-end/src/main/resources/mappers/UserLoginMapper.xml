@@ -28,6 +28,12 @@
         WHERE refresh_token = #{refreshToken};
     </select>
 
+    <select id="getRefreshTokenByUserId" resultType="string">
+        SELECT refresh_token
+        FROM users
+        WHERE id = #{id};
+    </select>
+
     <select id="social">
 
     </select>

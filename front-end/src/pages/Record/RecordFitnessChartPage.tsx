@@ -38,7 +38,13 @@ const RecordFitnessChartPage = (): JSX.Element => {
       },
     );
   }, []);
+  useEffect(() => {
+    setDates(fitnessData.map((data) => data.date));
+    setTotalVolumes(fitnessData.map((data) => data.totalVolume));
+    setTotalTimes(fitnessData.map((data) => data.totalTime));
+  }, [fitnessData]);
 
+  console.log(totalTimes);
   const labels = ['07.14', '07.15', '07.16', '07.17', '07.18', '07.19', '07,20'];
   return (
     <s.Container>

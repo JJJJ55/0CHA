@@ -25,6 +25,10 @@ const s = {
     height: 100%;
     background-color: ${(props) => props.theme.bgColor};
   `,
+  HeaderArea: styled.div`
+    position: relative;
+    z-index: 1000;
+  `,
   IconArea: styled.div`
     width: 100px;
     height: 100%;
@@ -39,8 +43,27 @@ const s = {
     padding: 57px 0 90px;
     overflow: auto;
   `,
-  FitnessTextArea: styled.div`
+  ImgArea: styled.div`
+    position: relative;
+    width: 80%;
+    margin: 0 auto;
+    border: 1px solid red;
+    &::after {
+      display: block;
+      content: '';
+      padding-bottom: 100%;
+    }
+  `,
+  Img: styled.img`
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
+    height: 100%;
+    object-fit: scale-down;
+  `,
+  FitnessTextArea: styled.div`
+    width: 90%;
     height: 200px;
     display: flex;
     align-items: center;
@@ -48,10 +71,12 @@ const s = {
     padding: 20px;
     color: ${(props) => props.theme.textColor};
     font-size: 14px;
+    margin: 0 auto;
   `,
   Title: styled.div`
     width: 90%;
     margin: 10px auto;
+    padding-left: 20px;
     text-align: left;
     font-size: 14px;
     color: ${(props) => props.theme.textColor2};
@@ -125,19 +150,23 @@ const FitnessDetailPage = (): JSX.Element => {
   };
   return (
     <s.Container>
-      <Header text={fitness?.name}>
-        {isLike ? (
-          <s.IconArea onClick={handleClickNotJjim}>
-            <IconSvg width="24" height="24" Ico={jjimOn} />
-          </s.IconArea>
-        ) : (
-          <s.IconArea onClick={handleClickJjim}>
-            <IconSvg width="24" height="24" Ico={jjimOff} />
-          </s.IconArea>
-        )}
-      </Header>
+      <s.HeaderArea>
+        <Header text={fitness?.name}>
+          {isLike ? (
+            <s.IconArea onClick={handleClickNotJjim}>
+              <IconSvg width="24" height="24" Ico={jjimOn} />
+            </s.IconArea>
+          ) : (
+            <s.IconArea onClick={handleClickJjim}>
+              <IconSvg width="24" height="24" Ico={jjimOff} />
+            </s.IconArea>
+          )}
+        </Header>
+      </s.HeaderArea>
       <s.ContentArea>
-        <Image width="100%" src={fitness?.image} height="50%" type="rect" />
+        <s.ImgArea>
+          <s.Img src={fitness?.image} />
+        </s.ImgArea>
         <s.FitnessTextArea>{fitness?.description}</s.FitnessTextArea>
         <s.Title>운동이력</s.Title>
         {momenthum.length === 0 ? (

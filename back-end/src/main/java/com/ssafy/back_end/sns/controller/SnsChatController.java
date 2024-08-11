@@ -43,7 +43,6 @@ public class SnsChatController {
     // 연결 요청 시 더미 유저 ID 반환
     // 나중에 토큰을 받고, 토큰이 맞으면 해당 토큰에서 유저 ID를 반환
     @MessageMapping("/connect")
-    @SendTo("/topic/connect")
     public int connect(@Header("Authorization") String token, SimpMessageHeaderAccessor headerAccessor) {
         if (token == null || token.isEmpty()) {
             throw new IllegalArgumentException("Authorization token is missing or empty");
@@ -54,9 +53,6 @@ public class SnsChatController {
         int userId = jwtUtil.getUserIdFromAccessToken(token);
 
         logger.info("User connected with ID: {}", userId);
-
-        // 세션에 토큰 저장
-        headerAccessor.getSessionAttributes().put("Authorization", token);
 
         return userId;
     }

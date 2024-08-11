@@ -12,8 +12,9 @@ import { modalActions, selectModalCalendar } from '../../store/modal';
 import { useModalExitHook } from '../../lib/hook/useModalExitHook';
 import { pageActions } from '../../store/page';
 import FitnessPlan from '../../components/Fitness/Detail/FitnessPlan';
-import { CreateRoutine, ExerciseDetailType } from '../../util/types/axios-fitness';
+import { axiosCreateRoutine, CreateRoutine, ExerciseDetailType } from '../../util/types/axios-fitness';
 import Text from '../../components/Common/Text';
+import { putNewRoutine } from '../../lib/api/fitness-api';
 
 const s = {
   Container: styled.section`
@@ -73,44 +74,103 @@ const FitnessPlanSetPage = (): JSX.Element => {
   const data: CreateRoutine[] = useLocation().state?.add || [];
   const [fitness, setFitness] = useState<
     {
-      name: string;
-      id: number;
-      detail: ExerciseDetailType[];
+      exerciseName: string;
+      exerciseId: number;
+      sequence: number;
+      sets: ExerciseDetailType[];
     }[]
-  >(data.map((item) => ({ ...item, detail: [] })));
+  >(data.map((item) => ({ ...item, sequence: 0, sets: [] })));
 
+  const dispatch = useAppDispatch();
+  const isModal = useAppSelector(selectModalCalendar);
+
+  // 날짜 선택 모달 열기
   const handleChangeOpen = (): void => {
     dispatch(modalActions.toggleCalendar());
   };
 
+  // 페이지 이동
   const handleClickMove = (path: string): void => {
     navigate(path);
   };
 
+  // 운동 삭제
   const handleDeleteExercise = (index: number): void => {
     const updatedFitness = fitness.filter((_, idx) => idx !== index);
     setFitness(updatedFitness);
   };
 
+  // 세트 변경
   const handleSetChange = (exerciseIndex: number, updatedSets: ExerciseDetailType[]) => {
     const updatedFitness = fitness.map((exercise, idx) => {
       if (idx === exerciseIndex) {
-        return { ...exercise, detail: updatedSets };
+        return { ...exercise, sets: updatedSets };
       }
       return exercise;
     });
     setFitness(updatedFitness);
+    console.log('Updated fitness:', updatedFitness); // 디버깅 로그
   };
 
-  const isModal = useAppSelector(selectModalCalendar);
-  const dispatch = useAppDispatch();
-
-  const toggleModal = (): void => {
-    dispatch(modalActions.toggleCalendar());
+  const handleSaveRoutine = async () => {
+    const day = new Date();
+    const today =
+      day.getFullYear() + '-' + ('0' + (1 + day.getMonth())).slice(-2) + '-' + ('0' + day.getDate()).slice(-2);
+    console.log(today);
+    if (date === '') {
+      alert('제목과 날짜를 선택해주세요.');
+    } else {
+      const param: axiosCreateRoutine = {
+        title: title,
+        dueDate: date,
+        details: fitness,
+      };
+      await putNewRoutine(
+        param,
+        (resp) => {
+          alert('저장완료');
+        },
+        (error) => {
+          alert('저장 중 오류');
+          console.log(error);
+        },
+      );
+    }
   };
 
-  const handlePlay = (): void => {
-    console.log('Current Fitness Data:', fitness); // 콘솔에 현재 데이터를 출력
+  // 운동 시작 버튼 클릭
+  const handlePlay = async () => {
+    const day = new Date();
+    const today =
+      day.getFullYear() + '-' + ('0' + (1 + day.getMonth())).slice(-2) + '-' + ('0' + day.getDate()).slice(-2);
+    console.log(today);
+    if (date === '') {
+      alert('제목과 날짜를 선택해주세요.');
+    } else if (date !== today) {
+      alert('운동시작은 당일만 가능합니다.');
+    } else {
+      console.log('Current Fitness Data:', fitness); // 콘솔에 현재 데이터를 출력
+
+      const param: axiosCreateRoutine = {
+        title: title,
+        dueDate: date,
+        details: fitness,
+      };
+
+      console.log(param);
+
+      await putNewRoutine(
+        param,
+        (resp) => {
+          alert('저장완료');
+        },
+        (error) => {
+          alert('저장 중 오류');
+          console.log(error);
+        },
+      );
+    }
+
     // dispatch(pageActions.toogleIsPlay(true));
     // navigate('/play', { state: { fitnessData: fitness } }); // 데이터를 운동 페이지로 전달
   };
@@ -149,8 +209,8 @@ const FitnessPlanSetPage = (): JSX.Element => {
             <div key={index}>
               <FitnessPlan
                 exercise={exercise}
-                index={index + 1}
-                onChangeSet={(exerciseIndex, updatedSets) => handleSetChange(exerciseIndex, updatedSets)}
+                index={index}
+                onChangeSet={handleSetChange}
                 onDelete={() => handleDeleteExercise(index)}
               />
             </div>
@@ -165,10 +225,7 @@ const FitnessPlanSetPage = (): JSX.Element => {
             width="170px"
             height="40px"
             children="루틴 저장"
-            onClick={() => {
-              alert('저장되었습니다.');
-              handleClickMove('../history');
-            }}
+            onClick={handleSaveRoutine}
             bold="500"
             size="14px"
             margin="10px"
@@ -186,7 +243,7 @@ const FitnessPlanSetPage = (): JSX.Element => {
         </s.BtnArea>
       </s.ContentArea>
       <BottomNav />
-      <FitnessPlanSetModal open={isModal} onModal={toggleModal} onTitle={setTitle} onDate={setDate} />
+      <FitnessPlanSetModal open={isModal} onModal={handleChangeOpen} onTitle={setTitle} onDate={setDate} />
     </s.Container>
   );
 };

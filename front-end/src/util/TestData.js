@@ -118,3 +118,5 @@ export const FitnessPlanData = {
 };
 
 export const exerciseData = [600, 700, 550, 340, 580, 620, 300];
+
+

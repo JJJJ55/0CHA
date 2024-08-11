@@ -94,7 +94,7 @@ const FitnessList = (props: FitnessListProps): JSX.Element => {
             </s.ContentArea>
             <s.IconArea>
               <IconSvg width="25" height="25" Ico={jjimOff} color="#ccff33" cursor="pointer" />
-              {props.add.some((item) => item.id === data.id) ? (
+              {props.add.some((item) => item.exerciseId === data.id) ? (
                 <IconSvg
                   width="25"
                   height="25"

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.back_end.exercise.mapper.WorkoutRoutineMapper">
+
+    <resultMap id="RoutineResultMap" type="com.ssafy.back_end.exercise.model.RoutineDto">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="title" column="title"/>
+        <result property="sumVolume" column="sum_volume"/>
+        <result property="sumTime" column="sum_time"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="completedAt" column="completed_at"/>
+        <result property="dueDate" column="due_date"/>
+        <result property="like" column="is_like"/>
+        <result property="isComplete" column="is_complete"/>
+        <result property="upload" column="is_upload"/>
+        <collection property="details" ofType="com.ssafy.back_end.exercise.model.RoutineDetailDto" column="id" select="getRoutineDetailsByRoutineId"/>
+    </resultMap>
+
+    <resultMap id="RoutineDetailResultMap" type="com.ssafy.back_end.exercise.model.RoutineDetailDto">
+        <id property="id" column="id"/>
+        <result property="routineId" column="routine_id"/>
+        <result property="exerciseId" column="exercise_id"/>
+        <result property="exerciseName" column="exerciseName"/>
+        <result property="sequence" column="sequence"/>
+        <collection property="sets" ofType="com.ssafy.back_end.exercise.model.RoutineSetDto" column="id" select="getSetsByRoutineDetailId"/>
+    </resultMap>
+
+    <resultMap id="RoutineSetResultMap" type="com.ssafy.back_end.exercise.model.RoutineSetDto">
+        <id property="id" column="id"/>
+        <result property="routineDetailId" column="routine_detail_id"/>
+        <result property="sequence" column="sequence"/>
+        <result property="weight" column="weight"/>
+        <result property="count" column="count"/>
+        <result property="complete" column="is_complete"/>
+    </resultMap>
+
+    <insert id="createRoutine" parameterType="com.ssafy.back_end.exercise.model.RoutineDto" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO routines (user_id, title, sum_volume, sum_time, created_at, completed_at, due_date, is_like, is_complete, is_upload)
+        VALUES (#{userId}, #{title}, #{sumVolume}, #{sumTime}, #{createdAt}, #{completedAt}, #{dueDate}, #{like}, #{isComplete}, #{upload})
+    </insert>
+
+    <insert id="createRoutineDetail" parameterType="com.ssafy.back_end.exercise.model.RoutineDetailDto" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO routine_details (routine_id, exercise_id, sequence)
+        VALUES (#{routineId}, #{exerciseId}, #{sequence})
+    </insert>
+
+    <insert id="createRoutineSet" parameterType="com.ssafy.back_end.exercise.model.RoutineSetDto" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO routine_sets (routine_detail_id, sequence, weight, count, is_complete)
+        VALUES (#{routineDetailId}, #{sequence}, #{weight}, #{count}, #{complete})
+    </insert>
+
+    <update id="updateRoutine" parameterType="com.ssafy.back_end.exercise.model.RoutineDto">
+        UPDATE routines
+        SET
+            title = #{title},
+            sum_volume = #{sumVolume},
+            sum_time = #{sumTime},
+            created_at = #{createdAt},
+            completed_at = #{completedAt},
+            due_date = #{dueDate},
+            is_like = #{like},
+            is_complete = #{isComplete},
+            is_upload = #{upload}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteRoutine" parameterType="map">
+        DELETE FROM routines WHERE id = #{routineId} AND user_id = #{userId}
+    </delete>
+
+    <delete id="deleteRoutineDetailsByRoutineId" parameterType="int">
+        DELETE FROM routine_details WHERE routine_id = #{routineId}
+    </delete>
+
+    <delete id="deleteRoutineSetsByRoutineId" parameterType="int">
+        DELETE FROM routine_sets WHERE routine_detail_id IN (SELECT id FROM routine_details WHERE routine_id = #{routineId})
+    </delete>
+
+    <select id="getRoutineByIdAndUserId" parameterType="map" resultMap="RoutineResultMap">
+        SELECT * FROM routines WHERE id = #{routineId} AND user_id = #{userId}
+    </select>
+
+    <select id="getRoutineById" resultMap="RoutineResultMap">
+        SELECT * FROM routines WHERE id = #{routineId}
+    </select>
+
+    <select id="getRoutineDetailsByRoutineId" parameterType="int" resultMap="RoutineDetailResultMap">
+        SELECT rd.*, e.name as exerciseName
+        FROM routine_details rd
+                 JOIN exercises e ON rd.exercise_id = e.id
+        WHERE rd.routine_id = #{routineId}
+    </select>
+
+    <select id="getSetsByRoutineDetailId" parameterType="int" resultMap="RoutineSetResultMap">
+        SELECT * FROM routine_sets WHERE routine_detail_id = #{routineDetailId}
+    </select>
+
+    <select id="getAllRoutines" parameterType="int" resultMap="RoutineResultMap">
+        SELECT * FROM routines WHERE user_id = #{userId}
+    </select>
+
+    <select id="getAllRoutinesLimit" parameterType="int" resultMap="RoutineResultMap">
+        SELECT * FROM routines WHERE user_id = #{userId} ORDER BY created_at DESC LIMIT 5
+    </select>
+
+    <select id="getAllUsersRoutines" resultMap="RoutineResultMap">
+        SELECT * FROM routines ORDER BY id ASC LIMIT 5
+    </select>
+
+    <update id="completeRoutine" parameterType="map">
+        UPDATE routines
+        SET is_complete = true, completed_at = #{completedAt}
+        WHERE id = #{routineId} AND user_id = #{userId}
+    </update>
+
+    <update id="likeRoutine">
+        UPDATE routines
+        SET is_like = 1
+        WHERE id = #{routineId} AND user_id = #{userId}
+    </update>
+
+    <update id="unlikeRoutine">
+        UPDATE routines
+        SET is_like = 0
+        WHERE id = #{routineId} AND user_id = #{userId}
+    </update>
+
+    <select id="isRoutineLiked" resultType="boolean">
+        SELECT CASE WHEN is_like = 1 THEN TRUE ELSE FALSE END
+        FROM routines
+        WHERE id = #{routineId} AND user_id = #{userId}
+    </select>
+
+</mapper>

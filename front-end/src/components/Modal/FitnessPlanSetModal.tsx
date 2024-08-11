@@ -126,6 +126,7 @@ const FitnessPlanSetModal = (props: FitnessPlanModalProps): JSX.Element => {
         <CalendarArea
           className="react-calendar"
           onChangeDate={handleChangeDate}
+<<<<<<< front-end/src/components/Modal/FitnessPlanSetModal.tsx
           // Routine={attendDay2}
           // RoutineFinish={attendDay}
           FitnessDay={fitness}

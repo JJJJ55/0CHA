@@ -96,7 +96,8 @@ public class SnsItemController {
 
         int userID = (Integer) request.getAttribute("userId");
         item.setUserId(userID);
-//        item.setImages(images);
+
+        snsItemService.validateImages(images.size());
 
         log.debug("[SnsItemController] item 정보: {}", item.toString());
 

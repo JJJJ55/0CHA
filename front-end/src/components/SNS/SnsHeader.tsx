@@ -21,6 +21,7 @@ const s = {
     justify-content: space-between;
     align-items: center;
     padding: 0px 15px;
+    background-color: #000000;
   `,
   MenuArea1: styled.div`
     width: 70%;

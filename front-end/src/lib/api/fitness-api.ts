@@ -1,6 +1,6 @@
 import { AxiosError } from 'axios';
 import { localAxios, publicAxios } from '../../util/axios-setting';
-import { newRoutine, Routine } from '../../util/types/axios-fitness';
+import { axiosCreateRoutine, newRoutine, Routine } from '../../util/types/axios-fitness';
 
 const local = publicAxios();
 const jwt = localAxios();
@@ -22,6 +22,15 @@ export const getFitnessListCategory = async (
   fail: (error: AxiosError) => void,
 ) => {
   await jwt.get(`/workout/exercises/${exerciseId}`).then(success).catch(fail);
+};
+
+// 운동별 운동량조회
+export const getFitnessMomentum = async (
+  exerciseId: number,
+  success: (response: any) => void,
+  fail: (error: AxiosError) => void,
+) => {
+  await jwt.get(`/record/exercises/${exerciseId}/records`).then(success).catch(fail);
 };
 
 // 운동찜
@@ -57,7 +66,7 @@ export const getRoutineList = async (success: (response: any) => void, fail: (er
   await jwt.get(`/workout/routines`).then(success).catch(fail);
 };
 
-// 과거루틴 상세조회
+// 루틴 상세조회
 export const getRoutineDetail = async (
   routineId: number,
   success: (response: any) => void,
@@ -66,19 +75,19 @@ export const getRoutineDetail = async (
   await jwt.get(`/workout/routines/${routineId}`).then(success).catch(fail);
 };
 
-// 빈 루틴생성
-export const postNewRoutine = async (
-  param: newRoutine,
+// 루틴생성
+export const putNewRoutine = async (
+  param: axiosCreateRoutine,
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
 ) => {
-  await jwt.post(`/workout/routines`, param).then(success).catch(fail);
+  await jwt.put(`/workout/routines`, param).then(success).catch(fail);
 };
 
-// 루틴저장
-export const putSaveRoutine = async (
+// 루틴업데이트
+export const putUpdateRoutine = async (
   routineId: number,
-  param: Routine,
+  param: axiosCreateRoutine,
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
 ) => {
@@ -94,29 +103,14 @@ export const delRoutine = async (
   await jwt.delete(`/workout/routines/${routineId}`).then(success).catch(fail);
 };
 
-// 루틴에 운동추가
-export const postRoutineAddFitness = async (
+// 루틴 찜하기/해제
+export const putRoutineJjim = async (
   routineId: number,
-  exerciseId: number,
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
 ) => {
-  await jwt.post(`/workout/routines/${routineId}/exercise/${exerciseId}`).then(success).catch(fail);
+  await jwt.put(`/workout/routines/${routineId}/like`).then(success).catch(fail);
 };
-
-// 루틴에 운동삭제
-export const delRoutineDelFitness = async (
-  routineId: number,
-  exerciseId: number,
-  success: (response: any) => void,
-  fail: (error: AxiosError) => void,
-) => {
-  await jwt.get(`/workout/routines/${routineId}/exercise/${exerciseId}`).then(success).catch(fail);
-};
-
-// 세트추가
-
-// 세트삭제
 
 // 운동완료
 export const putFinishRoutine = async (

@@ -99,6 +99,7 @@ const EmailArea: React.FC<EmailAreaProps> = ({
             children={verificationBtnText}
             onClick={onSendVerificationCode}
             bold="500"
+            size="12px"
           />
         </s.InputBtn>
       </s.InputArea>

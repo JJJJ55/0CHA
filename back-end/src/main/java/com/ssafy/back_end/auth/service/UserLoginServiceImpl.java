@@ -35,6 +35,10 @@ public class UserLoginServiceImpl implements UserLoginService {
         return userLoginMapper.getUserIdByRefreshToken(refreshToken);
     }
 
+    @Override
+    public String getRefreshTokenByUserId(int userId) {
+        return userLoginMapper.getRefreshTokenByUserId(userId);
+    }
 
 //    @Override
 //    public String social(UserDto userDto) {

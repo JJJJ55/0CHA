@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Header from '../../components/Common/Header';
 import { ReactComponent as add } from '../../asset/img/svg/add.svg';
@@ -16,6 +16,7 @@ import { putNewRoutine } from '../../lib/api/fitness-api';
 import { RoutineListDetail, RoutineDetails } from '../../util/types/axios-fitness';
 import TestPlan from '../../components/Fitness/Detail/TestPlan';
 import { pageActions } from '../../store/page';
+import { fitnessActions, selectPlan } from '../../store/fitness';
 
 const s = {
   Container: styled.section`
@@ -75,6 +76,8 @@ const TestPlanSetPage = (): JSX.Element => {
 
   // Fallback to user-provided data if historyData is not available
   const data: CreateRoutine[] = locationState?.add || [];
+  const reduxData = useAppSelector(selectPlan);
+  console.log(reduxData);
 
   // Set initial title and date based on historyData or default values
   const [title, setTitle] = useState(historyData?.title || '이름과 날짜를 지정해주세요.');
@@ -83,10 +86,24 @@ const TestPlanSetPage = (): JSX.Element => {
   // Initialize fitness based on historyData or map data to desired structure
   const [fitness, setFitness] = useState<RoutineDetails[]>(
     historyData?.details || data.map((item) => ({ ...item, sequence: 0, sets: [] })),
+    // reduxData.details,
   );
 
   const dispatch = useAppDispatch();
   const isModal = useAppSelector(selectModalCalendar);
+
+  // useEffect(() => {
+  //   return () => {
+  //     const param: axiosCreateRoutine = {
+  //       id: historyData?.id,
+  //       title: title,
+  //       dueDate: date,
+  //       details: fitness,
+  //     };
+
+  //     dispatch(fitnessActions.setPlanData(param));
+  //   };
+  // }, [title, date, fitness]);
 
   // 날짜 선택 모달 열기
   const handleChangeOpen = (): void => {
@@ -95,7 +112,9 @@ const TestPlanSetPage = (): JSX.Element => {
 
   // 페이지 이동
   const handleClickMove = (path: string): void => {
-    navigate(path);
+    if (window.confirm('작성중인 루틴이 삭제됩니다. 그래도 진행하시겠습니까?')) {
+      navigate(path);
+    }
   };
 
   // 운동 삭제
@@ -184,7 +203,7 @@ const TestPlanSetPage = (): JSX.Element => {
 
   return (
     <s.Container>
-      <Header text="새루틴">
+      <Header text="새루틴" onBack={() => navigate('../list')}>
         <Button
           width="80px"
           height="40px"

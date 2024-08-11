@@ -6,6 +6,8 @@ import IconSvg from '../../components/Common/IconSvg';
 import Button from '../../components/Common/Button';
 import { useLocation, useNavigate } from 'react-router';
 import { FinishProps } from '../../util/types/axios-fitness';
+import { useAppDispatch } from '../../lib/hook/useReduxHook';
+import { fitnessActions } from '../../store/fitness';
 const s = {
   Container: styled.section`
     height: 100%;
@@ -41,9 +43,11 @@ const s = {
 
 const FitnessFinishPage = (): JSX.Element => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const data: FinishProps = useLocation().state.data;
 
   const handleClickMove = (path: string): void => {
+    dispatch(fitnessActions.setFinish());
     navigate(path);
   };
 

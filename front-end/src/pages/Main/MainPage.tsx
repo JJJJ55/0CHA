@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useLayoutEffect, useState } from 'react';
 import styled from 'styled-components';
-import testImage from '../../asset/img/testImg.png';
+import basic from '../../asset/img/basic.png';
 import IconSvg from '../../components/Common/IconSvg';
 import { ReactComponent as alarm } from '../../asset/img/svg/alram.svg';
 import { ReactComponent as main1 } from '../../asset/img/svg/main1.svg';
@@ -17,6 +17,7 @@ import { MainMyRoutine, Profile, User } from '../../util/types/axios-main';
 import { mainPageRoutine } from '../../util/types/axios-fitness';
 import { useAppSelector } from '../../lib/hook/useReduxHook';
 import { selectIsPlay } from '../../store/page';
+import { putFinishRoutine } from '../../lib/api/fitness-api';
 // import { user } from '../../lib/api/user-api';
 
 const s = {
@@ -332,7 +333,7 @@ const MainPage = (): JSX.Element => {
           cursor="pointer"
           onClick={() => navigate('/sns/notification')}
         />
-        <s.ProfileImage src={testImage} alt="Profile" onClick={() => navigate('/mypage')} />
+        <s.ProfileImage src={user?.profileImage ?? basic} alt="Profile" onClick={() => navigate('/mypage')} />
       </s.HeaderIcons>
     </s.Header>
   );

@@ -57,7 +57,7 @@ export interface RoutineListDetail {
 export interface RoutineDetails {
   exerciseId: number;
   exerciseName: string;
-  sequence: number;
+  sequence?: number;
   sets: RoutineSets[];
 }
 
@@ -93,7 +93,7 @@ export interface axiosCreateRoutine {
 export interface axiosCreateRoutineDetails {
   exerciseName: string;
   exerciseId: number;
-  sequence: number;
+  sequence?: number;
   sets: ExerciseDetailType[];
 }
 

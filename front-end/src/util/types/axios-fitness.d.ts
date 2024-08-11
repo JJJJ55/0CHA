@@ -35,44 +35,44 @@ export interface RoutineList {
   id: number;
   title: string;
   dueDate: string;
-  isLike: boolean;
+  like: boolean;
 }
 
-export interface RoutineListDetailType {
-  id: number;
-  title: 'string';
-  sumVolume: 'double';
-  sumTime: 'int';
-  createdAt: 'dateTime';
-  completedAt: 'dateTime';
-  dueDate: 'date';
-  details: [
-    {
-      id: number;
-      routineId: number;
-      exerciseId: number;
-      sequence: number;
-      sets: [
-        {
-          id: number;
-          routineDetailId: number;
-          sequence: number;
-          weight: number;
-          count: number;
-          set: number;
-          complete: boolean;
-        },
-      ];
-    },
-  ];
+// 아래는 루틴불러오기
+
+export interface RoutineListDetail {
+  id?: number;
+  title: string;
+  sumVolume: number;
+  sumTime: number;
+  createdAt?: string;
+  completedAt?: string;
+  dueDate: string;
+  details: RoutineDetails[];
   like: boolean;
   complete: boolean;
   upload: boolean;
 }
 
+export interface RoutineDetails {
+  exerciseId: number;
+  exerciseName: string;
+  sequence?: number;
+  sets: RoutineSets[];
+}
+
+export interface RoutineSets {
+  sequence: number;
+  weight: number | '';
+  count: number | '';
+  complete: boolean;
+}
+
+// 아래는 루틴 생성
+
 export interface CreateRoutine {
-  name: string;
-  id: number;
+  exerciseName: string;
+  exerciseId: number;
 }
 
 export interface plan {
@@ -81,10 +81,45 @@ export interface plan {
   detail: any[];
 }
 
+export interface axiosCreateRoutine {
+  id?: number;
+  title: string;
+  sumVolume?: number;
+  sumTime?: number;
+  dueDate: string;
+  details: axiosCreateRoutineDetails[];
+}
+
+export interface axiosCreateRoutineDetails {
+  exerciseName: string;
+  exerciseId: number;
+  sequence?: number;
+  sets: ExerciseDetailType[];
+}
+
 export interface ExerciseDetailType {
-  id: number;
-  set: number;
+  sequence: number;
   weight: number | '';
   count: number | '';
-  is_complete: boolean;
+  complete: boolean;
+}
+
+export interface mainPageRoutine {
+  id: number;
+  title: string;
+  dueDate: string;
+  like: boolean;
+}
+
+export interface FitnessMomenthum {
+  date: string;
+  exerciseName: string;
+  volume: number;
+  totalTime: number;
+}
+
+export interface FinishProps {
+  date: string;
+  volume: number;
+  time: number;
 }

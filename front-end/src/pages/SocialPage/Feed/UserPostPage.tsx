@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Input from '../../../components/Common/Input';
 import Button from '../../../components/Common/Button';
@@ -11,6 +11,11 @@ import Header from '../../../components/Common/Header';
 import SnsNavigation from '../../../components/SNS/SnsNavigation';
 import BottomNav from '../../../components/Common/BottomNav';
 import UserProfileInfo from '../../../components/SNS/UserProfileInfo';
+import { useNavigate, useParams } from 'react-router';
+
+import { UserPage } from '../../../lib/api/sns-api';
+import { UserPageFeed } from '../../../lib/api/sns-api';
+import { UserPageItem } from '../../../lib/api/sns-api';
 
 const s = {
   Container: styled.section`
@@ -49,15 +54,40 @@ const s = {
     margin-top: 3px;
   `,
   ThumbnailArea: styled.div`
+    width: 100%;
     margin: auto;
     display: inline-flex;
     flex-wrap: wrap;
+    
   `,
   Thumbnail: styled.div`
     width: 33%;
+    aspect-ratio: 1;
     padding: 1px;
+    border: 1px #212121 solid;
   `,
 };
+
+type userPageData = {
+  id: number;
+  nickname: string;
+  profileImage: string;
+  feedCount: number;
+  itemCount: number;
+  followedIdCount: number;
+  followerIdCount: number;
+};
+
+type userPageFeedData = {
+  id: number;
+  image: string;
+};
+
+type userPageMarketData = {
+  id: number;
+  image: string;
+};
+
 
 const UserPostPage = (): JSX.Element => {
   const [isFitness, setIsFitness] = useState(true);
@@ -65,16 +95,110 @@ const UserPostPage = (): JSX.Element => {
     setIsFitness(!isFitness);
   };
 
+  const [userId, setUserId] = useState(0)
+  const [userNickname, setUserNickname] = useState('')
+  const [userProfileImage, setUserProfileImage] = useState('')
+
+  const userStr = localStorage.getItem("user")
+
+  useEffect(() => {
+    if (userStr) {
+      const userTmp = JSON.parse(userStr)
+      setUserId(userTmp.id)
+      setUserNickname(userTmp.nickname)
+      setUserProfileImage(userTmp.profileImage)
+    }
+  }, [])
+  
+  const [userData, setUserData] = useState<userPageData>();
+  const [feedData, setFeedData] = useState<userPageFeedData[]>([]);
+  const [marketData, setMarketData] = useState<userPageMarketData[]>([]);
+  const params = useParams()
+  const feedUserId = params.id
+
+  useEffect(() => {
+    console.log(feedUserId)
+  }, [feedUserId])
+
+  const getUserPage = async() => {
+    if (feedUserId){
+      await UserPage(
+        parseInt(feedUserId),
+        (resp) => {
+          setUserData(resp.data);
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+    }
+  }
+
+  const getUserPageFeed = async() => {
+    if (feedUserId) {
+      await UserPageFeed(
+        parseInt(feedUserId),
+        (resp) => {
+          if (resp.data === '피드 0개입니다') {
+            setFeedData([])
+          } else {
+            setFeedData(resp.data);
+          }
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+    }
+  };
+
+  const getUserPageMarket = async () => {
+    if (feedUserId) {
+      await UserPageItem(
+        parseInt(feedUserId),
+        (resp) => {
+          if (resp.data === '중고거래 0개입니다') {
+            setMarketData([]);
+          } else {
+            setMarketData(resp.data);
+          }
+        },
+        (error) => {
+          console.log(error);
+        }
+      )
+    }
+  }
+
+  useEffect(() => {
+    getUserPage();
+    getUserPageFeed();
+    getUserPageMarket();
+  }, []);
+
+  useEffect(() => {
+    console.log(userData)
+  }, [userData]);
+
+  const navigate = useNavigate();
+
+  const handleThumbnailClick = ((feedId: number) => {
+    navigate(`/sns/feed`, {state: {targetFeedId: feedId, targetUserId: feedUserId}});
+    console.log(feedId, 'selected feed id')
+  })
+
   return (
     <>
       <Header text="피드" />
       <s.Container>
         <UserProfileInfo
-          isCurrentUser={false}
-          userName={'stranger_00'}
-          postCnt={'9'}
-          followerCnt={'12'}
-          followingCnt={'23'}
+          profileUserId={userData?.id}
+          isCurrentUser={userId === userData?.id}
+          userName={userData?.nickname}
+          postCnt={userData?.feedCount}
+          marketCnt={userData?.itemCount}
+          followerCnt={userData?.followerIdCount}
+          followingCnt={userData?.followedIdCount}
         />
         <s.TabBar>
           {isFitness === true ? (
@@ -90,21 +214,23 @@ const UserPostPage = (): JSX.Element => {
         </s.TabBar>
         <s.testArea>
           <s.ThumbnailArea>
-            <s.Thumbnail>
-              <Image width="100%" height="auto" src={test} type="rect" cursor="pointer" />
-            </s.Thumbnail>
-            <s.Thumbnail>
-              <Image width="100%" height="auto" src={test} type="rect" cursor="pointer" />
-            </s.Thumbnail>
-            <s.Thumbnail>
-              <Image width="100%" height="auto" src={test} type="rect" cursor="pointer" />
-            </s.Thumbnail>
-            <s.Thumbnail>
-              <Image width="100%" height="auto" src={test} type="rect" cursor="pointer" />
-            </s.Thumbnail>
-            <s.Thumbnail>
-              <Image width="100%" height="auto" src={test} type="rect" cursor="pointer" />
-            </s.Thumbnail>
+            {isFitness === true ? (
+              <>
+                {feedData.map((thumbnail) => (
+                  <s.Thumbnail key={thumbnail.id} onClick={() => handleThumbnailClick(thumbnail.id)}>
+                    <Image width="100%" height="auto" src={thumbnail.image} type="rect" cursor="pointer" />
+                  </s.Thumbnail>
+                ))}
+              </>
+            ) : (
+              <>
+                {marketData.map((thumbnail) => (
+                  <s.Thumbnail key={thumbnail.id}>
+                    <Image width="100%" height="auto" src={thumbnail.image} type="rect" cursor="pointer" />
+                  </s.Thumbnail>
+                ))}
+              </>
+            )}      
           </s.ThumbnailArea>
         </s.testArea>
       </s.Container>

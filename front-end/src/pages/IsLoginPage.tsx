@@ -26,7 +26,7 @@ export const PrivateRoute = () => {
   if (isFinish && isPlay && location.pathname !== '/play') {
     dispatch(pageActions.toogleIsFinish(false));
   }
-  if (isScan && location.pathname !== '/inbody/scan') {
+  if (isScan && location.pathname !== '/record/inbody/scan') {
     dispatch(pageActions.toogleIsScan(false));
   }
   const checkLogin = !!localStorage.getItem('accessToken');

@@ -76,7 +76,7 @@
                 LEFT JOIN
             item_details d ON i.id = d.item_id AND d.detail_type = 'image'
         ORDER BY
-            i.created_at DESC;
+            i.created_at DESC
         LIMIT #{limit}
         OFFSET #{offset};
     </select>

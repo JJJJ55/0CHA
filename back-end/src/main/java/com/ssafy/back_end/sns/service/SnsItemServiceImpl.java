@@ -169,7 +169,7 @@ public class SnsItemServiceImpl implements SnsItemService {
     }
 
     @Override
-    public void validateImages(List<MultipartFile> images) {
+    public void validateImages(List<String> images) {
         if (images == null || images.isEmpty()) {
             throw new IllegalArgumentException("At least one image is required.");
         }

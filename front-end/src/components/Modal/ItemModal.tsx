@@ -235,7 +235,13 @@ const ItemModal = (props: MarketModalProps): JSX.Element => {
 
   const handleMovePage = (): void => {
     onModal();
-    navigate('../chat/id');
+    if (item?.userId === userId) {
+      // 사용자가 판매자인 경우
+      navigate('../chat');
+    } else {
+      // 사용자가 구매자인 경우
+      navigate(`../chat/${item?.id}`);
+    }
   };
   // 게시글 수정
   const handleUpdate = () => {

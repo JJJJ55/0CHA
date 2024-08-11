@@ -130,6 +130,7 @@ const UpdateItemPage = (): JSX.Element => {
   const location = useLocation();
   const state = location.state as LocationState | undefined;
 
+  // const [images, setImages] = useState<File[]>([]); // 파일 배열로 변경
   const [images, setImages] = useState<string[]>(state?.item.images || []);
   const [title, setTitle] = useState<string>(state?.item.title || '');
   const [price, setPrice] = useState<string>(state?.item.price.toString() || '');
@@ -156,7 +157,6 @@ const UpdateItemPage = (): JSX.Element => {
             },
           );
         };
-
         fetchItemDetail();
       }
     }
@@ -239,6 +239,21 @@ const UpdateItemPage = (): JSX.Element => {
     setImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
+  const basicUrl = 'https://i11b310.p.ssafy.io/images/';
+
+  // 이미지 경로를 파싱하여 basicUrl과 결합하는 함수
+  const getParsedImageUrl = (imagePath: string) => {
+    const basePath = '/home/ubuntu/images/';
+
+    // 서버에서 온 이미지인 경우 이미지 반환
+    if (!imagePath.includes(basePath)) {
+      return imagePath;
+    }
+
+    const relativePath = imagePath.split('/home/ubuntu/images/')[1];
+    return basicUrl + relativePath;
+  };
+
   return (
     <>
       <Header text="수정하기" />
@@ -259,7 +274,7 @@ const UpdateItemPage = (): JSX.Element => {
           <s.ImageArea>
             {images.map((image, index) => (
               <s.ImageWrapper key={index}>
-                <Image width="64px" height="64px" src={image} type="rect" />
+                <Image width="64px" height="64px" src={getParsedImageUrl(image)} type="rect" />
                 {index === 0 && <s.MainImageCaption>대표</s.MainImageCaption>}
                 <s.DeleteButton onClick={() => handleDeleteImage(index)}>X</s.DeleteButton>
               </s.ImageWrapper>

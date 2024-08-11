@@ -87,8 +87,16 @@ const s = {
   `,
   SearchInput: styled(Input)`
     flex: 1;
-    max-width: 400px;
     min-width: 100px;
+    height: 30px;
+  `,
+  NoItemsMessage: styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+    font-size: 14px;
+    color: ${(props) => props.theme.textColor};
   `,
 };
 
@@ -225,26 +233,28 @@ const MarketPage = (): JSX.Element => {
               setLocation2={setLocation2}
             />
           </s.LocationDropdownWrapper>
-          <s.SearchInput value={searchQuery} onChange={handleSearchInputChange} placeholder="Search items..." />
-          <Button type="main" onClick={handleSearch}>
-            검색
-          </Button>
+          <s.SearchInput value={searchQuery} onChange={handleSearchInputChange} placeholder="제목 검색" />
+          <Button type="main" onClick={handleSearch} height="30px" width="40px" children="검색" />
         </s.SearchArea>
-        {items.map((item) => (
-          <React.Fragment key={item.id}>
-            <MarketItem
-              itemId={item.id}
-              itemImage={item.images[0]}
-              itemName={item.title}
-              itemPrice={item.price}
-              isOnSale={!item.isSold}
-              itemLike={item.likeCount}
-              isLike={item.isLike}
-              onClick={() => toggleMarket(item.id)} // 클릭 시 해당 아이템을 모달에 설정
-            />
-            <s.Horizon />
-          </React.Fragment>
-        ))}
+        {items.length === 0 ? (
+          <s.NoItemsMessage>상품이 없습니다</s.NoItemsMessage>
+        ) : (
+          items.map((item) => (
+            <React.Fragment key={item.id}>
+              <MarketItem
+                itemId={item.id}
+                itemImage={item.images[0]}
+                itemName={item.title}
+                itemPrice={item.price}
+                isOnSale={!item.isSold}
+                itemLike={item.likeCount}
+                isLike={item.isLike}
+                onClick={() => toggleMarket(item.id)} // 클릭 시 해당 아이템을 모달에 설정
+              />
+              <s.Horizon />
+            </React.Fragment>
+          ))
+        )}
         <s.PaginationButtons>
           {currentRange !== 0 && <s.PageButton type="main" onClick={handlePreviousRange} children="이전" />}
           {Array.from({ length: Math.min(5, totalPages - currentRange) }).map((_, index) => {

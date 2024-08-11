@@ -72,6 +72,22 @@ const s = {
     min-width: 250px;
     border-color: #212121;
   `,
+  ItemImage: styled.div`
+    width: 70px;
+    height: 70px;
+    min-width: 70px;
+    min-height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  `,
 };
 
 type marketItem = {
@@ -142,14 +158,28 @@ const MarketItem = (props: MarketItemProps): JSX.Element => {
     setLikeCount(itemLike);
   }, [isLike, itemLike]);
 
+  const basicUrl = 'https://i11b310.p.ssafy.io/images/';
+
+  // 이미지 경로를 파싱하여 basicUrl과 결합하는 함수
+  const getParsedImageUrl = (imagePath: string) => {
+    if (imagePath) {
+      const relativePath = imagePath.split('/home/ubuntu/images/')[1];
+      return basicUrl + relativePath;
+    } else {
+      return testImg;
+    }
+  };
+
   return (
     <s.Container>
       {/* <Image width="70px" height="70px" src={itemImage} type="rect" /> */}
-      <Image width="70px" height="70px" src={testImg} type="rect" />
+      <s.ItemImage>
+        <Image width="70px" height="70px" src={getParsedImageUrl(itemImage)} type="rect" />
+      </s.ItemImage>
       <s.ItemInfoArea>
         <s.ItemTopArea onClick={onClick}>
           <s.ItemName>{itemName}</s.ItemName>
-          {isOnSale === true ? <s.Available>판매중</s.Available> : <s.Unavailable>판매완료</s.Unavailable>}
+          {isOnSale === true ? <s.Available>판매중</s.Available> : <s.Unavailable>판매완료 </s.Unavailable>}
         </s.ItemTopArea>
         <s.ItemBottomArea>
           <s.ItemPrice>{Number(itemPrice).toLocaleString()}원</s.ItemPrice>

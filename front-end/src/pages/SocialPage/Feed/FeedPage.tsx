@@ -11,7 +11,7 @@ import UserSearchModal from '../../../components/Modal/UserSearchModal';
 import test from '../../../asset/img/testImg.png';
 import { useAppDispatch, useAppSelector } from '../../../lib/hook/useReduxHook';
 import { modalActions, selectModalComment, selectModalUserSearch } from '../../../store/modal';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import { useModalExitHook } from '../../../lib/hook/useModalExitHook';
 
 import FeedList from '../../../components/SNS/FeedList';
@@ -28,6 +28,7 @@ const s = {
     height: 100%;
     background-color: ${(props) => props.theme.bgColor};
     overflow: auto;
+    padding-top: 114px; //57+
     padding-bottom: 68px;
   `,
   Title: styled.div`
@@ -67,6 +68,12 @@ const s = {
     color: #666666;
     font-size: 14px;
   `,
+  Header: styled.div`
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  `
 };
 
 type feedData = {
@@ -120,60 +127,77 @@ const FeedPage = (): JSX.Element => {
   const [commentData, setCommentData] = useState<commentData[]>([]);
 
 
-  // const [userId, setUserId] = useState(null)
+  const [userId, setUserId] = useState(0)
+  const [userNickname, setUserNickname] = useState('')
+  const [userProfileImage, setUserProfileImage] = useState('')
 
-  // const userStr = localStorage.getItem("user")
+  const userStr = localStorage.getItem("user")
 
-  // useEffect(() => {
-  //   if (userStr) {
-  //     const userObj = JSON.parse(userStr)
-  //     // const userId = userObj.id
-  //     setUserId(userObj.id)
-  //     console.log(userObj.id)
-  //   }
-  // }, [])
-  // const getFeedData = async (page: number) => {
-  //   if (loading) return;
-  //   try {
-  //     setLoading(true);
-  //     const res = await axios.get(`http://localhost:4000/feedData?_page=${page}&_limit=10`);
-  //     const data = res.data;
+  useEffect(() => {
+    if (userStr) {
+      console.log(userStr, '유저정보')
+      const userTmp = JSON.parse(userStr)
+      setUserId(userTmp.id)
+      setUserNickname(userTmp.nickname)
+      setUserProfileImage(userTmp.profileImage)
+    }
+  }, []);
 
-  //     if (data.length === 0) {
-  //       setIsMoreData(false);
-  //     } else {
-  //       setFeedData((prevData) => [...prevData, ...data]);
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
   const [offset, setOffset] = useState(0);
+
   const getFeedData = async (offset: number) => {
     if (loading) return;
-    setLoading(true);
-
+    setLoading(true);    
     await SnsFeedList(
-      10,
+      0,
       offset,
       (resp) => {
         const data = resp.data;
         // if (data.length === 0) {
         if (data === '피드 0개입니다') {
           setIsMoreData(false);
+          console.log('ismoredatafalse')
         } else {
           setFeedData((prevData) => [...prevData, ...data]);
+          console.log('setfeed')
         }
         setLoading(false)
       },
       (error) => {
         console.error(error)
       },
-    )
+      10
+    );
+  };
 
-  }
+  const getTargetData = async (offset: number) => {
+    if (loading) return;
+    setLoading(true);
+    if (targetUserId) {
+      console.log('targetuserfeeddata')
+      await SnsFeedList(
+        targetUserId,
+        offset,
+        (resp) => {
+          const data = resp.data;
+          // if (data.length === 0) {
+          if (data === '피드 0개입니다') {
+            setIsMoreData(false);
+            console.log('ismoredatafalse')
+          } else {
+            setFeedData(data);
+            // setFeedData((prevData) => [...prevData, ...data]);
+            console.log('settargetfeed')
+          }
+          setLoading(false)
+        },
+        (error) => {
+          console.error(error)
+        },
+        9999
+      );
+    }
+  };
 
   useEffect(() => {
     getFeedData(offset);
@@ -225,30 +249,63 @@ const FeedPage = (): JSX.Element => {
         console.error(error);
       }
     );
-    // try {
-    //   const res = await axios.get(`http://localhost:4000/comment${id}`);
-    //   const data = res.data;
-    //   if (data.length === 0) {
-    //     setCommentData([]);
-    //   } else {
-    //     setCommentData(data);
-    //   }
+  };
 
-    // } catch (error) {
-    //   setCommentData([]);
-    //   console.error(error);
-    // }
-  }
+  const [targetFeedId, setTargetFeedId] = useState();
+  const [targetUserId, setTargetUserId] = useState();
+  const location = useLocation();
+  useEffect(() => {
+    if (location.state !== null) {
+      console.log(location.state.targetFeedId, 'state');
+      console.log(location.state.targetUserId, 'targetuser');
+      setTargetFeedId(location.state.targetFeedId);
+      setTargetUserId(location.state.targetUserId);
+    }
+  }, [targetUserId])
 
+  // useEffect(() => {
+  //   if (targetFeedId) {
+  //     getTargetData(0)
+  //   }
+  // }, [targetFeedId])
+  useEffect(() => {
+    if (targetFeedId && containerRef.current && targetUserId) {
+      getTargetData(0)
+      setTimeout(() => {
+        const element = document.getElementById(`feed-${targetFeedId}`);
+        if (element) {
+          element.scrollIntoView({block: 'center'});
+        }
+      }, 100);
+    }
+  }, [targetFeedId])
   useModalExitHook();
 
   return (
     <>
+      <s.Header>
         <SnsHeader />
         <SnsNavigation />
+      </s.Header>
       <s.Container ref={containerRef}>
-        {/* <FeedList data={feedData} onClick={toggleModalComment} /> */}
-        <FeedList data={feedData} onClick={handleCommentClick} />
+        {feedData.map((data, index) => (
+          <div id={`feed-${data.id}`}>
+            <FeedList key={data.id}
+              feedId={data.id}
+              content={data.content}
+              image={data.image}
+              likeCount={data.likeCount}
+              commentCount={data.commentCount}
+              createdAt={data.createdAt}
+              userId={data.userId}
+              nickname={data.nickname}
+              profileImage={data.profileImage}
+              isLike={data.isLike}
+              onClick={handleCommentClick}
+              loginUser={userId}
+            />
+          </div>
+        ))}
         <CommentModal open={isComment} onModal={toggleModalComment} data={commentData} feedId={feedId}/>
         <UserSearchModal open={isUserSearch} onModal={toggleModalUserSearch} />
       </s.Container>

@@ -80,17 +80,24 @@ export const SnsFeedList = async (
   offset: number,
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
+  limit?: number,
 ) => {
-  await jwt.get(`/sns/feed/list?user-id=${userId}&offset=${offset}&limit=10`).then(success).catch(fail);
+  await jwt.get(`/sns/feed/list?user-id=${userId}&offset=${offset}&limit=${limit}`).then(success).catch(fail);
 };
 
 // 피드 작성
 export const SnsFeedWrite = async (
+  // param: snsFeedWrite,
   param: snsFeedWrite,
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
 ) => {
   await jwt.post(`/sns/feed/write`, param).then(success).catch(fail);
+  // await jwt.post(`/sns/feed/write`, param, {
+  //   headers: {
+  //     'Content-Type': 'multipart/form-data',
+  //   },
+  // }).then(success).catch(fail);
 };
 
 // 피드 작성시 루틴가져오기
@@ -325,4 +332,11 @@ export const UserSearch = async (
   fail: (error: AxiosError) => void,
 ) => {
   await jwt.get(`/sns/social/search`).then(success).catch(fail);
-}
+};
+
+export const MyRoutine = async (
+  success: (response: any) => void,
+  fail: (error: AxiosError) => void,
+) => {
+  await jwt.get(`sns/feed/my-routine`).then(success).catch(fail);
+};

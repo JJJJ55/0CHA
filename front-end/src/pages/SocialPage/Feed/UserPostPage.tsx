@@ -11,7 +11,7 @@ import Header from '../../../components/Common/Header';
 import SnsNavigation from '../../../components/SNS/SnsNavigation';
 import BottomNav from '../../../components/Common/BottomNav';
 import UserProfileInfo from '../../../components/SNS/UserProfileInfo';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 
 import { UserPage } from '../../../lib/api/sns-api';
 import { UserPageFeed } from '../../../lib/api/sns-api';
@@ -87,6 +87,7 @@ type userPageMarketData = {
   id: number;
   image: string;
 };
+
 
 const UserPostPage = (): JSX.Element => {
   const [isFitness, setIsFitness] = useState(true);
@@ -173,7 +174,18 @@ const UserPostPage = (): JSX.Element => {
     getUserPage();
     getUserPageFeed();
     getUserPageMarket();
-  }, [])
+  }, []);
+
+  useEffect(() => {
+    console.log(userData)
+  }, [userData]);
+
+  const navigate = useNavigate();
+
+  const handleThumbnailClick = ((feedId: number) => {
+    navigate(`/sns/feed`, {state: {targetFeedId: feedId, targetUserId: feedUserId}});
+    console.log(feedId, 'selected feed id')
+  })
 
   return (
     <>
@@ -205,7 +217,7 @@ const UserPostPage = (): JSX.Element => {
             {isFitness === true ? (
               <>
                 {feedData.map((thumbnail) => (
-                  <s.Thumbnail key={thumbnail.id}>
+                  <s.Thumbnail key={thumbnail.id} onClick={() => handleThumbnailClick(thumbnail.id)}>
                     <Image width="100%" height="auto" src={thumbnail.image} type="rect" cursor="pointer" />
                   </s.Thumbnail>
                 ))}

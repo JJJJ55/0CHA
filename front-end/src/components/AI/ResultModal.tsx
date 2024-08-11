@@ -81,10 +81,12 @@ const ResultModal: React.FC<ResultModalProps> = ({ onClose, results }) => {
           <tbody>
             {results.map((result) => (
               <s.TableRow key={result.set}>
-                <s.TableCell width="20%" style={{ textAlign: 'right' }}>
+                <s.TableCell width="20%" style={{ textAlign: 'right' }} $isError={result.isError}>
                   {result.set}회차
                 </s.TableCell>
-                <s.TableCell width="10%">{result.isError ? 'X' : 'O'}</s.TableCell>
+                <s.TableCell width="10%" $isError={result.isError}>
+                  {result.isError ? 'X' : 'O'}
+                </s.TableCell>
                 <s.TableCell width="65%" style={{ textAlign: 'left' }} $isError={result.isError}>
                   {result.message}
                 </s.TableCell>

@@ -115,7 +115,6 @@ const getByteLength = (str: string) => new Blob([str]).size;
 
 const UploadItemPage = (): JSX.Element => {
   const navigate = useNavigate();
-  // const [images, setImages] = useState<string[]>([]);
   const [images, setImages] = useState<File[]>([]); // 파일 배열로 변경
 
   const [title, setTitle] = useState<string>('');
@@ -139,10 +138,6 @@ const UploadItemPage = (): JSX.Element => {
 
   // 작성완료
   const handleMovePage = async () => {
-    console.log(title);
-    console.log(price);
-    console.log(content);
-    console.log(images);
     if (!title.trim()) {
       alert('제목을 작성해 주세요.');
       return;
@@ -156,7 +151,7 @@ const UploadItemPage = (): JSX.Element => {
       alert('이미지를 한 장 이상 입력해 주세요');
       return;
     }
-    // FormData 객체 생성
+
     const formData = new FormData();
     const itemData = {
       title: title,
@@ -164,12 +159,11 @@ const UploadItemPage = (): JSX.Element => {
       content: content,
     };
 
-    // ItemDto 데이터 추가
-    formData.append('item', new Blob([JSON.stringify(itemData)], { type: 'multipart/form-data' }));
+    // ItemDto 데이터를 JSON 형태로 변환하고 formData에 추가
+    formData.append('item', new Blob([JSON.stringify(itemData)], { type: 'application/json' }));
 
     images.forEach((image) => {
-      console.log(image);
-      formData.append('images', image); // 파일 추가
+      formData.append('images', image);
     });
 
     await SnsItemWrite(
@@ -180,11 +174,9 @@ const UploadItemPage = (): JSX.Element => {
         console.log(resp);
       },
       (err) => {
-        console.log('자 문제 발생');
+        console.log('자 문제 발생 ');
+        console.log(formData);
         console.log(err);
-        console.log('두 번째', formData.getAll('item'));
-        console.log('두 번째', formData.getAll('images'));
-        console.log('두 번째', formData.values());
         formData.forEach((value, key) => {
           console.log(key, value);
         });
@@ -210,7 +202,14 @@ const UploadItemPage = (): JSX.Element => {
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     const filteredValue = value.replace(/[^0-9]/g, ''); // 숫자만 입력되도록 필터링
-    setPrice(filteredValue);
+    // 2의 31승보다 작은 가격만 설정 가능
+    const maxPrice = 2 ** 31 - 1;
+    if (parseInt(filteredValue) > maxPrice) {
+      setPrice(maxPrice.toString());
+      alert(`가격은 ${maxPrice.toLocaleString()}원까지만 입력 가능합니다. `);
+    } else {
+      setPrice(filteredValue);
+    }
   };
   // 이미지 삭제
   const handleDeleteImage = (index: number) => {

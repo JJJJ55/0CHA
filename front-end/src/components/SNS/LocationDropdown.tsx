@@ -7,7 +7,7 @@ const s = {
     height: 45px;
     display: flex;
     align-items: center;
-    padding: 0px 15px;
+    /* padding: 0px 15px; */
   `,
   LocationSelect: styled.select`
     color: ${(props) => props.theme.textColor};
@@ -16,8 +16,9 @@ const s = {
     background-color: #000000;
     border: none;
     line-height: 2;
-    margin-right: 20px;
+    /* margin-right: 20px; */
     cursor: pointer;
+    max-width: 80px;
   `,
   LocationOption: styled.option`
     color: ${(props) => props.theme.textColor};

@@ -35,28 +35,42 @@ public class SnsItemController {
         this.snsItemService = snsItemService;
     }
 
-    @Operation (summary = "전체or유저 중고장터 목록보기-완")
-    @GetMapping ("/list")
-    public ResponseEntity<?> getItems(HttpServletRequest request, @RequestParam (value = "user-id", defaultValue = "0") int userId,
-                                      @RequestParam (value = "district", defaultValue = "") String district,
-                                      @RequestParam (value = "si-gun-gu", defaultValue = "") String siGunGu,
-                                      @RequestParam (value = "title", defaultValue = "") String title,
-                                      @RequestParam (value = "page", defaultValue = "1") int page,
-                                      @RequestParam (value = "limit", defaultValue = "20") int limit) {
-        int ID = (Integer)request.getAttribute("userId");
+    @Operation(summary = "전체or유저 중고장터 목록보기-완")
+    @GetMapping("/list")
+    public ResponseEntity<?> getItems(HttpServletRequest request,
+                                      @RequestParam(value = "user-id", defaultValue = "0") int userId,
+                                      @RequestParam(value = "district", defaultValue = "") String district,
+                                      @RequestParam(value = "si-gun-gu", defaultValue = "") String siGunGu,
+                                      @RequestParam(value = "title", defaultValue = "") String title,
+                                      @RequestParam(value = "page", defaultValue = "1") int page,
+                                      @RequestParam(value = "limit", defaultValue = "20") int limit) {
+        int ID = (Integer) request.getAttribute("userId");
         int offset = (page - 1) * limit;
+
+        // 로그 추가
+        log.info("User ID: {}, District: {}, SiGunGu: {}, Title: {}, Page: {}, Limit: {}",
+                userId, district, siGunGu, title, page, limit);
+        log.info("Requesting user ID: {}", ID);
 
         ItemListDto list = new ItemListDto();
         List<ItemDto> items = snsItemService.getItems(ID, userId, district, siGunGu, title, offset, limit);
+
+        // 로그 추가
+        log.debug("Retrieved {} items", items != null ? items.size() : 0);
+
         list.setSize(snsItemService.getItems(ID, userId, district, siGunGu, title, 0, 9999999).size());
         list.setItems(items);
 
-        if (items != null) {
-            if (items.isEmpty()) {
-                return ResponseEntity.ok("중고장터 0개입니다");
+        if (items != null && !items.isEmpty()) {
+            log.debug("Retrieved {} items", items.size());
+            for (ItemDto item : items) {
+                log.debug("Item {}", item);
             }
-            return ResponseEntity.ok(list);
+            return new ResponseEntity<>(list, HttpStatus.OK);
+        } else {
+            log.debug("No items retrieved or items list is null");
         }
+        log.error("Item retrieval failed");
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("중고장터 조회 오류");
     }
 
@@ -82,7 +96,7 @@ public class SnsItemController {
 
         int userID = (Integer) request.getAttribute("userId");
         item.setUserId(userID);
-        item.setImages(images);
+//        item.setImages(images);
 
         log.debug("[SnsItemController] item 정보: {}", item.toString());
 

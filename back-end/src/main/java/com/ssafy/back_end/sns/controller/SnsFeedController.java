@@ -91,7 +91,7 @@ public class SnsFeedController {
             routine.setCreatedAt(Timestamp.valueOf(now));
 
             int result = workoutRoutineService.upsertRoutine(routine);
-            
+
             if (result != 0) {
                 return ResponseEntity.ok("루틴 저장 성공");
             }

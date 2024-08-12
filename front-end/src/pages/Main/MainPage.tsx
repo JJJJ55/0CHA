@@ -304,14 +304,14 @@ const MainPage = (): JSX.Element => {
         console.log(error);
       },
     );
-    // getMyRoutine(
-    //   (resp) => {
-    //     setMainMyRoutine(resp.data);
-    //   },
-    //   (error) => {
-    //     console.log(error);
-    //   },
-    // );
+    getMyRoutine(
+      (resp) => {
+        setMainMyRoutine(resp.data);
+      },
+      (error) => {
+        console.log(error);
+      },
+    );
   }, []);
 
   const PageHeader = () => (

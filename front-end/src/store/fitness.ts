@@ -78,6 +78,7 @@ export const fitnessSlice = createSlice({
       state.time = 0;
       state.volume = 0;
       state.isSave = false;
+      state.rest = false;
     },
     toggleSave(state, action: PayloadAction<boolean>) {
       state.isSave = action.payload;

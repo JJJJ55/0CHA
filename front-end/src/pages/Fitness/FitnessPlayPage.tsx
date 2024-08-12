@@ -30,7 +30,7 @@ const FitnessPlayPage = (): JSX.Element => {
   const plan = useAppSelector(selectPlan);
   let planTest = { ...plan };
   const locationState = useLocation().state;
-  const historyData = (locationState?.data as RoutineListDetail) || planTest;
+  const historyData = planTest || (locationState?.data as RoutineListDetail);
   const time = useAppSelector(selectTime);
   const volume = useAppSelector(selectVolume);
   console.log(historyData);
@@ -96,8 +96,8 @@ const FitnessPlayPage = (): JSX.Element => {
 
   const handleFinish = (t: number) => {
     const param: axiosCreateRoutine = {
-      title: historyData.title,
-      dueDate: historyData.dueDate,
+      title: historyData.title || planTest.title,
+      dueDate: historyData.dueDate || planTest.dueDate,
       sumTime: t,
       sumVolume: volume,
       details: fitness,

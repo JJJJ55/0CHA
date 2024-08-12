@@ -11,7 +11,7 @@ import IconSvg from '../../../components/Common/IconSvg';
 import Image from '../../../components/Common/Image';
 import { ReactComponent as camera } from '../../../asset/img/svg/camera.svg';
 
-import { SnsItemWrite, SnsItemDetail, SnsItemModify } from '../../../lib/api/sns-api';
+import { SnsItemDetail, SnsItemModify } from '../../../lib/api/sns-api';
 
 const s = {
   ImageText: styled.span`
@@ -110,8 +110,6 @@ const s = {
   MainImage: styled(Image)``,
 };
 
-const getByteLength = (str: string) => new Blob([str]).size;
-
 interface Item {
   id: number;
   images: string[];
@@ -124,14 +122,17 @@ interface LocationState {
   item: Item;
 }
 
+const getByteLength = (str: string) => new Blob([str]).size;
+
 const UpdateItemPage = (): JSX.Element => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const location = useLocation();
   const state = location.state as LocationState | undefined;
 
-  // const [images, setImages] = useState<File[]>([]); // 파일 배열로 변경
-  const [images, setImages] = useState<string[]>(state?.item.images || []);
+  const [existingImages, setExistingImages] = useState<string[]>(state?.item.images || []);
+  const [newImages, setNewImages] = useState<File[]>([]); // 파일 배열로 변경
+  const [removeImages, setRemoveImages] = useState<string[]>([]); // 삭제된 이미지를 관리
   const [title, setTitle] = useState<string>(state?.item.title || '');
   const [price, setPrice] = useState<string>(state?.item.price.toString() || '');
   const [content, setContent] = useState<string>(state?.item.content || '');
@@ -147,7 +148,7 @@ const UpdateItemPage = (): JSX.Element => {
             parseInt(id, 10),
             (resp) => {
               const item = resp.data;
-              setImages(item.images);
+              setExistingImages(item.images);
               setTitle(item.title);
               setPrice(item.price.toString());
               setContent(item.content);
@@ -162,14 +163,18 @@ const UpdateItemPage = (): JSX.Element => {
     }
   }, [id, state]);
 
+  // 이미지 유효성
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
-      const filesArray = Array.from(event.target.files).slice(0, 5);
-      const newImages = filesArray.map((file) => URL.createObjectURL(file));
-      setImages((prevImages) => [...prevImages, ...newImages].slice(0, 5));
+      const filesArray = Array.from(event.target.files).slice(0, 5 - existingImages.length - newImages.length);
+      const validFiles = filesArray.filter((file) => file.size <= 5 * 1024 * 1024); // 5MB 이하의 파일만 추가
+      if (validFiles.length < filesArray.length) {
+        alert('이미지 파일 크기는 각 5MB 이하로 제한됩니다.');
+      }
+      setNewImages((prevImages) => [...prevImages, ...validFiles]);
     }
   };
-
+  // 이미지 업로드를 위한 클릭
   const handleUploadClick = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
@@ -186,42 +191,57 @@ const UpdateItemPage = (): JSX.Element => {
     } else if (!content.trim()) {
       alert('내용을 입력해 주세요.');
       return;
-    } else if (images.length === 0) {
+    } else if (existingImages.length + newImages.length === 0) {
       alert('이미지를 한 장 이상 입력해 주세요');
       return;
     }
 
-    const processedImages = images.map((image) => (image.startsWith('blob:') ? image.slice(5) : image));
+    const formData = new FormData();
+    const itemData = {
+      title: title,
+      price: parseInt(price),
+      content: content,
+    };
 
+    // ItemDto 데이터를 JSON 형태로 변환하고 formData에 추가
+    formData.append('item', new Blob([JSON.stringify(itemData)], { type: 'application/json' }));
+
+    removeImages.forEach((image) => {
+      formData.append('removeImagePaths', image);
+    });
+
+    newImages.forEach((image) => {
+      formData.append('addImages', image);
+    });
+    console.log(itemData);
+    console.log(removeImages);
+    console.log(newImages);
+    // 보내는 부분
     if (id) {
-      const param = {
-        title,
-        price: parseInt(price),
-        content,
-        images: processedImages,
-      };
-
       await SnsItemModify(
         parseInt(id, 10),
-        param,
+        formData,
         (resp) => {
-          console.log('중고장터 게시글이 수정되었습니다.');
+          console.log('중고장터 게시글이 수정되었습니다. ');
           navigate('/sns');
         },
         (err) => {
           console.log('문제 발생', err);
         },
       );
+    } else {
+      console.log('id 없음');
     }
   };
 
+  // 제목 유효성
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     if (getByteLength(value) <= 50) {
       setTitle(value);
     }
   };
-
+  // 내용 유효성
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
     if (getByteLength(value) <= 1000) {
@@ -229,23 +249,36 @@ const UpdateItemPage = (): JSX.Element => {
     }
   };
 
+  // 가격 유효성
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     const filteredValue = value.replace(/[^0-9]/g, ''); // 숫자만 입력되도록 필터링
-    setPrice(filteredValue);
+    // 2의 31승보다 작은 가격만 설정 가능
+    const maxPrice = 2 ** 31 - 1;
+    if (parseInt(filteredValue) > maxPrice) {
+      setPrice(maxPrice.toString());
+      alert(`가격은 ${maxPrice.toLocaleString()}원까지만 입력 가능합니다. `);
+    } else {
+      setPrice(filteredValue);
+    }
   };
 
-  const handleDeleteImage = (index: number) => {
-    setImages((prevImages) => prevImages.filter((_, i) => i !== index));
+  const handleDeleteImage = (index: number, isExisting: boolean) => {
+    if (isExisting) {
+      const removedImage = existingImages[index];
+      setExistingImages((prevImages) => prevImages.filter((_, i) => i !== index));
+      setRemoveImages((prevRemove) => [...prevRemove, removedImage]);
+    } else {
+      setNewImages((prevImages) => prevImages.filter((_, i) => i !== index));
+    }
   };
-
-  const basicUrl = 'https://i11b310.p.ssafy.io/images/';
 
   // 이미지 경로를 파싱하여 basicUrl과 결합하는 함수
   const getParsedImageUrl = (imagePath: string) => {
+    const basicUrl = 'https://i11b310.p.ssafy.io/images/';
     const basePath = '/home/ubuntu/images/';
 
-    // 서버에서 온 이미지인 경우 이미지 반환
+    // 서버에서 온 이미지인 경우 이미지 url 반환
     if (!imagePath.includes(basePath)) {
       return imagePath;
     }
@@ -260,7 +293,7 @@ const UpdateItemPage = (): JSX.Element => {
       <s.Container>
         <s.ImageUploadArea onClick={handleUploadClick}>
           <IconSvg width="50" height="50" Ico={camera} color="#ffffff" />
-          <s.ImageText>{images.length}/5</s.ImageText>
+          <s.ImageText>{existingImages.length + newImages.length}/5</s.ImageText>
         </s.ImageUploadArea>
         <input
           ref={fileInputRef}
@@ -272,11 +305,19 @@ const UpdateItemPage = (): JSX.Element => {
         />
         <s.ImageOutBox>
           <s.ImageArea>
-            {images.map((image, index) => (
-              <s.ImageWrapper key={index}>
+            {existingImages.map((image, index) => (
+              <s.ImageWrapper key={`existing-${index}`}>
                 <Image width="64px" height="64px" src={getParsedImageUrl(image)} type="rect" />
                 {index === 0 && <s.MainImageCaption>대표</s.MainImageCaption>}
-                <s.DeleteButton onClick={() => handleDeleteImage(index)}>X</s.DeleteButton>
+                <s.DeleteButton onClick={() => handleDeleteImage(index, true)}>X</s.DeleteButton>
+              </s.ImageWrapper>
+            ))}
+            {newImages.map((file, index) => (
+              <s.ImageWrapper key={`new-${index}`}>
+                <Image width="64px" height="64px" src={URL.createObjectURL(file)} type="rect" />
+                {/* 대표 이미지 표시 */}
+                {existingImages.length === 0 && index === 0 && <s.MainImageCaption>대표</s.MainImageCaption>}
+                <s.DeleteButton onClick={() => handleDeleteImage(index, false)}>X</s.DeleteButton>
               </s.ImageWrapper>
             ))}
           </s.ImageArea>

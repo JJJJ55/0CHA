@@ -60,7 +60,6 @@ export const UserFollow = async (
   targetUserId: number,
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
-  
 ) => {
   await jwt.post(`/sns/social/follow`, targetUserId).then(success).catch(fail);
 };
@@ -178,7 +177,7 @@ export const SnsCommentWrite = async (
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
 ) => {
-  await jwt.post(`/sns/feed/${feedId}/comment`, {"comment": content}).then(success).catch(fail);
+  await jwt.post(`/sns/feed/${feedId}/comment`, { comment: content }).then(success).catch(fail);
 };
 
 // 피드 댓글 수정
@@ -188,7 +187,7 @@ export const SnsCommentModify = async (
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
 ) => {
-  await jwt.put(`/sns/feed/comment/${commentId}`, {"comment": content}).then(success).catch(fail);
+  await jwt.put(`/sns/feed/comment/${commentId}`, { comment: content }).then(success).catch(fail);
 };
 
 // 피드 댓글 삭제
@@ -260,7 +259,7 @@ export const SnsItemWrite = async (
 // 물건 판매 수정
 export const SnsItemModify = async (
   itemId: number,
-  param: snsItemWrite,
+  param: FormData,
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
 ) => {
@@ -293,13 +292,39 @@ export const SnsItemSell = async (
 };
 
 // 채팅방 목록
-export const SnsChatList = async (success: (response: any) => void, fail: (error: AxiosError) => void) => {
-  await jwt.get(`/sns/chat`).then(success).catch(fail);
+// export const SnsChatList = async (success: (response: any) => void, fail: (error: AxiosError) => void) => {
+//   await jwt.get(`/sns/chat`).then(success).catch(fail);
+// };
+
+export const SnsChatList = async (
+  clientId: number,
+  success: (response: any) => void,
+  fail: (error: AxiosError) => void,
+) => {
+  await jwt.get(`/sns/chat/users?excludeUserId=${clientId}`).then(success).catch(fail);
+};
+
+// 채팅방 들어가기
+export const SnsChatEnter = async (
+  clientId: number,
+  receiverId: number,
+  success: (response: any) => void,
+  fail: (error: AxiosError) => void,
+) => {
+  await jwt.get(`/sns/chat/createRoom?senderId=${clientId}&receiverId=${receiverId}`);
 };
 
 // 해당 채팅방 메세지 가져오기
-export const SnsChat = async (chatId: number, success: (response: any) => void, fail: (error: AxiosError) => void) => {
-  await jwt.get(`/sns/chat/${chatId}/message`).then(success).catch(fail);
+// export const SnsChat = async (chatId: number, success: (response: any) => void, fail: (error: AxiosError) => void) => {
+//   await jwt.get(`/sns/chat/${chatId}/message`).then(success).catch(fail);
+// };
+
+export const SnsChat = async (
+  currentRoomId: number,
+  success: (response: any) => void,
+  fail: (error: AxiosError) => void,
+) => {
+  await jwt.get(`/sns/chat/history?roomId=${currentRoomId}`).then(success).catch(fail);
 };
 
 // 메세지 보내기
@@ -327,16 +352,10 @@ export const SnsChatOff = async (
 };
 
 // 유저전체조회(검색)
-export const UserSearch = async (
-  success: (response: any) => void,
-  fail: (error: AxiosError) => void,
-) => {
+export const UserSearch = async (success: (response: any) => void, fail: (error: AxiosError) => void) => {
   await jwt.get(`/sns/social/search`).then(success).catch(fail);
 };
 
-export const MyRoutine = async (
-  success: (response: any) => void,
-  fail: (error: AxiosError) => void,
-) => {
+export const MyRoutine = async (success: (response: any) => void, fail: (error: AxiosError) => void) => {
   await jwt.get(`sns/feed/my-routine`).then(success).catch(fail);
 };

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Button from '../../../components/Common/Button';
 import Input from '../../../components/Common/Input';
@@ -10,7 +10,6 @@ import LocationDropdown from '../../../components/SNS/LocationDropdown';
 import MarketItem from '../../../components/SNS/MarketItem';
 import ItemModal from '../../../components/Modal/ItemModal';
 
-import test from '../../../asset/img/testImg.png';
 import { useAppDispatch, useAppSelector } from '../../../lib/hook/useReduxHook';
 import { modalActions, selectModalMarket, selectModalUserSearch } from '../../../store/modal';
 import { useModalExitHook } from '../../../lib/hook/useModalExitHook';
@@ -28,7 +27,7 @@ const s = {
   Horizon: styled.hr`
     margin: 0 15px;
     min-width: 250px;
-    border-color: #212121;
+    border-color: ${(props) => props.theme.subColor};
   `,
   PaginationButtons: styled.div`
     display: flex;
@@ -166,6 +165,7 @@ const MarketPage = (): JSX.Element => {
       },
       (error) => {
         console.log(error);
+        setItems([]);
       },
     );
   };

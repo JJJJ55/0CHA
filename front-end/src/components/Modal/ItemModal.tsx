@@ -107,10 +107,6 @@ const s = {
   `,
 };
 
-interface ItemStatusProps {
-  available: boolean;
-}
-
 interface Item {
   id: number;
   images: string[];
@@ -280,6 +276,7 @@ const ItemModal = (props: MarketModalProps): JSX.Element => {
             const updatedItem = { ...item, isSold: newStatus };
             setItem(updatedItem);
             onItemUpdate(updatedItem);
+            console.log(resp);
           },
           (error) => {
             console.log(error);

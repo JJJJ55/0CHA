@@ -23,6 +23,7 @@ const s = {
 const ChatListPage = (): JSX.Element => {
   const getChatList = async () => {
     await SnsChatList(
+      0,
       (resp) => {
         console.log(resp.data);
       },

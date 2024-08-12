@@ -39,11 +39,11 @@ const s = {
     display: flex;
     align-items: center;
     padding: 0 10px;
-    background-color: #000000;
+    background-color: ${(props) => props.theme.bgColor};
   `,
   InputArea: styled.div`
     height: 70px;
-    background-color: black;
+    background-color: ${(props) => props.theme.bgColor};
     width: 100%;
     display: flex;
     display: flex;

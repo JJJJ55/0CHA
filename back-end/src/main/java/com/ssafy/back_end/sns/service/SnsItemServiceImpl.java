@@ -88,6 +88,44 @@ public class SnsItemServiceImpl implements SnsItemService {
 
     @Override
     @Transactional
+    public int deleteImagesByImageUrl(List<String> imageUrls) {
+        int deleteCnt = 0;
+        try {
+            // 호스트에서 파일 삭제 및 정보 디비에서 삭제
+            for (String imageUrl : imageUrls) {
+                File file = new File(imageUrl);
+                if (file.exists()) {
+                    if (file.delete()) {
+                        log.debug("SnsItmeService 호스트 이미지 파일 삭제 성공, {}", imageUrl);
+
+                        //snsItemMapper.deleteItemImage();
+
+                        deleteCnt++;
+                    } else {
+                        log.warn("SnsItmeService 호스트 이미지 파일 삭제 실패, {}", imageUrl);
+                        throw new RuntimeException("SnsItmeService 호스트 이미지 파일 삭제 실패: " + imageUrl);
+                    }
+                } else {
+                    log.warn("SnsItmeService 호스트 이미지 파일이 존재하지 않습니다, {}", imageUrl);
+                    throw new RuntimeException("SnsItmeService 호스트 이미지 파일이 존재하지 않음: " + imageUrl);
+                }
+            }
+            
+            
+            // 디비에서 해당 url을 가진 이미지 정보 삭제
+            for(String imageUrl : imageUrls) {
+                snsItemMapper.deleteItemImage(imageUrl);
+                deleteCnt++;
+            }
+        }catch (Exception e){
+            log.error("게시물 수정중 이미지 호스트 디렉토리에서 삭제 실패");
+        }
+
+        return deleteCnt;
+    }
+
+    @Override
+    @Transactional
     public int updateItem(ItemDto item) {
         validateImages(item.getImages().size());
 

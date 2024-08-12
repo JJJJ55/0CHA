@@ -23,6 +23,8 @@ public interface SnsItemMapper {
 
     int deleteItemImage(@Param ("imageUrl") String imageUrl);   // 중고장터 이미지 삭제
 
+    List<String> getRemainingImageUrls(@Param ("itemId") int itemId);    // 해당 게시물의 남은 이미지들의 URL을 가져옴
+
     int updateItem(ItemDto item);   // 중고장터 글 수정
 
     int deleteItem(@Param ("id") int itemId);   //중고장터 삭제

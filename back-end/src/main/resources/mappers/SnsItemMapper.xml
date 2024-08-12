@@ -140,6 +140,13 @@
           AND detail_type = 'image';
     </delete>
 
+    <select id="getRemainingImageUrls">
+        select image_url
+        from item_details
+        where item_id = #{itemId}
+          and detail_type = 'image';
+    </select>
+
     <update id="updateItem">
         UPDATE items
         SET title      = #{title},

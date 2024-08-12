@@ -52,6 +52,11 @@ public class SnsFeedServiceImpl implements SnsFeedService {
     }
 
     @Override
+    public int setUpload(int routineId) {
+        return snsFeedMapper.setUpload(routineId);
+    }
+
+    @Override
     public int saveRoutine(int userId, int routineId) {
         return 0;   //루틴에 유저 아이디 추가해서 저장하기
     }
@@ -72,6 +77,11 @@ public class SnsFeedServiceImpl implements SnsFeedService {
 
 //        return snsFeedMapper.writeFeed(feed);
         return feedId;
+    }
+
+    @Override
+    public int updateImage(int feedId) {
+        return snsFeedMapper.updateImage(feedId);
     }
 
 

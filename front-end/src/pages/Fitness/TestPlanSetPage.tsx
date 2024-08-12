@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import Header from '../../components/Common/Header';
 import { ReactComponent as add } from '../../asset/img/svg/add.svg';
@@ -16,7 +16,7 @@ import { putNewRoutine } from '../../lib/api/fitness-api';
 import { RoutineListDetail, RoutineDetails } from '../../util/types/axios-fitness';
 import TestPlan from '../../components/Fitness/Detail/TestPlan';
 import { pageActions } from '../../store/page';
-import { fitnessActions, selectPlan } from '../../store/fitness';
+import { selectPlan } from '../../store/fitness';
 
 const s = {
   Container: styled.section`

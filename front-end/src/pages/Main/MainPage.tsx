@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useLayoutEffect, useState } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import basic from '../../asset/img/basic.png';
 import IconSvg from '../../components/Common/IconSvg';
@@ -13,12 +13,10 @@ import Button from '../../components/Common/Button';
 import { useBottomNavHook } from '../../lib/hook/useBottomNavHook';
 import { useNavigate } from 'react-router';
 import { getMainRoutineAll, getMyInfo, getMyRoutine } from '../../lib/api/main-api';
-import { MainMyRoutine, Profile, User } from '../../util/types/axios-main';
+import { MainMyRoutine, User } from '../../util/types/axios-main';
 import { mainPageRoutine } from '../../util/types/axios-fitness';
 import { useAppSelector } from '../../lib/hook/useReduxHook';
 import { selectIsPlay } from '../../store/page';
-import { putFinishRoutine } from '../../lib/api/fitness-api';
-// import { user } from '../../lib/api/user-api';
 
 const s = {
   Header: styled.header`

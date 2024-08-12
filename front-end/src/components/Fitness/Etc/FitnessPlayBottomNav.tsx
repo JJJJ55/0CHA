@@ -2,9 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Button from '../../Common/Button';
 import Text from '../../Common/Text';
-import { useNavigate } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../../../lib/hook/useReduxHook';
-import { pageActions } from '../../../store/page';
 import { fitnessActions, selectRest, selectTime } from '../../../store/fitness';
 
 const s = {

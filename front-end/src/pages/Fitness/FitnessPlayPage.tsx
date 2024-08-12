@@ -1,19 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Header from '../../components/Common/Header';
-import { FitnessPlanData } from '../../util/TestData';
-import FitnessPlan from '../../components/Fitness/Detail/FitnessPlan';
-import FitnessPlayBottomNav from '../../components/Fitness/Etc/FitnessPlayBottomNav';
 import { useLocation, useNavigate } from 'react-router';
-import Timer from '../../components/Common/Timer';
 import {
   axiosCreateRoutine,
-  CreateRoutine,
   ExerciseDetailType,
   RoutineDetails,
   RoutineListDetail,
 } from '../../util/types/axios-fitness';
-import TestPlan from '../../components/Fitness/Detail/TestPlan';
 import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
 import { pageActions } from '../../store/page';
 import { putFinishRoutine, putUpdateRoutine } from '../../lib/api/fitness-api';

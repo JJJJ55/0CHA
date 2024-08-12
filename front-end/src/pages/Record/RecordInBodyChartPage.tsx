@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Header from '../../components/Common/Header';
-import BottomNav from '../../components/Common/BottomNav';
 import Text from '../../components/Common/Text';
-import { exerciseData } from '../../util/TestData';
 import Chart from '../../components/Common/Chart';
 import { getInbody } from '../../lib/api/record-api';
 import { Inbody } from '../../util/types/axios-record';

@@ -5,7 +5,6 @@ import com.ssafy.back_end.sns.model.ItemDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -22,7 +21,7 @@ public interface SnsItemMapper {
 
     int insertItemImage(ItemDetailDto itemDetailDto);   // 중고장터 이미지 등록
 
-    int deleteItemImages(@Param ("itemId") int itemId);   // 중고장터 이미지 삭제
+    int deleteItemImage(@Param ("imageUrl") String imageUrl);   // 중고장터 이미지 삭제
 
     int updateItem(ItemDto item);   // 중고장터 글 수정
 

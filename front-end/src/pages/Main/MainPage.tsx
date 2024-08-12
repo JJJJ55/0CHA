@@ -17,6 +17,7 @@ import { MainMyRoutine, User } from '../../util/types/axios-main';
 import { mainPageRoutine } from '../../util/types/axios-fitness';
 import { useAppSelector } from '../../lib/hook/useReduxHook';
 import { selectIsPlay } from '../../store/page';
+import Text from '../../components/Common/Text';
 
 const s = {
   Header: styled.header`
@@ -251,12 +252,6 @@ const HorizontalScroll: React.FC<HorizontalScrollProps> = ({ items }) => {
     <s.ScrollContainer>
       <s.SectionTitle children="추천 루틴" />
       <s.ScrollArea ref={scrollWrapperRef}>
-        {/* {items.map((item, index) => (
-          <s.Item key={index} onClick={() => handleMovePage('/fitness/history/detail')}>
-            <IconSvg Ico={img[index]} height="100%" width="100%" cursor="pointer" />
-            <s.ItemText>{item.title}</s.ItemText>
-          </s.Item>
-        ))} */}
         <s.Item onClick={() => navigate('/fitness/history/detail', { state: { id: items[0].id } })}>
           <IconSvg Ico={img[0]} height="100%" width="100%" cursor="pointer" />
           <Text1>{items[0]?.title}</Text1>
@@ -309,14 +304,14 @@ const MainPage = (): JSX.Element => {
         console.log(error);
       },
     );
-    getMyRoutine(
-      (resp) => {
-        setMainMyRoutine(resp.data);
-      },
-      (error) => {
-        console.log(error);
-      },
-    );
+    // getMyRoutine(
+    //   (resp) => {
+    //     setMainMyRoutine(resp.data);
+    //   },
+    //   (error) => {
+    //     console.log(error);
+    //   },
+    // );
   }, []);
 
   const PageHeader = () => (
@@ -357,15 +352,19 @@ const MainPage = (): JSX.Element => {
             <s.MoreBtn onClick={() => navigate('/fitness/history')} children="더보기" />
           </s.SectionTitleContainer>
           <s.RoutineList>
-            {mainMyRoutine.map((routine, index) => (
-              <s.RoutineItem key={index}>
-                <s.RoutineInfo>
-                  <s.RoutineName children={routine.title} />
-                  <s.RoutineDate children={routine.dueDate} />
-                </s.RoutineInfo>
-                <s.RoutineBtn children="상세보기" onClick={() => handleClickMove(routine.id)} />
-              </s.RoutineItem>
-            ))}
+            {Array.isArray(mainMyRoutine) ? (
+              mainMyRoutine.map((routine, index) => (
+                <s.RoutineItem key={index}>
+                  <s.RoutineInfo>
+                    <s.RoutineName children={routine.title} />
+                    <s.RoutineDate children={routine.dueDate} />
+                  </s.RoutineInfo>
+                  <s.RoutineBtn children="상세보기" onClick={() => handleClickMove(routine.id)} />
+                </s.RoutineItem>
+              ))
+            ) : (
+              <Text children="목록이 없습니다." width="100%" margin="20px auto" display="block" />
+            )}
           </s.RoutineList>
         </s.ScrollContainer>
       </s.PageBody>

@@ -1,7 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '.';
-import { axiosCreateRoutine, axiosCreateRoutineDetails, ExerciseDetailType } from '../util/types/axios-fitness';
+import {
+  axiosCreateRoutine,
+  axiosCreateRoutineDetails,
+  CreateRoutine,
+  ExerciseDetailType,
+} from '../util/types/axios-fitness';
 
 interface FitnessState {
   type: string;
@@ -10,6 +15,7 @@ interface FitnessState {
   volume: number;
   rest: boolean;
   isSave: boolean;
+  addList: CreateRoutine[];
 }
 
 const initialState: FitnessState = {
@@ -25,6 +31,7 @@ const initialState: FitnessState = {
   volume: 0,
   rest: false,
   isSave: false,
+  addList: [],
 };
 
 export const fitnessSlice = createSlice({
@@ -75,6 +82,10 @@ export const fitnessSlice = createSlice({
     toggleSave(state, action: PayloadAction<boolean>) {
       state.isSave = action.payload;
     },
+
+    setAddList(state, action: PayloadAction<CreateRoutine[]>) {
+      state.addList = action.payload;
+    },
     // savePlanSet(state, action: PayloadAction<ExerciseDetailType[]>) {
     //   // 각 운동의 세트를 업데이트
     //   state.plan.details.forEach((exercise, idx) => {
@@ -93,6 +104,7 @@ export const selectRest = (state: RootState) => state.fitness.rest;
 export const selectTime = (state: RootState) => state.fitness.time;
 export const selectVolume = (state: RootState) => state.fitness.volume;
 export const selectSave = (state: RootState) => state.fitness.isSave;
+export const selectAddList = (state: RootState) => state.fitness.addList;
 export const { setPlanData, updateTitle, updateDueDate, addExercise, removeExercise, updateExerciseSets } =
   fitnessSlice.actions;
 export default fitnessSlice.reducer;

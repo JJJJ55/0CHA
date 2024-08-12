@@ -7,6 +7,8 @@ import BottomNav from '../../components/Common/BottomNav';
 import { useNavigate } from 'react-router';
 import { getFitnessJjimList, getFitnessList } from '../../lib/api/fitness-api';
 import { CreateRoutine, FitnessType } from '../../util/types/axios-fitness';
+import { useAppDispatch } from '../../lib/hook/useReduxHook';
+import { fitnessActions } from '../../store/fitness';
 
 const s = {
   Container: styled.section`
@@ -54,6 +56,7 @@ const s = {
 
 const FitnessListPage = (): JSX.Element => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [jjim, setjjim] = useState<FitnessType[]>([]);
   const [fitness, setFitness] = useState<FitnessType[]>([]);
   useEffect(() => {
@@ -62,6 +65,7 @@ const FitnessListPage = (): JSX.Element => {
         setFitness(resp.data);
       },
       (error) => {
+        setFitness([]);
         console.log(error);
       },
     );
@@ -72,6 +76,7 @@ const FitnessListPage = (): JSX.Element => {
       (error) => {
         // console.log(error);
         console.log('없음');
+        setjjim([]);
       },
     );
   }, []);
@@ -86,10 +91,14 @@ const FitnessListPage = (): JSX.Element => {
       const existingItem = prevAdd.find((item) => item.exerciseId === exerciseId);
       if (existingItem) {
         // Remove item if it already exists
-        return prevAdd.filter((item) => item.exerciseId !== exerciseId);
+        const list = prevAdd.filter((item) => item.exerciseId !== exerciseId);
+        dispatch(fitnessActions.setAddList(list));
+        return list;
       } else {
         // Add new item
-        return [...prevAdd, { exerciseId, exerciseName }];
+        const list = [...prevAdd, { exerciseId, exerciseName }];
+        dispatch(fitnessActions.setAddList(list));
+        return list;
       }
     });
   };
@@ -113,11 +122,6 @@ const FitnessListPage = (): JSX.Element => {
       </s.HeaderArea>
       <s.MainArea>
         <s.FitnessArea>
-          {/* {!jjim || jjim.length === 0 ? (
-            ''
-          ) : (
-            <FitnessList text="즐겨찾기" data={jjim} add={add} onAdd={handleClickAdd} />
-          )} */}
           <FitnessList text="즐겨찾기" data={jjim} add={add} onAdd={handleClickAdd} />
           <FitnessList text="전체" data={fitness} add={add} onAdd={handleClickAdd} />
         </s.FitnessArea>

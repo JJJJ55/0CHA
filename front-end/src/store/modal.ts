@@ -6,6 +6,7 @@ interface ModalState {
   isUserSearch: boolean;
   isComment: boolean;
   isMarket: boolean;
+  isAddList: boolean;
 }
 
 const initialState: ModalState = {
@@ -13,6 +14,7 @@ const initialState: ModalState = {
   isUserSearch: false,
   isComment: false,
   isMarket: false,
+  isAddList: false,
 };
 
 export const modalSlice = createSlice({
@@ -31,6 +33,9 @@ export const modalSlice = createSlice({
     toggleMarket: (state) => {
       state.isMarket = !state.isMarket;
     },
+    toggleAddList: (state) => {
+      state.isAddList = !state.isAddList;
+    },
     CloseCalendar: (state) => {
       state.isCalendar = false;
     },
@@ -43,6 +48,9 @@ export const modalSlice = createSlice({
     CloseMarket: (state) => {
       state.isMarket = false;
     },
+    CloseAddList: (state) => {
+      state.isAddList = false;
+    },
   },
 });
 
@@ -51,5 +59,6 @@ export const selectModalCalendar = (state: RootState) => state.modal.isCalendar;
 export const selectModalUserSearch = (state: RootState) => state.modal.isUserSearch;
 export const selectModalComment = (state: RootState) => state.modal.isComment;
 export const selectModalMarket = (state: RootState) => state.modal.isMarket;
+export const selectModalAddList = (state: RootState) => state.modal.isAddList;
 
 export default modalSlice.reducer;

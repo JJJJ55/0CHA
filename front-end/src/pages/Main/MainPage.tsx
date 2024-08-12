@@ -1,14 +1,23 @@
 import React, { useRef, useEffect, useLayoutEffect, useState } from 'react';
 import styled from 'styled-components';
-import testImage from '../../asset/img/testImg.png';
+import basic from '../../asset/img/basic.png';
 import IconSvg from '../../components/Common/IconSvg';
 import { ReactComponent as alarm } from '../../asset/img/svg/alram.svg';
+import { ReactComponent as main1 } from '../../asset/img/svg/main1.svg';
+import { ReactComponent as main2 } from '../../asset/img/svg/main2.svg';
+import { ReactComponent as main3 } from '../../asset/img/svg/main3.svg';
+import { ReactComponent as main4 } from '../../asset/img/svg/main4.svg';
+import { ReactComponent as main5 } from '../../asset/img/svg/main5.svg';
 import BottomNav from '../../components/Common/BottomNav';
 import Button from '../../components/Common/Button';
 import { useBottomNavHook } from '../../lib/hook/useBottomNavHook';
 import { useNavigate } from 'react-router';
-import { getMyInfo } from '../../lib/api/main-api';
-import { Profile, User } from '../../util/types/axios-main';
+import { getMainRoutineAll, getMyInfo, getMyRoutine } from '../../lib/api/main-api';
+import { MainMyRoutine, Profile, User } from '../../util/types/axios-main';
+import { mainPageRoutine } from '../../util/types/axios-fitness';
+import { useAppSelector } from '../../lib/hook/useReduxHook';
+import { selectIsPlay } from '../../store/page';
+import { putFinishRoutine } from '../../lib/api/fitness-api';
 // import { user } from '../../lib/api/user-api';
 
 const s = {
@@ -72,15 +81,24 @@ const s = {
     border-radius: 10px;
     cursor: pointer;
   `,
-  ItemText: styled.div`
+  ItemText1: styled.div`
     position: absolute;
     bottom: 10px;
     left: 10px;
     right: 10px;
-    color: ${(props) => props.theme.textColor};
     font-size: 16px;
-    font-weight: bold;
-    background-color: rgba(0, 0, 0, 0.5);
+    font-weight: 800;
+    padding: 5px;
+    border-radius: 5px;
+    cursor: default;
+  `,
+  ItemText2: styled.div`
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    font-size: 16px;
+    font-weight: 800;
     padding: 5px;
     border-radius: 5px;
     cursor: default;
@@ -181,8 +199,29 @@ const s = {
   `,
 };
 
+const Text1 = styled(s.ItemText1)`
+  text-align: right;
+  color: ${(props) => props.theme.mainColor};
+`;
+const Text2 = styled(s.ItemText2)`
+  text-align: left;
+  color: ${(props) => props.theme.textColor};
+`;
+const Text3 = styled(s.ItemText1)`
+  text-align: right;
+  color: ${(props) => props.theme.mainColor};
+`;
+const Text4 = styled(s.ItemText1)`
+  text-align: right;
+  color: ${(props) => props.theme.mainColor};
+`;
+const Text5 = styled(s.ItemText2)`
+  text-align: left;
+  color: ${(props) => props.theme.textColor};
+`;
+
 interface HorizontalScrollProps {
-  items: { name: string; image: string }[];
+  items: mainPageRoutine[];
 }
 
 const HorizontalScroll: React.FC<HorizontalScrollProps> = ({ items }) => {
@@ -193,6 +232,7 @@ const HorizontalScroll: React.FC<HorizontalScrollProps> = ({ items }) => {
   const handleMovePage = (path: string): void => {
     navigate(path);
   };
+  const img = [main1, main2, main3, main4, main5];
   useEffect(() => {
     const scrollWrapper = scrollWrapperRef.current;
     if (scrollWrapper) {
@@ -213,12 +253,32 @@ const HorizontalScroll: React.FC<HorizontalScrollProps> = ({ items }) => {
     <s.ScrollContainer>
       <s.SectionTitle children="추천 루틴" />
       <s.ScrollArea ref={scrollWrapperRef}>
-        {items.map((item, index) => (
+        {/* {items.map((item, index) => (
           <s.Item key={index} onClick={() => handleMovePage('/fitness/history/detail')}>
-            <s.ItemImage src={item.image} alt={item.name} />
-            <s.ItemText>{item.name}</s.ItemText>
+            <IconSvg Ico={img[index]} height="100%" width="100%" cursor="pointer" />
+            <s.ItemText>{item.title}</s.ItemText>
           </s.Item>
-        ))}
+        ))} */}
+        <s.Item onClick={() => navigate('/fitness/history/detail', { state: { id: items[0].id } })}>
+          <IconSvg Ico={img[0]} height="100%" width="100%" cursor="pointer" />
+          <Text1>{items[0]?.title}</Text1>
+        </s.Item>
+        <s.Item onClick={() => navigate('/fitness/history/detail', { state: { id: items[1].id } })}>
+          <IconSvg Ico={img[1]} height="100%" width="100%" cursor="pointer" />
+          <Text2>{items[1]?.title}</Text2>
+        </s.Item>
+        <s.Item onClick={() => navigate('/fitness/history/detail', { state: { id: items[2].id } })}>
+          <IconSvg Ico={img[2]} height="100%" width="100%" cursor="pointer" />
+          <Text3>{items[2]?.title}</Text3>
+        </s.Item>
+        <s.Item onClick={() => navigate('/fitness/history/detail', { state: { id: items[3].id } })}>
+          <IconSvg Ico={img[3]} height="100%" width="100%" cursor="pointer" />
+          <Text4>{items[3]?.title}</Text4>
+        </s.Item>
+        <s.Item onClick={() => navigate('/fitness/history/detail', { state: { id: items[4].id } })}>
+          <IconSvg Ico={img[4]} height="100%" width="100%" cursor="pointer" />
+          <Text5>{items[4]?.title}</Text5>
+        </s.Item>
       </s.ScrollArea>
     </s.ScrollContainer>
   );
@@ -226,7 +286,10 @@ const HorizontalScroll: React.FC<HorizontalScrollProps> = ({ items }) => {
 
 const MainPage = (): JSX.Element => {
   const navigate = useNavigate();
+  const isPlay = useAppSelector(selectIsPlay);
   const [user, setUser] = useState<User>();
+  const [main, setMain] = useState<mainPageRoutine[]>([]);
+  const [mainMyRoutine, setMainMyRoutine] = useState<MainMyRoutine[]>([]);
   useEffect(() => {
     getMyInfo(
       (resp) => {
@@ -240,24 +303,23 @@ const MainPage = (): JSX.Element => {
       },
       (error) => {},
     );
+    getMainRoutineAll(
+      (resp) => {
+        setMain(resp.data);
+      },
+      (error) => {
+        console.log(error);
+      },
+    );
+    getMyRoutine(
+      (resp) => {
+        setMainMyRoutine(resp.data);
+      },
+      (error) => {
+        console.log(error);
+      },
+    );
   }, []);
-  const items = [
-    { name: '월요일 추천 루틴', image: testImage },
-    { name: '헬스 꿀팁 300선', image: testImage },
-    { name: '홈트레이닝 맛있게', image: testImage },
-    { name: '치킨을 먹기 위해', image: testImage },
-    { name: '걸어서 집 가기 싫은 날', image: testImage },
-    { name: '인간의 진화 이전 모습을 보고 싶다면', image: testImage },
-  ];
-
-  const routineItems = [
-    { date: '07월 14일', name: '07월 14일 루틴' },
-    { date: '07월 13일', name: '토요일 루틴' },
-    { date: '07월 12일', name: '금요일 루틴' },
-    { date: '07월 11일', name: '금요일 루틴' },
-    { date: '07월 10일', name: '금요일 루틴' },
-    { date: '07월 09일', name: '금요일 루틴' },
-  ];
 
   const PageHeader = () => (
     <s.Header>
@@ -271,21 +333,23 @@ const MainPage = (): JSX.Element => {
           cursor="pointer"
           onClick={() => navigate('/sns/notification')}
         />
-        <s.ProfileImage src={testImage} alt="Profile" onClick={() => navigate('/mypage')} />
+        <s.ProfileImage src={user?.profileImage ?? basic} alt="Profile" onClick={() => navigate('/mypage')} />
       </s.HeaderIcons>
     </s.Header>
   );
 
   const handleLiveExercise = () => {
-    alert('진행중인 운동 페이지로 이동합니다.');
-    navigate('/play');
+    isPlay ? navigate('/play') : alert('진행중인 운동이 존재하지 않습니다.');
+  };
+  const handleClickMove = (id: number): void => {
+    navigate('../fitness/history/detail', { state: { id } });
   };
 
   return (
     <s.Container>
       <PageHeader />
       <s.PageBody>
-        <HorizontalScroll items={items} />
+        <HorizontalScroll items={main} />
         <s.BtnArea>
           <s.LiveBtn children="진행 중인 운동" onClick={handleLiveExercise} />
         </s.BtnArea>
@@ -295,13 +359,13 @@ const MainPage = (): JSX.Element => {
             <s.MoreBtn onClick={() => navigate('/fitness/history')} children="더보기" />
           </s.SectionTitleContainer>
           <s.RoutineList>
-            {routineItems.map((routine, index) => (
+            {mainMyRoutine.map((routine, index) => (
               <s.RoutineItem key={index}>
                 <s.RoutineInfo>
-                  <s.RoutineName children={routine.name} />
-                  <s.RoutineDate children={routine.date} />
+                  <s.RoutineName children={routine.title} />
+                  <s.RoutineDate children={routine.dueDate} />
                 </s.RoutineInfo>
-                <s.RoutineBtn children="상세보기" onClick={() => navigate('/fitness/history/detail')} />
+                <s.RoutineBtn children="상세보기" onClick={() => handleClickMove(routine.id)} />
               </s.RoutineItem>
             ))}
           </s.RoutineList>

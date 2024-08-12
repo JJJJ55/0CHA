@@ -5,8 +5,10 @@ import { changePw, MyInfo, Profile } from '../../util/types/axios-main';
 const local = publicAxios();
 const jwt = localAxios();
 
-// 상단 루틴가져오기
-
+// 메인페이지 루틴조회
+export const getMainRoutineAll = async (success: (response: any) => void, fail: (error: AxiosError) => void) => {
+  await jwt.get(`/main/all`).then(success).catch(fail);
+};
 // 내 루틴가져오기
 export const getMyRoutine = async (success: (response: any) => void, fail: (error: AxiosError) => void) => {
   await jwt.get(`/main/routines`).then(success).catch(fail);

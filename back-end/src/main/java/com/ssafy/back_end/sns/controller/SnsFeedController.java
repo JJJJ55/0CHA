@@ -186,7 +186,7 @@ public class SnsFeedController {
             if(result != 0) {
                 Map<String, Object> response = new HashMap<>();
                 response.put("message", "피드 작성 성공");
-                response.put("itemID", feedId);
+                response.put("feedId", feedId);
                 log.debug("[SnsFeedController] 피드 작성 성공, feedId: {}", feedId);
                 return ResponseEntity.ok(response);
             }

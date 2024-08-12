@@ -58,6 +58,8 @@ public class MainController {
 
         int result = mainService.checkNickname(nickname, ID);
 
+        String preImage = mainService.getImagePathsByUserId(ID);
+
         if (result <= 0) {
 
             String uploadDir = "/home/ubuntu/images/profile/";
@@ -109,29 +111,29 @@ public class MainController {
 
             //등록 성공 시점
 
-            String preImage = mainService.getImagePathsByUserId(ID);
+//            String preImage = mainService.getImagePathsByUserId(ID);
 
-            if (preImage != null)
-            // 2. 각 이미지 파일을 호스트 디렉토리에서 삭제
-            {
-                try {
-                    File file = new File(preImage);
-                    if (file.exists()) {
-                        if (file.delete()) {
-                            log.debug("이미지 파일 삭제 성공, {}", preImage);
-                        } else {
-                            log.warn("이미지 파일 삭제 실패, {}", preImage);
-                            throw new RuntimeException("이미지 파일 삭제 실패: " + preImage);
-                        }
-                    } else {
-                        log.warn("이미지 파일이 존재하지 않습니다, {}", preImage);
-                        throw new RuntimeException("이미지 파일이 존재하지 않음: " + preImage);
-                    }
-                } catch (Exception e) {
-                    log.error("게시물 삭제 중 오류 발생: {}", e.getMessage());
-                    throw e;  // 트랜잭션 롤백을 위해 예외를 다시 던짐
-                }
-            }
+//            if (preImage != null)
+//            // 2. 각 이미지 파일을 호스트 디렉토리에서 삭제
+//            {
+//                try {
+//                    File file = new File(preImage);
+//                    if (file.exists()) {
+//                        if (file.delete()) {
+//                            log.debug("이미지 파일 삭제 성공, {}", preImage);
+//                        } else {
+//                            log.warn("이미지 파일 삭제 실패, {}", preImage);
+//                            throw new RuntimeException("이미지 파일 삭제 실패: " + preImage);
+//                        }
+//                    } else {
+//                        log.warn("이미지 파일이 존재하지 않습니다, {}", preImage);
+//                        throw new RuntimeException("이미지 파일이 존재하지 않음: " + preImage);
+//                    }
+//                } catch (Exception e) {
+//                    log.error("게시물 삭제 중 오류 발생: {}", e.getMessage());
+//                    throw e;  // 트랜잭션 롤백을 위해 예외를 다시 던짐
+//                }
+//            }
 
             // 삭제 성공 시점
 

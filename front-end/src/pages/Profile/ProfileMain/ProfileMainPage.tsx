@@ -189,12 +189,24 @@ const ProfileMainPage = (): JSX.Element => {
     }
   };
 
+  const basicUrl = 'https://i11b310.p.ssafy.io/images/';
+
+  // 이미지 경로를 파싱하여 basicUrl과 결합하는 함수
+  const getParsedImageUrl = (imagePath: string) => {
+    if (imagePath) {
+      const relativePath = imagePath.split('/home/ubuntu/images/')[1];
+      return basicUrl + relativePath;
+    } else {
+      return basic;
+    }
+  };
+
   return (
     <s.Container>
       <Header text="내 프로필" />
       <s.ProfileArea>
         <s.ProfileImageArea>
-          <s.ProfileImage src={user.profileImage ?? basic} alt="프로필 이미지" />
+          <s.ProfileImage src={getParsedImageUrl(user.profileImage)} alt="프로필 이미지" />
           <s.ProfileDetails>
             <s.MainDetail children={user.name} />
             <s.SubDetail children={user.nickname} />

@@ -1,7 +1,7 @@
 import React, { useState, ChangeEvent, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import Button from '../../../components/Common/Button';
-import test from '../../../asset/img/testImg.png';
+import basic from '../../../asset/img/basic.png';
 import Header from '../../../components/Common/Header';
 import Input from '../../../components/Common/Input';
 import BottomNav from '../../../components/Common/BottomNav';
@@ -94,75 +94,37 @@ interface User {
 const UpdateProfilePage = (): JSX.Element => {
   const navigate = useNavigate();
   const data = userData();
-  const [user, setUser] = useState<User>({
-    nickname: 'it_is_me',
-    tempNickname: 'it_is_me',
-    profileImage: test,
-  });
 
-  const [tempNickname, setTempNickname] = useState<string>(data.nickname);
-  const [isNicknameConfirmed, setIsNicknameConfirmed] = useState<boolean>(false);
   // 닉네임
+  const [nickname, setNickName] = useState(data.nickname);
   const [nicknameError, setNicknameError] = useState('');
-  const nicknameChanged = useRef(false);
 
-  useEffect(() => {
-    if (nicknameChanged.current && user.nickname === tempNickname) {
-      alert(`닉네임이 성공적으로 ${tempNickname}으로 변경되었습니다.`);
-      navigate('../');
-    }
-  }, [user.nickname, tempNickname]);
+  const [image, setImage] = useState<string>(data.profileImage); // 파일 배열로 변경
+  const [changeImg, setChangeImg] = useState<File>();
 
-  // 이미지 핸들러(나중에 저장 로직 추가해야 함)
-  const handleProfileImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setUser({ ...user, profileImage: reader.result as string });
-      };
-      reader.readAsDataURL(file);
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const newFilesArray = Array.from(e.target.files);
+      const file = e.target.files?.[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          setImage(reader.result as string);
+        };
+        setChangeImg(newFilesArray[0]);
+        reader.readAsDataURL(file);
+      }
     }
   };
 
   // 닉네임 핸들러
   const handleNicknameChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setIsNicknameConfirmed(false); // 닉네임이 수정되면 중복 확인 상태를 초기화
-    setTempNickname(e.target.value); // 현재 수정중인 닉네임 값
+    setNickName(e.target.value);
     const nicknameRegex = /^[a-zA-Z0-9_]*$/;
-    if (e.target.value.length === 0) {
-      setNicknameError('');
-    } else if (!nicknameRegex.test(e.target.value) || e.target.value.length < 5) {
+    if (!nicknameRegex.test(e.target.value) || e.target.value.length < 5) {
       setNicknameError('닉네임은 5~10자 영문/숫자/_만 사용 가능합니다.');
     } else {
       setNicknameError('');
-    }
-    // 10글자 초과 입력은 불가
-    if (e.target.value.length > 10) {
-      return;
-    }
-  };
-  // 닉네임 중복 확인 핸들러
-  const handleCheckDuplicate = async () => {
-    // 닉네임 중복 확인 로직 (예: API 호출)
-    // 중복 확인이 성공적으로 완료되었다면 상태를 true와 현재 닉네임 값 변경
-    if (nicknameError === '' && tempNickname.length !== 0) {
-      // setIsNicknameConfirmed(true);
-      // setUser({ ...user, tempNickname: tempNickname }); // 현재 닉네임 값을 변경
-      // alert('사용할 수 있는 닉네임입니다.');
-
-      await postCheckNickname(
-        tempNickname,
-        (resp) => {
-          setIsNicknameConfirmed(true);
-          alert('사용할 수 있는 닉네임입니다.');
-        },
-        (error) => {
-          alert('사용할 수 없는 닉네임입니다.');
-        },
-      );
-    } else {
-      // alert('사용할 수 없는 닉네임입니다.');
     }
   };
 
@@ -173,25 +135,37 @@ const UpdateProfilePage = (): JSX.Element => {
   const handleSave = async () => {
     // 이미지 저장 로직 구현해야 함
     // 이미지 저장 시 행동 로직도 구현해야 함
-    if (isNicknameConfirmed) {
-      nicknameChanged.current = true; // 변경 상태 초기화
-      // setUser({ ...user, nickname: tempNickname }); // 사용자의 닉네임을 변경
-      const param = {
-        nickname: tempNickname,
-        profileImage: null, //이미지는 잠시 보류
-      };
-      await putProfileModify(
-        param,
-        (resp) => {
-          alert('변경되었습니다.');
-          navigate('../../mypage');
-        },
-        (error) => {
-          alert('잠시 후 다시 시도해주세요.');
-        },
-      );
+    const formData = new FormData();
+    formData.append('nickname', new Blob([JSON.stringify(nickname)], { type: 'application/json' }));
+
+    // 이미지 파일이 있는 경우에만 FormData에 추가
+    if (changeImg) {
+      formData.append('image', changeImg);
+    }
+    await putProfileModify(
+      formData,
+      (resp) => {
+        alert('변경되었습니다.');
+        navigate('../../mypage');
+      },
+      (error) => {
+        alert('잠시 후 다시 시도해주세요.');
+      },
+    );
+  };
+
+  const basicUrl = 'https://i11b310.p.ssafy.io/images/';
+
+  // 이미지 경로를 파싱하여 basicUrl과 결합하는 함수
+  const getParsedImageUrl = (imagePath: string) => {
+    if (imagePath.length >= 200) {
+      return imagePath;
+    }
+    if (imagePath) {
+      const relativePath = imagePath.split('/home/ubuntu/images/')[1];
+      return basicUrl + relativePath;
     } else {
-      alert('닉네임 중복 확인을 해주세요.');
+      return basic;
     }
   };
 
@@ -201,14 +175,14 @@ const UpdateProfilePage = (): JSX.Element => {
       <s.BinArea></s.BinArea>
       <s.ProfileArea>
         <label htmlFor="profileImage">
-          <s.ProfileImage src={user.profileImage} alt="프로필 이미지" />
+          <s.ProfileImage src={getParsedImageUrl(image)} alt="프로필 이미지" />
         </label>
         <input
           type="file"
           id="profileImage"
           style={{ display: 'none' }}
           accept="image/*"
-          onChange={handleProfileImageChange}
+          onChange={handleImageUpload}
         />
         <s.InfoNameBox>
           <s.InputHeader children="닉네임" />
@@ -223,18 +197,10 @@ const UpdateProfilePage = (): JSX.Element => {
               placeholder="닉네임을 입력해주세요"
               type="text"
               margin="5px auto"
-              value={tempNickname}
+              value={nickname}
               onChange={handleNicknameChange}
             />
           </s.InputBox>
-          <Button
-            onClick={handleCheckDuplicate}
-            type="main"
-            width="80px"
-            height="40px"
-            children="중복확인"
-            bold="500"
-          />
         </s.InputArea>
         <s.ButtonArea>
           <s.CancelButton onClick={handleCancel} children="이전" bold="500" />

@@ -49,7 +49,7 @@
         WHERE id = #{userId};
     </select>
 
-    <select id="checkNickname" parameterType="string" resultType="int">
+    <select id="checkNickname" resultType="int">
         SELECT COUNT(*)
         FROM users
         WHERE nickname = #{nickname} AND id != #{userId}

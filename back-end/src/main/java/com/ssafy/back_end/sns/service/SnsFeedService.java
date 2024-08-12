@@ -1,6 +1,9 @@
 package com.ssafy.back_end.sns.service;
 
-import com.ssafy.back_end.sns.model.*;
+import com.ssafy.back_end.sns.model.FeedDto;
+import com.ssafy.back_end.sns.model.FeedInteractionDto;
+import com.ssafy.back_end.sns.model.SnsRoutineDto;
+import com.ssafy.back_end.sns.model.UserPageDto;
 
 import java.util.List;
 
@@ -11,9 +14,13 @@ public interface SnsFeedService {
 
     SnsRoutineDto getRoutine(int feedId);   //피드에서 루틴 자세히 보기
 
+    int setUpload( int routineId);   //루틴을 업로드 상태로 변경
+
     int saveRoutine(int userId, int routineId);   //피드에서 루틴 저장하기
 
     int writeFeed(FeedDto feedDto);   //피드 작성
+
+    int updateImage(int feedId);   //사진 수정(등록)
 
     int updateFeed(FeedDto feedDto);   //피드 수정
 
@@ -35,5 +42,5 @@ public interface SnsFeedService {
 
     int deleteComment(int feedId);   //댓글 삭제
 
-    void validateImages(String image);   //이미지 유효성 검사
+    void validateImages(int imageN);   //이미지 유효성 검사
 }

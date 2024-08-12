@@ -20,7 +20,7 @@ public interface SnsFeedService {
 
     int writeFeed(FeedDto feedDto);   //피드 작성
 
-    int updateImage(int feedId);   //사진 수정(등록)
+    int updateImage(int feedId, String image);   //사진 수정(등록)
 
     int updateFeed(FeedDto feedDto);   //피드 수정
 

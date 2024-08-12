@@ -28,7 +28,7 @@ public interface SnsFeedMapper {
     @Options (useGeneratedKeys = true, keyProperty = "id")
     int writeFeed(FeedDto feedDto);   //피드 작성
 
-    int updateImage(@Param("feedId") int feedId);   //사진 수정(등록)
+    int updateImage(@Param("feedId") int feedId, @Param("image") String image);   //사진 수정(등록)
 
     int updateFeed(FeedDto feedDto);   //피드 수정
 

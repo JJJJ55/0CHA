@@ -39,10 +39,15 @@ public class SecurityConfig {
         http
                 .cors(cors -> cors.configurationSource(request -> {
                     var corsConfiguration = new CorsConfiguration();
-                    corsConfiguration.setAllowedOrigins(List.of("*")); // 적절히 도메인 설정
+                    corsConfiguration.setAllowedOriginPatterns(List.of(
+                            "https://*.i11b310.p.ssafy.io",  // i11b310.p.ssafy.io의 모든 서브도메인에서 HTTPS 허용
+                            "http://*.i11b310.p.ssafy.io",   // i11b310.p.ssafy.io의 모든 서브도메인에서 HTTP 허용
+                            "https://localhost",             // 로컬호스트 HTTPS 허용
+                            "http://localhost"               // 로컬호스트 HTTP 허용
+                    ));
                     corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                     corsConfiguration.setAllowedHeaders(List.of("*"));
-                    corsConfiguration.setAllowCredentials(true);
+                    corsConfiguration.setAllowCredentials(true);  // 자격 증명 허용
                     corsConfiguration.setMaxAge(3600L);
                     return corsConfiguration;
                 }))

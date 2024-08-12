@@ -173,8 +173,8 @@ public class SnsItemController {
     public ResponseEntity<?> updateItem(HttpServletRequest request,
                                         @PathVariable int itemId,
                                         @RequestPart("item") ItemDto item,
-                                        @RequestPart("removeImagePaths") List<String> removeImagePaths,
-                                        @RequestPart("addImages") List<MultipartFile> addImages) {
+                                        @RequestPart(value = "removeImagePaths", required = false) List<String> removeImagePaths,
+                                        @RequestPart(value = "addImages", required = false) List<MultipartFile> addImages) {
         // 사용자 ID를 request에서 추출
         int ID = (Integer)request.getAttribute("userId");
         log.debug("SnsItemContoller UserID: {}", ID);

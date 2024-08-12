@@ -129,7 +129,7 @@ public class SnsFeedController {
         int feedId = snsFeedService.writeFeed(feedDto);
         log.debug("[SnsFeedController] feedId : {}", feedId);
 
-        String uploadDir = "/home/ubuntu/images/item/";
+        String uploadDir = "/home/ubuntu/images/feed/";
         File uploadDirectory = new File(uploadDir);
 
         // 디렉토리가 존재하지 않으면 생성
@@ -178,15 +178,22 @@ public class SnsFeedController {
             }
         }
 
-
         if (feedId > 0) {
-            Map<String, Object> response = new HashMap<>();
-            response.put("message", "피드 작성 성공");
-            response.put("itemID", feedId);
-            log.debug("[SnsFeedController] 피드 작성 성공, feedId: {}", feedId);
-            return ResponseEntity.ok(response);
+            int result = snsFeedService.updateImage(feedId);
+            snsFeedService.setUpload(feedDto.getRoutineId());
+
+            if(result != 0) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("message", "피드 작성 성공");
+                response.put("itemID", feedId);
+                log.debug("[SnsFeedController] 피드 작성 성공, feedId: {}", feedId);
+                return ResponseEntity.ok(response);
+            }
+            else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("피드 작성 오류");
+            }
         }
-        log.debug("[SnsFeedController] 중고피드마켓 작성 오류");
+        log.debug("[SnsFeedController] 피드 작성 오류");
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("피드 작성 오류");
     }
 

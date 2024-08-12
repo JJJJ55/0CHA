@@ -170,10 +170,48 @@ public class SnsItemController {
 
     @Operation (summary = "중고장터 글수정-완")
     @PutMapping ("/{itemId}")
-    public ResponseEntity<?> updateItem(HttpServletRequest request, @PathVariable int itemId, @RequestBody ItemDto item) {
+    public ResponseEntity<?> updateItem(HttpServletRequest request,
+                                        @PathVariable int itemId,
+                                        @RequestPart("item") ItemDto item,
+                                        @RequestPart("removeImagePaths") List<String> removeImagePaths,
+                                        @RequestPart("addImages") List<MultipartFile> addImages) {
         int ID = (Integer)request.getAttribute("userId");
+        log.debug("SnsItemContoller UserID: {}", ID);
+
+        // itemId 로그 출력
+        log.debug("SnsItemController Item ID: {}", itemId);
+
+        // ItemDto 객체 로그 출력
+        log.debug("SnsItemController ItemDto: {}", item);
+
+        // 제거할 이미지 경로 목록 로그 출력
+        if (removeImagePaths != null && !removeImagePaths.isEmpty()) {
+            log.debug("SnsItemController Remove Image Paths: {}", removeImagePaths);
+        } else {
+            log.debug("SnsItemController No images to remove.");
+        }
+
+        // 추가할 이미지 파일 목록 로그 출력
+        if (addImages != null && !addImages.isEmpty()) {
+            log.debug("SnsItemController Add Images: {} files", addImages.size());
+            for (MultipartFile file : addImages) {
+                log.debug("SnsItemController File Name: {}, Size: {} bytes", file.getOriginalFilename(), file.getSize());
+            }
+        } else {
+            log.debug("SnsItemController No images to add.");
+        }
+
+        // 1. 받은 삭제할 파일 인덱스 or 파일 저장 경로를 기준으로 호스트 디렉토리에서 이미지 제거
+        // 2. DB에 저장된 파일 정보들 삭제
+        // deleteImagesByImageUrl
+
+
+        // 3.
+
         item.setUserId(ID);
         item.setId(itemId);
+
+
         int id = snsItemService.updateItem(item);
 
         if (id > 0) {

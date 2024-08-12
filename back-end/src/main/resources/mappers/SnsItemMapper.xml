@@ -55,38 +55,41 @@
             u.nickname AS nickname,
             u.profile_image AS profile_image,
             IFNULL(il.like_count, 0) AS like_count,
-            IFNULL(il.is_like, 0) AS is_like,
+            IFNULL(CASE WHEN il.user_id = #{myId} THEN 1 ELSE 0 END, 0) AS is_like,
             d.image_url AS image_url
         FROM
             items i
-                JOIN
-            users u ON i.user_id = u.id
-                LEFT JOIN
-            (SELECT
-                 item_id,
-                 COUNT(*) AS like_count,
-                 MAX(CASE WHEN user_id IS NOT NULL THEN 1 ELSE 0 END) AS is_like
-             FROM
-                 item_details
-             WHERE
-                 detail_type = 'like'
-             GROUP BY
-                 item_id
+                JOIN users u ON i.user_id = u.id
+                LEFT JOIN (
+                SELECT
+                    item_id,
+                    COUNT(*) AS like_count,
+                    MAX(CASE WHEN user_id = #{myId} THEN 1 ELSE 0 END) AS is_like,
+                    user_id
+                FROM
+                    item_details
+                WHERE
+                    detail_type = 'like'
+                GROUP BY
+                    item_id, user_id
             ) il ON i.id = il.item_id
-                LEFT JOIN
-            (SELECT
-                 item_id,
-                 MIN(image_url) AS image_url  -- 가장 첫 번째 이미지만 선택
-             FROM
-                 item_details
-             WHERE
-                 detail_type = 'image'
-             GROUP BY
-                 item_id
+                LEFT JOIN (
+                SELECT
+                    item_id,
+                    MIN(image_url) AS image_url  -- 가장 첫 번째 이미지만 선택
+                FROM
+                    item_details
+                WHERE
+                    detail_type = 'image'
+                GROUP BY
+                    item_id
             ) d ON i.id = d.item_id
+        WHERE
+            (#{district} IS NULL OR #{district} = '' OR u.district = #{district})
+          AND (#{siGunGu} IS NULL OR #{siGunGu} = '' OR u.si_gun_gu = #{siGunGu})
         ORDER BY
             i.created_at DESC
-        LIMIT #{limit}
+            LIMIT #{limit}
         OFFSET #{offset};
     </select>
 

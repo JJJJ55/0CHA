@@ -198,15 +198,18 @@ const FitnessAddListModal = (props: FitnessPlanModalProps): JSX.Element => {
   const dispatch = useAppDispatch();
   const addList = useAppSelector(selectAddList);
   const [fitness, setFitness] = useState<FitnessType[]>([]);
+  const [filteredFitness, setFilteredFitness] = useState<FitnessType[]>([]);
   const [search, setSearch] = useState<string>('');
 
   useEffect(() => {
     getFitnessList(
       (resp) => {
         setFitness(resp.data);
+        setFilteredFitness(resp.data); // 초기에는 모든 데이터를 보여줌
       },
       (error) => {
         setFitness([]);
+        setFilteredFitness([]); // 초기에는 모든 데이터를 보여줌
         console.error(error);
       },
     );
@@ -238,7 +241,10 @@ const FitnessAddListModal = (props: FitnessPlanModalProps): JSX.Element => {
   useEffect(() => {
     // 검색어가 변경될 때마다 데이터를 필터링
     const searchLower = search.toLowerCase();
-    setFitness(fitness.filter((item) => item.name.toLowerCase().includes(searchLower)));
+    // setFitness(fitness.filter((item) => item.name.toLowerCase().includes(searchLower)));
+    const filterBySearch = (items: FitnessType[]) =>
+      items.filter((item) => item.name.toLowerCase().includes(searchLower));
+    setFilteredFitness(filterBySearch(fitness));
   }, [search, fitness]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -269,7 +275,7 @@ const FitnessAddListModal = (props: FitnessPlanModalProps): JSX.Element => {
         </s.HeaderArea>
         <s.MainArea>
           <s.FitnessArea>
-            <FitnessModalList text="전체" data={fitness} add={add} onAdd={handleClickAdd} />
+            <FitnessModalList text="전체" data={filteredFitness} add={add} onAdd={handleClickAdd} />
           </s.FitnessArea>
         </s.MainArea>
         <s.Btn onClick={handleClickMove}>루틴에 추가하기</s.Btn>

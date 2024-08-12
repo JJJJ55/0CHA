@@ -5,7 +5,7 @@ import test from '../../../asset/img/testImg.png';
 import Header from '../../../components/Common/Header';
 import Input from '../../../components/Common/Input';
 import BottomNav from '../../../components/Common/BottomNav';
-import { useLocation, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import { postCheckNickname, putProfileModify } from '../../../lib/api/main-api';
 import { userData } from '../../../lib/hook/userData';
 

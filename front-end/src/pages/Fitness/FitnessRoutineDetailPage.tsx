@@ -3,8 +3,6 @@ import styled from 'styled-components';
 import Header from '../../components/Common/Header';
 import Button from '../../components/Common/Button';
 import BottomNav from '../../components/Common/BottomNav';
-import FitnessPlan from '../../components/Fitness/Detail/FitnessPlan';
-import { FitnessPlanData } from '../../util/TestData';
 import FitnessRoutineListDetail from '../../components/Fitness/Detail/FitnessRoutineListDetail';
 import { useLocation, useNavigate } from 'react-router';
 import { getRoutineDetail } from '../../lib/api/fitness-api';

@@ -1,5 +1,4 @@
-import axios, { Axios, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { logout } from '../lib/api/user-api';
+import axios, { Axios, AxiosResponse } from 'axios';
 
 export const localAxios = () => {
   const instance: Axios = axios.create({

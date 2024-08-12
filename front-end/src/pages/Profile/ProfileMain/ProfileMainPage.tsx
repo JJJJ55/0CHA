@@ -4,7 +4,7 @@ import Button from '../../../components/Common/Button';
 import basic from '../../../asset/img/basic.png';
 import Header from '../../../components/Common/Header';
 import BottomNav from '../../../components/Common/BottomNav';
-import { useLocation, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import { logout } from '../../../lib/api/user-api';
 import { delMyDel, getMyInfo } from '../../../lib/api/main-api';
 import { User } from '../../../util/types/axios-main';

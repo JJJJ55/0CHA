@@ -6,10 +6,7 @@ import IconSvg from '../../Common/IconSvg';
 import { useLocation } from 'react-router';
 import FitnessPlayBottomNav from '../Etc/FitnessPlayBottomNav';
 import { useAppDispatch, useAppSelector } from '../../../lib/hook/useReduxHook';
-import { axiosCreateRoutine } from '../../../util/types/axios-fitness';
-import { putFinishRoutine, putUpdateRoutine } from '../../../lib/api/fitness-api';
-import { pageActions } from '../../../store/page';
-import { fitnessActions, selectSave, selectTime } from '../../../store/fitness';
+import { fitnessActions, selectSave } from '../../../store/fitness';
 
 const s = {
   Container: styled.section`

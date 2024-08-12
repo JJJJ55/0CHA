@@ -17,7 +17,6 @@ import MainPage from './pages/Main/MainPage';
 import AIMainPage from './pages/AI/AIMainPage';
 import FitnessListPage from './pages/Fitness/FitnessListPage';
 import FitnessDetailPage from './pages/Fitness/FitnessDetailPage';
-import FitnessPlanSetPage from './pages/Fitness/FitnessPlanSetPage';
 import FitnessRoutineDetatilPage from './pages/Fitness/FitnessRoutineDetailPage';
 import FitnessRoutineListPage from './pages/Fitness/FitnessRoutineListPage';
 import FitnessPlayPage from './pages/Fitness/FitnessPlayPage';

@@ -4,11 +4,8 @@ import Header from '../../components/Common/Header';
 import IconSvg from '../../components/Common/IconSvg';
 import { ReactComponent as jjimOn } from '../../asset/img/svg/jjimOn.svg';
 import { ReactComponent as jjimOff } from '../../asset/img/svg/jjimOff.svg';
-import test from '../../asset/img/testImg.png';
-import Image from '../../components/Common/Image';
 import BottomNav from '../../components/Common/BottomNav';
 import Chart from '../../components/Common/Chart';
-import { exerciseData } from '../../util/TestData';
 import {
   deleteFitnessJjimCancel,
   getFitnessJjimCheck,

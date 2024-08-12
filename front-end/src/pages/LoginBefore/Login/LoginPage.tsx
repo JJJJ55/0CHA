@@ -5,7 +5,6 @@ import Button from '../../../components/Common/Button';
 import Text from '../../../components/Common/Text';
 import { ReactComponent as Logo } from '../../../asset/img/svg/0CHA.svg';
 import { useNavigate } from 'react-router';
-import { AxiosError, AxiosResponse } from 'axios';
 import { login } from '../../../lib/api/user-api';
 
 const s = {

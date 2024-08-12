@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Image from '../../Common/Image';
-import test from '../../../asset/img/testImg.png';
-import Text from '../../Common/Text';
 import IconSvg from '../../Common/IconSvg';
 import { ReactComponent as jjimOn } from '../../../asset/img/svg/jjimOn.svg';
 import { ReactComponent as jjimOff } from '../../../asset/img/svg/jjimOff.svg';
@@ -10,7 +8,6 @@ import { ReactComponent as addOff } from '../../../asset/img/svg/pickOff.svg';
 import { ReactComponent as addOn } from '../../../asset/img/svg/pickOn.svg';
 import { useNavigate } from 'react-router';
 import { CreateRoutine, FitnessType } from '../../../util/types/axios-fitness';
-import { getFitnessListCategory } from '../../../lib/api/fitness-api';
 
 const s = {
   Container: styled.section`

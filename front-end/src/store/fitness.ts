@@ -1,12 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '.';
-import {
-  axiosCreateRoutine,
-  axiosCreateRoutineDetails,
-  ExerciseDetailType,
-  RoutineListDetail,
-} from '../util/types/axios-fitness';
+import { axiosCreateRoutine, axiosCreateRoutineDetails, ExerciseDetailType } from '../util/types/axios-fitness';
 
 interface FitnessState {
   type: string;

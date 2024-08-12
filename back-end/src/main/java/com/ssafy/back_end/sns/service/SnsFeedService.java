@@ -35,5 +35,5 @@ public interface SnsFeedService {
 
     int deleteComment(int feedId);   //댓글 삭제
 
-    void validateImages(String image);   //이미지 유효성 검사
+    void validateImages(int imageN);   //이미지 유효성 검사
 }

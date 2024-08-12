@@ -99,7 +99,6 @@
 <!--    <insert id="saveRoutine">-->
 <!--    </insert>-->
 
-
     <update id="setUpload">
         UPDATE routines
         SET is_upload      = 1

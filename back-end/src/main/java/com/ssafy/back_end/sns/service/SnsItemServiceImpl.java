@@ -96,32 +96,29 @@ public class SnsItemServiceImpl implements SnsItemService {
                 File file = new File(imageUrl);
                 if (file.exists()) {
                     if (file.delete()) {
-                        log.debug("SnsItmeService 호스트 이미지 파일 삭제 성공, {}", imageUrl);
-
-                        //snsItemMapper.deleteItemImage();
-
+                        log.debug("SnsItemService 호스트 이미지 파일 삭제 성공, {}", imageUrl);
+                        snsItemMapper.deleteItemImage(imageUrl);
                         deleteCnt++;
                     } else {
-                        log.warn("SnsItmeService 호스트 이미지 파일 삭제 실패, {}", imageUrl);
-                        throw new RuntimeException("SnsItmeService 호스트 이미지 파일 삭제 실패: " + imageUrl);
+                        log.warn("SnsItemService 호스트 이미지 파일 삭제 실패, {}", imageUrl);
+                        throw new RuntimeException("SnsItemService 호스트 이미지 파일 삭제 실패: " + imageUrl);
                     }
                 } else {
-                    log.warn("SnsItmeService 호스트 이미지 파일이 존재하지 않습니다, {}", imageUrl);
-                    throw new RuntimeException("SnsItmeService 호스트 이미지 파일이 존재하지 않음: " + imageUrl);
+                    log.warn("SnsItemService 호스트 이미지 파일이 존재하지 않습니다, {}", imageUrl);
+                    throw new RuntimeException("SnsItemService 호스트 이미지 파일이 존재하지 않음: " + imageUrl);
                 }
             }
-            
-            
-            // 디비에서 해당 url을 가진 이미지 정보 삭제
-            for(String imageUrl : imageUrls) {
-                snsItemMapper.deleteItemImage(imageUrl);
-                deleteCnt++;
-            }
-        }catch (Exception e){
-            log.error("게시물 수정중 이미지 호스트 디렉토리에서 삭제 실패");
+        } catch (Exception e) {
+            log.error("게시물 수정 중 이미지 호스트 디렉토리에서 삭제 실패: {}", e.getMessage());
+            // 예외 발생 시 트랜잭션 롤백
+            throw e;
         }
-
         return deleteCnt;
+    }
+
+    @Override
+    public List<String> getRemainingImageUrls(int itemId){
+        return snsItemMapper.getRemainingImageUrls(itemId);
     }
 
     @Override

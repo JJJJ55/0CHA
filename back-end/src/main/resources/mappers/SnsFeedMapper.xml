@@ -99,14 +99,22 @@
 <!--    <insert id="saveRoutine">-->
 <!--    </insert>-->
 
+    <update id="setUpload">
+        UPDATE routines
+        SET is_upload      = 1
+        WHERE id = #{routineId};
+    </update>
 
-
-
-
-    <insert id="writeFeed">
+    <insert id="writeFeed" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO feeds (content, image, routine_id, user_id)
         VALUES (#{content}, #{image}, #{routineId}, #{userId});
     </insert>
+
+    <update id="updateImage">
+        UPDATE feeds
+        SET image      = #{image}
+        WHERE id = #{feedId};
+    </update>
 
     <update id="updateFeed">
         UPDATE feeds
@@ -115,6 +123,12 @@
             routine_id = #{routineId}
         WHERE id = #{id};
     </update>
+
+    <select id="getImagePathsByFeedId" resultType="string">
+        SELECT image
+        FROM feeds
+        WHERE id = #{feedId};
+    </select>
 
     <delete id="deleteFeed">
         DELETE

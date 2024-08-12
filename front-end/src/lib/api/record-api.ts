@@ -10,23 +10,14 @@ export const getRm = async (success: (response: any) => void, fail: (error: Axio
   await jwt.get(`/record/rm`).then(success).catch(fail);
 };
 
-// 운동량
+// 최근 5개 운동량과 운동시간 가져오기
 export const getFitnessData = async (success: (response: any) => void, fail: (error: AxiosError) => void) => {
-  await jwt.get(`/record/exercise/volume`).then(success).catch(fail);
+  await jwt.get(`/record/exercise-records`).then(success).catch(fail);
 };
 
-// 운동시간
-export const getFitnessTime = async (success: (response: any) => void, fail: (error: AxiosError) => void) => {
-  await jwt.get(`/record/exercise/time`).then(success).catch(fail);
-};
-
-// 운동이력조회 달마다
-export const getFitnessCalendar = async (
-  param: any,
-  success: (response: any) => void,
-  fail: (error: AxiosError) => void,
-) => {
-  await jwt.get(`/record/routines/month?year=${param.year}&month=${param.month}`, param).then(success).catch(fail);
+// 운동이력조회
+export const getFitnessCalendar = async (success: (response: any) => void, fail: (error: AxiosError) => void) => {
+  await jwt.get(`/record/routines`).then(success).catch(fail);
 };
 
 // 인바디 결과 관리

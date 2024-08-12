@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { styled } from 'styled-components';
 import Header from '../../components/Common/Header';
 import Button from '../../components/Common/Button';
 import Text from '../../components/Common/Text';
 import RecordInbodyInput from '../../components/Record/Inbody/RecordInbodyInput';
 import BottomNav from '../../components/Common/BottomNav';
+import { useNavigate } from 'react-router';
+import { postInbody } from '../../lib/api/record-api';
+import { Inbody } from '../../util/types/axios-record';
 
 const s = {
   Container: styled.section`
@@ -47,6 +50,48 @@ const s = {
 };
 
 const RecordInBodyScanResultPage = (): JSX.Element => {
+  const [inbody, setInbody] = useState<Inbody>({
+    height: 0,
+    weight: 0,
+    bodyWater: 0,
+    protein: 0,
+    mineral: 0,
+    bodyFat: 0,
+    muscleMass: 0,
+    muscleBody: 0,
+    muscleLeftArm: 0,
+    muscleRightArm: 0,
+    muscleLeftLeg: 0,
+    muscleRightLeg: 0,
+    bmi: 0,
+    bodyFatPercent: 0,
+    measuredAt: '',
+  });
+  const navigate = useNavigate();
+
+  const changeInbodyInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputData = e.target.value === '' ? '' : e.target.value;
+    setInbody({
+      ...inbody,
+      [e.target.name]: inputData,
+    });
+  };
+  const handleSaveData = async () => {
+    const day = new Date();
+    const today =
+      day.getFullYear() + '-' + ('0' + (1 + day.getMonth())).slice(-2) + '-' + ('0' + day.getDate()).slice(-2);
+    setInbody({ ...inbody, measuredAt: today });
+    postInbody(
+      inbody,
+      (resp) => {
+        alert('저장되었습니다.');
+        navigate('../data');
+      },
+      (error) => {
+        alert('잠시 후 다시 시도해주세요.');
+      },
+    );
+  };
   return (
     <s.Container>
       <Header text="인바디 스캔" />
@@ -65,8 +110,8 @@ const RecordInBodyScanResultPage = (): JSX.Element => {
           display="block"
         />
         <s.InputArea>
-          <RecordInbodyInput id="height" title="신장" unit="cm" />
-          <RecordInbodyInput id="weight" title="체중" unit="kg" />
+          <RecordInbodyInput id="height" title="신장" unit="cm" value={inbody.height} onChange={changeInbodyInput} />
+          <RecordInbodyInput id="weight" title="체중" unit="kg" value={inbody.weight} onChange={changeInbodyInput} />
         </s.InputArea>
         <s.ListLine />
         <Text
@@ -79,12 +124,36 @@ const RecordInBodyScanResultPage = (): JSX.Element => {
           display="block"
         />
         <s.InputArea>
-          <RecordInbodyInput id="body_water" title="체수분" unit="L" />
-          <RecordInbodyInput id="protein" title="단백질" unit="kg" />
+          <RecordInbodyInput
+            id="bodyWater"
+            title="체수분"
+            unit="L"
+            value={inbody.bodyWater}
+            onChange={changeInbodyInput}
+          />
+          <RecordInbodyInput
+            id="protein"
+            title="단백질"
+            unit="kg"
+            value={inbody.protein}
+            onChange={changeInbodyInput}
+          />
         </s.InputArea>
         <s.InputArea>
-          <RecordInbodyInput id="mineral" title="무기질" unit="kg" />
-          <RecordInbodyInput id="body_fat" title="체지방" unit="kg" />
+          <RecordInbodyInput
+            id="mineral"
+            title="무기질"
+            unit="kg"
+            value={inbody.mineral}
+            onChange={changeInbodyInput}
+          />
+          <RecordInbodyInput
+            id="bodyFat"
+            title="체지방"
+            unit="kg"
+            value={inbody.bodyFat}
+            onChange={changeInbodyInput}
+          />
         </s.InputArea>
         <s.ListLine />
         <Text
@@ -97,16 +166,52 @@ const RecordInBodyScanResultPage = (): JSX.Element => {
           display="block"
         />
         <s.InputArea>
-          <RecordInbodyInput id="muscle_mass" title="골격근" unit="kg" />
-          <RecordInbodyInput id="muscle_body" title="몸통" unit="kg" />
+          <RecordInbodyInput
+            id="muscleMass"
+            title="골격근"
+            unit="kg"
+            value={inbody.muscleMass}
+            onChange={changeInbodyInput}
+          />
+          <RecordInbodyInput
+            id="muscleBody"
+            title="몸통"
+            unit="kg"
+            value={inbody.muscleBody}
+            onChange={changeInbodyInput}
+          />
         </s.InputArea>
         <s.InputArea>
-          <RecordInbodyInput id="muscle_left_arm" title="왼팔" unit="kg" />
-          <RecordInbodyInput id="muscle_right_arm" title="오른팔" unit="kg" />
+          <RecordInbodyInput
+            id="muscleLeftArm"
+            title="왼팔"
+            unit="kg"
+            value={inbody.muscleLeftArm}
+            onChange={changeInbodyInput}
+          />
+          <RecordInbodyInput
+            id="muscleRightArm"
+            title="오른팔"
+            unit="kg"
+            value={inbody.muscleRightArm}
+            onChange={changeInbodyInput}
+          />
         </s.InputArea>
         <s.InputArea>
-          <RecordInbodyInput id="muscle_left_leg" title="왼다리" unit="kg" />
-          <RecordInbodyInput id="muscle_right_leg" title="오른다리" unit="kg" />
+          <RecordInbodyInput
+            id="muscleLeftLeg"
+            title="왼다리"
+            unit="kg"
+            value={inbody.muscleLeftLeg}
+            onChange={changeInbodyInput}
+          />
+          <RecordInbodyInput
+            id="muscleRightLeg"
+            title="오른다리"
+            unit="kg"
+            value={inbody.muscleRightLeg}
+            onChange={changeInbodyInput}
+          />
         </s.InputArea>
         <s.ListLine />
         <Text
@@ -119,8 +224,14 @@ const RecordInBodyScanResultPage = (): JSX.Element => {
           display="block"
         />
         <s.InputArea>
-          <RecordInbodyInput id="bmi" title="BMI" unit="kg/m2" />
-          <RecordInbodyInput id="body_fat_percent" title="체지방률" unit="%" />
+          <RecordInbodyInput id="bmi" title="BMI" unit="kg/m2" value={inbody.bmi} onChange={changeInbodyInput} />
+          <RecordInbodyInput
+            id="bodyFatPercent"
+            title="체지방률"
+            unit="%"
+            value={inbody.bodyFatPercent}
+            onChange={changeInbodyInput}
+          />
         </s.InputArea>
         <Button
           children="저장하기"
@@ -131,6 +242,7 @@ const RecordInBodyScanResultPage = (): JSX.Element => {
           height="40px"
           type="main"
           width="90%"
+          onClick={handleSaveData}
         />
       </s.MainArea>
       {/* <BottomNav /> */}

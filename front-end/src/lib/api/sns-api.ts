@@ -1,6 +1,6 @@
 import { AxiosError } from 'axios';
 import { localAxios, publicAxios } from '../../util/axios-setting';
-import { snsFeedWrite, snsItemWrite } from '../../util/types/axios-sns';
+import { snsFeedWrite, snsItemList, snsItemWrite } from '../../util/types/axios-sns';
 
 const local = publicAxios();
 const jwt = localAxios();
@@ -46,40 +46,58 @@ export const UserPageFollowing = async (
   await jwt.get(`/sns/social/user-page/followings?user-id=${param}`).then(success).catch(fail);
 };
 
+// 팔로우하는 유저인지 조회
+export const IsFollowingUser = async (
+  targetUserId: number,
+  success: (response: any) => void,
+  fail: (error: AxiosError) => void,
+) => {
+  await jwt.get(`/sns/social/is-following?target-id=${targetUserId}`).then(success).catch(fail);
+};
+
 // 팔로우
 export const UserFollow = async (
   targetUserId: number,
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
+  
 ) => {
   await jwt.post(`/sns/social/follow`, targetUserId).then(success).catch(fail);
 };
 
 // 팔로우 삭제 (number 타입가질 시 에러남)
 export const UserFollowCancel = async (
-  targetUserId: any,
+  targetUserId: number,
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
 ) => {
-  await jwt.delete(`/sns/social/follow`, targetUserId).then(success).catch(fail);
+  await jwt.put(`/sns/social/follow`, targetUserId).then(success).catch(fail);
 };
 
 // 피드 내역 가져오기
 export const SnsFeedList = async (
-  param: number,
+  userId: number,
+  offset: number,
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
+  limit?: number,
 ) => {
-  await jwt.get(`/sns/feed/list?user-id=${param}`).then(success).catch(fail);
+  await jwt.get(`/sns/feed/list?user-id=${userId}&offset=${offset}&limit=${limit}`).then(success).catch(fail);
 };
 
 // 피드 작성
 export const SnsFeedWrite = async (
+  // param: snsFeedWrite,
   param: snsFeedWrite,
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
 ) => {
   await jwt.post(`/sns/feed/write`, param).then(success).catch(fail);
+  // await jwt.post(`/sns/feed/write`, param, {
+  //   headers: {
+  //     'Content-Type': 'multipart/form-data',
+  //   },
+  // }).then(success).catch(fail);
 };
 
 // 피드 작성시 루틴가져오기
@@ -160,7 +178,7 @@ export const SnsCommentWrite = async (
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
 ) => {
-  await jwt.post(`/sns/feed/${feedId}/comment`, content).then(success).catch(fail);
+  await jwt.post(`/sns/feed/${feedId}/comment`, {"comment": content}).then(success).catch(fail);
 };
 
 // 피드 댓글 수정
@@ -170,7 +188,7 @@ export const SnsCommentModify = async (
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
 ) => {
-  await jwt.put(`/sns/feed/comment/${commentId}`, content).then(success).catch(fail);
+  await jwt.put(`/sns/feed/comment/${commentId}`, {"comment": content}).then(success).catch(fail);
 };
 
 // 피드 댓글 삭제
@@ -184,11 +202,16 @@ export const SnsCommentDel = async (
 
 // 중고마켓 목록 조회
 export const SnsItemList = async (
-  param: number,
+  param: snsItemList,
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
 ) => {
-  await jwt.get(`/sns/item/list?user_id=${param}`).then(success).catch(fail);
+  await jwt
+    .get(
+      `/sns/item/list?user-id=${param.userId}&page=${param.page}&limit=${param.limit}&district=${param.district}&si-gun-gu=${param.siGunGu}&title=${param.title}`,
+    )
+    .then(success)
+    .catch(fail);
 };
 
 // 물건 상세
@@ -220,11 +243,18 @@ export const SnsItemLikeCancel = async (
 
 // 물건 판매 작성
 export const SnsItemWrite = async (
-  param: snsItemWrite,
+  param: FormData,
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
 ) => {
-  await jwt.post(`/sns/item/write`, param).then(success).catch(fail);
+  await jwt
+    .post(`/sns/item/write`, param, {
+      headers: {
+        'Content-Type': 'multipart/form-data', // FormData에 맞는 Content-Type 설정
+      },
+    })
+    .then(success)
+    .catch(fail);
 };
 
 // 물건 판매 수정
@@ -234,7 +264,14 @@ export const SnsItemModify = async (
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
 ) => {
-  await jwt.put(`/sns/item/${itemId}`, param).then(success).catch(fail);
+  await jwt
+    .put(`/sns/item/${itemId}`, param, {
+      headers: {
+        'Content-Type': 'multipart/form-data', // FormData에 맞는 Content-Type 설정
+      },
+    })
+    .then(success)
+    .catch(fail);
 };
 
 // 물건 판매 삭제
@@ -287,4 +324,19 @@ export const SnsChatOff = async (
   fail: (error: AxiosError) => void,
 ) => {
   await jwt.delete(`/sns/chat/connect/${connectionId}`).then(success).catch(fail);
+};
+
+// 유저전체조회(검색)
+export const UserSearch = async (
+  success: (response: any) => void,
+  fail: (error: AxiosError) => void,
+) => {
+  await jwt.get(`/sns/social/search`).then(success).catch(fail);
+};
+
+export const MyRoutine = async (
+  success: (response: any) => void,
+  fail: (error: AxiosError) => void,
+) => {
+  await jwt.get(`sns/feed/my-routine`).then(success).catch(fail);
 };

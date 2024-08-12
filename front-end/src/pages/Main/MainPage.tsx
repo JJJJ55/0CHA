@@ -313,6 +313,17 @@ const MainPage = (): JSX.Element => {
       },
     );
   }, []);
+  const basicUrl = 'https://i11b310.p.ssafy.io/images/';
+
+  // 이미지 경로를 파싱하여 basicUrl과 결합하는 함수
+  const getParsedImageUrl = (imagePath?: string) => {
+    if (imagePath) {
+      const relativePath = imagePath.split('/home/ubuntu/images/')[1];
+      return basicUrl + relativePath;
+    } else {
+      return basic;
+    }
+  };
 
   const PageHeader = () => (
     <s.Header>
@@ -326,7 +337,7 @@ const MainPage = (): JSX.Element => {
           cursor="pointer"
           onClick={() => navigate('/sns/notification')}
         />
-        <s.ProfileImage src={user?.profileImage ?? basic} alt="Profile" onClick={() => navigate('/mypage')} />
+        <s.ProfileImage src={getParsedImageUrl(user?.profileImage)} alt="Profile" onClick={() => navigate('/mypage')} />
       </s.HeaderIcons>
     </s.Header>
   );

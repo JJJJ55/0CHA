@@ -10,19 +10,27 @@ import com.ssafy.back_end.sns.service.SnsFeedServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Tag (name = "SNS피드")
 @RestController
 @RequestMapping (value = "/api/sns/feed")
 public class SnsFeedController {
+    private static final Logger log = LoggerFactory.getLogger(SnsItemController.class);
     private final SnsFeedServiceImpl snsFeedService;
     private final WorkoutRoutineService workoutRoutineService;
 
@@ -79,7 +87,7 @@ public class SnsFeedController {
     public ResponseEntity<?> saveRoutine(HttpServletRequest request, @PathVariable int routineId) {
         int ID = (Integer)request.getAttribute("userId");
 
-        RoutineDto routine = workoutRoutineService.getRoutine(routineId );
+        RoutineDto routine = workoutRoutineService.getRoutine(routineId);
 
         if (routine != null) {
             routine.setUserId(ID);
@@ -91,7 +99,7 @@ public class SnsFeedController {
             routine.setCreatedAt(Timestamp.valueOf(now));
 
             int result = workoutRoutineService.upsertRoutine(routine);
-            
+
             if (result != 0) {
                 return ResponseEntity.ok("루틴 저장 성공");
             }
@@ -104,14 +112,88 @@ public class SnsFeedController {
 
     @Operation (summary = "피드 글쓰기-완")
     @PostMapping ("/write")
-    public ResponseEntity<?> writeFeed(HttpServletRequest request, @RequestBody FeedDto feedDto) {
+    public ResponseEntity<?> writeFeed(HttpServletRequest request, @RequestPart("feed") FeedDto feedDto,
+                                       @RequestPart ("image") MultipartFile image) {
+
+        log.debug("[SnsFeedController] writeFeed - 시작");
+
         int ID = (Integer)request.getAttribute("userId");
         feedDto.setUserId(ID);
-        int result = snsFeedService.writeFeed(feedDto);
 
-        if (result != 0) {
-            return ResponseEntity.ok("피드 작성 성공");
+        snsFeedService.validateImages(1);
+
+        log.debug("[SnsFeedController] feed 정보: {}", feedDto.toString());
+
+//        int result = snsFeedService.writeFeed(feedDto);
+
+        int feedId = snsFeedService.writeFeed(feedDto);
+        log.debug("[SnsFeedController] feedId : {}", feedId);
+
+        String uploadDir = "/home/ubuntu/images/feed/";
+        File uploadDirectory = new File(uploadDir);
+
+        // 디렉토리가 존재하지 않으면 생성
+        if (!uploadDirectory.exists()) {
+            log.debug("[SnsItemController] 디렉토리 {} 가 존재하지 않음", uploadDirectory.getAbsolutePath());
+            boolean isCreated = uploadDirectory.mkdirs();
+            if (!isCreated) {
+                log.debug("[SnsItemController] 디렉토리 {} 생성 실패", uploadDirectory.getAbsolutePath());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("디렉토리 생성 실패");
+            }
+            else {
+                log.debug("[SnsItemController] 디렉토리 {} 생성 완료", uploadDirectory.getAbsolutePath());
+            }
         }
+        log.debug("[SnsItemController] 디렉토리 {} 가 존재함", uploadDirectory.getAbsolutePath());
+
+
+        if (!image.isEmpty()) {
+            try {
+                String originalImageName = image.getOriginalFilename();
+                String imageExtension = "";
+
+                // 파일 확장자 추출
+                if (originalImageName != null && originalImageName.contains(".")) {
+                    imageExtension = originalImageName.substring(originalImageName.lastIndexOf("."));
+                }
+
+                // 고유한 파일 이름 생성
+                // 사용자 ID-게시물 번호-해당 게시물에서 이미지 순서.확장자
+                String newFileName = ID + "-" + feedId + "-" + imageExtension;
+                log.debug("[SnsFeedController] 새 파일 이름 생성: {}", newFileName);
+
+                // 파일 저장
+                image.transferTo(new File(uploadDir + newFileName));
+
+                // 이미지 정보 DB에 저장
+                String imageUrl = uploadDir + newFileName;
+                log.debug("[SnsFeedController] 이미지 저장 경로: {}", imageUrl);
+
+                log.debug("[SnsFeedController] 이미지 업로드 성공: {}", newFileName);
+
+            }
+            catch (IOException e) {
+                log.error("[SnsFeedController] 이미지 업로드 오류", e);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("이미지 업로드 오류");
+            }
+        }
+
+        if (feedId > 0) {
+            int result = snsFeedService.updateImage(feedId);
+            snsFeedService.setUpload(feedDto.getRoutineId());
+
+            if(result != 0) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("message", "피드 작성 성공");
+                response.put("itemID", feedId);
+                log.debug("[SnsFeedController] 피드 작성 성공, feedId: {}", feedId);
+                return ResponseEntity.ok(response);
+            }
+            else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("피드 작성 오류");
+            }
+        }
+        log.debug("[SnsFeedController] 피드 작성 오류");
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("피드 작성 오류");
     }
 

@@ -58,7 +58,9 @@ const FitnessRoutineList = (): JSX.Element => {
       (resp) => {
         setRoutine(resp.data);
       },
-      (error) => {},
+      (error) => {
+        setRoutine([]);
+      },
     );
   }, []);
 
@@ -91,46 +93,50 @@ const FitnessRoutineList = (): JSX.Element => {
   };
   return (
     <s.Container>
-      {routine.map((data, index) => (
-        <s.ListBoxArea key={index}>
-          <s.ListArea>
-            <s.ContentArea onClick={() => handleClickMove(data.id)}>
-              <Text
-                width="100%"
-                children={data.title}
-                color="textColor"
-                size="16px"
-                bold="700"
-                margin="10px"
-                cursor="pointer"
-              />
-              <Text
-                width="100%"
-                children={data.dueDate}
-                color="textColor2"
-                size="14px"
-                bold="700"
-                margin="0 0 0 10px"
-                cursor="pointer"
-              />
-            </s.ContentArea>
-            {data.like ? (
+      {routine.length > 0 ? (
+        routine.map((data, index) => (
+          <s.ListBoxArea key={index}>
+            <s.ListArea>
+              <s.ContentArea onClick={() => handleClickMove(data.id)}>
+                <Text
+                  width="100%"
+                  children={data.title}
+                  color="textColor"
+                  size="16px"
+                  bold="700"
+                  margin="10px"
+                  cursor="pointer"
+                />
+                <Text
+                  width="100%"
+                  children={data.dueDate}
+                  color="textColor2"
+                  size="14px"
+                  bold="700"
+                  margin="0 0 0 10px"
+                  cursor="pointer"
+                />
+              </s.ContentArea>
+              {data.like ? (
+                <s.IconArea>
+                  <IconSvg width="25" height="25" Ico={jjimOn} onClick={() => handleRoutineJjim(data.id)} />
+                </s.IconArea>
+              ) : (
+                <s.IconArea>
+                  <IconSvg width="25" height="25" Ico={jjimOff} onClick={() => handleRoutineJjim(data.id)} />
+                </s.IconArea>
+              )}
               <s.IconArea>
-                <IconSvg width="25" height="25" Ico={jjimOn} onClick={() => handleRoutineJjim(data.id)} />
+                <IconSvg width="25" height="25" Ico={trash} onClick={() => handleDeleteRoutine(data.id)} />
               </s.IconArea>
-            ) : (
-              <s.IconArea>
-                <IconSvg width="25" height="25" Ico={jjimOff} onClick={() => handleRoutineJjim(data.id)} />
-              </s.IconArea>
-            )}
-            <s.IconArea>
-              <IconSvg width="25" height="25" Ico={trash} onClick={() => handleDeleteRoutine(data.id)} />
-            </s.IconArea>
-          </s.ListArea>
-          {index + 1 === routine?.length || <s.ListLine />}
-          {/* <s.ListLine /> */}
-        </s.ListBoxArea>
-      ))}
+            </s.ListArea>
+            {index + 1 === routine?.length || <s.ListLine />}
+            {/* <s.ListLine /> */}
+          </s.ListBoxArea>
+        ))
+      ) : (
+        <Text children="목록이 없습니다." width="90%" margin="20px auto" display="block" />
+      )}
     </s.Container>
   );
 };

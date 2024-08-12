@@ -40,7 +40,7 @@ const s = {
     width: 20%;
     height: 100%;
     display: flex;
-    justify-content: space-between;
+    justify-content: end;
     align-items: center;
   `,
   FitnessTitle: styled.span`
@@ -63,36 +63,8 @@ interface FitnessListProps {
   data: FitnessType[];
 }
 
-const FitnessList = (props: FitnessListProps): JSX.Element => {
-  const navigate = useNavigate();
+const FitnessModalList = (props: FitnessListProps): JSX.Element => {
   // const [add, setAdd] = useState<number[]>([]);
-  const handleClickMove = async (id: number) => {
-    navigate('detail', { state: { id } });
-  };
-
-  const handleClickJjim = async (id: number) => {
-    await postFitnessJjim(
-      id,
-      (resp) => {
-        alert('찜 성공');
-      },
-      (error) => {
-        alert('잠시후 다시 시도해주세요.');
-      },
-    );
-  };
-  const handleClickNotJjim = async (id: number) => {
-    await deleteFitnessJjimCancel(
-      id,
-      (resp) => {
-        alert('찜 해제');
-      },
-      (error) => {
-        alert('잠시후 다시 시도해주세요.');
-      },
-    );
-  };
-
   if (!Array.isArray(props.data)) {
     return (
       <>
@@ -108,31 +80,11 @@ const FitnessList = (props: FitnessListProps): JSX.Element => {
       {props.data.map((data, index) => (
         <div key={index}>
           <s.ListArea>
-            <s.ContentArea onClick={() => handleClickMove(data.id)}>
+            <s.ContentArea>
               <Image width="60" height="60" type="" src={data.image} />
               <s.FitnessTitle>{data.name}</s.FitnessTitle>
             </s.ContentArea>
             <s.IconArea>
-              {data.like ? (
-                <IconSvg
-                  width="25"
-                  height="25"
-                  Ico={jjimOn}
-                  color="#ccff33"
-                  cursor="pointer"
-                  onClick={() => handleClickNotJjim(data.id)}
-                />
-              ) : (
-                <IconSvg
-                  width="25"
-                  height="25"
-                  Ico={jjimOff}
-                  color="#ccff33"
-                  cursor="pointer"
-                  onClick={() => handleClickJjim(data.id)}
-                />
-              )}
-
               {props.add.some((item) => item.exerciseId === data.id) ? (
                 <IconSvg
                   width="25"
@@ -162,4 +114,4 @@ const FitnessList = (props: FitnessListProps): JSX.Element => {
   // }
 };
 
-export default FitnessList;
+export default FitnessModalList;

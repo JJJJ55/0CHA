@@ -66,8 +66,12 @@ const SnsNavigation = (): JSX.Element => {
   };
 
   const createButtonClick = (() => {
-    isRoutineData();
-  })
+    if (snsType === 'market') {
+      handleMovePage('write');
+    } else {
+      isRoutineData();
+    }
+  });
 
   return (
     <s.Container>

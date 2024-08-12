@@ -221,11 +221,11 @@ const FeedPage = (): JSX.Element => {
     const container = containerRef.current;
     if (container) {
       container.addEventListener('scroll', handleScroll);
-    }
+    };
     return () => {
       if (container) {
         container.removeEventListener('scroll', handleScroll);
-      }
+      };
     };
   }, [handleScroll]);
 

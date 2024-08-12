@@ -140,10 +140,7 @@ const FitnessPlayPage = (): JSX.Element => {
               onFinish={handleFinish}
             />
           </div>
-        ))}{' '}
-        <button onClick={save} style={{ color: '#fff' }}>
-          저장
-        </button>
+        ))}
       </s.MainArea>
     </s.Container>
   );

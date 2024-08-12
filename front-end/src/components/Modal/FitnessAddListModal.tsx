@@ -198,6 +198,7 @@ const FitnessAddListModal = (props: FitnessPlanModalProps): JSX.Element => {
   const dispatch = useAppDispatch();
   const addList = useAppSelector(selectAddList);
   const [fitness, setFitness] = useState<FitnessType[]>([]);
+  const [search, setSearch] = useState<string>('');
 
   useEffect(() => {
     getFitnessList(
@@ -234,6 +235,16 @@ const FitnessAddListModal = (props: FitnessPlanModalProps): JSX.Element => {
     props.onModal();
   };
 
+  useEffect(() => {
+    // 검색어가 변경될 때마다 데이터를 필터링
+    const searchLower = search.toLowerCase();
+    setFitness(fitness.filter((item) => item.name.toLowerCase().includes(searchLower)));
+  }, [search, fitness]);
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+  };
+
   return (
     <ReactModal
       isOpen={props.open}
@@ -245,7 +256,15 @@ const FitnessAddListModal = (props: FitnessPlanModalProps): JSX.Element => {
       <s.Container>
         <s.HeaderArea>
           <s.InputArea>
-            <Input width="100%" height="40px" placeholder="검색" type="text" name="" value={''} onChange={() => {}} />
+            <Input
+              width="100%"
+              height="40px"
+              placeholder="검색"
+              type="text"
+              name="search"
+              value={search}
+              onChange={handleSearch}
+            />
           </s.InputArea>
         </s.HeaderArea>
         <s.MainArea>

@@ -65,7 +65,7 @@ public class SnsFeedServiceImpl implements SnsFeedService {
     public int writeFeed(FeedDto feedDto) {
 //        validateImages(feedDto.getImage());
 
-        FeedDto feed = FeedDto.builder().content(feedDto.getContent()).image(feedDto.getImage()).routineId(feedDto.getRoutineId()).userId(feedDto.getUserId()).build();
+        FeedDto feed = FeedDto.builder().content(feedDto.getContent()).routineId(feedDto.getRoutineId()).userId(feedDto.getUserId()).build();
 
         log.info("Feed details: {}", feed);
         snsFeedMapper.writeFeed(feed);

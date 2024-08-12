@@ -200,8 +200,61 @@ public class SnsFeedController {
 
     @Operation (summary = "피드 글수정-완")
     @PutMapping ("/{feedId}")
-    public ResponseEntity<?> updateFeed(@PathVariable int feedId, @RequestBody FeedDto feedDto) {
+    public ResponseEntity<?> updateFeed(HttpServletRequest request, @PathVariable int feedId, @RequestPart("feed") FeedDto feedDto,
+                                        @RequestPart("image") MultipartFile image) {
+
+        int ID = (Integer) request.getAttribute("userId");
+        String imageUrl="";
+
+        String uploadDir = "/home/ubuntu/images/feed/";
+        File uploadDirectory = new File(uploadDir);
+
+        // 디렉토리가 존재하지 않으면 생성
+        if (!uploadDirectory.exists()) {
+            log.debug("[SnsFeedController] 디렉토리 {} 가 존재하지 않음", uploadDirectory.getAbsolutePath());
+            boolean isCreated = uploadDirectory.mkdirs();
+            if (!isCreated) {
+                log.debug("[SnsFeedController] 디렉토리 {} 생성 실패", uploadDirectory.getAbsolutePath());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("디렉토리 생성 실패");
+            } else {
+                log.debug("[SnsFeedController] 디렉토리 {} 생성 완료", uploadDirectory.getAbsolutePath());
+            }
+        }
+        log.debug("[SnsFeedController] 디렉토리 {} 가 존재함", uploadDirectory.getAbsolutePath());
+
+        if (!image.isEmpty()) {
+            try {
+                String originalImageName = image.getOriginalFilename();
+                String imageExtension = "";
+
+                // 파일 확장자 추출
+                if (originalImageName != null && originalImageName.contains(".")) {
+                    imageExtension = originalImageName.substring(originalImageName.lastIndexOf("."));
+                }
+
+                // 고유한 파일 이름 생성
+                // 사용자 ID-게시물 번호-해당 게시물에서 이미지 순서.확장자
+                String newFileName = ID + "-" + feedId + "-" + imageExtension;
+                log.debug("[SnsFeedController] 새 파일 이름 생성: {}", newFileName);
+
+                // 파일 저장
+                image.transferTo(new File(uploadDir + newFileName));
+
+                // 이미지 정보 DB에 저장
+                imageUrl = uploadDir + newFileName;
+                log.debug("[SnsFeedController] 이미지 저장 경로: {}", imageUrl);
+
+                log.debug("[SnsFeedController] 이미지 업로드 성공: {}", newFileName);
+
+            } catch (IOException e) {
+                log.error("[SnsFeedController] 이미지 업로드 오류", e);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("이미지 업로드 오류");
+            }
+        }
+
+
         feedDto.setId(feedId);
+        feedDto.setImage(imageUrl);
         int result = snsFeedService.updateFeed(feedDto);
 
         if (result != 0) {

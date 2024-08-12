@@ -116,6 +116,7 @@ public class SnsFeedController {
                                        @RequestPart ("image") MultipartFile image) {
 
         log.debug("[SnsFeedController] writeFeed - 시작");
+        String imageUrl="";
 
         int ID = (Integer)request.getAttribute("userId");
         feedDto.setUserId(ID);
@@ -134,17 +135,17 @@ public class SnsFeedController {
 
         // 디렉토리가 존재하지 않으면 생성
         if (!uploadDirectory.exists()) {
-            log.debug("[SnsItemController] 디렉토리 {} 가 존재하지 않음", uploadDirectory.getAbsolutePath());
+            log.debug("[SnsFeedController] 디렉토리 {} 가 존재하지 않음", uploadDirectory.getAbsolutePath());
             boolean isCreated = uploadDirectory.mkdirs();
             if (!isCreated) {
-                log.debug("[SnsItemController] 디렉토리 {} 생성 실패", uploadDirectory.getAbsolutePath());
+                log.debug("[SnsFeedController] 디렉토리 {} 생성 실패", uploadDirectory.getAbsolutePath());
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("디렉토리 생성 실패");
             }
             else {
-                log.debug("[SnsItemController] 디렉토리 {} 생성 완료", uploadDirectory.getAbsolutePath());
+                log.debug("[SnsFeedController] 디렉토리 {} 생성 완료", uploadDirectory.getAbsolutePath());
             }
         }
-        log.debug("[SnsItemController] 디렉토리 {} 가 존재함", uploadDirectory.getAbsolutePath());
+        log.debug("[SnsFeedController] 디렉토리 {} 가 존재함", uploadDirectory.getAbsolutePath());
 
 
         if (!image.isEmpty()) {
@@ -166,7 +167,7 @@ public class SnsFeedController {
                 image.transferTo(new File(uploadDir + newFileName));
 
                 // 이미지 정보 DB에 저장
-                String imageUrl = uploadDir + newFileName;
+                imageUrl = uploadDir + newFileName;
                 log.debug("[SnsFeedController] 이미지 저장 경로: {}", imageUrl);
 
                 log.debug("[SnsFeedController] 이미지 업로드 성공: {}", newFileName);
@@ -179,7 +180,7 @@ public class SnsFeedController {
         }
 
         if (feedId > 0) {
-            int result = snsFeedService.updateImage(feedId);
+            int result = snsFeedService.updateImage(feedId, imageUrl);
             snsFeedService.setUpload(feedDto.getRoutineId());
 
             if(result != 0) {

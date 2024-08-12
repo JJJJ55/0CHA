@@ -80,8 +80,8 @@ public class SnsFeedServiceImpl implements SnsFeedService {
     }
 
     @Override
-    public int updateImage(int feedId) {
-        return snsFeedMapper.updateImage(feedId);
+    public int updateImage(int feedId, String image) {
+        return snsFeedMapper.updateImage(feedId, image);
     }
 
 

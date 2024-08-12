@@ -208,7 +208,7 @@ public class SnsItemServiceImpl implements SnsItemService {
         if (imageN <= 0) {
             throw new IllegalArgumentException("At least one image is required.");
         }
-        if (imageN >= 5) {
+        if (imageN > 5) {
             throw new IllegalArgumentException("A maximum of 5 images are allowed.");
         }
     }

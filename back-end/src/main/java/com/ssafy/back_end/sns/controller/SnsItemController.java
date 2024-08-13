@@ -172,18 +172,27 @@ public class SnsItemController {
     @PutMapping ("/{itemId}")
     public ResponseEntity<?> updateItem(HttpServletRequest request,
                                         @PathVariable int itemId,
-                                        @RequestPart("item") ItemDto item,
+                                        @RequestPart("item") String item,
                                         @RequestPart(value = "removeImagePaths", required = false) List<String> removeImagePaths,
                                         @RequestPart(value = "addImages", required = false) List<MultipartFile> addImages) {
         // 사용자 ID를 request에서 추출
         int ID = (Integer)request.getAttribute("userId");
         log.debug("SnsItemContoller UserID: {}", ID);
 
+        // JSON 문자열을 객체로 변환
+        ObjectMapper objectMapper = new ObjectMapper();
+        ItemDto itemDto;
+        try {
+            itemDto = objectMapper.readValue(item, ItemDto.class);
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().body("JSON parsing error");
+        }
+
         // itemId 로그 출력
         log.debug("SnsItemController Item ID: {}", itemId);
 
         // ItemDto 객체 로그 출력
-        log.debug("SnsItemController ItemDto: {}", item);
+        log.debug("SnsItemController ItemDto: {}", itemDto);
 
         // 제거할 이미지 경로 목록 로그 출력
         if (removeImagePaths != null && !removeImagePaths.isEmpty()) {
@@ -283,11 +292,11 @@ public class SnsItemController {
         }
 
         // 6. 게시글 내용 수정
-        item.setUserId(ID);
-        item.setId(itemId);
-        log.debug("[SnsItemController] Updated item details: {}", item);
+        itemDto.setUserId(ID);
+        itemDto.setId(itemId);
+        log.debug("[SnsItemController] Updated item details: {}", itemDto);
 
-        int id = snsItemService.updateItem(item);
+        int id = snsItemService.updateItem(itemDto);
 
         if (id > 0) {
             log.debug("[SnsItemController] Item update successful: {}", itemId);

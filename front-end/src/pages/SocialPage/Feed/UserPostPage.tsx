@@ -15,8 +15,6 @@ import { modalActions, selectModalFollower, selectModalFollowing, selectModalMar
 import FollowerModal from '../../../components/Modal/FollowerModal';
 import ItemModal from '../../../components/Modal/ItemModal';
 
-
-
 const s = {
   Container: styled.section`
     height: 100%;
@@ -58,7 +56,6 @@ const s = {
     margin: auto;
     display: inline-flex;
     flex-wrap: wrap;
-    
   `,
   Thumbnail: styled.div`
     width: 33%;
@@ -90,6 +87,16 @@ type userPageMarketData = {
   image: string;
 };
 
+// 복현우
+interface Item {
+  id: number;
+  images: string[];
+  title: string;
+  price: string;
+  isSold: boolean;
+  likeCount: number;
+  isLike: number;
+}
 
 const UserPostPage = (): JSX.Element => {
   const [isFitness, setIsFitness] = useState(true);
@@ -107,29 +114,29 @@ const UserPostPage = (): JSX.Element => {
     dispatch(modalActions.toggleFollower());
   };
 
-  const [userId, setUserId] = useState(0)
-  const [userNickname, setUserNickname] = useState('')
-  const [userProfileImage, setUserProfileImage] = useState('')
+  const [userId, setUserId] = useState(0);
+  const [userNickname, setUserNickname] = useState('');
+  const [userProfileImage, setUserProfileImage] = useState('');
 
-  const userStr = localStorage.getItem("user")
+  const userStr = localStorage.getItem('user');
 
   useEffect(() => {
     if (userStr) {
-      const userTmp = JSON.parse(userStr)
-      setUserId(userTmp.id)
-      setUserNickname(userTmp.nickname)
-      setUserProfileImage(userTmp.profileImage)
+      const userTmp = JSON.parse(userStr);
+      setUserId(userTmp.id);
+      setUserNickname(userTmp.nickname);
+      setUserProfileImage(userTmp.profileImage);
     }
-  }, [])
-  
+  }, []);
+
   const [userData, setUserData] = useState<userPageData>();
   const [feedData, setFeedData] = useState<userPageFeedData[]>([]);
   const [marketData, setMarketData] = useState<userPageMarketData[]>([]);
-  const params = useParams()
-  const feedUserId = params.id
+  const params = useParams();
+  const feedUserId = params.id;
 
-  const getUserPage = async() => {
-    if (feedUserId){
+  const getUserPage = async () => {
+    if (feedUserId) {
       await UserPage(
         parseInt(feedUserId),
         (resp) => {
@@ -137,25 +144,25 @@ const UserPostPage = (): JSX.Element => {
         },
         (error) => {
           console.log(error);
-        }
+        },
       );
     }
-  }
+  };
 
-  const getUserPageFeed = async() => {
+  const getUserPageFeed = async () => {
     if (feedUserId) {
       await UserPageFeed(
         parseInt(feedUserId),
         (resp) => {
           if (resp.data === '피드 0개입니다') {
-            setFeedData([])
+            setFeedData([]);
           } else {
             setFeedData(resp.data);
           }
         },
         (error) => {
           console.log(error);
-        }
+        },
       );
     }
   };
@@ -169,15 +176,15 @@ const UserPostPage = (): JSX.Element => {
             setMarketData([]);
           } else {
             setMarketData(resp.data);
-            console.log(resp.data, '마켓데이터예요')
+            console.log(resp.data, '마켓데이터예요');
           }
         },
         (error) => {
           console.log(error);
-        }
-      )
+        },
+      );
     }
-  }
+  };
 
   useEffect(() => {
     getUserPage();
@@ -191,10 +198,37 @@ const UserPostPage = (): JSX.Element => {
 
   const navigate = useNavigate();
 
-  const handleThumbnailClick = ((feedId: number) => {
-    navigate(`/sns/feed`, {state: {targetFeedId: feedId, targetUserId: feedUserId}});
-    console.log(feedId, 'selected feed id')
-  });  
+  const handleThumbnailClick = (feedId: number) => {
+    navigate(`/sns/feed`, { state: { targetFeedId: feedId, targetUserId: feedUserId } });
+    console.log(feedId, 'selected feed id');
+  };
+
+  // 복현우
+  const [selectedItem, setSelectedItem] = useState<number | null>(null); // 선택된 아이템 상태 관리
+  const [showItemModal, setShowItemModal] = useState(false);
+
+  const toggleMarket = (itemId?: number): void => {
+    console.log(itemId);
+    if (itemId !== undefined) {
+      setSelectedItem(itemId); // 선택된 아이템 설정
+      setShowItemModal(true);
+    } else {
+      // itemId가 선택이 안되는 경우
+      setShowItemModal(false);
+    }
+    dispatch(modalActions.toggleMarket());
+  };
+
+  const handleItemDeleted = () => {
+    toggleMarket(); // 모달 닫기
+    setShowItemModal(false);
+  };
+
+  // 아이템 리스트의 특정 아이템 업데이트 함수
+  const handleItemUpdated = (updatedItem: Item) => {
+    console.log(`업데이트!`);
+    console.log(updatedItem);
+  };
 
   return (
     <>
@@ -221,7 +255,7 @@ const UserPostPage = (): JSX.Element => {
             <s.ActiveText>거래</s.ActiveText>
           )}
 
-{/* {props.image === null ? (
+          {/* {props.image === null ? (
             <></>
           ) : (
           <Image
@@ -240,7 +274,14 @@ const UserPostPage = (): JSX.Element => {
                     {thumbnail.image === null ? (
                       <div></div>
                     ) : (
-                      <Image width="100%" height="100%" src={`https://i11b310.p.ssafy.io/images/${thumbnail.image.split('/home/ubuntu/images/')[1]}`} type="rect" cursor="pointer" fit="cover" />
+                      <Image
+                        width="100%"
+                        height="100%"
+                        src={`https://i11b310.p.ssafy.io/images/${thumbnail.image.split('/home/ubuntu/images/')[1]}`}
+                        type="rect"
+                        cursor="pointer"
+                        fit="cover"
+                      />
                     )}
                   </s.Thumbnail>
                 ))}
@@ -248,21 +289,38 @@ const UserPostPage = (): JSX.Element => {
             ) : (
               <>
                 {marketData.map((thumbnail) => (
-                  <s.Thumbnail key={thumbnail.id}>
+                  <s.Thumbnail
+                    key={thumbnail.id}
+                    onClick={() => toggleMarket(thumbnail.id)} // 클릭 시 해당 아이템을 모달에 설정
+                  >
                     {thumbnail.image === null ? (
-                    <div></div>
+                      <div></div>
                     ) : (
-                      <Image width="100%" height="100%" src={`https://i11b310.p.ssafy.io/images/${thumbnail.image.split('/home/ubuntu/images/')[1]}`} type="rect" cursor="pointer" fit="cover" />
+                      <Image
+                        width="100%"
+                        height="100%"
+                        src={`https://i11b310.p.ssafy.io/images/${thumbnail.image.split('/home/ubuntu/images/')[1]}`}
+                        type="rect"
+                        cursor="pointer"
+                        fit="cover"
+                      />
                     )}
                   </s.Thumbnail>
                 ))}
               </>
-            )}      
+            )}
           </s.ThumbnailArea>
         </s.testArea>
-      <FollowingModal open={isFollowingModal} onModal={toggleModalFollowing} userId={userData?.id}/>
-      <FollowerModal open={isFollowerModal} onModal={toggleModalFollower} userId={userData?.id}/>
-      {/* 아이템 모달 자리 for 복현우 ^^ */}
+        <FollowingModal open={isFollowingModal} onModal={toggleModalFollowing} userId={userData?.id} />
+        <FollowerModal open={isFollowerModal} onModal={toggleModalFollower} userId={userData?.id} />
+        {/* 아이템 모달 자리 for 복현우 ^^ */}
+        <ItemModal
+          open={showItemModal}
+          onModal={toggleMarket}
+          itemId={selectedItem}
+          onDelete={handleItemDeleted} // 삭제 후 호출될 콜백 함수 전달
+          onItemUpdate={handleItemUpdated} // 아이템 업데이트 후 호출될 콜백 함수 전달
+        />
       </s.Container>
       <BottomNav />
     </>

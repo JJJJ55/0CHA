@@ -40,6 +40,10 @@ const s = {
     font-weight: 500;
     margin-bottom: 7px;
   `,
+  SellerInfoContainer: styled.div`
+    display: flex;
+    align-items: center;
+  `,
   CreatedAt: styled.div`
     color: ${(props) => props.theme.textColor2};
     font-size: 12px;
@@ -238,17 +242,17 @@ const ItemModal = (props: MarketModalProps): JSX.Element => {
     onModal();
     if (item?.userId === userId) {
       // 사용자가 판매자인 경우
-      navigate('../chat');
+      navigate('/sns/chat');
     } else {
       // 사용자가 구매자인 경우
-      navigate(`../chat/${item?.userId}`);
+      navigate(`/sns/chat/${item?.userId}`);
     }
   };
   // 게시글 수정
   const handleUpdate = () => {
     console.log('수정 페이지로 이동');
     if (item) {
-      navigate(`../market/update/${item.id}`, { state: { item } });
+      navigate(`/sns/market/update/${item.id}`, { state: { item } });
     }
   };
   // 게시글 삭제
@@ -259,7 +263,7 @@ const ItemModal = (props: MarketModalProps): JSX.Element => {
           itemId,
           (resp) => {
             onDelete();
-            navigate('../market');
+            navigate('/sns/market');
           },
           (err) => {
             console.log(err);
@@ -291,6 +295,14 @@ const ItemModal = (props: MarketModalProps): JSX.Element => {
     }
   };
 
+  // 프로필 페이지로 이동하는 함수
+  const handleMoveProfilePage = (): void => {
+    onModal();
+    if (item?.userId) {
+      navigate(`/sns/profile/${item?.userId}`);
+    }
+  };
+
   return (
     <ReactModal
       isOpen={open}
@@ -310,22 +322,21 @@ const ItemModal = (props: MarketModalProps): JSX.Element => {
           <Image width="100%" height="auto" src={testImg} type="rect" />
         )}
         {/* 1. images배열의 image들이 들어가야 할 부분 */}
-        {/* <Image width="100%" height="auto" src={item?.images[0]} type="rect" /> */}
-        {/* <Image width="100%" height="auto" src={testImg} type="rect" /> */}
         <s.SellerInfo>
-          {/* <Image width="34px" height="34px" src={item?.profileImage || ''} /> */}
-          {item?.profileImage && (
-            <Image
-              width="34px"
-              height="34px"
-              src={'https://i11b310.p.ssafy.io/images/' + item?.profileImage.split('/home/ubuntu/images/')[1]}
-            />
-          )}
-          {!item?.profileImage && <Image width="34px" height="34px" src={testImg} />}
-          <s.SellerNameArea>
-            <s.SellerName>{item?.nickname}</s.SellerName>
-            <s.CreatedAt>{relativeTime}</s.CreatedAt>
-          </s.SellerNameArea>
+          <s.SellerInfoContainer onClick={handleMoveProfilePage}>
+            {item?.profileImage && (
+              <Image
+                width="34px"
+                height="34px"
+                src={'https://i11b310.p.ssafy.io/images/' + item?.profileImage.split('/home/ubuntu/images/')[1]}
+              />
+            )}
+            {!item?.profileImage && <Image width="34px" height="34px" src={testImg} />}
+            <s.SellerNameArea>
+              <s.SellerName>{item?.nickname}</s.SellerName>
+              <s.CreatedAt>{relativeTime}</s.CreatedAt>
+            </s.SellerNameArea>
+          </s.SellerInfoContainer>
           <s.ButtonArea>
             <s.LikeArea onClick={handleLike}>
               <IconSvg width="23" height="23" Ico={like ? likeOn : likeOff} />

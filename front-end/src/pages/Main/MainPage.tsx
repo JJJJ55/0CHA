@@ -18,6 +18,7 @@ import { mainPageRoutine } from '../../util/types/axios-fitness';
 import { useAppSelector } from '../../lib/hook/useReduxHook';
 import { selectIsPlay } from '../../store/page';
 import Text from '../../components/Common/Text';
+import { requestPermission } from '../../firebaseCloudMessaging';
 
 const s = {
   Header: styled.header`
@@ -312,6 +313,7 @@ const MainPage = (): JSX.Element => {
         console.log(error);
       },
     );
+    requestPermission();
   }, []);
   const basicUrl = 'https://i11b310.p.ssafy.io/images/';
 

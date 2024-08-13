@@ -8,7 +8,7 @@ import IconSvg from '../../../components/Common/IconSvg';
 import Input from '../../../components/Common/Input';
 import Chat from '../../../components/SNS/Chat';
 import { ReactComponent as back } from '../../../asset/img/svg/back.svg';
-import { UserPage } from '../../../lib/api/sns-api';
+import { UserPage, WsOn } from '../../../lib/api/sns-api';
 import testImg from '../../../asset/img/testImg.png';
 
 import SockJS from 'sockjs-client';
@@ -121,12 +121,23 @@ const ChatPage = (): JSX.Element => {
     fetchUserInfo();
   }, [userId, location.state]);
 
-  // JWT 토큰 가져오기
-  const accessToken = localStorage.getItem('accessToken');
-  const refreshToken = localStorage.getItem('refreshToken');
-
+  const getWs = async () => {
+    await WsOn(
+      (resp) => {
+        console.log(resp.data);
+      },
+      (err) => {
+        console.log(err);
+      },
+    );
+  };
   // WebSocket 연결 설정
   useEffect(() => {
+    getWs();
+    // JWT 토큰 가져오기
+    const accessToken = localStorage.getItem('accessToken');
+    const refreshToken = localStorage.getItem('refreshToken');
+
     if (!accessToken || !refreshToken) {
       console.error('No access or refresh token found in localStorage');
       return;
@@ -137,7 +148,7 @@ const ChatPage = (): JSX.Element => {
     const client = new Client({
       webSocketFactory: () => socket, // SockJS를 WebSocket으로 사용
       connectHeaders: {
-        Authorization: `${accessToken}`, // JWT 토큰을 Authorization 헤더에 포함
+        Authorization: `Bearer ${accessToken}`, // JWT 토큰을 Authorization 헤더에 포함
         RefreshToken: refreshToken, // RefreshToken을 헤더에 포함
       },
       debug: (str: string) => {
@@ -168,7 +179,7 @@ const ChatPage = (): JSX.Element => {
         console.log('Disconnected');
       }
     };
-  }, [userId, accessToken, refreshToken]);
+  }, [userId]);
 
   // 메시지를 화면에 표시하는 함수
   const showMessage = (message: { sender: string; content: string }) => {

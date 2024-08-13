@@ -21,6 +21,7 @@ interface FitnessState {
 const initialState: FitnessState = {
   type: 'all',
   plan: {
+    id: 0,
     title: '',
     sumVolume: 0,
     sumTime: 0,
@@ -43,6 +44,9 @@ export const fitnessSlice = createSlice({
     },
     setPlanData(state, action: PayloadAction<axiosCreateRoutine>) {
       state.plan = action.payload;
+    },
+    setPlanId(state, action: PayloadAction<number>) {
+      state.plan.id = action.payload;
     },
     updateTitle(state, action: PayloadAction<string>) {
       state.plan.title = action.payload;
@@ -79,6 +83,7 @@ export const fitnessSlice = createSlice({
       state.volume = 0;
       state.isSave = false;
       state.rest = false;
+      state.plan = initialState.plan;
     },
     toggleSave(state, action: PayloadAction<boolean>) {
       state.isSave = action.payload;

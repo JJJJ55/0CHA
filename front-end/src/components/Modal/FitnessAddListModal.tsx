@@ -1,141 +1,3 @@
-// import React, { useEffect, useState } from 'react';
-// import styled from 'styled-components';
-// import Input from '../../components/Common/Input';
-// import FitnessListTopNav from '../../components/Fitness/Etc/FitnessListTopNav';
-// import FitnessList from '../../components/Fitness/List/FitnessList';
-// import BottomNav from '../../components/Common/BottomNav';
-// import { useNavigate } from 'react-router';
-// import { getFitnessJjimList, getFitnessList } from '../../lib/api/fitness-api';
-// import { CreateRoutine, FitnessType } from '../../util/types/axios-fitness';
-// import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
-// import { fitnessActions, selectAddList } from '../../store/fitness';
-// import ReactModal from 'react-modal';
-// import FitnessModalList from '../Fitness/List/FitnessModalList';
-
-// const s = {
-//   Container: styled.section`
-//     height: 100%;
-//     background-color: ${(props) => props.theme.bgColor};
-//     overflow: auto;
-//   `,
-//   HeaderArea: styled.div`
-//     width: 100%;
-//     max-width: 800px;
-//     position: fixed;
-//     background-color: ${(props) => props.theme.bgColor};
-//   `,
-//   MainArea: styled.div`
-//     height: 100%;
-//     padding: 120px 0 140px;
-//     overflow: auto;
-//   `,
-//   InputArea: styled.div`
-//     width: 80%;
-//     margin: 10px auto;
-//   `,
-//   FitnessArea: styled.div`
-//     width: 100%;
-//     display: flex;
-//     flex-direction: column;
-//     flex-grow: 1;
-//   `,
-//   Btn: styled.button`
-//     width: 169px;
-//     height: 40px;
-//     font-size: 14px;
-//     font-weight: 500;
-//     margin: 10px auto;
-//     display: block;
-//     position: fixed;
-//     background-color: ${(props) => props.theme.mainColor};
-//     border-radius: 10px;
-//     bottom: 70px;
-//     left: 0;
-//     right: 0;
-//   `,
-// };
-
-// interface FitnessPlanModalProps {
-//   open: boolean;
-//   onModal: Function;
-// }
-
-// const FitnessAddListModal = (props: FitnessPlanModalProps): JSX.Element => {
-//   const navigate = useNavigate();
-//   const dispatch = useAppDispatch();
-//   const addList = useAppSelector(selectAddList);
-//   const [jjim, setjjim] = useState<FitnessType[]>([]);
-//   const [fitness, setFitness] = useState<FitnessType[]>([]);
-//   useEffect(() => {
-//     getFitnessList(
-//       (resp) => {
-//         setFitness(resp.data);
-//       },
-//       (error) => {
-//         setFitness([]);
-//         console.log(error);
-//       },
-//     );
-//     setAdd({ ...addList });
-//   }, []);
-//   // 상태가 업데이트된 후에 실행되는 useEffect
-//   useEffect(() => {
-//     console.log('Fitness 데이터:', fitness);
-//   }, [fitness]);
-
-//   const [add, setAdd] = useState<CreateRoutine[]>([]);
-//   const handleClickAdd = (exerciseId: number, exerciseName: string) => {
-//     setAdd((prevAdd) => {
-//       const existingItem = prevAdd.find((item) => item.exerciseId === exerciseId);
-//       if (existingItem) {
-//         // Remove item if it already exists
-//         const list = prevAdd.filter((item) => item.exerciseId !== exerciseId);
-//         dispatch(fitnessActions.setAddList(list));
-//         return list;
-//       } else {
-//         // Add new item
-//         const list = [...prevAdd, { exerciseId, exerciseName }];
-//         dispatch(fitnessActions.setAddList(list));
-//         return list;
-//       }
-//     });
-//   };
-//   const handleClickMove = (): void => {
-//     // if (add.length !== 0) {
-//     //   navigate('../testplan', { state: { add } });
-//     // } else {
-//     //   alert('루틴에 운동을 추가해주세요.');
-//     // }
-//     props.onModal();
-//   };
-
-//   return (
-//     <ReactModal
-//       isOpen={props.open}
-//       ariaHideApp={false}
-//       onRequestClose={() => props.onModal()}
-//       className="FitnessCalendarModal"
-//       overlayClassName="Overlay"
-//     >
-//       <s.Container>
-//         <s.HeaderArea>
-//           <s.InputArea>
-//             <Input width="100%" height="40px" placeholder="검색" type="text" name="" value={''} onChange={() => {}} />
-//           </s.InputArea>
-//           {/* <FitnessListTopNav /> */}
-//         </s.HeaderArea>
-//         <s.MainArea>
-//           <s.FitnessArea>
-//             <FitnessModalList text="전체" data={fitness} add={add} onAdd={handleClickAdd} />
-//           </s.FitnessArea>
-//         </s.MainArea>
-//         <s.Btn onClick={handleClickMove}>루틴에 추가하기</s.Btn>
-//       </s.Container>
-//     </ReactModal>
-//   );
-// };
-
-// export default FitnessAddListModal;
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Input from '../../components/Common/Input';
@@ -160,8 +22,7 @@ const s = {
   `,
   MainArea: styled.div`
     height: 100%;
-    padding: 120px 0 140px;
-    overflow: auto;
+    padding: 120px 0 10px;
   `,
   InputArea: styled.div`
     width: 80%;
@@ -169,9 +30,18 @@ const s = {
   `,
   FitnessArea: styled.div`
     width: 100%;
+    height: 90%;
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+    overflow: auto;
+  `,
+  btnArea: styled.div`
+    width: 90%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin: 0 auto;
   `,
   Btn: styled.button`
     width: 169px;
@@ -180,12 +50,8 @@ const s = {
     font-weight: 500;
     margin: 10px auto;
     display: block;
-    position: fixed;
     background-color: ${(props) => props.theme.mainColor};
     border-radius: 10px;
-    bottom: 70px;
-    left: 0;
-    right: 0;
   `,
 };
 
@@ -201,19 +67,26 @@ const FitnessAddListModal = (props: FitnessPlanModalProps): JSX.Element => {
   const [filteredFitness, setFilteredFitness] = useState<FitnessType[]>([]);
   const [search, setSearch] = useState<string>('');
 
+  // Store the initial state when the modal opens
+  const [initialAddList, setInitialAddList] = useState<CreateRoutine[]>([]);
+
   useEffect(() => {
+    if (props.open) {
+      setInitialAddList(addList); // Save the initial state when the modal opens
+    }
+
     getFitnessList(
       (resp) => {
         setFitness(resp.data);
-        setFilteredFitness(resp.data); // 초기에는 모든 데이터를 보여줌
+        setFilteredFitness(resp.data); // Show all data initially
       },
       (error) => {
         setFitness([]);
-        setFilteredFitness([]); // 초기에는 모든 데이터를 보여줌
+        setFilteredFitness([]);
         console.error(error);
       },
     );
-  }, []);
+  }, [props.open, addList]);
 
   const [add, setAdd] = useState<CreateRoutine[]>(addList || []);
 
@@ -222,29 +95,28 @@ const FitnessAddListModal = (props: FitnessPlanModalProps): JSX.Element => {
       const existingItem = prevAdd.find((item) => item.exerciseId === exerciseId);
       if (existingItem) {
         // Remove item if it already exists
-        const list = prevAdd.filter((item) => item.exerciseId !== exerciseId);
-        dispatch(fitnessActions.setAddList(list));
-        return list;
+        return prevAdd.filter((item) => item.exerciseId !== exerciseId);
       } else {
         // Add new item
-        const list = [...prevAdd, { exerciseId, exerciseName }];
-        dispatch(fitnessActions.setAddList(list));
-        return list;
+        return [...prevAdd, { exerciseId, exerciseName }];
       }
     });
   };
 
   const handleClickMove = (): void => {
+    dispatch(fitnessActions.setAddList(add)); // Commit changes
+    props.onModal();
+  };
+
+  const handleCancelMove = (): void => {
+    setAdd(initialAddList); // Revert changes
     props.onModal();
   };
 
   useEffect(() => {
-    // 검색어가 변경될 때마다 데이터를 필터링
+    // Filter data based on search input
     const searchLower = search.toLowerCase();
-    // setFitness(fitness.filter((item) => item.name.toLowerCase().includes(searchLower)));
-    const filterBySearch = (items: FitnessType[]) =>
-      items.filter((item) => item.name.toLowerCase().includes(searchLower));
-    setFilteredFitness(filterBySearch(fitness));
+    setFilteredFitness(fitness.filter((item) => item.name.toLowerCase().includes(searchLower)));
   }, [search, fitness]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -277,8 +149,11 @@ const FitnessAddListModal = (props: FitnessPlanModalProps): JSX.Element => {
           <s.FitnessArea>
             <FitnessModalList text="전체" data={filteredFitness} add={add} onAdd={handleClickAdd} />
           </s.FitnessArea>
+          <s.btnArea>
+            <s.Btn onClick={handleCancelMove}>돌아가기</s.Btn>
+            <s.Btn onClick={handleClickMove}>루틴에 추가하기</s.Btn>
+          </s.btnArea>
         </s.MainArea>
-        <s.Btn onClick={handleClickMove}>루틴에 추가하기</s.Btn>
       </s.Container>
     </ReactModal>
   );

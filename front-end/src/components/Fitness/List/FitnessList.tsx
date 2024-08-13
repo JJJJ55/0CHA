@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import Image from '../../Common/Image';
 import IconSvg from '../../Common/IconSvg';
+import basic from '../../../asset/img/testImg.png';
 import { ReactComponent as jjimOn } from '../../../asset/img/svg/jjimOn.svg';
 import { ReactComponent as jjimOff } from '../../../asset/img/svg/jjimOff.svg';
 import { ReactComponent as addOff } from '../../../asset/img/svg/pickOff.svg';
@@ -102,6 +103,21 @@ const FitnessList = (props: FitnessListProps): JSX.Element => {
     );
   }
 
+  const basicUrl = 'https://i11b310.p.ssafy.io/images/';
+
+  // 이미지 경로를 파싱하여 basicUrl과 결합하는 함수
+  const getParsedImageUrl = (imagePath: string) => {
+    if (imagePath.length >= 200) {
+      return imagePath;
+    }
+    if (imagePath) {
+      const relativePath = imagePath.split('/home/ubuntu/images/')[1];
+      return basicUrl + relativePath;
+    } else {
+      return basic;
+    }
+  };
+
   return (
     <s.Container>
       <s.title>{props.text}</s.title>
@@ -109,7 +125,7 @@ const FitnessList = (props: FitnessListProps): JSX.Element => {
         <div key={index}>
           <s.ListArea>
             <s.ContentArea onClick={() => handleClickMove(data.id)}>
-              <Image width="60" height="60" type="" src={data.image} />
+              <Image width="60" height="60" type="" src={getParsedImageUrl(data.image)} />
               <s.FitnessTitle>{data.name}</s.FitnessTitle>
             </s.ContentArea>
             <s.IconArea>

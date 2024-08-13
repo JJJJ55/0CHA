@@ -30,10 +30,10 @@ const FitnessPlayPage = (): JSX.Element => {
   const plan = useAppSelector(selectPlan);
   let planTest = { ...plan };
   const locationState = useLocation().state;
-  const historyData = planTest || (locationState?.data as RoutineListDetail);
+  // const historyData = (locationState?.data as RoutineListDetail) || planTest;
   const time = useAppSelector(selectTime);
   const volume = useAppSelector(selectVolume);
-  console.log(historyData);
+  // console.log(historyData);
 
   // Fallback to user-provided data if historyData is not available
   // const data: CreateRoutine[] = locationState?.add || [];
@@ -41,19 +41,9 @@ const FitnessPlayPage = (): JSX.Element => {
   // Initialize fitness based on historyData or map data to desired structure
   const [fitness, setFitness] = useState<RoutineDetails[]>(
     // historyData?.details || data.map((item) => ({ ...item, sequence: 0, sets: [] })),
-    historyData?.details,
+    // historyData?.details,
+    planTest.details,
   );
-
-  useEffect(() => {
-    if (isSave) {
-      setFitness(planTest.details);
-      save();
-      // setFitness(plan.details.map((item) => ({ ...item, sequence: 0, sets: [] })));
-    }
-    // return () => {
-    //   save();
-    // };
-  }, []);
 
   useEffect(() => {
     save();
@@ -74,15 +64,14 @@ const FitnessPlayPage = (): JSX.Element => {
       return exercise;
     });
     setFitness(updatedFitness);
-    // save();
     console.log('Updated fitness:', updatedFitness); // 디버깅 로그
   };
 
   const save = () => {
     const param: axiosCreateRoutine = {
-      id: historyData.id || planTest.id,
-      title: historyData.title || planTest.title,
-      dueDate: historyData.dueDate || planTest.dueDate,
+      id: planTest.id,
+      title: planTest.title,
+      dueDate: planTest.dueDate,
       sumTime: time,
       sumVolume: volume,
       details: fitness,
@@ -96,23 +85,23 @@ const FitnessPlayPage = (): JSX.Element => {
 
   const handleFinish = (t: number) => {
     const param: axiosCreateRoutine = {
-      title: historyData.title || planTest.title,
-      dueDate: historyData.dueDate || planTest.dueDate,
+      title: planTest.title,
+      dueDate: planTest.dueDate,
       sumTime: t,
       sumVolume: volume,
       details: fitness,
     };
     console.log(param);
     putUpdateRoutine(
-      historyData.id! || planTest.id!,
+      planTest.id!,
       param,
       (resp) => {
         putFinishRoutine(
-          historyData.id! || planTest.id!,
+          planTest.id!,
           (resp) => {
             dispatch(pageActions.toogleIsFinish(true));
             navigate('/play', {
-              state: { data: { date: historyData.dueDate || planTest.dueDate, volume: volume, time: t } },
+              state: { data: { date: planTest.dueDate || planTest.dueDate, volume: volume, time: t } },
             });
           },
           (error) => {

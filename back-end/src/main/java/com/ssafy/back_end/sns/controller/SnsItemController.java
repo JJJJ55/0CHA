@@ -172,13 +172,18 @@ public class SnsItemController {
     @PutMapping ("/{itemId}")
     public ResponseEntity<?> updateItem(HttpServletRequest request,
                                         @PathVariable int itemId,
-                                        @RequestPart("item") String item){
+                                        @RequestPart("item") String item,
+                                        @RequestPart(value = "addImages", required = false) List<MultipartFile> addImages){
 //                                        @RequestPart(value = "removeImagePaths", required = false) List<String> removeImagePaths,
 //                                        @RequestPart(value = "addImages", required = false) List<MultipartFile> addImages) {
         // 사용자 ID를 request에서 추출
         int ID = (Integer)request.getAttribute("userId");
 
         log.debug("SnsItemContoller UserID: {}", ID);
+
+        for(MultipartFile file : addImages){
+            log.debug("Add image : {}", file.getOriginalFilename());
+        }
 
         // JSON 문자열을 객체로 변환
         ObjectMapper objectMapper = new ObjectMapper();

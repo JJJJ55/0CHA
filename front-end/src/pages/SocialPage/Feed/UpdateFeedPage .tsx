@@ -174,15 +174,17 @@ const UpdateFeedPage = (): JSX.Element => {
   };
 
   const feedOnSubmit = async (event: React.FormEvent<HTMLButtonElement>) => {
-    if (changeImg !== undefined && routine !== undefined && targetFeedId !== undefined) {
+    if (routine !== undefined && targetFeedId !== undefined) {
+    // if (changeImg !== undefined && routine !== undefined && targetFeedId !== undefined) {
       const formData = new FormData();
       const feedContent={
         content: contentValue,
         routineId: routine.id
       };
       formData.append('feed', new Blob([JSON.stringify(feedContent)], {type: 'application/json'}));
-      formData.append('image', changeImg)
-
+      if (changeImg !== undefined) {
+        formData.append('image', changeImg)
+      }
       await SnsFeedModify(
         targetFeedId,
         formData,

@@ -46,6 +46,7 @@ import { selectIsEmail, selectIsFinish, selectIsPlay, selectIsPw, selectIsScan, 
 import TestPlanSetPage from './pages/Fitness/TestPlanSetPage';
 import UpdateItemPage from './pages/SocialPage/Market/UpdateItemPage';
 import UpdateFeedPage from './pages/SocialPage/Feed/UpdateFeedPage ';
+import UserFeedPage from './pages/SocialPage/Feed/UserFeedPage';
 
 const s = {
   Background: styled.section`

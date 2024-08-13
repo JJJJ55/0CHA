@@ -18,7 +18,7 @@ const s = {
     align-items: center;
     font-size: 14px;
     font-weight: 500;
-    border-bottom: 3px solid ${(props)=>props.color || "#000"};
+    border-bottom: 3px solid ${(props) => props.color || '#000'};
     &:hover {
       color: ${(props) => props.theme.mainColor};
       border-bottom: 3px solid ${(props) => props.theme.mainColor};
@@ -30,7 +30,7 @@ const FitnessListTopNav = (): JSX.Element => {
   const type = useAppSelector(selectFitnessType);
   const dispatch = useAppDispatch();
   const handleClickIcon = (mode: string) => {
-    dispatch(fitnessActions.changeFitnessType(mode))
+    dispatch(fitnessActions.changeFitnessType(mode));
   };
 
   const getColor = (mode: string) => {
@@ -38,13 +38,27 @@ const FitnessListTopNav = (): JSX.Element => {
   };
   return (
     <s.Container>
-      <s.SelectArea onClick={()=>handleClickIcon("all")} color={getColor("all")}>전체</s.SelectArea>
-      <s.SelectArea onClick={()=>handleClickIcon("chest")} color={getColor("chest")}>가슴</s.SelectArea>
-      <s.SelectArea onClick={()=>handleClickIcon("back")} color={getColor("back")}>등</s.SelectArea>
-      <s.SelectArea onClick={()=>handleClickIcon("leg")} color={getColor("leg")}>하체</s.SelectArea>
-      <s.SelectArea onClick={()=>handleClickIcon("shoulder")} color={getColor("shoulder")}>어깨</s.SelectArea>
-      <s.SelectArea onClick={()=>handleClickIcon("arm")} color={getColor("arm")}>팔</s.SelectArea>
-      <s.SelectArea onClick={()=>handleClickIcon("etc")} color={getColor("etc")}>기타</s.SelectArea>
+      <s.SelectArea onClick={() => handleClickIcon('all')} color={getColor('all')}>
+        전체
+      </s.SelectArea>
+      <s.SelectArea onClick={() => handleClickIcon('chest')} color={getColor('chest')}>
+        가슴
+      </s.SelectArea>
+      <s.SelectArea onClick={() => handleClickIcon('back')} color={getColor('back')}>
+        등
+      </s.SelectArea>
+      <s.SelectArea onClick={() => handleClickIcon('leg')} color={getColor('leg')}>
+        하체
+      </s.SelectArea>
+      <s.SelectArea onClick={() => handleClickIcon('shoulder')} color={getColor('shoulder')}>
+        어깨
+      </s.SelectArea>
+      <s.SelectArea onClick={() => handleClickIcon('arm')} color={getColor('arm')}>
+        팔
+      </s.SelectArea>
+      <s.SelectArea onClick={() => handleClickIcon('etc')} color={getColor('etc')}>
+        기타
+      </s.SelectArea>
     </s.Container>
   );
 };

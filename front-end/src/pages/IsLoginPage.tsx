@@ -11,8 +11,6 @@ import {
   selectIsScan,
   selectIsSign,
 } from '../store/page';
-// import { useRecoilState, useRecoilValue } from 'recoil';
-// import { isLogin, isAdmin } from '../../lib/recoil/isLoginAtom';
 
 export const PrivateRoute = () => {
   const location = useLocation();
@@ -53,6 +51,7 @@ export const PublicRoute = () => {
   if (isPw && location.pathname !== '/find/password') {
     dispatch(pageActions.toogleIsPw(false));
   }
+  sessionStorage.removeItem('persist:redux-state');
   const checkLogin = !!localStorage.getItem('accessToken');
   // const checkLogin = false;
   if (checkLogin) {

@@ -8,8 +8,8 @@ import { ReactComponent as sns } from '../../asset/img/svg/sns.svg';
 import IconSvg from './IconSvg';
 import { useNavigate } from 'react-router';
 
-import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
-import { selectNav, navActions } from '../../store/nav';
+import { useAppSelector } from '../../lib/hook/useReduxHook';
+import { selectNav } from '../../store/nav';
 
 const s = {
   Container: styled.section`

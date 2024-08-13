@@ -7,7 +7,6 @@ import Input from '../Common/Input';
 import Button from '../Common/Button';
 import Text from '../Common/Text';
 import CalendarArea from '../Common/CalendarArea';
-import { useModalExitHook } from '../../lib/hook/useModalExitHook';
 import { getFitnessCalendar } from '../../lib/api/record-api';
 import { FitnessDay } from '../../util/types/axios-record';
 

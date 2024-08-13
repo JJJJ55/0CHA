@@ -4,9 +4,12 @@ import Input from '../../../components/Common/Input';
 import Button from '../../../components/Common/Button';
 import Text from '../../../components/Common/Text';
 import { ReactComponent as Logo } from '../../../asset/img/svg/0CHA.svg';
+import { ReactComponent as google } from '../../../asset/img/svg/google.svg';
+import { ReactComponent as kakao } from '../../../asset/img/svg/kakao.svg';
+import { ReactComponent as git } from '../../../asset/img/svg/git.svg';
 import { useNavigate } from 'react-router';
-import { AxiosError, AxiosResponse } from 'axios';
 import { login } from '../../../lib/api/user-api';
+import IconSvg from '../../../components/Common/IconSvg';
 
 const s = {
   Container: styled.section`
@@ -53,6 +56,13 @@ const s = {
     color: #666666;
     font-size: 14px;
   `,
+  snsArea: styled.div`
+    width: 250px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin: 20px auto;
+  `,
 };
 interface dataType {
   email: string;
@@ -92,14 +102,6 @@ const LoginPage = (): JSX.Element => {
     );
   };
 
-  // const testLogin = async () => {
-  //   const resp = await user.login(data);
-  //   localStorage.setItem('accessToken', resp.accessToken);
-  //   localStorage.setItem('refreshToken', resp.refreshToken);
-
-  //   navigate('/main');
-  // };
-
   return (
     <s.Container>
       <s.Title>
@@ -126,10 +128,10 @@ const LoginPage = (): JSX.Element => {
           value={data.password}
           onChange={handleChangeValue}
         />
-        <s.InputArea>
+        {/* <s.InputArea>
           <s.LoginCheckInput type="checkbox" style={{ accentColor: '#ccff33' }} id="autoLogin" />
           <s.LoginLabel htmlFor="autoLogin">자동 로그인</s.LoginLabel>
-        </s.InputArea>
+        </s.InputArea> */}
         <Button
           width="80%"
           height="40px"
@@ -169,6 +171,11 @@ const LoginPage = (): JSX.Element => {
           />
         </s.TextBtnArea>
         <s.SnsText>SNS 로그인</s.SnsText>
+        <s.snsArea>
+          <IconSvg width="40" height="40" Ico={kakao} cursor="pointer" />
+          <IconSvg width="40" height="40" Ico={google} cursor="pointer" />
+          <IconSvg width="40" height="40" Ico={git} cursor="pointer" />
+        </s.snsArea>
       </s.LoginArea>
     </s.Container>
   );

@@ -20,7 +20,7 @@ export interface FindPwAuth {
 
 export interface AuthCheck {
   email: string;
-  authCode: string;
+  authCode: number;
 }
 
 export interface ResetPw {

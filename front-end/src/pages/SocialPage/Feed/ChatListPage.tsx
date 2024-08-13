@@ -20,12 +20,23 @@ const s = {
   `,
 };
 
+interface Chat {
+  id: number;
+  profileImage: string | null;
+  nickname: string;
+  recentChat: string;
+  chatId: number;
+}
+
 const ChatListPage = (): JSX.Element => {
+  const [chatList, setChatList] = useState<Chat[]>([]);
+
   const getChatList = async () => {
     await SnsChatList(
       0,
       (resp) => {
         console.log(resp.data);
+        setChatList(resp.data);
       },
       (err) => {
         console.log(err);
@@ -40,10 +51,16 @@ const ChatListPage = (): JSX.Element => {
     <>
       <Header text="채팅 목록" />
       <s.Container>
-        <Conversation profileImage={test} username="stranger_00" recentChat="안녕하세여" />
-        <Conversation profileImage={test} username="stranger_00" recentChat="안녕하세여" />
-        <Conversation profileImage={test} username="stranger_00" recentChat="안녕하세여" />
-        <Conversation profileImage={test} username="stranger_00" recentChat="안녕하세여" />
+        {chatList.map((chat) => (
+          <Conversation
+            key={chat.id}
+            profileImage={chat.profileImage || test} // profileImage가 null이면 기본 이미지 사용
+            nickname={chat.nickname}
+            recentChat={chat.recentChat || '최근 메시지가 없습니다.'}
+            chatId={chat.chatId || 1}
+            userId={chat.id}
+          />
+        ))}
       </s.Container>
 
       <BottomNav />

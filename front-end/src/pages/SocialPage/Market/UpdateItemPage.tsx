@@ -201,21 +201,21 @@ const UpdateItemPage = (): JSX.Element => {
       title: title,
       price: parseInt(price),
       content: content,
+      removeImagePaths: removeImages,
     };
 
     // ItemDto 데이터를 JSON 형태로 변환하고 formData에 추가
     formData.append('item', new Blob([JSON.stringify(itemData)], { type: 'application/json' }));
 
-    removeImages.forEach((image) => {
-      formData.append('removeImagePaths', image);
-    });
+    // removeImages.forEach((image) => {
+    //   formData.append('removeImagePaths', image);
+    // });
 
     newImages.forEach((image) => {
       formData.append('addImages', image);
     });
-    console.log(itemData);
-    console.log(removeImages);
-    console.log(newImages);
+
+    console.log(formData.get('item'));
     // 보내는 부분
     if (id) {
       await SnsItemModify(

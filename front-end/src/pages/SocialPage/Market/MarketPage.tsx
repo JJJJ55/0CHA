@@ -37,16 +37,17 @@ const s = {
     align-items: center;
   `,
   PageButton: styled(Button)`
-    width: 40px;
-    height: 30px;
+    background: none;
+    border: none;
+    color: ${(props) => props.theme.textColor};
     font-size: 14px;
     font-weight: bold;
     margin: 0 5px;
-    border-radius: 5px;
+    cursor: pointer;
 
     &:hover {
-      background-color: ${(props) => props.theme.mainColor};
-      color: ${(props) => props.theme.btnTextColor};
+      color: ${(props) => props.theme.mainColor};
+      text-decoration: underline;
     }
   `,
   PageInputForm: styled.form`

@@ -26,9 +26,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Tag (name = "SNS피드")
+@Tag(name = "SNS피드")
 @RestController
-@RequestMapping (value = "/api/sns/feed")
+@RequestMapping(value = "/api/sns/feed")
 public class SnsFeedController {
     private static final Logger log = LoggerFactory.getLogger(SnsItemController.class);
     private final SnsFeedServiceImpl snsFeedService;
@@ -40,12 +40,12 @@ public class SnsFeedController {
         this.workoutRoutineService = workoutRoutineService;
     }
 
-    @Operation (summary = "전체or유저 피드 목록보기-완")
-    @GetMapping ("/list")
-    public ResponseEntity<?> getFeeds(HttpServletRequest request, @RequestParam (value = "user-id", defaultValue = "0") int userId,
-                                      @RequestParam (value = "offset", defaultValue = "0") int offset,
-                                      @RequestParam (value = "limit", defaultValue = "10") int limit) {
-        int ID = (Integer)request.getAttribute("userId");
+    @Operation(summary = "전체or유저 피드 목록보기-완")
+    @GetMapping("/list")
+    public ResponseEntity<?> getFeeds(HttpServletRequest request, @RequestParam(value = "user-id", defaultValue = "0") int userId,
+                                      @RequestParam(value = "offset", defaultValue = "0") int offset,
+                                      @RequestParam(value = "limit", defaultValue = "10") int limit) {
+        int ID = (Integer) request.getAttribute("userId");
         List<FeedDto> feeds = snsFeedService.getFeeds(ID, userId, offset, limit);
 
         if (feeds != null) {
@@ -57,10 +57,10 @@ public class SnsFeedController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("피드 조회 오류");
     }
 
-    @Operation (summary = "오늘 내가 완료한 루틴 조회")
-    @GetMapping ("/my-routine")
+    @Operation(summary = "오늘 내가 완료한 루틴 조회")
+    @GetMapping("/my-routine")
     public ResponseEntity<?> getMyRoutine(HttpServletRequest request) {
-        int ID = (Integer)request.getAttribute("userId");
+        int ID = (Integer) request.getAttribute("userId");
 
         SnsRoutineDto routine = snsFeedService.getMyRoutine(ID);   //유저아이디, 오늘날짜, 완료한 내 루틴의 아이디 조회 서비스
 
@@ -70,8 +70,8 @@ public class SnsFeedController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("오늘 운동 안함");
     }
 
-    @Operation (summary = "피드에서 루틴 자세히 보기")
-    @GetMapping ("/{feedId}/routine")
+    @Operation(summary = "피드에서 루틴 자세히 보기")
+    @GetMapping("/{feedId}/routine")
     public ResponseEntity<?> getRoutine(@PathVariable int feedId) {
 
         SnsRoutineDto routine = snsFeedService.getRoutine(feedId);
@@ -82,10 +82,10 @@ public class SnsFeedController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("루틴 조회 실패");
     }
 
-    @Operation (summary = "피드에서 루틴 저장하기")
-    @PostMapping ("/{routineId}/routine")
+    @Operation(summary = "피드에서 루틴 저장하기")
+    @PostMapping("/{routineId}/routine")
     public ResponseEntity<?> saveRoutine(HttpServletRequest request, @PathVariable int routineId) {
-        int ID = (Integer)request.getAttribute("userId");
+        int ID = (Integer) request.getAttribute("userId");
 
         RoutineDto routine = workoutRoutineService.getRoutine(routineId);
 
@@ -104,21 +104,20 @@ public class SnsFeedController {
                 return ResponseEntity.ok("루틴 저장 성공");
             }
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("루틴 저장 실패");
-        }
-        else {
+        } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("루틴을 찾을 수 없습니다");
         }
     }
 
-    @Operation (summary = "피드 글쓰기-완")
-    @PostMapping ("/write")
+    @Operation(summary = "피드 글쓰기-완")
+    @PostMapping("/write")
     public ResponseEntity<?> writeFeed(HttpServletRequest request, @RequestPart("feed") FeedDto feedDto,
-                                       @RequestPart ("image") MultipartFile image) {
+                                       @RequestPart(value = "image", required = false) MultipartFile image) {
 
         log.debug("[SnsFeedController] writeFeed - 시작");
-        String imageUrl="";
+        String imageUrl = "";
 
-        int ID = (Integer)request.getAttribute("userId");
+        int ID = (Integer) request.getAttribute("userId");
         feedDto.setUserId(ID);
 
         snsFeedService.validateImages(1);
@@ -140,8 +139,7 @@ public class SnsFeedController {
             if (!isCreated) {
                 log.debug("[SnsFeedController] 디렉토리 {} 생성 실패", uploadDirectory.getAbsolutePath());
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("디렉토리 생성 실패");
-            }
-            else {
+            } else {
                 log.debug("[SnsFeedController] 디렉토리 {} 생성 완료", uploadDirectory.getAbsolutePath());
             }
         }
@@ -172,8 +170,7 @@ public class SnsFeedController {
 
                 log.debug("[SnsFeedController] 이미지 업로드 성공: {}", newFileName);
 
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 log.error("[SnsFeedController] 이미지 업로드 오류", e);
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("이미지 업로드 오류");
             }
@@ -183,14 +180,13 @@ public class SnsFeedController {
             int result = snsFeedService.updateImage(feedId, imageUrl);
             snsFeedService.setUpload(feedDto.getRoutineId());
 
-            if(result != 0) {
+            if (result != 0) {
                 Map<String, Object> response = new HashMap<>();
                 response.put("message", "피드 작성 성공");
                 response.put("feedId", feedId);
                 log.debug("[SnsFeedController] 피드 작성 성공, feedId: {}", feedId);
                 return ResponseEntity.ok(response);
-            }
-            else {
+            } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("피드 작성 오류");
             }
         }
@@ -198,13 +194,13 @@ public class SnsFeedController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("피드 작성 오류");
     }
 
-    @Operation (summary = "피드 글수정-완")
-    @PutMapping ("/{feedId}")
+    @Operation(summary = "피드 글수정-완")
+    @PutMapping("/{feedId}")
     public ResponseEntity<?> updateFeed(HttpServletRequest request, @PathVariable int feedId, @RequestPart("feed") FeedDto feedDto,
                                         @RequestPart("image") MultipartFile image) {
 
         int ID = (Integer) request.getAttribute("userId");
-        String imageUrl="";
+        String imageUrl = "";
 
         String uploadDir = "/home/ubuntu/images/feed/";
         File uploadDirectory = new File(uploadDir);
@@ -222,7 +218,7 @@ public class SnsFeedController {
         }
         log.debug("[SnsFeedController] 디렉토리 {} 가 존재함", uploadDirectory.getAbsolutePath());
 
-        if (!image.isEmpty()) {
+        if (image != null && !image.isEmpty()) {
             try {
                 String originalImageName = image.getOriginalFilename();
                 String imageExtension = "";
@@ -263,8 +259,8 @@ public class SnsFeedController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("피드 수정 오류");
     }
 
-    @Operation (summary = "피드 글삭제-완")
-    @DeleteMapping ("/{feedId}")
+    @Operation(summary = "피드 글삭제-완")
+    @DeleteMapping("/{feedId}")
     public ResponseEntity<?> deleteFeed(@PathVariable int feedId) {
         int result = snsFeedService.deleteFeed(feedId);
 
@@ -274,8 +270,8 @@ public class SnsFeedController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("피드 삭제 오류");
     }
 
-    @Operation (summary = "피드 좋아요 목록보기-완")
-    @GetMapping ("/{feedId}/like")
+    @Operation(summary = "피드 좋아요 목록보기-완")
+    @GetMapping("/{feedId}/like")
     public ResponseEntity<?> getListLikes(@PathVariable int feedId) {
         List<UserPageDto> likes = snsFeedService.getListLikes(feedId);
 
@@ -288,48 +284,44 @@ public class SnsFeedController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("댓글 조회 오류");
     }
 
-    @Operation (summary = "피드 좋아요-완")
-    @PostMapping ("/{feedId}/like")
+    @Operation(summary = "피드 좋아요-완")
+    @PostMapping("/{feedId}/like")
     public ResponseEntity<?> likeFeed(HttpServletRequest request, @PathVariable int feedId) {
-        int ID = (Integer)request.getAttribute("userId");
+        int ID = (Integer) request.getAttribute("userId");
         int isLike = snsFeedService.isLike(feedId, ID);
 
         if (isLike == 0) {   //좋아요 안눌려있음
             int result = snsFeedService.likeFeed(feedId, ID);
             if (result != 0) {
                 return ResponseEntity.ok("좋아요성공");
-            }
-            else {
+            } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("좋아요 오류");
             }
-        }
-        else {
+        } else {
             return ResponseEntity.ok("이미 좋아요 되어 있음");
         }
     }
 
-    @Operation (summary = "피드 좋아요 삭제-완")
-    @DeleteMapping ("/{feedId}/like")
+    @Operation(summary = "피드 좋아요 삭제-완")
+    @DeleteMapping("/{feedId}/like")
     public ResponseEntity<?> dislikeFeed(HttpServletRequest request, @PathVariable int feedId) {
-        int ID = (Integer)request.getAttribute("userId");
+        int ID = (Integer) request.getAttribute("userId");
         int isLike = snsFeedService.isLike(feedId, ID);
 
         if (isLike == 1) {   //좋아요 눌려있음
             int result = snsFeedService.dislikeFeed(feedId, ID);
             if (result != 0) {
                 return ResponseEntity.ok("좋아요취소성공");
-            }
-            else {
+            } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("좋아요취소 오류");
             }
-        }
-        else {
+        } else {
             return ResponseEntity.ok("좋아요 안눌려 있음");
         }
     }
 
-    @Operation (summary = "피드 댓글 목록보기-완")
-    @GetMapping ("/{feedId}/comment")
+    @Operation(summary = "피드 댓글 목록보기-완")
+    @GetMapping("/{feedId}/comment")
     public ResponseEntity<?> getListComments(@PathVariable int feedId) {
         List<FeedInteractionDto> comments = snsFeedService.getListComments(feedId);
 
@@ -342,10 +334,10 @@ public class SnsFeedController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("댓글 조회 오류");
     }
 
-    @Operation (summary = "피드 댓글 쓰기-완")
-    @PostMapping ("/{feedId}/comment")
+    @Operation(summary = "피드 댓글 쓰기-완")
+    @PostMapping("/{feedId}/comment")
     public ResponseEntity<?> writeComment(HttpServletRequest request, @PathVariable int feedId, @RequestBody FeedInteractionDto feedInteractionDto) {
-        int ID = (Integer)request.getAttribute("userId");
+        int ID = (Integer) request.getAttribute("userId");
         feedInteractionDto.setUserId(ID);
         feedInteractionDto.setFeedId(feedId);
         int result = snsFeedService.writeComment(feedInteractionDto);
@@ -356,8 +348,8 @@ public class SnsFeedController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("댓글 작성 오류");
     }
 
-    @Operation (summary = "피드 댓글 수정-완")
-    @PutMapping ("/comment/{commentId}")
+    @Operation(summary = "피드 댓글 수정-완")
+    @PutMapping("/comment/{commentId}")
     public ResponseEntity<?> updateComment(@PathVariable int commentId, @RequestBody FeedInteractionDto feedInteractionDto) {
         feedInteractionDto.setId(commentId);
         int result = snsFeedService.updateComment(feedInteractionDto);
@@ -368,8 +360,8 @@ public class SnsFeedController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("댓글 수정 오류");
     }
 
-    @Operation (summary = "피드 댓글 삭제-완")
-    @DeleteMapping ("/comment/{commentId}")
+    @Operation(summary = "피드 댓글 삭제-완")
+    @DeleteMapping("/comment/{commentId}")
     public ResponseEntity<?> deleteComment(@PathVariable int commentId) {
         int result = snsFeedService.deleteComment(commentId);
 

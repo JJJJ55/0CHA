@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router';
 
 export const localAxios = () => {
   const instance: Axios = axios.create({
-    baseURL: '/proxy',
+    baseURL: process.env.REACT_APP_BASE_URL,
     withCredentials: true,
   });
 
@@ -99,7 +99,7 @@ export const localAxios = () => {
 
 export const publicAxios = () => {
   const publicAxios: Axios = axios.create({
-    baseURL: '/proxy',
+    baseURL: process.env.REACT_APP_BASE_URL,
     withCredentials: true,
   });
 

@@ -68,12 +68,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 if (refreshToken != null && jwtUtil.isRefreshTokenExpired(refreshToken)) {
                     int userId = userLoginService.getUserIdByRefreshToken(refreshToken);
                     userLoginService.invalidateRefreshToken(userId);
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     response.getWriter().write("Refresh token is expired, logged out");
                     return;
                 }
                 logger.debug("만료된 jwt 토큰입니다. uri : {}", request.getRequestURI());
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write("Access token is expired");
                 return;
             } catch (Exception e) {

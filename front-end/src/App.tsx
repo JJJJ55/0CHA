@@ -119,13 +119,10 @@ function App() {
                     <Route index element={<FitnessListPage />} />
                     <Route path="detail" element={<FitnessDetailPage />} />
                   </Route>
-                  <Route path="testplan" element={<TestPlanSetPage />} />
-                  {/* <Route path="plan" element={<FitnessPlanSetPage />} /> */}
                   <Route path="plan" element={<TestPlanSetPage />} />
                   <Route path="history">
                     <Route index element={<FitnessRoutineListPage />} />
                     <Route path="detail" element={<FitnessRoutineDetatilPage />} />
-                    {/* <Route path="test" element={<TestPlanSetPage />} /> */}
                   </Route>
                 </Route>
                 {isPlay ? (

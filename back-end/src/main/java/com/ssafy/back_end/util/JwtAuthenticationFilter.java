@@ -31,16 +31,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String uri = request.getRequestURI();
 
-        // 특정 경로에 대한 요청을 멈추기 위한 추가 로직
-        if ("/api/ws".equals(uri)) {
-            logger.debug("요청이 /api/ws에서 멈췄습니다.");
-            response.setStatus(HttpServletResponse.SC_OK);
-            response.getWriter().write("Request stopped at /api/ws");
-            // 다음 필터로 요청 전달
-            chain.doFilter(request, response);
-            return;
-        }
-
         // Swagger 경로에 대한 요청은 필터링에서 제외
         if (uri.startsWith("/swagger-ui/") || uri.startsWith("/v3/api-docs/")) {
             chain.doFilter(request, response);

@@ -1,7 +1,11 @@
 package com.ssafy.back_end.sns.mapper;
 
-import com.ssafy.back_end.sns.model.*;
+import com.ssafy.back_end.sns.model.FeedDto;
+import com.ssafy.back_end.sns.model.FeedInteractionDto;
+import com.ssafy.back_end.sns.model.SnsRoutineDetailDto;
+import com.ssafy.back_end.sns.model.UserPageDto;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -17,11 +21,18 @@ public interface SnsFeedMapper {
 
     List<SnsRoutineDetailDto> getRoutine(@Param("routineId") int routineId);   //피드에서 루틴 자세히 보기
 
+    int setUpload(@Param("routineId") int routineId);   //루틴을 업로드 상태로 변경
+
 //    int saveRoutine(int userId, int routineId);   //피드에서 루틴 저장하기
 
+    @Options (useGeneratedKeys = true, keyProperty = "id")
     int writeFeed(FeedDto feedDto);   //피드 작성
 
+    int updateImage(@Param("feedId") int feedId, @Param("image") String image);   //사진 수정(등록)
+
     int updateFeed(FeedDto feedDto);   //피드 수정
+
+    String getImagePathsByFeedId(@Param("feedId") int feedId);   // 삭제할 게시물의 이미지 경로 가져옴
 
     int deleteFeed(@Param ("id") int feedId);   //피드 삭제
 

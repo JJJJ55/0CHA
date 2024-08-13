@@ -13,6 +13,7 @@ import {
   getFitnessMomentum,
   postFitnessJjim,
 } from '../../lib/api/fitness-api';
+import basic from '../../asset/img/testImg.png';
 import { useLocation } from 'react-router';
 import { FitnessMomenthum, FitnessType } from '../../util/types/axios-fitness';
 import Text from '../../components/Common/Text';
@@ -122,7 +123,7 @@ const FitnessDetailPage = (): JSX.Element => {
         console.log(error);
       },
     );
-  }, []);
+  }, [id]);
   const handleClickJjim = async () => {
     await postFitnessJjim(
       id,
@@ -145,6 +146,21 @@ const FitnessDetailPage = (): JSX.Element => {
       },
     );
   };
+
+  const basicUrl = 'https://i11b310.p.ssafy.io/images/';
+
+  // 이미지 경로를 파싱하여 basicUrl과 결합하는 함수
+  const getParsedImageUrl = (imagePath: string) => {
+    if (imagePath.length >= 200) {
+      return imagePath;
+    }
+    if (imagePath) {
+      const relativePath = imagePath.split('/home/ubuntu/images/')[1];
+      return basicUrl + relativePath;
+    } else {
+      return basic;
+    }
+  };
   return (
     <s.Container>
       <s.HeaderArea>
@@ -162,7 +178,7 @@ const FitnessDetailPage = (): JSX.Element => {
       </s.HeaderArea>
       <s.ContentArea>
         <s.ImgArea>
-          <s.Img src={fitness?.image} />
+          <s.Img src={fitness ? getParsedImageUrl(fitness.image) : basic} />
         </s.ImgArea>
         <s.FitnessTextArea>{fitness?.description}</s.FitnessTextArea>
         <s.Title>운동이력</s.Title>

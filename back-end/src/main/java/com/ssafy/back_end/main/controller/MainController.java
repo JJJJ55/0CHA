@@ -53,11 +53,12 @@ public class MainController {
     @Operation(summary = "유저 프로필 수정")
     @PutMapping("/profile")
     public ResponseEntity<?> modifyProfile(HttpServletRequest request, @RequestPart("nickname") String nickname,
-                                           @RequestPart("image") MultipartFile image) {
+                                           @RequestPart(value = "image" , required = false) MultipartFile image) {
         int ID = (Integer) request.getAttribute("userId");
         String imageUrl = "";
 
         int result = mainService.checkNickname(nickname, ID);
+
         ObjectMapper objectMapper = new ObjectMapper();
         UserInfoDto userInfoDto;
         try {
@@ -85,7 +86,7 @@ public class MainController {
             }
             log.debug("[MainController] 디렉토리 {} 가 존재함", uploadDirectory.getAbsolutePath());
 
-            if (!image.isEmpty()) {
+            if (image!=null&&!image.isEmpty()) {
                 try {
                     String originalImageName = image.getOriginalFilename();
                     String imageExtension = "";
@@ -143,7 +144,7 @@ public class MainController {
 //            }
 
             // 삭제 성공 시점
-
+            System.out.println("imageUrl: " + imageUrl);
             result = mainService.modifyProfile(userInfoDto.getNickname(), imageUrl, ID);
             if (result != 0) {
                 return ResponseEntity.ok("유저 프로필 수정 완료");

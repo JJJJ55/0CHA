@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Header from '../../components/Common/Header';
-import BottomNav from '../../components/Common/BottomNav';
 import Text from '../../components/Common/Text';
 import { exerciseData } from '../../util/TestData';
 import Chart from '../../components/Common/Chart';
@@ -61,7 +60,20 @@ const RecordFitnessChartPage = (): JSX.Element => {
           display="block"
           margin="100px auto 20px"
         />
-        <Chart labels={dates} datas={totalVolumes} />
+        {totalVolumes.length === 0 ? (
+          <Text
+            children="데이터가 존재하지 않습니다."
+            width="90%"
+            bold="700"
+            color="textColor"
+            size="16px"
+            display="block"
+            margin="20px auto"
+          />
+        ) : (
+          <Chart labels={dates} datas={totalVolumes} />
+        )}
+
         <Text
           children="운동시간"
           width="90%"
@@ -71,7 +83,19 @@ const RecordFitnessChartPage = (): JSX.Element => {
           display="block"
           margin="100px auto 20px"
         />
-        <Chart labels={dates} datas={totalTimes} />
+        {totalTimes.length === 0 ? (
+          <Text
+            children="데이터가 존재하지 않습니다."
+            width="90%"
+            bold="700"
+            color="textColor"
+            size="16px"
+            display="block"
+            margin="20px auto"
+          />
+        ) : (
+          <Chart labels={dates} datas={totalTimes} />
+        )}
       </s.MainArea>
       {/* <BottomNav /> */}
     </s.Container>

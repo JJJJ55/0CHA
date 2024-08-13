@@ -4,7 +4,6 @@ import Header from '../../components/Common/Header';
 import Button from '../../components/Common/Button';
 import Text from '../../components/Common/Text';
 import RecordInbodyInput from '../../components/Record/Inbody/RecordInbodyInput';
-import BottomNav from '../../components/Common/BottomNav';
 import { useNavigate } from 'react-router';
 import { postInbody } from '../../lib/api/record-api';
 import { Inbody } from '../../util/types/axios-record';

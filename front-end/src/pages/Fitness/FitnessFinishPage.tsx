@@ -6,8 +6,8 @@ import IconSvg from '../../components/Common/IconSvg';
 import Button from '../../components/Common/Button';
 import { useLocation, useNavigate } from 'react-router';
 import { FinishProps } from '../../util/types/axios-fitness';
-import { useAppDispatch } from '../../lib/hook/useReduxHook';
-import { fitnessActions } from '../../store/fitness';
+import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
+import { fitnessActions, selectPlan, selectTime, selectVolume } from '../../store/fitness';
 const s = {
   Container: styled.section`
     height: 100%;
@@ -44,7 +44,10 @@ const s = {
 const FitnessFinishPage = (): JSX.Element => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const data: FinishProps = useLocation().state.data;
+  // const data: FinishProps = useLocation().state?.data;
+  const t = useAppSelector(selectTime);
+  const volume = useAppSelector(selectVolume);
+  const plan = useAppSelector(selectPlan);
 
   const handleClickMove = (path: string): void => {
     dispatch(fitnessActions.setFinish());
@@ -64,7 +67,8 @@ const FitnessFinishPage = (): JSX.Element => {
       .toString()
       .padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
-  const time = formatSecondsToHHMMSS(data.time);
+  const time = formatSecondsToHHMMSS(t);
+
   return (
     <s.Container>
       <s.MainArea>
@@ -102,7 +106,7 @@ const FitnessFinishPage = (): JSX.Element => {
         <Text
           width="280px"
           textalian="left"
-          children={data.date}
+          children={plan.dueDate}
           size="16px"
           color="textColor2"
           display="block"
@@ -114,14 +118,7 @@ const FitnessFinishPage = (): JSX.Element => {
         </s.ContentArea>
         <s.ContentArea>
           <Text width="50%" textalian="left" children="운동량" size="18px" color="textColor" />
-          <Text
-            width="50%"
-            textalian="right"
-            children={`${data.volume} kg`}
-            size="18px"
-            color="textColor"
-            bold="bold"
-          />
+          <Text width="50%" textalian="right" children={`${volume} kg`} size="18px" color="textColor" bold="bold" />
         </s.ContentArea>
       </s.MainArea>
       <s.BtnArea>

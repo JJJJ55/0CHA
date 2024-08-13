@@ -13,9 +13,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-@Tag (name = "AUTH회원가입")
+@Tag(name = "AUTH회원가입")
 @RestController
-@RequestMapping (value = "/api/auth/register")
+@RequestMapping(value = "/api/auth/register")
 public class UserRegisterController {
     private final UserRegisterService userRegisterService;
     private Map<String, Integer> authCode = new HashMap<>();
@@ -25,70 +25,68 @@ public class UserRegisterController {
         this.userRegisterService = userRegisterService;
     }
 
-    @Operation (summary = "회원가입")
-    @PostMapping ("/signup")
+    @Operation(summary = "회원가입")
+    @PostMapping("/signup")
     public ResponseEntity<?> register(@RequestBody UserDto userDto) {
         int ID = userRegisterService.register(userDto);
 
         if (ID > 0) {
             return ResponseEntity.ok(ID);
-        }
-        else {
+        } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("회원가입실패");
         }
     }
 
-    @Operation (summary = "회원가입 후 추가정보 기입")
-    @PutMapping ("/user-info")
+    @Operation(summary = "회원가입 후 추가정보 기입")
+    @PutMapping("/user-info")
     public ResponseEntity<?> userInfo(@RequestBody UserDto userDto) {
         int result = userRegisterService.userInfo(userDto);
 
         if (result > 0) {
             return ResponseEntity.ok("추가정보 기입이 완료되었습니다.");
-        }
-        else {
+        } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("추가정보 기입 실패");
         }
     }
 
-    @Operation (summary = "이메일 중복검사&인증발송")
-    @PostMapping ("/check-email")
+    @Operation(summary = "이메일 중복검사&인증발송")
+    @PostMapping("/check-email")
     public ResponseEntity<?> checkEmail(@RequestBody String email) {
         int result = userRegisterService.checkEmail(email);
 
         if (result <= 0) {
-            if(!authCode.containsKey(email)) {
+            if (!authCode.containsKey(email)) {
                 authCode.put(email, getRandomNumber());   //랜덤으로 이메일로 전송해줘야함
             }
             userRegisterService.sendEmail(email, authCode.get(email));
             return ResponseEntity.ok("이메일로 인증코드가 전송되었습니다.");
-        }
-        else {
+        } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("이메일이 유효하지 않습니다.");
         }
     }
 
-    @Operation (summary = "이메일 인증확인")
-    @PostMapping ("/check-email/verify")
-    public ResponseEntity<?> verifyEmail(@RequestPart("email") String email, @RequestPart("authCode") int code) {
-        if(authCode.get(email) == code){
+    @Operation(summary = "이메일 인증확인")
+    @PostMapping("/check-email/verify")
+    public ResponseEntity<?> verifyEmail(@RequestBody Map<String, Object> request) {
+        String email = (String) request.get("email");
+        int code = (int) request.get("authCode");
+
+        if (authCode.get(email) != null && authCode.get(email) == code) {
             authCode.remove(email);
             return ResponseEntity.ok("성공적으로 인증되었습니다.");
-        }
-        else {
+        } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("코드가 일치하지 않습니다");
         }
     }
 
-    @Operation (summary = "닉네임 중복검사")
-    @PostMapping ("/check-nickname")
+    @Operation(summary = "닉네임 중복검사")
+    @PostMapping("/check-nickname")
     public ResponseEntity<?> checkNickname(@RequestBody String nickname) {
         int result = userRegisterService.checkNickname(nickname);
 
         if (result <= 0) {
             return ResponseEntity.ok("사용가능한 닉네임입니다.");
-        }
-        else {
+        } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사용중인 닉네임입니다.");
         }
     }

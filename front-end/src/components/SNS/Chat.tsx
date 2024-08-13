@@ -59,12 +59,10 @@ const Chat = (props: CommentProps): JSX.Element => {
       {isMyChat === true ? (
         <s.MyChatArea>
           <s.MyChat>{content}</s.MyChat>
-          <p>aaa</p>
         </s.MyChatArea>
       ) : (
         <s.YourChatArea>
           <s.YourChat>{content}</s.YourChat>
-          <p>aaa</p>
         </s.YourChatArea>
       )}
     </>

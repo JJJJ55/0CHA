@@ -33,21 +33,28 @@ const s = {
 
 interface CommentProps {
   profileImage: string;
-  username: string;
+  nickname: string;
   recentChat: string;
+  userId: number;
+  chatId: number;
 }
 
 const Conversation = (props: CommentProps): JSX.Element => {
+  const { profileImage, nickname, recentChat, chatId, userId } = props;
+
+  console.log(userId);
   const navigate = useNavigate();
+
   const handleMovePage = (): void => {
-    navigate('id');
+    navigate(`./${userId}`, {
+      state: { userId, nickname, profileImage },
+    });
   };
-  const { profileImage, username, recentChat } = props;
   return (
     <s.Container onClick={handleMovePage}>
       <Image width="45px" height="45px" src={profileImage} />
       <s.Content>
-        <s.Username>{username}</s.Username>
+        <s.Username>{nickname}</s.Username>
         <s.RecentChat>{recentChat}</s.RecentChat>
       </s.Content>
     </s.Container>

@@ -55,23 +55,27 @@ const SnsNavigation = (): JSX.Element => {
     await MyRoutine(
       (resp) => {
         console.log(resp);
-        handleMovePage('write')
+        handleMovePage('write');
       },
       (error) => {
         console.error(error);
-        window.alert('오늘운동안함')
-        handleMovePage('write')
-      }
-    )
+        window.alert('오늘운동안함');
+        handleMovePage('write');
+      },
+    );
   };
 
-  const createButtonClick = (() => {
+  const createButtonClick = () => {
     if (snsType === 'market') {
+      handleMovePage('write');
+    } else {
+      if (snsType === 'market') {
       handleMovePage('write');
     } else {
       isRoutineData();
     }
-  });
+    }
+  };
 
   return (
     <s.Container>

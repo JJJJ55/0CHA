@@ -9,14 +9,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 @Tag (name = "AUTH회원가입")
 @RestController
 @RequestMapping (value = "/api/auth/register")
 public class UserRegisterController {
-    static int authCode;
     private final UserRegisterService userRegisterService;
+    private Map<String, Integer> authCode = new HashMap<>();
 
     @Autowired
     public UserRegisterController(UserRegisterService userRegisterService) {
@@ -55,8 +57,10 @@ public class UserRegisterController {
         int result = userRegisterService.checkEmail(email);
 
         if (result <= 0) {
-            authCode = getRandomNumber();   //랜덤코드
-            userRegisterService.sendEmail(email, authCode);
+            if(!authCode.containsKey(email)) {
+                authCode.put(email, getRandomNumber());   //랜덤으로 이메일로 전송해줘야함
+            }
+            userRegisterService.sendEmail(email, authCode.get(email));
             return ResponseEntity.ok("이메일로 인증코드가 전송되었습니다.");
         }
         else {
@@ -66,9 +70,9 @@ public class UserRegisterController {
 
     @Operation (summary = "이메일 인증확인")
     @PostMapping ("/check-email/verify")
-    public ResponseEntity<?> verifyEmail(@RequestBody int code) {
-        if (code == authCode) {
-            authCode = 0;   //인증코드 초기화
+    public ResponseEntity<?> verifyEmail(@RequestPart("email") String email, @RequestPart("authCode") int code) {
+        if(authCode.get(email) == code){
+            authCode.remove(email);
             return ResponseEntity.ok("성공적으로 인증되었습니다.");
         }
         else {

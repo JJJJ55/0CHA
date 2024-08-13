@@ -94,11 +94,14 @@ export const SnsFeedWrite = async (
   fail: (error: AxiosError) => void,
 ) => {
   // await jwt.post(`/sns/feed/write`, param).then(success).catch(fail);
-  await jwt.post(`/sns/feed/write`, param, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  }).then(success).catch(fail);
+  await jwt
+    .post(`/sns/feed/write`, param, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+    .then(success)
+    .catch(fail);
 };
 
 // 피드 작성시 루틴가져오기
@@ -113,11 +116,14 @@ export const SnsFeedModify = async (
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
 ) => {
-  await jwt.put(`/sns/feed/${feedId}`, param, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  }).then(success).catch(fail);
+  await jwt
+    .put(`/sns/feed/${feedId}`, param, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+    .then(success)
+    .catch(fail);
   // await jwt.put(`/sns/feed/${feedId}`, param).then(success).catch(fail);
 };
 
@@ -173,7 +179,7 @@ export const SnsFeedRoutineLoad = async (
   fail: (error: AxiosError) => void,
 ) => {
   await jwt.post(`/sns/feed/${routineId}/routine`).then(success).catch(fail);
-}
+};
 
 // 피드 댓글 목록
 export const SnsCommentList = async (
@@ -382,6 +388,11 @@ export const SnsChatSend = async (
 
 export const SnsChatOn = async (success: (response: any) => void, fail: (error: AxiosError) => void) => {
   await jwt.post(`/sns/chat/connect`).then(success).catch(fail);
+};
+
+// 웹소켓
+export const WsOn = async (success: (response: any) => void, fail: (error: AxiosError) => void) => {
+  await jwt.get(`/ws/`).then(success).catch(fail);
 };
 
 // 웹소켓 해제

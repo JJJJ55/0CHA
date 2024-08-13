@@ -1,6 +1,8 @@
 import { AxiosError } from 'axios';
 import { localAxios, publicAxios } from '../../util/axios-setting';
 import { snsFeedWrite, snsItemList, snsItemWrite } from '../../util/types/axios-sns';
+import SockJS from 'sockjs-client';
+import { Client, Frame } from '@stomp/stompjs';
 
 const local = publicAxios();
 const jwt = localAxios();
@@ -338,6 +340,34 @@ export const SnsChatSend = async (
 };
 
 // 웹소켓 연결
+// 웹소켓 연결 함수
+// export const SnsChatOn = (success: (frame: Frame) => void, fail: (error: AxiosError | string) => void) => {
+//   try {
+//     // SockJS를 사용하여 웹소켓 연결 생성
+//     const socket = new SockJS('/proxy/ws');
+
+//     // STOMP 클라이언트를 사용하여 웹소켓 연결 설정
+//     const client = new Client({
+//       webSocketFactory: () => socket,
+//       connectHeaders: {
+//         Authorization: `Bearer ${localStorage.getItem('accessToken')}`, // 연결 시 토큰 헤더 포함
+//       },
+//       onConnect: success,
+//       onStompError: (frame: Frame) => {
+//         fail(`Broker reported error: ${frame.headers['message']}. Additional details: ${frame.body}`);
+//       },
+//       onWebSocketError: (event: Event) => {
+//         fail(`WebSocket error: ${event}`);
+//       },
+//     });
+
+//     // 클라이언트 활성화
+//     client.activate();
+//   } catch (error) {
+//     fail(error as AxiosError);
+//   }
+// };
+
 export const SnsChatOn = async (success: (response: any) => void, fail: (error: AxiosError) => void) => {
   await jwt.post(`/sns/chat/connect`).then(success).catch(fail);
 };

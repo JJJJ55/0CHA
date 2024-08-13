@@ -176,7 +176,7 @@ function App() {
                   </Route>
                   <Route path="chat">
                     <Route index element={<ChatListPage />} />
-                    <Route path=":id" element={<ChatPage />} />
+                    <Route path=":userId" element={<ChatPage />} />
                   </Route>
                   <Route path="notification" element={<NotificationPage />} />
                 </Route>

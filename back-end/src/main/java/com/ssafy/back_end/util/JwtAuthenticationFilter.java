@@ -72,6 +72,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         throw new ExpiredJwtException(null, null, "토큰이 만료되었거나 유효하지 않습니다.");
                     }
                 } else {
+                    //액세스 토큰이 유효하지않음
                     throw new ExpiredJwtException(null, null, "토큰이 만료되었거나 유효하지 않습니다.");
                 }
             } catch (ExpiredJwtException e) {
@@ -80,6 +81,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     userLoginService.invalidateRefreshToken(userId);
 //                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     response.getWriter().write("Refresh token is expired, logged out");
+                    return;
+                }
+                if((Integer)request.getAttribute("userId") != jwtUtil.getUserIdFromAccessToken(accessToken)){
+                    //동시로그인
+                    logger.debug("동시접속된 jwt 토큰입니다. uri : {}", request.getRequestURI());
+//                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.getWriter().write("Multi Login");
                     return;
                 }
                 logger.debug("만료된 jwt 토큰입니다. uri : {}", request.getRequestURI());

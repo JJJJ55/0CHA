@@ -177,16 +177,18 @@ public class SnsItemController {
 //                                        @RequestPart(value = "addImages", required = false) List<MultipartFile> addImages) {
         // 사용자 ID를 request에서 추출
         int ID = (Integer)request.getAttribute("userId");
-//        log.debug("SnsItemContoller UserID: {}", ID);
-//
-//        // JSON 문자열을 객체로 변환
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        ItemDto itemDto;
-//        try {
-//            itemDto = objectMapper.readValue(item, ItemDto.class);
-//        } catch (IOException e) {
-//            return ResponseEntity.badRequest().body("JSON parsing error");
-//        }
+
+        log.debug("SnsItemContoller UserID: {}", ID);
+
+        // JSON 문자열을 객체로 변환
+        ObjectMapper objectMapper = new ObjectMapper();
+        ItemDto itemDto;
+        try {
+            itemDto = objectMapper.readValue(item, ItemDto.class);
+            log.debug("itemDto: {}", itemDto);
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().body("JSON parsing error");
+        }
 //
 //        // itemId 로그 출력
 //        log.debug("SnsItemController Item ID: {}", itemId);

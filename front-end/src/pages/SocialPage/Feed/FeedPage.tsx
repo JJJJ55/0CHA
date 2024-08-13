@@ -73,6 +73,7 @@ const s = {
     display: flex;
     flex-direction: column;
     width: 100%;
+    z-index: 5;
   `
 };
 
@@ -126,7 +127,6 @@ const FeedPage = (): JSX.Element => {
   const [feedId, setFeedId] = useState<number | null>(null);
   const [commentData, setCommentData] = useState<commentData[]>([]);
 
-
   const [userId, setUserId] = useState(0)
   const [userNickname, setUserNickname] = useState('')
   const [userProfileImage, setUserProfileImage] = useState('')
@@ -153,7 +153,6 @@ const FeedPage = (): JSX.Element => {
       offset,
       (resp) => {
         const data = resp.data;
-        // if (data.length === 0) {
         if (data === '피드 0개입니다') {
           setIsMoreData(false);
           console.log('ismoredatafalse')
@@ -171,8 +170,6 @@ const FeedPage = (): JSX.Element => {
   };
 
   const getTargetData = async (offset: number) => {
-    if (loading) return;
-    setLoading(true);
     if (targetUserId) {
       console.log('targetuserfeeddata')
       await SnsFeedList(
@@ -180,16 +177,13 @@ const FeedPage = (): JSX.Element => {
         offset,
         (resp) => {
           const data = resp.data;
-          // if (data.length === 0) {
           if (data === '피드 0개입니다') {
             setIsMoreData(false);
             console.log('ismoredatafalse')
           } else {
             setFeedData(data);
-            // setFeedData((prevData) => [...prevData, ...data]);
             console.log('settargetfeed')
           }
-          setLoading(false)
         },
         (error) => {
           console.error(error)
@@ -205,13 +199,12 @@ const FeedPage = (): JSX.Element => {
   }, [offset]);
 
   const handleScroll = debounce(() => {
-    if (containerRef.current) {
+    if (containerRef.current && targetFeedId === undefined) {
       const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
 
       if ((scrollTop + clientHeight+1000) >= scrollHeight) {
         if (!loading && isMoreData) {
           setOffset((prevOffset) => prevOffset + 10);
-          // console.log(offset)
         }
       }
     }
@@ -229,7 +222,6 @@ const FeedPage = (): JSX.Element => {
     };
   }, [handleScroll]);
 
-
   const handleCommentClick = async (id: number) => {
     setFeedId(id);
     toggleModalComment();
@@ -237,7 +229,6 @@ const FeedPage = (): JSX.Element => {
       id,
       (resp) => {
         const data = resp.data;
-        // console.log(data)
         if (data === '댓글 0개입니다') {
           setCommentData([]);
         } else {
@@ -269,6 +260,7 @@ const FeedPage = (): JSX.Element => {
   //   }
   // }, [targetFeedId])
   useEffect(() => {
+    console.log('useeffect targetfeedid')
     if (targetFeedId && containerRef.current && targetUserId) {
       getTargetData(0)
       setTimeout(() => {

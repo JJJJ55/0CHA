@@ -10,8 +10,9 @@ import { useNavigate, useParams } from 'react-router';
 import { IsFollowingUser } from '../../lib/api/sns-api';
 import { UserFollow } from '../../lib/api/sns-api';
 import { UserFollowCancel } from '../../lib/api/sns-api';
-import { useAppDispatch } from '../../lib/hook/useReduxHook';
+import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
 import { modalActions } from '../../store/modal';
+import ItemModal from '../Modal/ItemModal';
 
 const s = {
   Container: styled.section`
@@ -59,7 +60,7 @@ const s = {
     justify-content: space-between;
     margin: auto;
     width: 100%;
-    max-width: 270px;
+    max-width: 280px;
     min-width: 150px;
     cursor: default;
   `,
@@ -67,6 +68,12 @@ const s = {
     display: flex;
     flex-direction: column;
     align-items: center;
+  `,
+  UserStatPointer: styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
   `,
   UserStatTitle: styled.span`
     color: ${(props) => props.theme.textColor};
@@ -173,8 +180,7 @@ const UserProfileInfo = (props: UserProfileInfoProps): JSX.Element => {
         }
       )
     }
-  }
-
+  };
 
   return (
     <s.Container>
@@ -242,17 +248,21 @@ const UserProfileInfo = (props: UserProfileInfoProps): JSX.Element => {
       </s.ProfileTopArea>
       <s.ProfileBottomArea>
         <s.UserStat>
-          <s.UserStatTitle>게시글</s.UserStatTitle>
+          <s.UserStatTitle>운동</s.UserStatTitle>
           <s.UserStatCnt>{postCnt}</s.UserStatCnt>
         </s.UserStat>
-        <s.UserStat onClick={handleClickFollowerModal}>
+        <s.UserStat>
+          <s.UserStatTitle>거래</s.UserStatTitle>
+          <s.UserStatCnt>{marketCnt}</s.UserStatCnt>
+        </s.UserStat>
+        <s.UserStatPointer onClick={handleClickFollowerModal}>
           <s.UserStatTitle>팔로워</s.UserStatTitle>
           <s.UserStatCnt>{follower}</s.UserStatCnt>
-        </s.UserStat>
-        <s.UserStat onClick={handleClickFollowingModal}>
+        </s.UserStatPointer>
+        <s.UserStatPointer onClick={handleClickFollowingModal}>
           <s.UserStatTitle>팔로잉</s.UserStatTitle>
           <s.UserStatCnt>{followingCnt}</s.UserStatCnt>
-        </s.UserStat>
+        </s.UserStatPointer>
       </s.ProfileBottomArea>
     </s.Container>
   );

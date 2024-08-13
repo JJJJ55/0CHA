@@ -89,16 +89,16 @@ export const SnsFeedList = async (
 // 피드 작성
 export const SnsFeedWrite = async (
   // param: snsFeedWrite,
-  param: snsFeedWrite,
+  param: FormData,
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
 ) => {
-  await jwt.post(`/sns/feed/write`, param).then(success).catch(fail);
-  // await jwt.post(`/sns/feed/write`, param, {
-  //   headers: {
-  //     'Content-Type': 'multipart/form-data',
-  //   },
-  // }).then(success).catch(fail);
+  // await jwt.post(`/sns/feed/write`, param).then(success).catch(fail);
+  await jwt.post(`/sns/feed/write`, param, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  }).then(success).catch(fail);
 };
 
 // 피드 작성시 루틴가져오기
@@ -109,11 +109,16 @@ export const SnsFeedGetRoutine = async (success: (response: any) => void, fail: 
 // 피드 수정
 export const SnsFeedModify = async (
   feedId: number,
-  param: snsFeedWrite,
+  param: FormData,
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
 ) => {
-  await jwt.put(`/sns/feed/${feedId}`, param).then(success).catch(fail);
+  await jwt.put(`/sns/feed/${feedId}`, param, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  }).then(success).catch(fail);
+  // await jwt.put(`/sns/feed/${feedId}`, param).then(success).catch(fail);
 };
 
 // 피드 삭제
@@ -161,7 +166,14 @@ export const SnsFeedListRoutine = async (
   await jwt.get(`/sns/feed/${feedId}/routine`).then(success).catch(fail);
 };
 
-// 불러온 루틴 저장?
+// 불러온 루틴 저장
+export const SnsFeedRoutineLoad = async (
+  routineId: number,
+  success: (response: any) => void,
+  fail: (error: AxiosError) => void,
+) => {
+  await jwt.post(`/sns/feed/${routineId}/routine`).then(success).catch(fail);
+}
 
 // 피드 댓글 목록
 export const SnsCommentList = async (

@@ -69,7 +69,11 @@ const SnsNavigation = (): JSX.Element => {
     if (snsType === 'market') {
       handleMovePage('write');
     } else {
+      if (snsType === 'market') {
+      handleMovePage('write');
+    } else {
       isRoutineData();
+    }
     }
   };
 

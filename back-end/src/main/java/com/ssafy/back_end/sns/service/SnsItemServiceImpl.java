@@ -127,7 +127,7 @@ public class SnsItemServiceImpl implements SnsItemService {
     @Override
     @Transactional
     public int updateItem(ItemDto item) {
-        validateImages(item.getImages().size());
+//        validateImages(item.getImages().size());
 
         ItemDto itemBuilder = ItemDto.builder()
                 .title(item.getTitle())

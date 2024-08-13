@@ -1,5 +1,6 @@
 package com.ssafy.back_end.main.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.back_end.exercise.model.RoutineDto;
 import com.ssafy.back_end.exercise.model.RoutineSummaryDto;
 import com.ssafy.back_end.exercise.service.WorkoutRoutineService;
@@ -57,8 +58,14 @@ public class MainController {
         String imageUrl = "";
 
         int result = mainService.checkNickname(nickname, ID);
-
-        String preImage = mainService.getImagePathsByUserId(ID);
+        ObjectMapper objectMapper = new ObjectMapper();
+        UserInfoDto userInfoDto;
+        try {
+            userInfoDto = objectMapper.readValue(nickname, UserInfoDto.class);
+        }
+        catch (IOException e) {
+            return ResponseEntity.badRequest().body("JSON parsing error");
+        }
 
         if (result <= 0) {
 
@@ -137,7 +144,7 @@ public class MainController {
 
             // 삭제 성공 시점
 
-            result = mainService.modifyProfile(nickname, imageUrl, ID);
+            result = mainService.modifyProfile(userInfoDto.getNickname(), imageUrl, ID);
             if (result != 0) {
                 return ResponseEntity.ok("유저 프로필 수정 완료");
             }

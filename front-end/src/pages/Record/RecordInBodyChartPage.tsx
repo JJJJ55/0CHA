@@ -37,7 +37,6 @@ const s = {
 };
 
 const RecordInBodyChartPage = (): JSX.Element => {
-  const labels = ['07.14', '07.15', '07.16'];
   const type1 = useAppSelector(selectType1);
   const type2 = useAppSelector(selectType2);
   const type3 = useAppSelector(selectType3);
@@ -120,23 +119,24 @@ const RecordInBodyChartPage = (): JSX.Element => {
     let date: string[] = [];
 
     // 인바디 데이터를 반복하여 배열을 채움
-    inbodyData.forEach((inbody) => {
-      if (inbody.height !== undefined) newSeparatedData.height.push(inbody.height);
-      if (inbody.weight !== undefined) newSeparatedData.weight.push(inbody.weight);
-      if (inbody.bodyWater !== undefined) newSeparatedData.bodyWater.push(inbody.bodyWater);
-      if (inbody.protein !== undefined) newSeparatedData.protein.push(inbody.protein);
-      if (inbody.mineral !== undefined) newSeparatedData.mineral.push(inbody.mineral);
-      if (inbody.bodyFat !== undefined) newSeparatedData.bodyFat.push(inbody.bodyFat);
-      if (inbody.muscleMass !== undefined) newSeparatedData.muscleMass.push(inbody.muscleMass);
-      if (inbody.muscleBody !== undefined) newSeparatedData.muscleBody.push(inbody.muscleBody);
-      if (inbody.muscleLeftArm !== undefined) newSeparatedData.muscleLeftArm.push(inbody.muscleLeftArm);
-      if (inbody.muscleRightArm !== undefined) newSeparatedData.muscleRightArm.push(inbody.muscleRightArm);
-      if (inbody.muscleLeftLeg !== undefined) newSeparatedData.muscleLeftLeg.push(inbody.muscleLeftLeg);
-      if (inbody.muscleRightLeg !== undefined) newSeparatedData.muscleRightLeg.push(inbody.muscleRightLeg);
-      if (inbody.bmi !== undefined) newSeparatedData.bmi.push(inbody.bmi);
-      if (inbody.bodyFatPercent !== undefined) newSeparatedData.bodyFatPercent.push(inbody.bodyFatPercent);
-      if (inbody.measuredAt !== undefined) date.push(formatDate(inbody.measuredAt));
-    });
+    Array.isArray(inbodyData) &&
+      inbodyData.forEach((inbody) => {
+        if (inbody.height !== undefined) newSeparatedData.height.push(inbody.height);
+        if (inbody.weight !== undefined) newSeparatedData.weight.push(inbody.weight);
+        if (inbody.bodyWater !== undefined) newSeparatedData.bodyWater.push(inbody.bodyWater);
+        if (inbody.protein !== undefined) newSeparatedData.protein.push(inbody.protein);
+        if (inbody.mineral !== undefined) newSeparatedData.mineral.push(inbody.mineral);
+        if (inbody.bodyFat !== undefined) newSeparatedData.bodyFat.push(inbody.bodyFat);
+        if (inbody.muscleMass !== undefined) newSeparatedData.muscleMass.push(inbody.muscleMass);
+        if (inbody.muscleBody !== undefined) newSeparatedData.muscleBody.push(inbody.muscleBody);
+        if (inbody.muscleLeftArm !== undefined) newSeparatedData.muscleLeftArm.push(inbody.muscleLeftArm);
+        if (inbody.muscleRightArm !== undefined) newSeparatedData.muscleRightArm.push(inbody.muscleRightArm);
+        if (inbody.muscleLeftLeg !== undefined) newSeparatedData.muscleLeftLeg.push(inbody.muscleLeftLeg);
+        if (inbody.muscleRightLeg !== undefined) newSeparatedData.muscleRightLeg.push(inbody.muscleRightLeg);
+        if (inbody.bmi !== undefined) newSeparatedData.bmi.push(inbody.bmi);
+        if (inbody.bodyFatPercent !== undefined) newSeparatedData.bodyFatPercent.push(inbody.bodyFatPercent);
+        if (inbody.measuredAt !== undefined) date.push(formatDate(inbody.measuredAt));
+      });
 
     setSeparatedData(newSeparatedData);
     setChartDate(date);
@@ -180,7 +180,20 @@ const RecordInBodyChartPage = (): JSX.Element => {
           display="block"
           margin="20px auto"
         />
-        <Chart labels={chartDate!} datas={chartData1} />
+        {chartData1.length === 0 ? (
+          <Text
+            children="데이터가 존재하지 않습니다."
+            width="90%"
+            bold="700"
+            color="textColor"
+            size="16px"
+            display="block"
+            margin="20px auto"
+          />
+        ) : (
+          <Chart labels={chartDate!} datas={chartData1} />
+        )}
+        {/* <Chart labels={chartDate!} datas={chartData1} /> */}
         <s.TextBtnArea>
           <s.Btn onClick={() => handleButtonClick1('bodyFat')} color={getColor1('bodyFat')}>
             체지방
@@ -204,7 +217,20 @@ const RecordInBodyChartPage = (): JSX.Element => {
           display="block"
           margin="20px auto"
         />
-        <Chart labels={chartDate!} datas={chartData2} />
+        {chartData2.length === 0 ? (
+          <Text
+            children="데이터가 존재하지 않습니다."
+            width="90%"
+            bold="700"
+            color="textColor"
+            size="16px"
+            display="block"
+            margin="20px auto"
+          />
+        ) : (
+          <Chart labels={chartDate!} datas={chartData2} />
+        )}
+
         <s.TextBtnArea>
           <s.Btn onClick={() => handleButtonClick2('muscleMass')} color={getColor2('muscleMass')}>
             골격근량
@@ -225,7 +251,20 @@ const RecordInBodyChartPage = (): JSX.Element => {
           display="block"
           margin="20px auto"
         />
-        <Chart labels={chartDate!} datas={chartData3} />
+        {chartData3.length === 0 ? (
+          <Text
+            children="데이터가 존재하지 않습니다."
+            width="90%"
+            bold="700"
+            color="textColor"
+            size="16px"
+            display="block"
+            margin="20px auto"
+          />
+        ) : (
+          <Chart labels={chartDate!} datas={chartData3} />
+        )}
+
         <s.TextBtnArea>
           <s.Btn onClick={() => handleButtonClick3('muscleLeftArm')} color={getColor3('muscleLeftArm')}>
             왼팔

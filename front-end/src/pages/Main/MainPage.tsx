@@ -363,7 +363,9 @@ const MainPage = (): JSX.Element => {
             <s.MoreBtn onClick={() => navigate('/fitness/history')} children="더보기" />
           </s.SectionTitleContainer>
           <s.RoutineList>
-            {Array.isArray(mainMyRoutine) ? (
+            {mainMyRoutine.length === 0 ? (
+              <Text children="목록이 없습니다." width="100%" margin="20px auto" display="block" />
+            ) : (
               mainMyRoutine.map((routine, index) => (
                 <s.RoutineItem key={index}>
                   <s.RoutineInfo>
@@ -373,8 +375,6 @@ const MainPage = (): JSX.Element => {
                   <s.RoutineBtn children="상세보기" onClick={() => handleClickMove(routine.id)} />
                 </s.RoutineItem>
               ))
-            ) : (
-              <Text children="목록이 없습니다." width="100%" margin="20px auto" display="block" />
             )}
           </s.RoutineList>
         </s.ScrollContainer>

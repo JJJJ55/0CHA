@@ -44,7 +44,7 @@
                 nickname = #{nickname},
             </if>
             <!-- profileImage가 null이 아닐 때만 profile_image를 업데이트 -->
-            <if test="profileImage != null">
+            <if test="profileImage != null and profileImage != ''">
                 profile_image = #{profileImage},
             </if>
         </set>

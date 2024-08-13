@@ -120,8 +120,9 @@ const UpdateProfilePage = (): JSX.Element => {
   // 닉네임 핸들러
   const handleNicknameChange = (e: ChangeEvent<HTMLInputElement>) => {
     setNickName(e.target.value);
+    console.log(nickname);
     const nicknameRegex = /^[a-zA-Z0-9_]*$/;
-    if (!nicknameRegex.test(e.target.value) || e.target.value.length < 5) {
+    if (!nicknameRegex.test(e.target.value) || e.target.value.length < 5 || e.target.value.length > 10) {
       setNicknameError('닉네임은 5~10자 영문/숫자/_만 사용 가능합니다.');
     } else {
       setNicknameError('');
@@ -133,14 +134,19 @@ const UpdateProfilePage = (): JSX.Element => {
   };
 
   const handleSave = async () => {
+    const item = {
+      nickname: nickname,
+    };
     // 이미지 저장 로직 구현해야 함
     // 이미지 저장 시 행동 로직도 구현해야 함
     const formData = new FormData();
-    formData.append('nickname', new Blob([JSON.stringify(nickname)], { type: 'application/json' }));
+    formData.append('nickname', new Blob([JSON.stringify(item)], { type: 'application/json' }));
 
     // 이미지 파일이 있는 경우에만 FormData에 추가
     if (changeImg) {
       formData.append('image', changeImg);
+    } else {
+      formData.append('image', '');
     }
     await putProfileModify(
       formData,

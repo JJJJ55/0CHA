@@ -168,17 +168,10 @@ const ProfileMainPage = (): JSX.Element => {
     if (password === '동의합니다.') {
       await delMyDel(
         (resp) => {
-          logout(
-            (resp) => {
-              alert('탈퇴되었습니다. 이용해주셔서 감사합니다.');
-              navigate('/');
-              localStorage.removeItem('accessToken');
-              localStorage.removeItem('refreshToken');
-            },
-            (error) => {
-              alert('탈퇴과정에서 오류가 발생했습니다.');
-            },
-          );
+          alert('탈퇴되었습니다. 이용해주셔서 감사합니다.');
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+          navigate('/');
         },
         (error) => {
           alert('잠시 후 다시 시도해주세요.');

@@ -57,7 +57,6 @@ public class MainController {
         int ID = (Integer) request.getAttribute("userId");
         String imageUrl = "";
 
-        int result = mainService.checkNickname(nickname, ID);
 
         ObjectMapper objectMapper = new ObjectMapper();
         UserInfoDto userInfoDto;
@@ -67,6 +66,8 @@ public class MainController {
         catch (IOException e) {
             return ResponseEntity.badRequest().body("JSON parsing error");
         }
+
+        int result = mainService.checkNickname(userInfoDto.getNickname(), ID);
 
         if (result <= 0) {
 

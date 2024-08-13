@@ -36,13 +36,6 @@ export const localAxios = () => {
         localStorage.removeItem('refreshToken');
         window.location.reload();
       }
-
-      // if (response.headers.authorization) {
-      //   console.log('토큰있나?');
-      //   const newAccessToken = response?.headers?.authorization;
-      //   localStorage.removeItem('accessToken'); // 만료된 access토큰 삭제
-      //   localStorage.setItem('accessToken', newAccessToken); // 새걸로 교체
-      // }
       return response;
     },
     async (error) => {
@@ -77,8 +70,9 @@ export const localAxios = () => {
             localStorage.setItem('accessToken', accessToken);
             localStorage.setItem('refreshToken', refreshToken);
             console.log('교체완료');
-            window.location.reload(); // 페이지 재시작
-            return axios(config);
+            window.location.reload(); // 동접일 때 여기서 무한루프,, 그러면 액세스토큰이 만료됐을때도?
+            return Response;
+            // return axios(config);
           } else {
             console.log('요청했지만 200이 아님');
             localStorage.removeItem('accessToken');

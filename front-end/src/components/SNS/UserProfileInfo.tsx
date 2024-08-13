@@ -10,6 +10,8 @@ import { useNavigate, useParams } from 'react-router';
 import { IsFollowingUser } from '../../lib/api/sns-api';
 import { UserFollow } from '../../lib/api/sns-api';
 import { UserFollowCancel } from '../../lib/api/sns-api';
+import { useAppDispatch } from '../../lib/hook/useReduxHook';
+import { modalActions } from '../../store/modal';
 
 const s = {
   Container: styled.section`
@@ -94,6 +96,14 @@ const UserProfileInfo = (props: UserProfileInfoProps): JSX.Element => {
   const naviagate = useNavigate();
   const handleMovePage = (path: string): void => {
     naviagate(path);
+  };
+
+  const dispatch = useAppDispatch();
+  const handleClickFollowingModal = (): void => {
+    dispatch(modalActions.toggleFollowing());
+  };
+  const handleClickFollowerModal = (): void => {
+    dispatch(modalActions.toggleFollower());
   };
 
   const params = useParams()
@@ -235,11 +245,11 @@ const UserProfileInfo = (props: UserProfileInfoProps): JSX.Element => {
           <s.UserStatTitle>게시글</s.UserStatTitle>
           <s.UserStatCnt>{postCnt}</s.UserStatCnt>
         </s.UserStat>
-        <s.UserStat>
+        <s.UserStat onClick={handleClickFollowerModal}>
           <s.UserStatTitle>팔로워</s.UserStatTitle>
           <s.UserStatCnt>{follower}</s.UserStatCnt>
         </s.UserStat>
-        <s.UserStat>
+        <s.UserStat onClick={handleClickFollowingModal}>
           <s.UserStatTitle>팔로잉</s.UserStatTitle>
           <s.UserStatCnt>{followingCnt}</s.UserStatCnt>
         </s.UserStat>

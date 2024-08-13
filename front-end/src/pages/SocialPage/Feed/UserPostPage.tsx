@@ -1,14 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import Input from '../../../components/Common/Input';
-import Button from '../../../components/Common/Button';
-import Text from '../../../components/Common/Text';
-import { ReactComponent as Logo } from '../../../asset/img/svg/0CHA.svg';
-import test from '../../../asset/img/testImg.png';
 import Image from '../../../components/Common/Image';
-import Feed from '../../../components/SNS/Feed';
 import Header from '../../../components/Common/Header';
-import SnsNavigation from '../../../components/SNS/SnsNavigation';
 import BottomNav from '../../../components/Common/BottomNav';
 import UserProfileInfo from '../../../components/SNS/UserProfileInfo';
 import { useNavigate, useParams } from 'react-router';
@@ -16,6 +9,10 @@ import { useNavigate, useParams } from 'react-router';
 import { UserPage } from '../../../lib/api/sns-api';
 import { UserPageFeed } from '../../../lib/api/sns-api';
 import { UserPageItem } from '../../../lib/api/sns-api';
+import FollowingModal from '../../../components/Modal/FollowingModal';
+import { useAppDispatch, useAppSelector } from '../../../lib/hook/useReduxHook';
+import { modalActions, selectModalFollower, selectModalFollowing } from '../../../store/modal';
+import FollowerModal from '../../../components/Modal/FollowerModal';
 
 const s = {
   Container: styled.section`
@@ -95,6 +92,16 @@ const UserPostPage = (): JSX.Element => {
     setIsFitness(!isFitness);
   };
 
+  const isFollowingModal = useAppSelector(selectModalFollowing);
+  const isFollowerModal = useAppSelector(selectModalFollower);
+  const dispatch = useAppDispatch();
+  const toggleModalFollowing = (): void => {
+    dispatch(modalActions.toggleFollowing());
+  };
+  const toggleModalFollower = (): void => {
+    dispatch(modalActions.toggleFollower());
+  };
+
   const [userId, setUserId] = useState(0)
   const [userNickname, setUserNickname] = useState('')
   const [userProfileImage, setUserProfileImage] = useState('')
@@ -116,9 +123,13 @@ const UserPostPage = (): JSX.Element => {
   const params = useParams()
   const feedUserId = params.id
 
-  useEffect(() => {
-    console.log(feedUserId)
-  }, [feedUserId])
+
+  // useEffect(() => {
+  //   console.log(feedUserIdtmp, 'tmp')
+  //   if (feedUserIdtmp !== undefined) {
+  //     setFeedUserId(parseInt(feedUserIdtmp))
+  //   }
+  // }, [feedUserIdtmp])
 
   const getUserPage = async() => {
     if (feedUserId){
@@ -174,7 +185,7 @@ const UserPostPage = (): JSX.Element => {
     getUserPage();
     getUserPageFeed();
     getUserPageMarket();
-  }, []);
+  }, [feedUserId]);
 
   useEffect(() => {
     console.log(userData)
@@ -233,6 +244,8 @@ const UserPostPage = (): JSX.Element => {
             )}      
           </s.ThumbnailArea>
         </s.testArea>
+      <FollowingModal open={isFollowingModal} onModal={toggleModalFollowing} userId={userData?.id}/>
+      <FollowerModal open={isFollowerModal} onModal={toggleModalFollower} userId={userData?.id}/>
       </s.Container>
       <BottomNav />
     </>

@@ -5,9 +5,10 @@ import Header from '../../../components/Common/Header';
 import TextArea from '../../../components/Common/TextArea';
 import Button from '../../../components/Common/Button';
 import Image from '../../../components/Common/Image';
-import { useNavigate } from 'react-router';
-import { MyRoutine } from '../../../lib/api/sns-api';
+import { useLocation, useNavigate } from 'react-router';
+import { MyRoutine, SnsFeedListRoutine } from '../../../lib/api/sns-api';
 import { SnsFeedWrite } from '../../../lib/api/sns-api';
+import { SnsFeedModify } from '../../../lib/api/sns-api';
 
 const s = {
   Container: styled.section`
@@ -79,11 +80,25 @@ type routineData = {
   ]
 };
 
-const CreateFeedPage = (): JSX.Element => {
+const UpdateFeedPage = (): JSX.Element => {
   const navigate = useNavigate();
   const handleMovePage = (): void => {
     navigate('/sns');
   };
+
+  //수정 전 정보 가져오기
+  const [targetFeedId, setTargetFeedId] = useState();
+  const [routineId, setRoutineId] = useState();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state !== null) {
+      setTargetFeedId(location.state.targetFeedId);
+      setContentValue(location.state.feedContent.content);
+      setimgurl(`https://i11b310.p.ssafy.io/images/${location.state.feedContent.image.split('/home/ubuntu/images/')[1]}`)
+      setRoutineId(location.state.feedContent.routineId);
+    };
+  }, [targetFeedId]);
 
   // 루틴 확인, 사진 확인 전환
   const [isRoutineMode, setIsRoutineMode] = useState(false);
@@ -121,24 +136,34 @@ const CreateFeedPage = (): JSX.Element => {
   // 내 루틴 가져오기
   const [routine, setRoutine] = useState<routineData>();
   
+  // const getRoutineData = async () => {
+  //   await MyRoutine(
+  //     (resp) => {
+  //       setRoutine(resp.data);
+  //     },
+  //     (error) => {
+  //       console.error(error);
+  //     }
+  //   )
+  // };
+
   const getRoutineData = async () => {
-    await MyRoutine(
-      (resp) => {
-        setRoutine(resp.data);
-      },
-      (error) => {
-        console.error(error);
-      }
-    )
+    if (targetFeedId) {
+      await SnsFeedListRoutine(
+        targetFeedId,
+        (resp) => {
+          setRoutine(resp.data);
+        },
+        (error) => {
+          console.error(error);
+        }
+      )
+    }
   };
 
   useEffect(() => {
     getRoutineData();
-  }, []);
-
-  useEffect(() => {
-    console.log(routine);
-  }, [routine]);
+  }, [targetFeedId]);
 
   // 피드 내용 작성
   const [contentValue, setContentValue] = useState('');
@@ -147,8 +172,9 @@ const CreateFeedPage = (): JSX.Element => {
     const { currentTarget: { value }} = event;
     setContentValue(value);
   };
+
   const feedOnSubmit = async (event: React.FormEvent<HTMLButtonElement>) => {
-    if (changeImg !== undefined && routine !== undefined) {
+    if (changeImg !== undefined && routine !== undefined && targetFeedId !== undefined) {
       const formData = new FormData();
       const feedContent={
         content: contentValue,
@@ -157,11 +183,12 @@ const CreateFeedPage = (): JSX.Element => {
       formData.append('feed', new Blob([JSON.stringify(feedContent)], {type: 'application/json'}));
       formData.append('image', changeImg)
 
-      await SnsFeedWrite(
+      await SnsFeedModify(
+        targetFeedId,
         formData,
         (resp) => {
           console.log(resp.data);
-          console.log('글작성성공');
+          console.log('글수정성공');
           handleMovePage();
         },
         (error) => {
@@ -170,12 +197,15 @@ const CreateFeedPage = (): JSX.Element => {
       );
     };
   };
+
+  
+
   
   return (
     <>
       <s.Container>
         <s.HeaderArea>
-          <Header text="운동 피드 작성" />
+          <Header text="운동 피드 수정" />
         </s.HeaderArea>
         <s.MainArea>
           <s.ImageArea>
@@ -227,4 +257,4 @@ const CreateFeedPage = (): JSX.Element => {
   );
 };
 
-export default CreateFeedPage;
+export default UpdateFeedPage;

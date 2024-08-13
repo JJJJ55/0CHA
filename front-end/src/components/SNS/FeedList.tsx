@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, useEffect, useId, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import Image from '../Common/Image';
@@ -10,6 +10,8 @@ import { useNavigate } from 'react-router';
 import LikeIcon from './LikeIcon';
 
 import { SnsFeedDel } from '../../lib/api/sns-api';
+import { SnsFeedListRoutine } from '../../lib/api/sns-api';
+import { SnsFeedRoutineLoad } from '../../lib/api/sns-api';
 
 const s = {
   FeedContentArea: styled.div`
@@ -70,24 +72,38 @@ const s = {
     margin-bottom: 80px;
     display: ${(props) => (props.$isdelete === false ? '' : 'none')};
   `,
+  IsRoutineButton: styled.div`
+    margin-right: 10px;
+    `,
   ImageArea: styled.div`
+    position: relative;
     width: 100%;
     aspect-ratio: 1;
     border: #212121 1px solid;
-  `
-};
+    display: flex;
+    align-items: center;
+  `,
+  FeedImage: styled.div<ImageAreaProps>`
+    display: ${(props) => (props.$isRoutine === true ? 'none' : '')};
 
-type feedData = {
-  id: number;
-  content: string;
-  image: string;
-  likeCount: number;
-  commentCount: number;
-  createdAt: string;
-  userId: number;
-  nickname: string;
-  profileImage: string;
-  isLike: number;
+  `,
+  FeedRoutine: styled.div<ImageAreaProps>`
+    display: ${(props) => (props.$isRoutine === true ? '' : 'none')};
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+  `,
+  RoutineArea: styled.div`
+    line-height: 150%;
+    margin: 40px;
+  `,
+  Routine: styled.div`
+    color: ${(props) => props.theme.textColor};
+    font-size: 80%;
+    font-weight: 600;
+    text-shadow: 1px 1px 1px black;
+  `,
+
 };
 
 interface FeedListProps {
@@ -101,27 +117,33 @@ interface FeedListProps {
   nickname: string;
   profileImage: string;
   isLike: number;
-  // onClick: MouseEventHandler<HTMLDivElement>;
   onClick: (id: number) => void;
   loginUser: number;
 };
 
 interface FeedDeleteProps {
   $isdelete?: boolean;
-}
+};
 
+interface ImageAreaProps {
+  $isRoutine: boolean;
+};
 
+type routineData = {
+  id: number;
+  details: [
+    {
+      exerciseName: string;
+      setCount: number;
+    }
+  ]
+};
 
 const FeedList = (props: FeedListProps): JSX.Element => {
-  
-// const FeedList = ({data, onClick}: FeedListProps): JSX.Element => {
   const navigate = useNavigate();
   const handleMovePage = (path: string): void => {
     navigate(path);
   };
-
-  
-
 
   // 피드 삭제
   const [isDelete, setIsDelete] = useState(false);
@@ -141,9 +163,58 @@ const FeedList = (props: FeedListProps): JSX.Element => {
     );
   };
 
+  // 루틴, 사진 전환
+  const [isRoutineMode, setIsRoutineMode] = useState(false);
+  const routineButtonOnClick =(() => {
+    setIsRoutineMode((prev) => !prev);
+  });
+
+  const [routine, setRoutine] = useState<routineData>();
+
+  const getRoutineData = async () => {
+    await SnsFeedListRoutine(
+      props.feedId,
+      (resp) => {
+        console.log(resp.data, '루틴데이터');
+        setRoutine(resp.data);
+      },
+      (error) => {
+        console.error(error);
+      }
+    )
+  };
+
+  useEffect(() => {
+    getRoutineData();
+  }, []);
+
+  const loadRoutine = async () => {
+    if (routine !== undefined) {
+      await SnsFeedRoutineLoad(
+        routine.id,
+        (resp) => {
+          console.log(resp.data);
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    };
+  };
+
+  const handleModifyClick = ((feedId: number) => {
+    const feedContent = {
+      image: props.image,
+      routineId: routine?.id,
+      content: props.content,
+    }
+    navigate(`/sns/feed/update`, {state: {targetFeedId: feedId, feedContent: feedContent}});
+    console.log(feedId, 'modify feedid')
+  })
+
+
   return (
     <>
-
       <s.FeedItem key={props.feedId} $isdelete={isDelete}>
       <s.AuthorProfileArea>
         <s.AuthorProfile>
@@ -157,7 +228,7 @@ const FeedList = (props: FeedListProps): JSX.Element => {
         </s.AuthorProfile>
         {props.userId === props.loginUser ? (
           <s.MyFeedMenuArea>
-            <s.MyFeedMenu>수정</s.MyFeedMenu>
+            <s.MyFeedMenu onClick={() => {handleModifyClick(props.feedId)}}>수정</s.MyFeedMenu>
             <s.MyFeedMenu onClick={() => {feedDelOnClick(props.feedId)}}>삭제</s.MyFeedMenu>
           </s.MyFeedMenuArea>
         ) : (
@@ -166,12 +237,21 @@ const FeedList = (props: FeedListProps): JSX.Element => {
         
       </s.AuthorProfileArea>
       <s.ImageArea>
-        <Image
-          width="100%"
-          height="100%"
-          src={props.image}
-          type="rect"
-        />
+        <s.FeedImage $isRoutine={isRoutineMode}>
+          <Image
+            width="100%"
+            height="100%"
+            src={`https://i11b310.p.ssafy.io/images/${props.image.split('/home/ubuntu/images/')[1]}`}
+            type="rect"
+          />
+        </s.FeedImage>
+        <s.FeedRoutine $isRoutine={isRoutineMode}>
+          <s.RoutineArea>
+            {routine?.details?.map((item) => (
+              <s.Routine>{item.exerciseName} {item.setCount}세트</s.Routine>
+            ))}
+          </s.RoutineArea>
+        </s.FeedRoutine>
       </s.ImageArea>
       <s.FeedInteractionArea>
         <LikeIcon feedId={props.feedId} isLike={props.isLike} likeCount={props.likeCount} />
@@ -185,18 +265,39 @@ const FeedList = (props: FeedListProps): JSX.Element => {
           <s.FeedCaption>{props.commentCount}</s.FeedCaption>
         </s.IconArea>
         <s.RoutineButton>
+          <s.IsRoutineButton>
+          {isRoutineMode ? (
+            <Button
+              width="90px"
+              height="30px"
+              children="사진 보기"
+              size="12px"
+              bold="500"
+              onClick={routineButtonOnClick}
+            />
+          ) : (
+            <Button
+              width="90px"
+              height="30px"
+              children="루틴 보기"
+              size="12px"
+              bold="500"
+              onClick={routineButtonOnClick}
+            />
+          )}
+          </s.IsRoutineButton>
           <Button
             width="90px"
             height="30px"
             children="루틴 불러오기"
             size="12px"
             bold="500"
-            onClick={() => handleMovePage('/fitness/history/detail')}
+            onClick={loadRoutine}
           />
         </s.RoutineButton>
       </s.FeedInteractionArea>
       <s.FeedContentArea>{props.content}</s.FeedContentArea>
-      </s.FeedItem>    
+      </s.FeedItem>
     </>
   );
 };

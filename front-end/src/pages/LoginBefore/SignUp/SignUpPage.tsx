@@ -374,8 +374,12 @@ const SignUpPage = (): JSX.Element => {
         alert('인증번호 6자를 정확하게 입력해주세요.');
       } else {
         // 6자 누른 경우
+        const param = {
+          email: data.email,
+          authCode: parseInt(data.verificationCode),
+        };
         await emailAuthCheck(
-          parseInt(data.verificationCode),
+          param,
           (resp) => {
             alert('인증번호가 확인되었습니다.');
             setConfirmBtnText('인증완료');

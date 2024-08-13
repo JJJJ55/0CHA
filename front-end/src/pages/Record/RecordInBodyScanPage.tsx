@@ -2,9 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import Header from '../../components/Common/Header';
 import Button from '../../components/Common/Button';
-import BottomNav from '../../components/Common/BottomNav';
-import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
-import { pageActions, selectIsScan } from '../../store/page';
+import { useAppDispatch } from '../../lib/hook/useReduxHook';
+import { pageActions } from '../../store/page';
 
 const s = {
   Container: styled.section`

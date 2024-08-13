@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useLayoutEffect, useState } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import basic from '../../asset/img/basic.png';
 import IconSvg from '../../components/Common/IconSvg';
@@ -13,12 +13,11 @@ import Button from '../../components/Common/Button';
 import { useBottomNavHook } from '../../lib/hook/useBottomNavHook';
 import { useNavigate } from 'react-router';
 import { getMainRoutineAll, getMyInfo, getMyRoutine } from '../../lib/api/main-api';
-import { MainMyRoutine, Profile, User } from '../../util/types/axios-main';
+import { MainMyRoutine, User } from '../../util/types/axios-main';
 import { mainPageRoutine } from '../../util/types/axios-fitness';
 import { useAppSelector } from '../../lib/hook/useReduxHook';
 import { selectIsPlay } from '../../store/page';
-import { putFinishRoutine } from '../../lib/api/fitness-api';
-// import { user } from '../../lib/api/user-api';
+import Text from '../../components/Common/Text';
 
 const s = {
   Header: styled.header`
@@ -253,12 +252,6 @@ const HorizontalScroll: React.FC<HorizontalScrollProps> = ({ items }) => {
     <s.ScrollContainer>
       <s.SectionTitle children="추천 루틴" />
       <s.ScrollArea ref={scrollWrapperRef}>
-        {/* {items.map((item, index) => (
-          <s.Item key={index} onClick={() => handleMovePage('/fitness/history/detail')}>
-            <IconSvg Ico={img[index]} height="100%" width="100%" cursor="pointer" />
-            <s.ItemText>{item.title}</s.ItemText>
-          </s.Item>
-        ))} */}
         <s.Item onClick={() => navigate('/fitness/history/detail', { state: { id: items[0].id } })}>
           <IconSvg Ico={img[0]} height="100%" width="100%" cursor="pointer" />
           <Text1>{items[0]?.title}</Text1>
@@ -320,6 +313,17 @@ const MainPage = (): JSX.Element => {
       },
     );
   }, []);
+  const basicUrl = 'https://i11b310.p.ssafy.io/images/';
+
+  // 이미지 경로를 파싱하여 basicUrl과 결합하는 함수
+  const getParsedImageUrl = (imagePath?: string) => {
+    if (imagePath) {
+      const relativePath = imagePath.split('/home/ubuntu/images/')[1];
+      return basicUrl + relativePath;
+    } else {
+      return basic;
+    }
+  };
 
   const PageHeader = () => (
     <s.Header>
@@ -333,7 +337,7 @@ const MainPage = (): JSX.Element => {
           cursor="pointer"
           onClick={() => navigate('/sns/notification')}
         />
-        <s.ProfileImage src={user?.profileImage ?? basic} alt="Profile" onClick={() => navigate('/mypage')} />
+        <s.ProfileImage src={getParsedImageUrl(user?.profileImage)} alt="Profile" onClick={() => navigate('/mypage')} />
       </s.HeaderIcons>
     </s.Header>
   );
@@ -359,15 +363,19 @@ const MainPage = (): JSX.Element => {
             <s.MoreBtn onClick={() => navigate('/fitness/history')} children="더보기" />
           </s.SectionTitleContainer>
           <s.RoutineList>
-            {mainMyRoutine.map((routine, index) => (
-              <s.RoutineItem key={index}>
-                <s.RoutineInfo>
-                  <s.RoutineName children={routine.title} />
-                  <s.RoutineDate children={routine.dueDate} />
-                </s.RoutineInfo>
-                <s.RoutineBtn children="상세보기" onClick={() => handleClickMove(routine.id)} />
-              </s.RoutineItem>
-            ))}
+            {mainMyRoutine.length === 0 ? (
+              <Text children="목록이 없습니다." width="100%" margin="20px auto" display="block" />
+            ) : (
+              mainMyRoutine.map((routine, index) => (
+                <s.RoutineItem key={index}>
+                  <s.RoutineInfo>
+                    <s.RoutineName children={routine.title} />
+                    <s.RoutineDate children={routine.dueDate} />
+                  </s.RoutineInfo>
+                  <s.RoutineBtn children="상세보기" onClick={() => handleClickMove(routine.id)} />
+                </s.RoutineItem>
+              ))
+            )}
           </s.RoutineList>
         </s.ScrollContainer>
       </s.PageBody>

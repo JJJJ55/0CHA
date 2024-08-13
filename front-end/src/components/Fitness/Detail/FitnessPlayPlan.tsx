@@ -6,10 +6,8 @@ import IconSvg from '../../Common/IconSvg';
 import { useLocation } from 'react-router';
 import FitnessPlayBottomNav from '../Etc/FitnessPlayBottomNav';
 import { useAppDispatch, useAppSelector } from '../../../lib/hook/useReduxHook';
-import { axiosCreateRoutine } from '../../../util/types/axios-fitness';
-import { putFinishRoutine, putUpdateRoutine } from '../../../lib/api/fitness-api';
-import { pageActions } from '../../../store/page';
-import { fitnessActions, selectSave, selectTime } from '../../../store/fitness';
+import { fitnessActions, selectSave } from '../../../store/fitness';
+import { RoutineDetails } from '../../../util/types/axios-fitness';
 
 const s = {
   Container: styled.section`
@@ -122,22 +120,6 @@ const FitnessPlayPlan = (props: FitnessPlanProps): JSX.Element => {
   const [sets, setSets] = useState<ExerciseDetailType[]>(props.exercise.sets);
   const path = useLocation().pathname;
   const dispatch = useAppDispatch();
-  const isSave = useAppSelector(selectSave);
-
-  useEffect(() => {
-    // 모든 세트의 complete 상태를 false로 초기화
-    if (!isSave) {
-      const resetSets = props.exercise.sets.map((set) => ({
-        ...set,
-        complete: false,
-      }));
-      setSets(resetSets);
-    }
-  }, []);
-
-  // useEffect(() => {
-  //   setSets(props.exercise.sets);
-  // }, [props.exercise.sets]);
 
   useEffect(() => {
     console.log(`Sets for exercise ${props.index}:`, sets);
@@ -201,7 +183,6 @@ const FitnessPlayPlan = (props: FitnessPlanProps): JSX.Element => {
   return (
     <s.Container>
       <s.PlanHeaderArea>
-        {/* <s.hidden>{(props.exercise.sequence = props.index + 1)}</s.hidden> */}
         <span style={{ fontWeight: 600 }}>{props.index + 1 + '. ' + props.exercise.exerciseName}</span>
         <s.DeleteText onClick={props.onDelete}>운동 삭제</s.DeleteText>
       </s.PlanHeaderArea>
@@ -222,6 +203,7 @@ const FitnessPlayPlan = (props: FitnessPlanProps): JSX.Element => {
                 <s.ValueInput
                   type="number"
                   value={data.weight}
+                  disabled={data.complete}
                   onChange={(e) => handleInputChange(index, 'weight', e.target.value ? Number(e.target.value) : '')}
                 />
               </s.Td>
@@ -229,6 +211,7 @@ const FitnessPlayPlan = (props: FitnessPlanProps): JSX.Element => {
                 <s.ValueInput
                   type="number"
                   value={data.count}
+                  disabled={data.complete}
                   onChange={(e) => handleInputChange(index, 'count', e.target.value ? Number(e.target.value) : '')}
                 />
               </s.Td>

@@ -10,7 +10,6 @@ import { useLocation, useNavigate } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
 import { modalActions, selectModalCalendar } from '../../store/modal';
 import { useModalExitHook } from '../../lib/hook/useModalExitHook';
-import { pageActions } from '../../store/page';
 import FitnessPlan from '../../components/Fitness/Detail/FitnessPlan';
 import { axiosCreateRoutine, CreateRoutine, ExerciseDetailType } from '../../util/types/axios-fitness';
 import Text from '../../components/Common/Text';

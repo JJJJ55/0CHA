@@ -4,7 +4,6 @@ import Header from '../../components/Common/Header';
 import CalendarArea from '../../components/Common/CalendarArea';
 import Text from '../../components/Common/Text';
 import Button from '../../components/Common/Button';
-import BottomNav from '../../components/Common/BottomNav';
 import IconSvg from '../../components/Common/IconSvg';
 import { ReactComponent as move } from '../../asset/img/svg/move.svg';
 import { useNavigate } from 'react-router';

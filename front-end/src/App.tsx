@@ -17,7 +17,6 @@ import MainPage from './pages/Main/MainPage';
 import AIMainPage from './pages/AI/AIMainPage';
 import FitnessListPage from './pages/Fitness/FitnessListPage';
 import FitnessDetailPage from './pages/Fitness/FitnessDetailPage';
-import FitnessPlanSetPage from './pages/Fitness/FitnessPlanSetPage';
 import FitnessRoutineDetatilPage from './pages/Fitness/FitnessRoutineDetailPage';
 import FitnessRoutineListPage from './pages/Fitness/FitnessRoutineListPage';
 import FitnessPlayPage from './pages/Fitness/FitnessPlayPage';
@@ -121,13 +120,10 @@ function App() {
                     <Route index element={<FitnessListPage />} />
                     <Route path="detail" element={<FitnessDetailPage />} />
                   </Route>
-                  <Route path="testplan" element={<TestPlanSetPage />} />
-                  {/* <Route path="plan" element={<FitnessPlanSetPage />} /> */}
                   <Route path="plan" element={<TestPlanSetPage />} />
                   <Route path="history">
                     <Route index element={<FitnessRoutineListPage />} />
                     <Route path="detail" element={<FitnessRoutineDetatilPage />} />
-                    {/* <Route path="test" element={<TestPlanSetPage />} /> */}
                   </Route>
                 </Route>
                 {isPlay ? (

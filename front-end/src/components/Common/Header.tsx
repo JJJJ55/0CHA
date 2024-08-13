@@ -1,8 +1,7 @@
-import React, { MouseEventHandler } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { ReactComponent as back } from '../../asset/img/svg/back.svg';
 import IconSvg from './IconSvg';
-import Button from './Button';
 import { useNavigate } from 'react-router';
 
 const s = {

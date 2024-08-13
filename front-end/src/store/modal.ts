@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '.';
 
 interface ModalState {
@@ -7,6 +6,7 @@ interface ModalState {
   isUserSearch: boolean;
   isComment: boolean;
   isMarket: boolean;
+  isAddList: boolean;
   isFollowingModal: boolean;
   isFollowerModal: boolean;
 }
@@ -16,6 +16,7 @@ const initialState: ModalState = {
   isUserSearch: false,
   isComment: false,
   isMarket: false,
+  isAddList: false,
   isFollowingModal: false,
   isFollowerModal: false,
 };
@@ -42,6 +43,9 @@ export const modalSlice = createSlice({
     toggleMarket: (state) => {
       state.isMarket = !state.isMarket;
     },
+    toggleAddList: (state) => {
+      state.isAddList = !state.isAddList;
+    },
     CloseCalendar: (state) => {
       state.isCalendar = false;
     },
@@ -54,6 +58,9 @@ export const modalSlice = createSlice({
     CloseMarket: (state) => {
       state.isMarket = false;
     },
+    CloseAddList: (state) => {
+      state.isAddList = false;
+    },
   },
 });
 
@@ -62,6 +69,7 @@ export const selectModalCalendar = (state: RootState) => state.modal.isCalendar;
 export const selectModalUserSearch = (state: RootState) => state.modal.isUserSearch;
 export const selectModalComment = (state: RootState) => state.modal.isComment;
 export const selectModalMarket = (state: RootState) => state.modal.isMarket;
+export const selectModalAddList = (state: RootState) => state.modal.isAddList;
 export const selectModalFollowing = (state: RootState) => state.modal.isFollowingModal;
 export const selectModalFollower = (state: RootState) => state.modal.isFollowerModal;
 

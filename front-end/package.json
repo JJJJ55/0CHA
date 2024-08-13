@@ -23,6 +23,7 @@
     "axios": "^1.7.3",
     "chart.js": "^4.4.3",
     "chartjs-plugin-datalabels": "^2.2.0",
+    "firebase": "^10.12.5",
     "http-proxy-middleware": "^3.0.0",
     "lodash": "^4.17.21",
     "moment": "^2.30.1",

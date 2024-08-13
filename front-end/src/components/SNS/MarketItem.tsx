@@ -35,7 +35,7 @@ const s = {
     font-weight: 600;
   `,
   Unavailable: styled.div`
-    color: #666666;
+    color: ${(props) => props.theme.textColor2};
     font-size: 12px;
     font-weight: 600;
   `,
@@ -70,7 +70,7 @@ const s = {
   Horizon: styled.hr`
     margin: 0 15px;
     min-width: 250px;
-    border-color: #212121;
+    border-color: ${(props) => props.theme.subColor};
   `,
   ItemImage: styled.div`
     width: 70px;
@@ -88,20 +88,6 @@ const s = {
       object-fit: cover;
     }
   `,
-};
-
-type marketItem = {
-  id: number;
-  title: string;
-  price: number;
-  isSold: boolean;
-  createdAt: string;
-  userId: number;
-  nickname: string;
-  profileImage: string;
-  likeCount: number;
-  isLike: number;
-  images: Array<string>;
 };
 
 interface MarketItemProps {

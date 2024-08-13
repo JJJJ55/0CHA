@@ -23,6 +23,10 @@ const s = {
   `,
   Header: styled.div`
     position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
   `,
   SellerInfo: styled.div`
     height: 70px;
@@ -37,7 +41,7 @@ const s = {
     margin-bottom: 7px;
   `,
   CreatedAt: styled.div`
-    color: #666666;
+    color: ${(props) => props.theme.textColor2};
     font-size: 12px;
     font-weight: 400;
   `,
@@ -82,7 +86,7 @@ const s = {
   `,
   Horizon: styled.hr`
     margin: 0 20px;
-    border-color: #212121;
+    border-color: ${(props) => props.theme.subColor};
   `,
   ItemContent: styled.div`
     color: ${(props) => props.theme.textColor};
@@ -98,7 +102,7 @@ const s = {
     gap: 10px;
   `,
   ItemStatus: styled.div<{ available: string }>`
-    color: ${(props) => (props.available === 'true' ? props.theme.mainColor : '#666666')};
+    color: ${(props) => (props.available === 'true' ? props.theme.mainColor : props.theme.textColor2)};
     width: 90%;
     margin: 0 auto;
     font-size: 14px;
@@ -106,10 +110,6 @@ const s = {
     text-align: right;
   `,
 };
-
-interface ItemStatusProps {
-  available: boolean;
-}
 
 interface Item {
   id: number;
@@ -123,6 +123,7 @@ interface Item {
   content: string;
   userId: number;
   createdAt: string;
+  profileImage: string;
 }
 
 interface MarketModalProps {
@@ -240,7 +241,7 @@ const ItemModal = (props: MarketModalProps): JSX.Element => {
       navigate('../chat');
     } else {
       // 사용자가 구매자인 경우
-      navigate(`../chat/${item?.id}`);
+      navigate(`../chat/${item?.userId}`);
     }
   };
   // 게시글 수정
@@ -280,6 +281,7 @@ const ItemModal = (props: MarketModalProps): JSX.Element => {
             const updatedItem = { ...item, isSold: newStatus };
             setItem(updatedItem);
             onItemUpdate(updatedItem);
+            console.log(resp);
           },
           (error) => {
             console.log(error);
@@ -312,7 +314,14 @@ const ItemModal = (props: MarketModalProps): JSX.Element => {
         {/* <Image width="100%" height="auto" src={testImg} type="rect" /> */}
         <s.SellerInfo>
           {/* <Image width="34px" height="34px" src={item?.profileImage || ''} /> */}
-          <Image width="34px" height="34px" src={testImg} />
+          {item?.profileImage && (
+            <Image
+              width="34px"
+              height="34px"
+              src={'https://i11b310.p.ssafy.io/images/' + item?.profileImage.split('/home/ubuntu/images/')[1]}
+            />
+          )}
+          {!item?.profileImage && <Image width="34px" height="34px" src={testImg} />}
           <s.SellerNameArea>
             <s.SellerName>{item?.nickname}</s.SellerName>
             <s.CreatedAt>{relativeTime}</s.CreatedAt>

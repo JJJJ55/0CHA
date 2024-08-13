@@ -22,7 +22,17 @@ const s = {
     height: 100%;
     background-color: ${(props) => props.theme.bgColor};
     overflow: auto;
+    padding-top: 200px;
     padding-bottom: 68px;
+  `,
+  FixedHeader: styled.div`
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 800px;
+    z-index: 5;
+    background-color: ${(props) => props.theme.bgColor};
   `,
   Horizon: styled.hr`
     margin: 0 15px;
@@ -222,7 +232,7 @@ const MarketPage = (): JSX.Element => {
 
   return (
     <>
-      <s.Container>
+      <s.FixedHeader>
         <SnsHeader />
         <SnsNavigation />
         <s.SearchArea>
@@ -237,6 +247,8 @@ const MarketPage = (): JSX.Element => {
           <s.SearchInput value={searchQuery} onChange={handleSearchInputChange} placeholder="제목 검색" />
           <Button type="main" onClick={handleSearch} height="30px" width="40px" children="검색" />
         </s.SearchArea>
+      </s.FixedHeader>
+      <s.Container>
         {items.length === 0 ? (
           <s.NoItemsMessage>상품이 없습니다</s.NoItemsMessage>
         ) : (

@@ -131,9 +131,12 @@ const ChatPage = (): JSX.Element => {
       },
     );
   };
+  getWs();
   // WebSocket 연결 설정
   useEffect(() => {
-    getWs();
+    // alert('추후 제공 예정입니다.');
+    // navigate(-1);
+    // return;
     // JWT 토큰 가져오기
     const accessToken = localStorage.getItem('accessToken');
     const refreshToken = localStorage.getItem('refreshToken');

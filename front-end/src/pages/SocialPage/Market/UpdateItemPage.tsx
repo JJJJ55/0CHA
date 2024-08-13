@@ -207,10 +207,6 @@ const UpdateItemPage = (): JSX.Element => {
     // ItemDto 데이터를 JSON 형태로 변환하고 formData에 추가
     formData.append('item', new Blob([JSON.stringify(itemData)], { type: 'application/json' }));
 
-    // removeImages.forEach((image) => {
-    //   formData.append('removeImagePaths', image);
-    // });
-
     newImages.forEach((image) => {
       formData.append('addImages', image);
     });
@@ -223,7 +219,7 @@ const UpdateItemPage = (): JSX.Element => {
         formData,
         (resp) => {
           console.log('중고장터 게시글이 수정되었습니다. ');
-          navigate('/sns');
+          navigate('/sns/market');
         },
         (err) => {
           console.log('문제 발생', err);

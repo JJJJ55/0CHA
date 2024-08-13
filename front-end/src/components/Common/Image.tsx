@@ -7,6 +7,7 @@ const Img = styled.img<ImgProps>`
   cursor: ${(props) => props.cursor};
   margin: ${(props) => props.margin};
   display: ${(props) => props.display};
+  object-fit: ${(props) => props.fit};
 `;
 const s = {
   FeedImg: styled(Img)``,
@@ -24,6 +25,7 @@ interface ImgProps {
   onClick?: Function;
   display?: string;
   margin?: string;
+  fit?: string;
 }
 
 const Image = (props: ImgProps): JSX.Element => {

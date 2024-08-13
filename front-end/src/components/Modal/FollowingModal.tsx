@@ -162,7 +162,7 @@ const FollowingModal = (props: FollowingModalProps): JSX.Element => {
           </s.HeaderContainer>
           <s.UserList>
             {followingData.map((user) => (
-              <SearchProfile
+              <SearchProfile key={user.id}
                 profileImage={user.profileImage}
                 username={user.nickname}
                 onClick={() => handleMovePage(`${user.id}`)}

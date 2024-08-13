@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, useEffect, useRef } from 'react';
+import React, { useState, ChangeEvent } from 'react';
 import styled from 'styled-components';
 import Button from '../../../components/Common/Button';
 import basic from '../../../asset/img/basic.png';
@@ -6,7 +6,7 @@ import Header from '../../../components/Common/Header';
 import Input from '../../../components/Common/Input';
 import BottomNav from '../../../components/Common/BottomNav';
 import { useNavigate } from 'react-router';
-import { postCheckNickname, putProfileModify } from '../../../lib/api/main-api';
+import { putProfileModify } from '../../../lib/api/main-api';
 import { userData } from '../../../lib/hook/userData';
 
 const s = {
@@ -134,30 +134,34 @@ const UpdateProfilePage = (): JSX.Element => {
   };
 
   const handleSave = async () => {
-    const item = {
-      nickname: nickname,
-    };
-    // 이미지 저장 로직 구현해야 함
-    // 이미지 저장 시 행동 로직도 구현해야 함
-    const formData = new FormData();
-    formData.append('nickname', new Blob([JSON.stringify(item)], { type: 'application/json' }));
-
-    // 이미지 파일이 있는 경우에만 FormData에 추가
-    if (changeImg) {
-      formData.append('image', changeImg);
+    if (nicknameError.length < 3) {
+      const item = {
+        nickname: nickname,
+      };
+      const formData = new FormData();
+      formData.append('nickname', new Blob([JSON.stringify(item)], { type: 'application/json' }));
+      if (changeImg) {
+        formData.append('image', changeImg);
+      } else {
+        formData.append('image', '');
+      }
+      await putProfileModify(
+        formData,
+        (resp) => {
+          alert('변경되었습니다.');
+          navigate('../../mypage');
+        },
+        (error) => {
+          if (error.response?.data === '사용중인 닉네임입니다.') {
+            alert('사용중인 닉네임입니다.');
+          } else {
+            alert('잠시 후 다시 시도해주세요.');
+          }
+        },
+      );
     } else {
-      formData.append('image', '');
+      alert('입력하신 데이터를 확인해주세요.');
     }
-    await putProfileModify(
-      formData,
-      (resp) => {
-        alert('변경되었습니다.');
-        navigate('../../mypage');
-      },
-      (error) => {
-        alert('잠시 후 다시 시도해주세요.');
-      },
-    );
   };
 
   const basicUrl = 'https://i11b310.p.ssafy.io/images/';

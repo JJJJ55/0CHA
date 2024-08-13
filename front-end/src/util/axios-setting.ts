@@ -1,4 +1,5 @@
 import axios, { Axios, AxiosResponse } from 'axios';
+import { useNavigate } from 'react-router';
 
 export const localAxios = () => {
   const instance: Axios = axios.create({
@@ -30,12 +31,18 @@ export const localAxios = () => {
   instance.interceptors.response.use(
     async (response: AxiosResponse) => {
       console.log('인터셉트 리스폰');
-      if (response.headers.authorization) {
-        console.log('토큰있나?');
-        const newAccessToken = response?.headers?.authorization;
-        localStorage.removeItem('accessToken'); // 만료된 access토큰 삭제
-        localStorage.setItem('accessToken', newAccessToken); // 새걸로 교체
+      if (response.data === 'Refresh token is expired, logged out') {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        window.location.reload();
       }
+
+      // if (response.headers.authorization) {
+      //   console.log('토큰있나?');
+      //   const newAccessToken = response?.headers?.authorization;
+      //   localStorage.removeItem('accessToken'); // 만료된 access토큰 삭제
+      //   localStorage.setItem('accessToken', newAccessToken); // 새걸로 교체
+      // }
       return response;
     },
     async (error) => {
@@ -50,6 +57,7 @@ export const localAxios = () => {
         // interceptioLogout();
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
+        window.location.reload(); // 페이지 재시작
       }
       if (status === 401 && data === 'Access token is expired') {
         try {
@@ -69,6 +77,7 @@ export const localAxios = () => {
             localStorage.setItem('accessToken', accessToken);
             localStorage.setItem('refreshToken', refreshToken);
             console.log('교체완료');
+            window.location.reload(); // 페이지 재시작
             return axios(config);
           } else {
             console.log('요청했지만 200이 아님');

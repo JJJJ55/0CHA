@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import Image from '../../Common/Image';
 import IconSvg from '../../Common/IconSvg';
-import basic from '../../../asset/img/testImg.png';
 import { ReactComponent as jjimOn } from '../../../asset/img/svg/jjimOn.svg';
 import { ReactComponent as jjimOff } from '../../../asset/img/svg/jjimOff.svg';
 import { ReactComponent as addOff } from '../../../asset/img/svg/pickOff.svg';
@@ -41,7 +40,7 @@ const s = {
     width: 20%;
     height: 100%;
     display: flex;
-    justify-content: space-between;
+    justify-content: end;
     align-items: center;
   `,
   FitnessTitle: styled.span`
@@ -64,36 +63,8 @@ interface FitnessListProps {
   data: FitnessType[];
 }
 
-const FitnessList = (props: FitnessListProps): JSX.Element => {
-  const navigate = useNavigate();
+const FitnessModalList = (props: FitnessListProps): JSX.Element => {
   // const [add, setAdd] = useState<number[]>([]);
-  const handleClickMove = async (id: number) => {
-    navigate('detail', { state: { id } });
-  };
-
-  const handleClickJjim = async (id: number) => {
-    await postFitnessJjim(
-      id,
-      (resp) => {
-        alert('찜 성공');
-      },
-      (error) => {
-        alert('잠시후 다시 시도해주세요.');
-      },
-    );
-  };
-  const handleClickNotJjim = async (id: number) => {
-    await deleteFitnessJjimCancel(
-      id,
-      (resp) => {
-        alert('찜 해제');
-      },
-      (error) => {
-        alert('잠시후 다시 시도해주세요.');
-      },
-    );
-  };
-
   if (!Array.isArray(props.data)) {
     return (
       <>
@@ -103,52 +74,17 @@ const FitnessList = (props: FitnessListProps): JSX.Element => {
     );
   }
 
-  const basicUrl = 'https://i11b310.p.ssafy.io/images/';
-
-  // 이미지 경로를 파싱하여 basicUrl과 결합하는 함수
-  const getParsedImageUrl = (imagePath: string) => {
-    if (imagePath.length >= 200) {
-      return imagePath;
-    }
-    if (imagePath) {
-      const relativePath = imagePath.split('/home/ubuntu/images/')[1];
-      return basicUrl + relativePath;
-    } else {
-      return basic;
-    }
-  };
-
   return (
     <s.Container>
       <s.title>{props.text}</s.title>
       {props.data.map((data, index) => (
         <div key={index}>
           <s.ListArea>
-            <s.ContentArea onClick={() => handleClickMove(data.id)}>
-              <Image width="60" height="60" type="" src={getParsedImageUrl(data.image)} />
+            <s.ContentArea>
+              <Image width="60" height="60" type="" src={data.image} />
               <s.FitnessTitle>{data.name}</s.FitnessTitle>
             </s.ContentArea>
             <s.IconArea>
-              {data.like ? (
-                <IconSvg
-                  width="25"
-                  height="25"
-                  Ico={jjimOn}
-                  color="#ccff33"
-                  cursor="pointer"
-                  onClick={() => handleClickNotJjim(data.id)}
-                />
-              ) : (
-                <IconSvg
-                  width="25"
-                  height="25"
-                  Ico={jjimOff}
-                  color="#ccff33"
-                  cursor="pointer"
-                  onClick={() => handleClickJjim(data.id)}
-                />
-              )}
-
               {props.add.some((item) => item.exerciseId === data.id) ? (
                 <IconSvg
                   width="25"
@@ -178,4 +114,4 @@ const FitnessList = (props: FitnessListProps): JSX.Element => {
   // }
 };
 
-export default FitnessList;
+export default FitnessModalList;

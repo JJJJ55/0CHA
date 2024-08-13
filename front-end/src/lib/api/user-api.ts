@@ -61,7 +61,7 @@ export const findPwAuth = async (
 };
 
 export const findPwAuthCheck = async (
-  param: number,
+  param: AuthCheck,
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
 ) => {
@@ -84,7 +84,7 @@ export const emailAuth = async (email: string, success: (response: any) => void,
 };
 
 export const emailAuthCheck = async (
-  param: number,
+  param: AuthCheck,
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
 ) => {

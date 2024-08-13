@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { ReactComponent as off } from '../../../asset/img/svg/pickOff.svg';
 import { ReactComponent as on } from '../../../asset/img/svg/pickOn.svg';
 import IconSvg from '../../Common/IconSvg';
-import Input from '../../Common/Input';
 import Text from '../../Common/Text';
 import { getRoutineDetail } from '../../../lib/api/fitness-api';
 import { useLocation } from 'react-router';

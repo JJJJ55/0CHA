@@ -10,6 +10,15 @@
         <result column="send_at" property="sendAt"/>
     </resultMap>
 
+    <resultMap id="lastMessageList" type="com.ssafy.back_end.sns.model.UserJoinRoomDto">
+        <result column="user_id" property="userId"/>
+        <result column="nickname" property="nickname"/>
+        <result column="profile_image" property="profileImage"/>
+        <result column="room_id" property="roomId"/>
+        <result column="last_message" property="lastMessage"/>
+        <result column="send_at" property="sendAt"/>
+    </resultMap>
+
     <select id="findByRoomId" resultMap="messageResultMap">
         SELECT * FROM messages WHERE room_id = #{roomId}
     </select>
@@ -18,4 +27,35 @@
         INSERT INTO messages (sender_id, room_id, message)
         VALUES (#{senderId}, #{roomId}, #{message})
     </insert>
+
+    <select id="getLastMessageList" resultMap="lastMessageList">
+        SELECT
+            opponent.user_id AS user_id,         -- 상대방 유저의 ID
+            u.nickname AS nickname,              -- 상대방 유저의 닉네임
+            u.profile_image AS profile_image,    -- 상대방 유저의 프로필 이미지
+            opponent.room_id AS room_id,         -- 채팅방 ID
+            m.message AS last_message,           -- 해당 채팅방에서 가장 최근의 메시지
+            m.send_at AS send_at                 -- 최근 메시지의 전송 시간
+        FROM
+            (
+                SELECT
+                    CASE
+                        WHEN r.user1_id = #{myId} THEN r.user2_id  -- 내가 user1이면 상대방은 user2
+                        WHEN r.user2_id = #{myId} THEN r.user1_id  -- 내가 user2이면 상대방은 user1
+                        END AS user_id,
+                    r.id AS room_id  -- 해당 방의 ID
+                FROM rooms r
+                WHERE
+                    r.user1_id = #{myId} OR r.user2_id = #{myId}  -- 내가 포함된 방만 선택
+            ) AS opponent
+                JOIN users u ON u.id = opponent.user_id  -- 상대방의 정보를 얻기 위해 users 테이블과 조인
+                JOIN messages m ON m.id = (
+                SELECT m2.id
+                FROM messages m2
+                WHERE m2.room_id = opponent.room_id  -- 각 방에서
+                ORDER BY m2.send_at DESC  -- 가장 최근의 메시지를 찾기 위해 전송 시간을 기준으로 정렬
+            LIMIT 1  -- 가장 최근 메시지 1개만 선택
+            )
+        ORDER BY send_at DESC  -- 최근 메시지를 기준으로 전체 결과를 내림차순 정렬
+    </select>
 </mapper>

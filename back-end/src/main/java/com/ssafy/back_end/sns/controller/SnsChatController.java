@@ -2,6 +2,7 @@ package com.ssafy.back_end.sns.controller;
 
 import com.ssafy.back_end.auth.model.UserDto;
 import com.ssafy.back_end.sns.model.MessageDto;
+import com.ssafy.back_end.sns.model.UserJoinRoomDto;
 import com.ssafy.back_end.sns.service.SnsChatService;
 import com.ssafy.back_end.redis.service.RedisMessagePublisher;
 import com.ssafy.back_end.util.JwtUtil;
@@ -70,6 +71,19 @@ public class SnsChatController {
         logger.info("Retrieved users excluding userId {}: {}", excludeUserId, users);
 
         return users;
+    }
+
+    @Operation(summary = "채팅한 목록 가져오기")
+    @GetMapping("/last-message-list")
+    @ResponseBody
+    public List<UserJoinRoomDto> getLastMessageList(HttpServletRequest request) {
+        int myId = (Integer)request.getAttribute("userId");
+        logger.info("Fetching myId: {}", myId);
+
+        List<UserJoinRoomDto> lastMessageList = snsChatService.getLastMessageList(myId);
+        logger.info("Retrieved myId {}: {}", myId, lastMessageList);
+
+        return lastMessageList;
     }
 
     // 채팅방 생성

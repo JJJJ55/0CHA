@@ -2,13 +2,11 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import ReactModal from 'react-modal';
 import SearchProfile from '../SNS/SearchProfile';
-import test from '../../asset/img/testImg.png';
-import Input from '../Common/Input';
-import Button from '../Common/Button';
 import IconSvg from '../Common/IconSvg';
 import { ReactComponent as back } from '../../asset/img/svg/back.svg';
 import { useNavigate } from 'react-router';
 import { UserSearch } from '../../lib/api/sns-api';
+import { UserPageFollower } from '../../lib/api/sns-api';
 
 const s = {
   Container: styled.section`
@@ -31,11 +29,40 @@ const s = {
     margin-right: 10px;
     cursor: pointer;
   `,
+  HeaderContainer: styled.section`
+    max-width: 800px;
+    width: 100%;
+    height: 57px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: ${(props) => props.theme.bgColor};
+    position: fixed;
+  `,
+  HeaderBasicArea: styled.div`
+    width: 70%;
+    height: 100%;
+    margin: 0 10px;
+    display: flex;
+    align-items: center;
+  `,
+  HeaderTitle: styled.span`
+    width: 100%;
+    color: ${(props) => props.theme.textColor};
+    font-size: 18px;
+    font-weight: bold;
+    margin-left: 20px;
+    cursor: default;
+  `,
+  UserList: styled.div`
+    padding-top: 57px;
+  `,
 };
 
-interface UserSearchModalProps {
+interface FollowingModalProps {
   open: boolean;
   onModal: Function;
+  userId?: number;
 }
 
 type UserData = {
@@ -48,11 +75,8 @@ type UserData = {
   followerIdCount: number;
 }
 
-const UserSearchModal = (props: UserSearchModalProps): JSX.Element => {
+const FollowerModal = (props: FollowingModalProps): JSX.Element => {
   const [search, setSearch] = useState('');
-  const onSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearch(e.target.value);
-  };
   const toggleModal = (): void => {
     props.onModal();
   };
@@ -61,9 +85,9 @@ const UserSearchModal = (props: UserSearchModalProps): JSX.Element => {
   const handleMovePage = (id: string) => {
     props.onModal();
     getUserData();
-    navigate(`../profile/${id}`);
+    navigate(`../${id}`, {replace: false});
   };
-
+//////////////////////
   const [userData, setUserData] = useState<UserData[]>([])
 
   const getUserData = async () => {
@@ -74,8 +98,8 @@ const UserSearchModal = (props: UserSearchModalProps): JSX.Element => {
       (error) => {
         console.error(error);
       }
-    )
-  }
+    );
+  };
 
   useEffect(() => {
     getUserData();
@@ -93,7 +117,31 @@ const UserSearchModal = (props: UserSearchModalProps): JSX.Element => {
       setFilter([])
     }
   }, [search])
+  /////////////////
 
+  const [followerData, setFollowerData] = useState<UserData[]>([]);
+
+  const getFollowerData = async () => {
+    if (props.userId) {
+      await UserPageFollower(
+        props.userId,
+        (resp) => {
+          if (resp.data === '팔로워 0명 입니다') {
+            setFollowerData([]);
+          } else {
+            setFollowerData(resp.data);
+          };
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    }
+  };
+
+  useEffect(() => {
+    getFollowerData();
+  }, [props.userId]);
 
 
   return (
@@ -106,33 +154,25 @@ const UserSearchModal = (props: UserSearchModalProps): JSX.Element => {
         overlayClassName="Overlay"
       >
         <s.Container>
-          <s.InputArea>
-            <s.IconArea onClick={toggleModal}>
-              <IconSvg width="25" height="25" Ico={back} cursor="pointer" />
-            </s.IconArea>
-            <Input
-              width="90%"
-              display="block"
-              margin="0 auto"
-              height="40px"
-              placeColor="textColor2"
-              placeholder="검색어 입력"
-              name={search}
-              value={search}
-              onChange={onSearch}
-            />
-          </s.InputArea>
-          {filter.map((user) => (
-            <SearchProfile
-              profileImage={user.profileImage}
-              username={user.nickname}
-              onClick={() => handleMovePage(`${user.id}`)}
-            />
-          ))}
+          <s.HeaderContainer>
+            <s.HeaderBasicArea>
+              <IconSvg width="25" height="25" Ico={back} cursor="pointer" onClick={toggleModal}/>
+              <s.HeaderTitle>팔로워 목록</s.HeaderTitle>
+            </s.HeaderBasicArea>
+          </s.HeaderContainer>
+          <s.UserList>
+            {followerData.map((user) => (
+              <SearchProfile
+                profileImage={user.profileImage}
+                username={user.nickname}
+                onClick={() => handleMovePage(`${user.id}`)}
+              />
+            ))}
+          </s.UserList>
         </s.Container>
       </ReactModal>
     </>
   );
 };
 
-export default UserSearchModal;
+export default FollowerModal;

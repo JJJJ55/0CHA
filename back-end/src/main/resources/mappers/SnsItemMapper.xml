@@ -133,10 +133,10 @@
         VALUES(#{itemId}, #{userId}, 'image', #{imageUrl}, #{originName}, #{saveName}, NOW())
     </insert>
 
-    <delete id="deleteItemImages">
+    <delete id="deleteItemImage">
         DELETE
         FROM item_details
-        WHERE item_id = #{itemId}
+        WHERE image_url = #{imageUrl}
           AND detail_type = 'image';
     </delete>
 

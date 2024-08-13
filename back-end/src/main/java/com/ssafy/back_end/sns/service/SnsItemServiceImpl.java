@@ -89,6 +89,9 @@ public class SnsItemServiceImpl implements SnsItemService {
     @Override
     @Transactional
     public int deleteImagesByImageUrl(List<String> imageUrls) {
+        log.debug("deleteImagesByImageUrl: {}", imageUrls);
+        log.debug("deleteImagesCnt: {}", imageUrls.size());
+
         int deleteCnt = 0;
         try {
             // 호스트에서 파일 삭제 및 정보 디비에서 삭제

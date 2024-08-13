@@ -10,14 +10,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 @Tag (name = "AUTH정보수정")
 @RestController
 @RequestMapping (value = "/api/auth/modify")
 public class UserModifyController {
-    static int authCode;
     private final UserModifyService userModifyService;
+    private Map<String, Integer> authCode = new HashMap<>();
 
     @Autowired
     public UserModifyController(UserModifyServiceImpl userModifyService) {
@@ -43,8 +45,10 @@ public class UserModifyController {
         int result = userModifyService.findPassword(userDto);
 
         if (result > 0) {
-            authCode = getRandomNumber();   //랜덤으로 이메일로 전송해줘야함
-            userModifyService.sendEmail(userDto.getEmail(), authCode);
+            if(!authCode.containsKey(userDto.getEmail())) {
+                authCode.put(userDto.getEmail(), getRandomNumber());   //랜덤으로 이메일로 전송해줘야함
+            }
+            userModifyService.sendEmail(userDto.getEmail(), authCode.get(userDto.getEmail()));
             return ResponseEntity.ok("이메일로 인증코드가 전송되었습니다.");
         }
         else {
@@ -54,9 +58,9 @@ public class UserModifyController {
 
     @Operation (summary = "비밀번호 인증확인")
     @PostMapping ("/find-password/verify")
-    public ResponseEntity<?> verifyPassword(@RequestBody int code) {
-        if (code == authCode) {
-            authCode = 0;   //인증코드 초기화
+    public ResponseEntity<?> verifyPassword(@RequestPart("email") String email, @RequestPart("authCode") int code) {
+        if(authCode.get(email) == code){
+            authCode.remove(email);
             return ResponseEntity.ok("성공적으로 인증되었습니다.");
         }
         else {

@@ -189,8 +189,12 @@ public class SnsItemController {
             return ResponseEntity.badRequest().body("JSON parsing error");
         }
 
-        for(MultipartFile file : addImages){
-            log.debug("Add image : {}", file.getOriginalFilename());
+        if(addImages != null && !addImages.isEmpty()){
+            for(MultipartFile file : addImages){
+                log.debug("Add image : {}", file.getOriginalFilename());
+            }
+        }else{
+            log.debug("Add image is null");
         }
 
         List<String> removeImagePaths = itemDto.getRemoveImagePaths();
@@ -265,35 +269,37 @@ public class SnsItemController {
         }
 
         // 5. 추가된 이미지를 저장하고 DB에 기록
-        for (int i = 0; i < addImages.size(); i++) {
-            MultipartFile image = addImages.get(i);
-            if (!image.isEmpty()) {
-                try {
-                    String originalImageName = image.getOriginalFilename();
-                    String imageExtension = "";
+        if(addImages != null && !addImages.isEmpty()){
+            for (int i = 0; i < addImages.size(); i++) {
+                MultipartFile image = addImages.get(i);
+                if (!image.isEmpty()) {
+                    try {
+                        String originalImageName = image.getOriginalFilename();
+                        String imageExtension = "";
 
-                    // 파일 확장자 추출
-                    if (originalImageName != null && originalImageName.contains(".")) {
-                        imageExtension = originalImageName.substring(originalImageName.lastIndexOf("."));
+                        // 파일 확장자 추출
+                        if (originalImageName != null && originalImageName.contains(".")) {
+                            imageExtension = originalImageName.substring(originalImageName.lastIndexOf("."));
+                        }
+
+                        // 고유한 파일 이름 생성
+                        // 사용자 ID-게시물 번호-해당 게시물에서 이미지 순서.확장자
+                        String newFileName = ID + "-" + itemId + "-" + (lastIndex + i + 1) + imageExtension;
+                        log.debug("[SnsItemController] 새 파일 이름 생성: {}", newFileName);
+
+                        // 파일 저장
+                        image.transferTo(new File(uploadDir + newFileName));
+                        log.debug("[SnsItemController] Image file saved: {}", newFileName);
+
+                        // 이미지 정보 DB에 저장
+                        String imageUrl = uploadDir + newFileName;
+                        snsItemService.saveImageDetail(itemId, ID, imageUrl, originalImageName, newFileName);
+                        log.debug("[SnsItemController] Image details saved to DB: {}", newFileName);
+
+                    } catch (IOException e) {
+                        log.error("[SnsItemController] 이미지 업로드 오류", e);
+                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("이미지 업로드 오류");
                     }
-
-                    // 고유한 파일 이름 생성
-                    // 사용자 ID-게시물 번호-해당 게시물에서 이미지 순서.확장자
-                    String newFileName = ID + "-" + itemId + "-" + (lastIndex + i + 1) + imageExtension;
-                    log.debug("[SnsItemController] 새 파일 이름 생성: {}", newFileName);
-
-                    // 파일 저장
-                    image.transferTo(new File(uploadDir + newFileName));
-                    log.debug("[SnsItemController] Image file saved: {}", newFileName);
-
-                    // 이미지 정보 DB에 저장
-                    String imageUrl = uploadDir + newFileName;
-                    snsItemService.saveImageDetail(itemId, ID, imageUrl, originalImageName, newFileName);
-                    log.debug("[SnsItemController] Image details saved to DB: {}", newFileName);
-
-                } catch (IOException e) {
-                    log.error("[SnsItemController] 이미지 업로드 오류", e);
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("이미지 업로드 오류");
                 }
             }
         }

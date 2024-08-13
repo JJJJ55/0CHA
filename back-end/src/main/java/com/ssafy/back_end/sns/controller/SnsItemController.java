@@ -173,8 +173,7 @@ public class SnsItemController {
     public ResponseEntity<?> updateItem(HttpServletRequest request,
                                         @PathVariable int itemId,
                                         @RequestPart("item") String item,
-                                        @RequestPart(value = "addImages", required = false) List<MultipartFile> addImages,
-                                        @RequestPart(value = "removeImagePaths", required = false) List<String> removeImagePaths){
+                                        @RequestPart(value = "addImages", required = false) List<MultipartFile> addImages){
 //                                        @RequestPart(value = "removeImagePaths", required = false) List<String> removeImagePaths,
 //                                        @RequestPart(value = "addImages", required = false) List<MultipartFile> addImages) {
         // 사용자 ID를 request에서 추출
@@ -184,10 +183,6 @@ public class SnsItemController {
 
         for(MultipartFile file : addImages){
             log.debug("Add image : {}", file.getOriginalFilename());
-        }
-
-        for(String removeImagePath : removeImagePaths){
-            log.debug("Remove image : {}", removeImagePath);
         }
 
         // JSON 문자열을 객체로 변환

@@ -16,18 +16,6 @@ services:
     networks:
       - app-network
 
-  react-nginx:
-    build:
-      context: ..
-      dockerfile: ./docker/react-nginx/Dockerfile
-    image: react-nginx-custom:latest
-    container_name: react-nginx-container
-    volumes:
-      - ${NGINX_CONF_PATH}:/etc/nginx/nginx.conf
-    restart: always
-    networks:
-      - app-network
-
 networks:
   app-network:
     external: true

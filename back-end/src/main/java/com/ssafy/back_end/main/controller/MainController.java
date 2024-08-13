@@ -53,7 +53,7 @@ public class MainController {
     @Operation(summary = "유저 프로필 수정")
     @PutMapping("/profile")
     public ResponseEntity<?> modifyProfile(HttpServletRequest request, @RequestPart("nickname") String nickname,
-                                           @RequestPart(value = "image" , required = false) MultipartFile image) {
+                                           @RequestPart(value = "image", required = false) MultipartFile image) {
         int ID = (Integer) request.getAttribute("userId");
         String imageUrl = "";
 
@@ -62,8 +62,7 @@ public class MainController {
         UserInfoDto userInfoDto;
         try {
             userInfoDto = objectMapper.readValue(nickname, UserInfoDto.class);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             return ResponseEntity.badRequest().body("JSON parsing error");
         }
 
@@ -87,7 +86,7 @@ public class MainController {
             }
             log.debug("[MainController] 디렉토리 {} 가 존재함", uploadDirectory.getAbsolutePath());
 
-            if (image!=null&&!image.isEmpty()) {
+            if (image != null && !image.isEmpty()) {
                 try {
                     String originalImageName = image.getOriginalFilename();
                     String imageExtension = "";

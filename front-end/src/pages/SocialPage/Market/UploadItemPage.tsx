@@ -95,7 +95,7 @@ const s = {
     position: relative;
   `,
   MainImageCaption: styled.div`
-    color: #000000;
+    color: ${(props) => props.theme.btnTextColor};
     display: flex;
     font-size: 12px;
     font-weight: 500;
@@ -137,15 +137,14 @@ const UploadItemPage = (): JSX.Element => {
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const newFilesArray = Array.from(event.target.files);
-      const newTotalSize = newFilesArray.reduce((acc, file) => acc + file.size, 0) + totalImageSize;
+      const validFiles = newFilesArray.filter((file) => file.size <= 5 * 1024 * 1024); // 5MB 이하의 파일만 추가
 
-      if (newTotalSize > 1024 * 1024) {
-        // 1MB
-        alert('총 이미지 용량이 1MB를 초과할 수 없습니다.');
-        return;
+      if (validFiles.length < newFilesArray.length) {
+        alert('각 이미지 파일 크기는 5MB를 초과할 수 없습니다.');
       }
 
-      setImages((prevImages) => [...prevImages, ...newFilesArray].slice(0, 5)); // 최대 5개까지
+      setImages((prevImages) => [...prevImages, ...validFiles].slice(0, 5)); // 최대 5개까지
+      const newTotalSize = validFiles.reduce((acc, file) => acc + file.size, totalImageSize);
       setTotalImageSize(newTotalSize); // 총 이미지 용량 업데이트
     }
   };

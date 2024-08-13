@@ -1,14 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import Input from '../../components/Common/Input';
-import FitnessListTopNav from '../../components/Fitness/Etc/FitnessListTopNav';
-import FitnessList from '../../components/Fitness/List/FitnessList';
-import { FitnessData } from '../../util/TestData';
-import Button from '../../components/Common/Button';
 import BottomNav from '../../components/Common/BottomNav';
-import { Outlet, useNavigate } from 'react-router';
-import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
-import { navActions, selectNav } from '../../store/nav';
+import { Outlet } from 'react-router';
 import { useBottomNavHook } from '../../lib/hook/useBottomNavHook';
 
 const s = {

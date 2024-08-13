@@ -8,15 +8,16 @@ import BottomNav from '../../components/Common/BottomNav';
 import FitnessPlanSetModal from '../../components/Modal/FitnessPlanSetModal';
 import { useLocation, useNavigate } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
-import { modalActions, selectModalCalendar } from '../../store/modal';
+import { modalActions, selectModalAddList, selectModalCalendar } from '../../store/modal';
 import { useModalExitHook } from '../../lib/hook/useModalExitHook';
-import { axiosCreateRoutine, CreateRoutine, ExerciseDetailType } from '../../util/types/axios-fitness';
+import { axiosCreateRoutine, ExerciseDetailType } from '../../util/types/axios-fitness';
 import Text from '../../components/Common/Text';
 import { putNewRoutine } from '../../lib/api/fitness-api';
 import { RoutineListDetail, RoutineDetails } from '../../util/types/axios-fitness';
 import TestPlan from '../../components/Fitness/Detail/TestPlan';
 import { pageActions } from '../../store/page';
-import { fitnessActions, selectPlan } from '../../store/fitness';
+import { fitnessActions, selectAddList } from '../../store/fitness';
+import FitnessAddListModal from '../../components/Modal/FitnessAddListModal';
 
 const s = {
   Container: styled.section`
@@ -71,59 +72,64 @@ const s = {
 
 const TestPlanSetPage = (): JSX.Element => {
   const navigate = useNavigate();
+  const addListData = useAppSelector(selectAddList);
   const locationState = useLocation().state;
   const historyData = locationState?.data as RoutineListDetail;
 
-  // Fallback to user-provided data if historyData is not available
-  const data: CreateRoutine[] = locationState?.add || [];
-  const reduxData = useAppSelector(selectPlan);
-  console.log(reduxData);
+  const [title, setTitle] = useState('이름과 날짜를 지정해주세요.');
+  const [date, setDate] = useState('');
 
-  // Set initial title and date based on historyData or default values
-  const [title, setTitle] = useState(historyData?.title || '이름과 날짜를 지정해주세요.');
-  const [date, setDate] = useState(historyData?.dueDate || '');
-
-  // Initialize fitness based on historyData or map data to desired structure
-  const [fitness, setFitness] = useState<RoutineDetails[]>(
-    historyData?.details || data.map((item) => ({ ...item, sequence: 0, sets: [] })),
-    // reduxData.details,
-  );
+  // 불러오기를 안하면 fitness는 공란
+  const [fitness, setFitness] = useState<RoutineDetails[]>(historyData?.details || []);
 
   const dispatch = useAppDispatch();
   const isModal = useAppSelector(selectModalCalendar);
+  const isAddList = useAppSelector(selectModalAddList);
 
-  // useEffect(() => {
-  //   return () => {
-  //     const param: axiosCreateRoutine = {
-  //       id: historyData?.id,
-  //       title: title,
-  //       dueDate: date,
-  //       details: fitness,
-  //     };
+  // Effect to handle adding new exercises
+  useEffect(() => {
+    if (addListData.length > 0) {
+      // Filter out exercises that are already in the fitness state
+      const newExercises = addListData.filter(
+        (exercise) => !fitness.some((fit) => fit.exerciseId === exercise.exerciseId),
+      );
 
-  //     dispatch(fitnessActions.setPlanData(param));
-  //   };
-  // }, [title, date, fitness]);
+      // Only update state if there are new exercises
+      if (newExercises.length > 0) {
+        setFitness((prevFitness) => [
+          ...prevFitness,
+          ...newExercises.map((exercise) => ({ ...exercise, sequence: prevFitness.length, sets: [] })),
+        ]);
+      }
+    }
+  }, [addListData]);
 
-  // 날짜 선택 모달 열기
+  // Effect to handle loading a new routine
+  useEffect(() => {
+    if (historyData?.details) {
+      setFitness(historyData.details);
+    }
+  }, [historyData]);
+
   const handleChangeOpen = (): void => {
     dispatch(modalActions.toggleCalendar());
   };
 
-  // 페이지 이동
+  const handleChangeAddListOpen = (): void => {
+    dispatch(modalActions.toggleAddList());
+  };
+
   const handleClickMove = (path: string): void => {
     if (window.confirm('작성중인 루틴이 삭제됩니다. 그래도 진행하시겠습니까?')) {
       navigate(path);
     }
   };
 
-  // 운동 삭제
   const handleDeleteExercise = (index: number): void => {
     const updatedFitness = fitness.filter((_, idx) => idx !== index);
     setFitness(updatedFitness);
   };
 
-  // 세트 변경
   const handleSetChange = (exerciseIndex: number, updatedSets: ExerciseDetailType[]) => {
     const updatedFitness = fitness.map((exercise, idx) => {
       if (idx === exerciseIndex) {
@@ -132,14 +138,12 @@ const TestPlanSetPage = (): JSX.Element => {
       return exercise;
     });
     setFitness(updatedFitness);
-    console.log('Updated fitness:', updatedFitness); // 디버깅 로그
   };
 
   const handleSaveRoutine = async () => {
     const day = new Date();
     const today =
       day.getFullYear() + '-' + ('0' + (1 + day.getMonth())).slice(-2) + '-' + ('0' + day.getDate()).slice(-2);
-    console.log(today);
     if (date === '') {
       alert('제목과 날짜를 선택해주세요.');
     } else {
@@ -152,6 +156,7 @@ const TestPlanSetPage = (): JSX.Element => {
         param,
         (resp) => {
           alert('저장완료');
+          navigate('/fitness');
         },
         (error) => {
           alert('저장 중 오류');
@@ -161,42 +166,58 @@ const TestPlanSetPage = (): JSX.Element => {
     }
   };
 
-  // 운동 시작 버튼 클릭
   const handlePlay = async () => {
+    for (const exercise of fitness) {
+      for (const set of exercise.sets) {
+        if (set.count === '' || set.count <= 0) {
+          alert(`${exercise.exerciseName}의 세트에 유효한 횟수를 입력해주세요.`);
+          return;
+        }
+        if (set.weight === '' || set.weight < 0) {
+          alert(`${exercise.exerciseName}의 세트에 유효한 무게를 입력해주세요.`);
+          return;
+        }
+      }
+    }
     const day = new Date();
     const today =
       day.getFullYear() + '-' + ('0' + (1 + day.getMonth())).slice(-2) + '-' + ('0' + day.getDate()).slice(-2);
-    console.log(today);
     if (date === '') {
       alert('제목과 날짜를 선택해주세요.');
     } else if (date !== today) {
       alert('운동시작은 당일만 가능합니다.');
     } else {
-      console.log('Current Fitness Data:', fitness); // 콘솔에 현재 데이터를 출력
-
       const param: axiosCreateRoutine = {
-        id: historyData?.id,
         title: title,
         dueDate: date,
-        details: fitness,
+        details: fitness.map((exercise) => ({
+          ...exercise,
+          sets: exercise.sets.map((set) => ({
+            ...set,
+            complete: false,
+          })),
+        })),
       };
-
       console.log(param);
-
+      dispatch(fitnessActions.setPlanData(param));
       await putNewRoutine(
         param,
         (resp) => {
           dispatch(pageActions.toogleIsPlay(true));
-          param.id = resp.data.routineId;
-          // navigate('/play', { state: { fitnessData: fitness } }); // 데이터를 운동 페이지로 전달
-          navigate('../../play', { state: { data: param } });
+          dispatch(fitnessActions.setPlanId(resp.data.routineId));
+          navigate('../../play');
         },
         (error) => {
-          alert('저장 중 오류');
+          alert('잠시 후 다시시도해주세요.');
+          navigate('/fitness');
           console.log(error);
         },
       );
     }
+  };
+
+  const handleExitModal = (): void => {
+    dispatch(modalActions.toggleAddList());
   };
 
   useModalExitHook();
@@ -240,7 +261,7 @@ const TestPlanSetPage = (): JSX.Element => {
             </div>
           ))}
         </s.FitnessArea>
-        <s.FitnessAdd onClick={() => handleClickMove('../list')}>
+        <s.FitnessAdd onClick={handleChangeAddListOpen}>
           운동 추가
           <IconSvg width="24" height="24" Ico={add} />
         </s.FitnessAdd>
@@ -268,6 +289,7 @@ const TestPlanSetPage = (): JSX.Element => {
       </s.ContentArea>
       <BottomNav />
       <FitnessPlanSetModal open={isModal} onModal={handleChangeOpen} onTitle={setTitle} onDate={setDate} />
+      <FitnessAddListModal open={isAddList} onModal={handleExitModal} />
     </s.Container>
   );
 };

@@ -4,8 +4,8 @@ import { RootState } from '.';
 import {
   axiosCreateRoutine,
   axiosCreateRoutineDetails,
+  CreateRoutine,
   ExerciseDetailType,
-  RoutineListDetail,
 } from '../util/types/axios-fitness';
 
 interface FitnessState {
@@ -15,11 +15,13 @@ interface FitnessState {
   volume: number;
   rest: boolean;
   isSave: boolean;
+  addList: CreateRoutine[];
 }
 
 const initialState: FitnessState = {
   type: 'all',
   plan: {
+    id: 0,
     title: '',
     sumVolume: 0,
     sumTime: 0,
@@ -30,6 +32,7 @@ const initialState: FitnessState = {
   volume: 0,
   rest: false,
   isSave: false,
+  addList: [],
 };
 
 export const fitnessSlice = createSlice({
@@ -41,6 +44,9 @@ export const fitnessSlice = createSlice({
     },
     setPlanData(state, action: PayloadAction<axiosCreateRoutine>) {
       state.plan = action.payload;
+    },
+    setPlanId(state, action: PayloadAction<number>) {
+      state.plan.id = action.payload;
     },
     updateTitle(state, action: PayloadAction<string>) {
       state.plan.title = action.payload;
@@ -76,9 +82,15 @@ export const fitnessSlice = createSlice({
       state.time = 0;
       state.volume = 0;
       state.isSave = false;
+      state.rest = false;
+      state.plan = initialState.plan;
     },
     toggleSave(state, action: PayloadAction<boolean>) {
       state.isSave = action.payload;
+    },
+
+    setAddList(state, action: PayloadAction<CreateRoutine[]>) {
+      state.addList = action.payload;
     },
     // savePlanSet(state, action: PayloadAction<ExerciseDetailType[]>) {
     //   // 각 운동의 세트를 업데이트
@@ -98,6 +110,7 @@ export const selectRest = (state: RootState) => state.fitness.rest;
 export const selectTime = (state: RootState) => state.fitness.time;
 export const selectVolume = (state: RootState) => state.fitness.volume;
 export const selectSave = (state: RootState) => state.fitness.isSave;
+export const selectAddList = (state: RootState) => state.fitness.addList;
 export const { setPlanData, updateTitle, updateDueDate, addExercise, removeExercise, updateExerciseSets } =
   fitnessSlice.actions;
 export default fitnessSlice.reducer;

@@ -10,7 +10,7 @@ import {
   Legend,
   ChartOptions,
 } from 'chart.js';
-import { Bar, Line } from 'react-chartjs-2';
+import { Line } from 'react-chartjs-2';
 import ChartDataLabels from 'chartjs-plugin-datalabels'; // 추가된 플러그인
 import styled from 'styled-components';
 

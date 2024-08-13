@@ -4,6 +4,7 @@ export interface FitnessType {
   category: string;
   image: string;
   description: string;
+  like: boolean;
 }
 
 export interface newRoutine {

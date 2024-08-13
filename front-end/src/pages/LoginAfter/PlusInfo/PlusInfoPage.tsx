@@ -3,8 +3,6 @@ import styled from 'styled-components';
 import Input from '../../../components/Common/Input';
 import Button from '../../../components/Common/Button';
 import Text from '../../../components/Common/Text';
-import TextArea from '../../../components/Common/TextArea';
-import { ReactComponent as Logo } from '../../../asset/img/svg/0CHA.svg';
 import { useLocation, useNavigate } from 'react-router';
 import { putPlusInfo } from '../../../lib/api/user-api';
 
@@ -386,7 +384,7 @@ const PlusInfoPage = (): JSX.Element => {
   const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     // 키 - 체중 필드에 대해 제약조건 규정
-    if ((name === 'height' || name === 'weight') && !/^\d*\.?\d*$/.test(value)) {
+    if ((name === 'height' || name === 'weight') && !/^(\d{0,3})(\.\d{0,2})?$/.test(value)) {
       return;
     }
 

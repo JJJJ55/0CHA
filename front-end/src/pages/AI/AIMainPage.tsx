@@ -1,11 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import Header from '../../components/Common/Header';
 import ResultModal from '../../components/AI/ResultModal';
 import SettingModal from '../../components/AI/SettingModal2';
 import BottomNav from '../../components/Common/BottomNav';
 import '@tensorflow/tfjs';
 import * as tmPose from '@teachablemachine/pose';
+import { useBottomNavHook } from '../../lib/hook/useBottomNavHook';
 
 const s = {
   // 스타일 컴포넌트 정의
@@ -18,10 +19,8 @@ const s = {
   `,
   AIArea: styled.div`
     width: 100%;
-    /* height: 100vh; min-height로 변경 */
     display: flex;
     flex-direction: column;
-    /* justify-content: center; */
     align-items: center;
     padding: 60px 10px 120px;
   `,
@@ -537,6 +536,8 @@ const AIMainPage: React.FC = () => {
       }
     };
   }, [requestID, webcam]);
+
+  useBottomNavHook('ai');
 
   return (
     <s.Container>

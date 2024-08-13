@@ -7,6 +7,8 @@ interface ModalState {
   isComment: boolean;
   isMarket: boolean;
   isAddList: boolean;
+  isFollowingModal: boolean;
+  isFollowerModal: boolean;
 }
 
 const initialState: ModalState = {
@@ -15,6 +17,8 @@ const initialState: ModalState = {
   isComment: false,
   isMarket: false,
   isAddList: false,
+  isFollowingModal: false,
+  isFollowerModal: false,
 };
 
 export const modalSlice = createSlice({
@@ -26,6 +30,12 @@ export const modalSlice = createSlice({
     },
     toggleUserSearch: (state) => {
       state.isUserSearch = !state.isUserSearch;
+    },
+    toggleFollowing: (state) => {
+      state.isFollowingModal = !state.isFollowingModal;
+    },
+    toggleFollower: (state) => {
+      state.isFollowerModal = !state.isFollowerModal;
     },
     toggleComment: (state) => {
       state.isComment = !state.isComment;
@@ -60,5 +70,7 @@ export const selectModalUserSearch = (state: RootState) => state.modal.isUserSea
 export const selectModalComment = (state: RootState) => state.modal.isComment;
 export const selectModalMarket = (state: RootState) => state.modal.isMarket;
 export const selectModalAddList = (state: RootState) => state.modal.isAddList;
+export const selectModalFollowing = (state: RootState) => state.modal.isFollowingModal;
+export const selectModalFollower = (state: RootState) => state.modal.isFollowerModal;
 
 export default modalSlice.reducer;

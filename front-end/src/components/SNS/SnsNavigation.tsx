@@ -59,8 +59,11 @@ const SnsNavigation = (): JSX.Element => {
       },
       (error) => {
         console.error(error);
-        window.alert('오늘운동안함');
-        handleMovePage('write');
+        if (error.response !== undefined) {
+          if (error.response.data === '오늘 운동 안함') {
+            window.alert('오늘운동안함');
+          };
+        };
       },
     );
   };

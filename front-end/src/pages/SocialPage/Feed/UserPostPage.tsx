@@ -11,8 +11,11 @@ import { UserPageFeed } from '../../../lib/api/sns-api';
 import { UserPageItem } from '../../../lib/api/sns-api';
 import FollowingModal from '../../../components/Modal/FollowingModal';
 import { useAppDispatch, useAppSelector } from '../../../lib/hook/useReduxHook';
-import { modalActions, selectModalFollower, selectModalFollowing } from '../../../store/modal';
+import { modalActions, selectModalFollower, selectModalFollowing, selectModalMarket } from '../../../store/modal';
 import FollowerModal from '../../../components/Modal/FollowerModal';
+import ItemModal from '../../../components/Modal/ItemModal';
+
+
 
 const s = {
   Container: styled.section`
@@ -62,6 +65,8 @@ const s = {
     aspect-ratio: 1;
     padding: 1px;
     border: 1px #212121 solid;
+    display: flex;
+    align-items: center;
   `,
 };
 
@@ -123,14 +128,6 @@ const UserPostPage = (): JSX.Element => {
   const params = useParams()
   const feedUserId = params.id
 
-
-  // useEffect(() => {
-  //   console.log(feedUserIdtmp, 'tmp')
-  //   if (feedUserIdtmp !== undefined) {
-  //     setFeedUserId(parseInt(feedUserIdtmp))
-  //   }
-  // }, [feedUserIdtmp])
-
   const getUserPage = async() => {
     if (feedUserId){
       await UserPage(
@@ -172,6 +169,7 @@ const UserPostPage = (): JSX.Element => {
             setMarketData([]);
           } else {
             setMarketData(resp.data);
+            console.log(resp.data, '마켓데이터예요')
           }
         },
         (error) => {
@@ -188,7 +186,7 @@ const UserPostPage = (): JSX.Element => {
   }, [feedUserId]);
 
   useEffect(() => {
-    console.log(userData)
+    console.log(userData);
   }, [userData]);
 
   const navigate = useNavigate();
@@ -196,7 +194,7 @@ const UserPostPage = (): JSX.Element => {
   const handleThumbnailClick = ((feedId: number) => {
     navigate(`/sns/feed`, {state: {targetFeedId: feedId, targetUserId: feedUserId}});
     console.log(feedId, 'selected feed id')
-  })
+  });  
 
   return (
     <>
@@ -222,6 +220,16 @@ const UserPostPage = (): JSX.Element => {
           ) : (
             <s.ActiveText>거래</s.ActiveText>
           )}
+
+{/* {props.image === null ? (
+            <></>
+          ) : (
+          <Image
+            width="100%"
+            height="100%"
+            src={`https://i11b310.p.ssafy.io/images/${props.image.split('/home/ubuntu/images/')[1]}`}
+            type="rect"
+          /> */}
         </s.TabBar>
         <s.testArea>
           <s.ThumbnailArea>
@@ -229,7 +237,11 @@ const UserPostPage = (): JSX.Element => {
               <>
                 {feedData.map((thumbnail) => (
                   <s.Thumbnail key={thumbnail.id} onClick={() => handleThumbnailClick(thumbnail.id)}>
-                    <Image width="100%" height="auto" src={thumbnail.image} type="rect" cursor="pointer" />
+                    {thumbnail.image === null ? (
+                      <div></div>
+                    ) : (
+                      <Image width="100%" height="100%" src={`https://i11b310.p.ssafy.io/images/${thumbnail.image.split('/home/ubuntu/images/')[1]}`} type="rect" cursor="pointer" fit="cover" />
+                    )}
                   </s.Thumbnail>
                 ))}
               </>
@@ -237,7 +249,11 @@ const UserPostPage = (): JSX.Element => {
               <>
                 {marketData.map((thumbnail) => (
                   <s.Thumbnail key={thumbnail.id}>
-                    <Image width="100%" height="auto" src={thumbnail.image} type="rect" cursor="pointer" />
+                    {thumbnail.image === null ? (
+                    <div></div>
+                    ) : (
+                      <Image width="100%" height="100%" src={`https://i11b310.p.ssafy.io/images/${thumbnail.image.split('/home/ubuntu/images/')[1]}`} type="rect" cursor="pointer" fit="cover" />
+                    )}
                   </s.Thumbnail>
                 ))}
               </>
@@ -246,6 +262,7 @@ const UserPostPage = (): JSX.Element => {
         </s.testArea>
       <FollowingModal open={isFollowingModal} onModal={toggleModalFollowing} userId={userData?.id}/>
       <FollowerModal open={isFollowerModal} onModal={toggleModalFollower} userId={userData?.id}/>
+      {/* 아이템 모달 자리 for 복현우 ^^ */}
       </s.Container>
       <BottomNav />
     </>

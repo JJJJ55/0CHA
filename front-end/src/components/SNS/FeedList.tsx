@@ -13,6 +13,8 @@ import { SnsFeedDel } from '../../lib/api/sns-api';
 import { SnsFeedListRoutine } from '../../lib/api/sns-api';
 import { SnsFeedRoutineLoad } from '../../lib/api/sns-api';
 
+import test from '../../asset/img/loginbg.jpg'
+
 const s = {
   FeedContentArea: styled.div`
     color: ${(props) => props.theme.textColor};
@@ -85,7 +87,8 @@ const s = {
   `,
   FeedImage: styled.div<ImageAreaProps>`
     display: ${(props) => (props.$isRoutine === true ? 'none' : '')};
-
+    width: 100%;
+    height: 100%;
   `,
   FeedRoutine: styled.div<ImageAreaProps>`
     display: ${(props) => (props.$isRoutine === true ? '' : 'none')};
@@ -238,12 +241,17 @@ const FeedList = (props: FeedListProps): JSX.Element => {
       </s.AuthorProfileArea>
       <s.ImageArea>
         <s.FeedImage $isRoutine={isRoutineMode}>
+          {props.image === null ? (
+            <></>
+          ) : (
           <Image
             width="100%"
             height="100%"
             src={`https://i11b310.p.ssafy.io/images/${props.image.split('/home/ubuntu/images/')[1]}`}
             type="rect"
+            fit="contain"
           />
+          )} 
         </s.FeedImage>
         <s.FeedRoutine $isRoutine={isRoutineMode}>
           <s.RoutineArea>

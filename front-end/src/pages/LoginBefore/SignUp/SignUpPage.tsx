@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router';
 import { emailAuth, emailAuthCheck, nickCheck, signup } from '../../../lib/api/user-api';
 import { useAppDispatch } from '../../../lib/hook/useReduxHook';
 import { pageActions } from '../../../store/page';
+import moment from 'moment';
 
 const s = {
   Container: styled.section`
@@ -341,25 +342,7 @@ const SignUpPage = (): JSX.Element => {
           setEmailInfoMessage('이미 가입된 메일입니다.');
         },
       );
-      // if (true) {
-      //   // 가입 이력이 없는 이메일인 경우
-      //   // 정상 이메일이면 인증번호 발송
-      //   //
-      //   // alert('인증번호가 발송되었습니다.');
-      //   // setReturnCode('000000'); // 인증번호 설정
-      //   // setVerificationBtnText('재전송'); // 버튼명 변경
-      //   // setVerificationBtnType('sub'); // 버튼 타입변경
-      //   // setConfirmBtnText('확인'); // 확인 필드에 대해서도 변경
-      //   // setConfirmBtnType('main');
-      //   // setIsVerified(false); // 인증여부 초기화
-      //   // setEmailInfoMessage('가입 가능한 이메일입니다.');
-      // } else {
-      //   // 가입 이력이 있는 이메일인 경우
-      //   // setEmailInfoMessage('이미 가입된 메일입니다.');
-      // }
     } else {
-      // 이메일 필드 조건을 미충족한 경우
-      // 정상 이메일이 아니면 이메일 확인
       alert('조건에 맞는 이메일을 먼저 입력해 주세요.');
     }
   };
@@ -387,18 +370,9 @@ const SignUpPage = (): JSX.Element => {
             setIsVerified(true);
           },
           (error) => {
-            console.log(error);
             alert('인증번호가 틀립니다.');
           },
         );
-        // if (verificationCode === returnCode) {
-        //   alert('인증번호가 확인되었습니다.');
-        //   setConfirmBtnText('인증완료');
-        //   setConfirmBtnType('sub');
-        //   setIsVerified(true);
-        // } else {
-        //   alert('인증번호가 틀립니다.');
-        // }
       }
     }
   };
@@ -427,15 +401,7 @@ const SignUpPage = (): JSX.Element => {
 
   // 제출
   const handleSubmit = async () => {
-    // 제출 로직 작성 (예: API 호출)
-    // 모든 조건 만족해야 함.
-    // 이메일 인증. 비밀번호
-    // 이름, 닉네임, 생년월일 존재, 전화번호 존재
-    // 인증 작업
-    console.log(isVerified, data.pw.length, pwError, pwCheckError);
-    console.log(data.username.length, usernameError, data.nickname.length, nicknameError);
-    console.log(isNicknameExisted, phoneNumberError, data.phonePart2.length);
-    console.log(data.birthYear, data.birthMonth, data.birthDay);
+    const today = moment(new Date()).format('YYYY-MM-DD');
     if (
       isVerified &&
       data.pw.length !== 0 &&
@@ -461,19 +427,20 @@ const SignUpPage = (): JSX.Element => {
         phone: '010' + data.phonePart2 + data.phonePart3,
         birth: data.birthYear + '-' + data.birthMonth + '-' + data.birthDay,
       };
-      console.log('Form submitted:', param);
-      await signup(
-        param,
-        (resp) => {
-          dispatch(pageActions.OnPageChange());
-          alert('가입성공');
-          console.log('뱉은 값 : ' + resp.data);
-          navigate('/signup', { state: { id: resp.data } });
-        },
-        (error) => {
-          alert('가입도중 오류가 발생하였습니다. 잠시후 다시 시도해주세요.');
-        },
-      );
+      if (param.birth < today) {
+        await signup(
+          param,
+          (resp) => {
+            dispatch(pageActions.OnPageChange());
+            navigate('/signup', { state: { id: resp.data } });
+          },
+          (error) => {
+            alert('가입도중 오류가 발생하였습니다. 잠시후 다시 시도해주세요.');
+          },
+        );
+      } else {
+        alert('금일 이전의 출생자만 가입이 가능합니다.');
+      }
     } else {
       alert('입력된 값을 다시한번 확인해주세요.');
     }

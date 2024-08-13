@@ -73,6 +73,7 @@ const s = {
     display: flex;
     flex-direction: column;
     width: 100%;
+    max-width: 800px;
     z-index: 5;
   `
 };
@@ -183,7 +184,8 @@ const FeedPage = (): JSX.Element => {
           } else {
             setFeedData(data);
             console.log('settargetfeed')
-          }
+          };
+          scrollToTargetFeed();
         },
         (error) => {
           console.error(error)
@@ -259,10 +261,10 @@ const FeedPage = (): JSX.Element => {
   //     getTargetData(0)
   //   }
   // }, [targetFeedId])
-  useEffect(() => {
-    console.log('useeffect targetfeedid')
+
+  const scrollToTargetFeed = (() => {
     if (targetFeedId && containerRef.current && targetUserId) {
-      getTargetData(0)
+      // getTargetData(0)
       setTimeout(() => {
         const element = document.getElementById(`feed-${targetFeedId}`);
         if (element) {
@@ -270,7 +272,25 @@ const FeedPage = (): JSX.Element => {
         }
       }, 100);
     }
+  })
+
+  useEffect(() => {
+    if (targetFeedId && containerRef.current && targetUserId) {
+      getTargetData(0);
+    }
   }, [targetFeedId])
+  // useEffect(() => {
+  //   console.log('useeffect targetfeedid')
+  //   if (targetFeedId && containerRef.current && targetUserId) {
+  //     getTargetData(0)
+  //     setTimeout(() => {
+  //       const element = document.getElementById(`feed-${targetFeedId}`);
+  //       if (element) {
+  //         element.scrollIntoView({block: 'center'});
+  //       }
+  //     }, 100);
+  //   }
+  // }, [targetFeedId])
   useModalExitHook();
 
   return (

@@ -172,137 +172,137 @@ public class SnsItemController {
     @PutMapping ("/{itemId}")
     public ResponseEntity<?> updateItem(HttpServletRequest request,
                                         @PathVariable int itemId,
-                                        @RequestPart("item") String item,
-                                        @RequestPart(value = "removeImagePaths", required = false) List<String> removeImagePaths,
-                                        @RequestPart(value = "addImages", required = false) List<MultipartFile> addImages) {
+                                        @RequestPart("item") String item){
+//                                        @RequestPart(value = "removeImagePaths", required = false) List<String> removeImagePaths,
+//                                        @RequestPart(value = "addImages", required = false) List<MultipartFile> addImages) {
         // 사용자 ID를 request에서 추출
         int ID = (Integer)request.getAttribute("userId");
-        log.debug("SnsItemContoller UserID: {}", ID);
-
-        // JSON 문자열을 객체로 변환
-        ObjectMapper objectMapper = new ObjectMapper();
-        ItemDto itemDto;
-        try {
-            itemDto = objectMapper.readValue(item, ItemDto.class);
-        } catch (IOException e) {
-            return ResponseEntity.badRequest().body("JSON parsing error");
-        }
-
-        // itemId 로그 출력
-        log.debug("SnsItemController Item ID: {}", itemId);
-
-        // ItemDto 객체 로그 출력
-        log.debug("SnsItemController ItemDto: {}", itemDto);
-
-        // 제거할 이미지 경로 목록 로그 출력
-        if (removeImagePaths != null && !removeImagePaths.isEmpty()) {
-            log.debug("SnsItemController Remove Image Paths: {}", removeImagePaths);
-        } else {
-            log.debug("SnsItemController No images to remove.");
-        }
-
-        // 추가할 이미지 파일 목록 로그 출력
-        if (addImages != null && !addImages.isEmpty()) {
-            log.debug("SnsItemController Add Images: {} files", addImages.size());
-            for (MultipartFile file : addImages) {
-                log.debug("SnsItemController File Name: {}, Size: {} bytes", file.getOriginalFilename(), file.getSize());
-            }
-        } else {
-            log.debug("SnsItemController No images to add.");
-        }
-
-        // 1. 받은 삭제할 파일 인덱스 or 파일 저장 경로를 기준으로 호스트 디렉토리에서 이미지 제거
-        // 2. DB에 저장된 파일 정보 삭제
-        int deleteCnt = snsItemService.deleteImagesByImageUrl(removeImagePaths);
-        log.debug("SnsItemController {} images removed from DB and file system.", deleteCnt);
-
-        // 3. 이미지 저장 경로 설정
-        String uploadDir = "/home/ubuntu/images/item/";
-        File uploadDirectory = new File(uploadDir);
-
-        // 디렉토리가 존재하지 않으면 생성
-        if (!uploadDirectory.exists()) {
-            log.debug("[SnsItemController] 디렉토리 {} 가 존재하지 않음", uploadDirectory.getAbsolutePath());
-            boolean isCreated = uploadDirectory.mkdirs();
-            if (!isCreated) {
-                log.debug("[SnsItemController] 디렉토리 {} 생성 실패", uploadDirectory.getAbsolutePath());
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("디렉토리 생성 실패");
-            } else {
-                log.debug("[SnsItemController] 디렉토리 {} 생성 완료", uploadDirectory.getAbsolutePath());
-            }
-        }
-        log.debug("[SnsItemController] 디렉토리 {} 가 존재함", uploadDirectory.getAbsolutePath());
-
-        // 4. 해당 게시물에서 삭제하고 남은 이미지 중에서 가장 마지막 이미지(마지막 숫자가 큰)를 가져옴
-        int lastIndex = 0;
-
-        // DB에서 해당 itemId에 대한 남은 이미지들의 URL을 가져옴
-        List<String> remainingImageUrls = snsItemService.getRemainingImageUrls(itemId);
-        log.debug("[SnsItemController] Remaining images count: {}", remainingImageUrls.size());
-
-        if(remainingImageUrls.size() != 0){
-            // 이미지 URL에서 마지막 순번을 추출
-            for (String imageUrl : remainingImageUrls) {
-                String[] parts = imageUrl.split("-");
-                if (parts.length > 2) {
-                    // 이미지 순번은 "user_id-item_id-순번.확장자" 형식에서 순번이 위치한 부분을 추출
-                    String sequencePart = parts[2];
-                    int dotIndex = sequencePart.lastIndexOf(".");
-                    int sequence = Integer.parseInt(sequencePart.substring(0, dotIndex));
-                    if (sequence > lastIndex) {
-                        lastIndex = sequence;
-                    }
-                }
-            }
-            log.debug("[SnsItemController] Last image index after deletion: {}", lastIndex);
-        }
-
-        // 5. 추가된 이미지를 저장하고 DB에 기록
-        for (int i = 0; i < addImages.size(); i++) {
-            MultipartFile image = addImages.get(i);
-            if (!image.isEmpty()) {
-                try {
-                    String originalImageName = image.getOriginalFilename();
-                    String imageExtension = "";
-
-                    // 파일 확장자 추출
-                    if (originalImageName != null && originalImageName.contains(".")) {
-                        imageExtension = originalImageName.substring(originalImageName.lastIndexOf("."));
-                    }
-
-                    // 고유한 파일 이름 생성
-                    // 사용자 ID-게시물 번호-해당 게시물에서 이미지 순서.확장자
-                    String newFileName = ID + "-" + itemId + "-" + (lastIndex + i + 1) + imageExtension;
-                    log.debug("[SnsItemController] 새 파일 이름 생성: {}", newFileName);
-
-                    // 파일 저장
-                    image.transferTo(new File(uploadDir + newFileName));
-                    log.debug("[SnsItemController] Image file saved: {}", newFileName);
-
-                    // 이미지 정보 DB에 저장
-                    String imageUrl = uploadDir + newFileName;
-                    snsItemService.saveImageDetail(itemId, ID, imageUrl, originalImageName, newFileName);
-                    log.debug("[SnsItemController] Image details saved to DB: {}", newFileName);
-
-                } catch (IOException e) {
-                    log.error("[SnsItemController] 이미지 업로드 오류", e);
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("이미지 업로드 오류");
-                }
-            }
-        }
-
-        // 6. 게시글 내용 수정
-        itemDto.setUserId(ID);
-        itemDto.setId(itemId);
-        log.debug("[SnsItemController] Updated item details: {}", itemDto);
-
-        int id = snsItemService.updateItem(itemDto);
-
-        if (id > 0) {
-            log.debug("[SnsItemController] Item update successful: {}", itemId);
-            return ResponseEntity.ok("중고마켓 수정 성공");
-        }
-        log.error("[SnsItemController] Item update failed: {}", itemId);
+//        log.debug("SnsItemContoller UserID: {}", ID);
+//
+//        // JSON 문자열을 객체로 변환
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        ItemDto itemDto;
+//        try {
+//            itemDto = objectMapper.readValue(item, ItemDto.class);
+//        } catch (IOException e) {
+//            return ResponseEntity.badRequest().body("JSON parsing error");
+//        }
+//
+//        // itemId 로그 출력
+//        log.debug("SnsItemController Item ID: {}", itemId);
+//
+//        // ItemDto 객체 로그 출력
+//        log.debug("SnsItemController ItemDto: {}", itemDto);
+//
+//        // 제거할 이미지 경로 목록 로그 출력
+//        if (removeImagePaths != null && !removeImagePaths.isEmpty()) {
+//            log.debug("SnsItemController Remove Image Paths: {}", removeImagePaths);
+//        } else {
+//            log.debug("SnsItemController No images to remove.");
+//        }
+//
+//        // 추가할 이미지 파일 목록 로그 출력
+//        if (addImages != null && !addImages.isEmpty()) {
+//            log.debug("SnsItemController Add Images: {} files", addImages.size());
+//            for (MultipartFile file : addImages) {
+//                log.debug("SnsItemController File Name: {}, Size: {} bytes", file.getOriginalFilename(), file.getSize());
+//            }
+//        } else {
+//            log.debug("SnsItemController No images to add.");
+//        }
+//
+//        // 1. 받은 삭제할 파일 인덱스 or 파일 저장 경로를 기준으로 호스트 디렉토리에서 이미지 제거
+//        // 2. DB에 저장된 파일 정보 삭제
+//        int deleteCnt = snsItemService.deleteImagesByImageUrl(removeImagePaths);
+//        log.debug("SnsItemController {} images removed from DB and file system.", deleteCnt);
+//
+//        // 3. 이미지 저장 경로 설정
+//        String uploadDir = "/home/ubuntu/images/item/";
+//        File uploadDirectory = new File(uploadDir);
+//
+//        // 디렉토리가 존재하지 않으면 생성
+//        if (!uploadDirectory.exists()) {
+//            log.debug("[SnsItemController] 디렉토리 {} 가 존재하지 않음", uploadDirectory.getAbsolutePath());
+//            boolean isCreated = uploadDirectory.mkdirs();
+//            if (!isCreated) {
+//                log.debug("[SnsItemController] 디렉토리 {} 생성 실패", uploadDirectory.getAbsolutePath());
+//                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("디렉토리 생성 실패");
+//            } else {
+//                log.debug("[SnsItemController] 디렉토리 {} 생성 완료", uploadDirectory.getAbsolutePath());
+//            }
+//        }
+//        log.debug("[SnsItemController] 디렉토리 {} 가 존재함", uploadDirectory.getAbsolutePath());
+//
+//        // 4. 해당 게시물에서 삭제하고 남은 이미지 중에서 가장 마지막 이미지(마지막 숫자가 큰)를 가져옴
+//        int lastIndex = 0;
+//
+//        // DB에서 해당 itemId에 대한 남은 이미지들의 URL을 가져옴
+//        List<String> remainingImageUrls = snsItemService.getRemainingImageUrls(itemId);
+//        log.debug("[SnsItemController] Remaining images count: {}", remainingImageUrls.size());
+//
+//        if(remainingImageUrls.size() != 0){
+//            // 이미지 URL에서 마지막 순번을 추출
+//            for (String imageUrl : remainingImageUrls) {
+//                String[] parts = imageUrl.split("-");
+//                if (parts.length > 2) {
+//                    // 이미지 순번은 "user_id-item_id-순번.확장자" 형식에서 순번이 위치한 부분을 추출
+//                    String sequencePart = parts[2];
+//                    int dotIndex = sequencePart.lastIndexOf(".");
+//                    int sequence = Integer.parseInt(sequencePart.substring(0, dotIndex));
+//                    if (sequence > lastIndex) {
+//                        lastIndex = sequence;
+//                    }
+//                }
+//            }
+//            log.debug("[SnsItemController] Last image index after deletion: {}", lastIndex);
+//        }
+//
+//        // 5. 추가된 이미지를 저장하고 DB에 기록
+//        for (int i = 0; i < addImages.size(); i++) {
+//            MultipartFile image = addImages.get(i);
+//            if (!image.isEmpty()) {
+//                try {
+//                    String originalImageName = image.getOriginalFilename();
+//                    String imageExtension = "";
+//
+//                    // 파일 확장자 추출
+//                    if (originalImageName != null && originalImageName.contains(".")) {
+//                        imageExtension = originalImageName.substring(originalImageName.lastIndexOf("."));
+//                    }
+//
+//                    // 고유한 파일 이름 생성
+//                    // 사용자 ID-게시물 번호-해당 게시물에서 이미지 순서.확장자
+//                    String newFileName = ID + "-" + itemId + "-" + (lastIndex + i + 1) + imageExtension;
+//                    log.debug("[SnsItemController] 새 파일 이름 생성: {}", newFileName);
+//
+//                    // 파일 저장
+//                    image.transferTo(new File(uploadDir + newFileName));
+//                    log.debug("[SnsItemController] Image file saved: {}", newFileName);
+//
+//                    // 이미지 정보 DB에 저장
+//                    String imageUrl = uploadDir + newFileName;
+//                    snsItemService.saveImageDetail(itemId, ID, imageUrl, originalImageName, newFileName);
+//                    log.debug("[SnsItemController] Image details saved to DB: {}", newFileName);
+//
+//                } catch (IOException e) {
+//                    log.error("[SnsItemController] 이미지 업로드 오류", e);
+//                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("이미지 업로드 오류");
+//                }
+//            }
+//        }
+//
+//        // 6. 게시글 내용 수정
+//        itemDto.setUserId(ID);
+//        itemDto.setId(itemId);
+//        log.debug("[SnsItemController] Updated item details: {}", itemDto);
+//
+//        int id = snsItemService.updateItem(itemDto);
+//
+//        if (id > 0) {
+//            log.debug("[SnsItemController] Item update successful: {}", itemId);
+//            return ResponseEntity.ok("중고마켓 수정 성공");
+//        }
+//        log.error("[SnsItemController] Item update failed: {}", itemId);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("중고마켓 수정 오류");
     }
 

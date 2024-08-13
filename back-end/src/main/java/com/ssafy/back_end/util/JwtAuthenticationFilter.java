@@ -86,7 +86,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             } catch (Exception e) {
                 logger.debug("유효하지 않은 jwt 토큰입니다. uri : {}", request.getRequestURI());
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("제발토큰아");
                 return;
             }
         }

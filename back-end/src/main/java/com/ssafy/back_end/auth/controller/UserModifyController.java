@@ -58,8 +58,11 @@ public class UserModifyController {
 
     @Operation (summary = "비밀번호 인증확인")
     @PostMapping ("/find-password/verify")
-    public ResponseEntity<?> verifyPassword(@RequestPart("email") String email, @RequestPart("authCode") int code) {
-        if(authCode.get(email) == code){
+    public ResponseEntity<?> verifyPassword(@RequestBody Map<String, Object> request) {
+        String email = (String) request.get("email");
+        int code = (int) request.get("authCode");
+
+        if(authCode.get(email) != null &&authCode.get(email) == code){
             authCode.remove(email);
             return ResponseEntity.ok("성공적으로 인증되었습니다.");
         }

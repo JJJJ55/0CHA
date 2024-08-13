@@ -1,6 +1,5 @@
 package com.ssafy.back_end.sns.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.back_end.sns.model.ItemDto;
 import com.ssafy.back_end.sns.model.ItemListDto;
@@ -18,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,16 +33,16 @@ public class SnsItemController {
         this.snsItemService = snsItemService;
     }
 
-    @Operation(summary = "전체or유저 중고장터 목록보기-완")
-    @GetMapping("/list")
+    @Operation (summary = "전체or유저 중고장터 목록보기-완")
+    @GetMapping ("/list")
     public ResponseEntity<?> getItems(HttpServletRequest request,
-                                      @RequestParam(value = "user-id", defaultValue = "0") int userId,
-                                      @RequestParam(value = "district", defaultValue = "") String district,
-                                      @RequestParam(value = "si-gun-gu", defaultValue = "") String siGunGu,
-                                      @RequestParam(value = "title", defaultValue = "") String title,
-                                      @RequestParam(value = "page", defaultValue = "1") int page,
-                                      @RequestParam(value = "limit", defaultValue = "20") int limit) {
-        int ID = (Integer) request.getAttribute("userId");
+                                      @RequestParam (value = "user-id", defaultValue = "0") int userId,
+                                      @RequestParam (value = "district", defaultValue = "") String district,
+                                      @RequestParam (value = "si-gun-gu", defaultValue = "") String siGunGu,
+                                      @RequestParam (value = "title", defaultValue = "") String title,
+                                      @RequestParam (value = "page", defaultValue = "1") int page,
+                                      @RequestParam (value = "limit", defaultValue = "20") int limit) {
+        int ID = (Integer)request.getAttribute("userId");
         int offset = (page - 1) * limit;
 
         // 로그 추가
@@ -61,17 +59,23 @@ public class SnsItemController {
         list.setSize(snsItemService.getItems(ID, userId, district, siGunGu, title, 0, 9999999).size());
         list.setItems(items);
 
-        if (items != null && !items.isEmpty()) {
+        if (items == null) {
+            log.error("Item retrieval failed");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("중고장터 조회 오류");
+        }
+        else if (!items.isEmpty()) {
             log.debug("Retrieved {} items", items.size());
             for (ItemDto item : items) {
                 log.debug("Item {}", item);
             }
             return new ResponseEntity<>(list, HttpStatus.OK);
-        } else {
-            log.debug("No items retrieved or items list is null");
         }
-        log.error("Item retrieval failed");
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("중고장터 조회 오류");
+        else {
+            log.debug("No items retrieved or items list is null");
+            return ResponseEntity.ok("중고장터 0개입니다");
+        }
+//        log.error("Item retrieval failed");
+//        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("중고장터 조회 오류");
     }
 
     @Operation (summary = "중고장터 자세히보기-완")
@@ -86,15 +90,15 @@ public class SnsItemController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("중고장터 세부조회 오류");
     }
 
-    @Operation(summary = "중고장터 글쓰기-완")
-    @PostMapping("/write")
+    @Operation (summary = "중고장터 글쓰기-완")
+    @PostMapping ("/write")
     public ResponseEntity<?> writeItem(HttpServletRequest request,
-                                       @RequestPart("item") ItemDto item,
-                                       @RequestPart("images") List<MultipartFile> images) {
+                                       @RequestPart ("item") ItemDto item,
+                                       @RequestPart ("images") List<MultipartFile> images) {
 
         log.debug("[SnsItemController] writeItem - 시작");
 
-        int userID = (Integer) request.getAttribute("userId");
+        int userID = (Integer)request.getAttribute("userId");
         item.setUserId(userID);
 
         snsItemService.validateImages(images.size());
@@ -115,7 +119,8 @@ public class SnsItemController {
             if (!isCreated) {
                 log.debug("[SnsItemController] 디렉토리 {} 생성 실패", uploadDirectory.getAbsolutePath());
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("디렉토리 생성 실패");
-            } else {
+            }
+            else {
                 log.debug("[SnsItemController] 디렉토리 {} 생성 완료", uploadDirectory.getAbsolutePath());
             }
         }
@@ -148,7 +153,8 @@ public class SnsItemController {
                     snsItemService.saveImageDetail(itemID, userID, imageUrl, originalImageName, newFileName);
                     log.debug("[SnsItemController] 이미지 업로드 성공: {}", newFileName);
 
-                } catch (IOException e) {
+                }
+                catch (IOException e) {
                     log.error("[SnsItemController] 이미지 업로드 오류", e);
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("이미지 업로드 오류");
                 }
@@ -167,13 +173,12 @@ public class SnsItemController {
     }
 
 
-
     @Operation (summary = "중고장터 글수정-완")
     @PutMapping ("/{itemId}")
     public ResponseEntity<?> updateItem(HttpServletRequest request,
                                         @PathVariable int itemId,
-                                        @RequestPart("item") String item,
-                                        @RequestPart(value = "addImages", required = false) List<MultipartFile> addImages){
+                                        @RequestPart ("item") String item,
+                                        @RequestPart (value = "addImages", required = false) List<MultipartFile> addImages) {
         // 사용자 ID를 request에서 추출
         int ID = (Integer)request.getAttribute("userId");
 
@@ -185,15 +190,17 @@ public class SnsItemController {
         try {
             itemDto = objectMapper.readValue(item, ItemDto.class);
             log.debug("itemDto: {}", itemDto);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             return ResponseEntity.badRequest().body("JSON parsing error");
         }
 
-        if(addImages != null && !addImages.isEmpty()){
-            for(MultipartFile file : addImages){
+        if (addImages != null && !addImages.isEmpty()) {
+            for (MultipartFile file : addImages) {
                 log.debug("Add image : {}", file.getOriginalFilename());
             }
-        }else{
+        }
+        else {
             log.debug("Add image is null");
         }
 
@@ -208,7 +215,8 @@ public class SnsItemController {
         // 제거할 이미지 경로 목록 로그 출력
         if (removeImagePaths != null && !removeImagePaths.isEmpty()) {
             log.debug("SnsItemController Remove Image Paths: {}", removeImagePaths);
-        } else {
+        }
+        else {
             log.debug("SnsItemController No images to remove.");
         }
 
@@ -218,7 +226,8 @@ public class SnsItemController {
             for (MultipartFile file : addImages) {
                 log.debug("SnsItemController File Name: {}, Size: {} bytes", file.getOriginalFilename(), file.getSize());
             }
-        } else {
+        }
+        else {
             log.debug("SnsItemController No images to add.");
         }
 
@@ -238,7 +247,8 @@ public class SnsItemController {
             if (!isCreated) {
                 log.debug("[SnsItemController] 디렉토리 {} 생성 실패", uploadDirectory.getAbsolutePath());
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("디렉토리 생성 실패");
-            } else {
+            }
+            else {
                 log.debug("[SnsItemController] 디렉토리 {} 생성 완료", uploadDirectory.getAbsolutePath());
             }
         }
@@ -251,7 +261,7 @@ public class SnsItemController {
         List<String> remainingImageUrls = snsItemService.getRemainingImageUrls(itemId);
         log.debug("[SnsItemController] Remaining images count: {}", remainingImageUrls.size());
 
-        if(remainingImageUrls.size() != 0){
+        if (remainingImageUrls.size() != 0) {
             // 이미지 URL에서 마지막 순번을 추출
             for (String imageUrl : remainingImageUrls) {
                 String[] parts = imageUrl.split("-");
@@ -269,7 +279,7 @@ public class SnsItemController {
         }
 
         // 5. 추가된 이미지를 저장하고 DB에 기록
-        if(addImages != null && !addImages.isEmpty()){
+        if (addImages != null && !addImages.isEmpty()) {
             for (int i = 0; i < addImages.size(); i++) {
                 MultipartFile image = addImages.get(i);
                 if (!image.isEmpty()) {
@@ -296,7 +306,8 @@ public class SnsItemController {
                         snsItemService.saveImageDetail(itemId, ID, imageUrl, originalImageName, newFileName);
                         log.debug("[SnsItemController] Image details saved to DB: {}", newFileName);
 
-                    } catch (IOException e) {
+                    }
+                    catch (IOException e) {
                         log.error("[SnsItemController] 이미지 업로드 오류", e);
                         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("이미지 업로드 오류");
                     }
@@ -319,8 +330,8 @@ public class SnsItemController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("중고마켓 수정 오류");
     }
 
-    @Operation(summary = "중고장터 글삭제-완")
-    @DeleteMapping("/{itemId}")
+    @Operation (summary = "중고장터 글삭제-완")
+    @DeleteMapping ("/{itemId}")
     public ResponseEntity<String> deleteItem(@PathVariable int itemId) {
         try {
             log.info("컨트롤러: 중고장터 삭제 요청 받음: itemId={}", itemId);
@@ -330,11 +341,13 @@ public class SnsItemController {
             if (result != 0) {
                 log.info("컨트롤러: 중고장터 삭제 성공: itemId={}", itemId);
                 return ResponseEntity.ok("중고장터 삭제 성공");
-            } else {
+            }
+            else {
                 log.warn("컨트롤러: 중고장터 삭제 실패, 항목을 찾을 수 없음: itemId={}", itemId);
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("삭제할 항목이 없습니다.");
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             log.error("컨트롤러: 중고장터 삭제 중 오류 발생: itemId={}, error={}", itemId, e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류로 삭제 실패");
         }

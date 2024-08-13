@@ -112,7 +112,7 @@ public class SnsFeedController {
     @Operation(summary = "피드 글쓰기-완")
     @PostMapping("/write")
     public ResponseEntity<?> writeFeed(HttpServletRequest request, @RequestPart("feed") FeedDto feedDto,
-                                       @RequestPart(value = "image", required = false) MultipartFile image) {
+                                       @RequestPart("image") MultipartFile image) {
 
         log.debug("[SnsFeedController] writeFeed - 시작");
         String imageUrl = "";
@@ -197,7 +197,7 @@ public class SnsFeedController {
     @Operation(summary = "피드 글수정-완")
     @PutMapping("/{feedId}")
     public ResponseEntity<?> updateFeed(HttpServletRequest request, @PathVariable int feedId, @RequestPart("feed") FeedDto feedDto,
-                                        @RequestPart("image") MultipartFile image) {
+                                        @RequestPart(value = "image", required = false) MultipartFile image) {
 
         int ID = (Integer) request.getAttribute("userId");
         String imageUrl = "";

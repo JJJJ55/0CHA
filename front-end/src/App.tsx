@@ -46,6 +46,7 @@ import { useAppSelector } from './lib/hook/useReduxHook';
 import { selectIsEmail, selectIsFinish, selectIsPlay, selectIsPw, selectIsScan, selectIsSign } from './store/page';
 import TestPlanSetPage from './pages/Fitness/TestPlanSetPage';
 import UpdateItemPage from './pages/SocialPage/Market/UpdateItemPage';
+import UpdateFeedPage from './pages/SocialPage/Feed/UpdateFeedPage ';
 
 const s = {
   Background: styled.section`
@@ -164,6 +165,7 @@ function App() {
                   <Route path="feed">
                     <Route index element={<FeedPage />} />
                     <Route path="write" element={<CreateFeedPage />} />                      
+                    <Route path="update" element={<UpdateFeedPage />} />                      
                   </Route>
                   <Route path="profile">
                     <Route index element={<Navigate to={'id'} replace />} />

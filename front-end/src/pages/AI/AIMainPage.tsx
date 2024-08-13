@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import Header from '../../components/Common/Header';
 import ResultModal from '../../components/AI/ResultModal';
 import SettingModal from '../../components/AI/SettingModal2';
@@ -19,10 +19,8 @@ const s = {
   `,
   AIArea: styled.div`
     width: 100%;
-    /* height: 100vh; min-height로 변경 */
     display: flex;
     flex-direction: column;
-    /* justify-content: center; */
     align-items: center;
     padding: 60px 10px 120px;
   `,

@@ -65,7 +65,6 @@ public class SecurityConfig {
                                         "/oauth/**",
                                         "/kakao/**",
                                         "/api/ws/**"
->>>>>>> back-end/src/main/java/com/ssafy/back_end/config/SecurityConfig.java
                                 ).permitAll() // 인증 없이 접근 가능한 경로 설정
                                 .anyRequest().authenticated()) // 그 외 모든 요청은 인증 필요
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtil, userLoginService), UsernamePasswordAuthenticationFilter.class);

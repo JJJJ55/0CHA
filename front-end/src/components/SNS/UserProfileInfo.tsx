@@ -5,7 +5,7 @@ import Button from '../Common/Button';
 import Image from '../Common/Image';
 
 import test from '../../asset/img/testImg.png';
-import { useNavigate, useParams } from 'react-router';
+import { useLocation, useNavigate, useParams } from 'react-router';
 
 import { IsFollowingUser } from '../../lib/api/sns-api';
 import { UserFollow } from '../../lib/api/sns-api';
@@ -106,6 +106,7 @@ const UserProfileInfo = (props: UserProfileInfoProps): JSX.Element => {
   const handleMovePage = (path: string): void => {
     naviagate(path);
   };
+  const userId = useLocation().pathname;
 
   const dispatch = useAppDispatch();
   const handleClickFollowingModal = (): void => {
@@ -115,15 +116,15 @@ const UserProfileInfo = (props: UserProfileInfoProps): JSX.Element => {
     dispatch(modalActions.toggleFollower());
   };
 
-  const params = useParams()
-  const feedUserId = params.id
+  const params = useParams();
+  const feedUserId = params.id;
 
   const [isFollowing, setIsFollowing] = useState(false);
-  const [follower, setFollower] = useState(followerCnt)
+  const [follower, setFollower] = useState(followerCnt);
 
   useEffect(() => {
-    setFollower(followerCnt)
-  }, [followerCnt])
+    setFollower(followerCnt);
+  }, [followerCnt]);
 
   const getIsFollowing = async () => {
     if (feedUserId) {
@@ -138,49 +139,48 @@ const UserProfileInfo = (props: UserProfileInfoProps): JSX.Element => {
         },
         (error) => {
           console.error(error);
-        }
-      )
+        },
+      );
     }
-  }
+  };
 
   useEffect(() => {
     getIsFollowing();
-  }, [isFollowing])
-
+  }, [userId]);
 
   const followClick = async () => {
     if (feedUserId) {
-      console.log('follow', feedUserId)
+      console.log('follow', feedUserId);
       await UserFollow(
         parseInt(feedUserId),
         (resp) => {
-          setIsFollowing(true)
+          setIsFollowing(true);
           if (follower !== undefined) {
-            setFollower(follower+1)
+            setFollower(follower + 1);
           }
         },
         (error) => {
           console.error(error);
-        }
-      )
+        },
+      );
     }
-  }
+  };
 
   const unfollowClick = async () => {
     if (feedUserId) {
-      console.log('unfollow', feedUserId)
+      console.log('unfollow', feedUserId);
       await UserFollowCancel(
         parseInt(feedUserId),
         (resp) => {
-          setIsFollowing(false)
+          setIsFollowing(false);
           if (follower !== undefined) {
-            setFollower(follower-1)
+            setFollower(follower - 1);
           }
         },
         (error) => {
           console.error(error);
-        }
-      )
+        },
+      );
     }
   };
 
@@ -209,7 +209,7 @@ const UserProfileInfo = (props: UserProfileInfoProps): JSX.Element => {
                 children="채팅 목록"
                 size="14px"
                 bold="500"
-                onClick={() => handleMovePage('../chat')}
+                onClick={() => handleMovePage('../../chat')}
               />
             ) : (
               <Button
@@ -232,27 +232,19 @@ const UserProfileInfo = (props: UserProfileInfoProps): JSX.Element => {
               />
             ) : (
               <>
-              {isFollowing === true ? (
-                <Button
-                  width="48%"
-                  height="30px"
-                  children="팔로우 취소"
-                  size="14px"
-                  bold="500"
-                  onClick={unfollowClick}
-                />
-              ) : (
-                <Button
-                  width="48%"
-                  height="30px"
-                  children="팔로우"
-                  size="14px"
-                  bold="500"
-                  onClick={followClick}
-                />
-              )}
+                {isFollowing === true ? (
+                  <Button
+                    width="48%"
+                    height="30px"
+                    children="팔로우 취소"
+                    size="14px"
+                    bold="500"
+                    onClick={unfollowClick}
+                  />
+                ) : (
+                  <Button width="48%" height="30px" children="팔로우" size="14px" bold="500" onClick={followClick} />
+                )}
               </>
-              
             )}
           </s.ProfileButton>
         </s.ProfileButtonArea>

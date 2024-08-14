@@ -42,31 +42,21 @@
     <select id="getRecentExerciseRecords" parameterType="int" resultType="com.ssafy.back_end.record.model.RecordDto">
         SELECT
             r.completed_at AS date,
-        -- Bench Press 1RM
-        MAX(CASE WHEN e.id = 1 THEN rs.weight * (1 + rs.count / 40.0) ELSE 0 END) AS benchPress,
-        -- Squat 1RM
-        MAX(CASE WHEN e.id = 2 THEN rs.weight * (1 + rs.count / 40.0) ELSE 0 END) AS squart,
-        -- Deadlift 1RM
-        MAX(CASE WHEN e.id = 3 THEN rs.weight * (1 + rs.count / 40.0) ELSE 0 END) AS deadLift,
-        -- Total Volume
-        SUM(rs.weight * rs.count) AS totalVolume,
-        -- Total Time
-        r.sum_time AS totalTime
+            MAX(rs.weight) AS maxWeight, -- 1RM (가장 높은 무게)
+            SUM(rs.weight * rs.count) AS totalVolume, -- 총 운동량
+            r.sum_time AS totalTime -- 총 운동 시간
         FROM
             routines r
             JOIN routine_details rd ON r.id = rd.routine_id
             JOIN routine_sets rs ON rd.id = rs.routine_detail_id
-            JOIN exercises e ON rs.exercise_id = e.id
         WHERE
             r.user_id = #{userId}
-          AND r.completed_at IS NOT NULL  -- 완료된 기록만 포함
         GROUP BY
             r.completed_at, r.sum_time
         ORDER BY
             r.completed_at DESC
             LIMIT 5
     </select>
-
 
     <select id="getUserRoutines" parameterType="int" resultType="com.ssafy.back_end.record.model.RoutineListDto">
         SELECT

@@ -12,7 +12,6 @@ import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.stereotype.Component;
 import org.springframework.messaging.support.ChannelInterceptor;
 
-import java.util.List;
 import java.util.Objects;
 
 @Slf4j
@@ -29,38 +28,28 @@ public class FilterChannelInterceptor implements ChannelInterceptor {
         log.info(">>>>>> headerAccessor : {}", headerAccessor);
         assert headerAccessor != null;
         log.info(">>>>> headAccessorHeaders : {}", headerAccessor.getCommand());
-
         if (Objects.equals(headerAccessor.getCommand(), StompCommand.CONNECT)
-                || Objects.equals(headerAccessor.getCommand(), StompCommand.SEND)) {
-
-            String token = headerAccessor.getFirstNativeHeader("Authorization");
-            if (token != null && token.startsWith("Bearer ")) {
-                token = token.substring(7);  // "Bearer " 제거
-            }
-
-            List<String> refreshTokens = headerAccessor.getNativeHeader("RefreshToken");
-            String refreshToken = (refreshTokens != null && !refreshTokens.isEmpty()) ? refreshTokens.get(0) : null;
+                || Objects.equals(headerAccessor.getCommand(), StompCommand.SEND)) { // 문제 발생 예상 지/점
+            String token = removeBrackets(String.valueOf(headerAccessor.getNativeHeader("Authorization")));
+            String refreshToken = removeBrackets(String.valueOf(headerAccessor.getNativeHeader("RefreshToken")));
 
             log.info(">>>>>> Token resolved : {}", token);
-            log.info(">>>>>> RefreshToken resolved : {}", refreshToken);
-
             try {
-                if (token != null) {
-                    int accountId = jwtUtil.getUserIdFromAccessToken(token);
-                    headerAccessor.addNativeHeader("AccountId", String.valueOf(accountId));
-                    log.info(">>>>>> AccountId is set to header : {}", accountId);
-                } else {
-                    log.warn(">>>>> No Token provided");
-                }
+//                Authentication authentication = jwtTokenProvider.getAuthentication(token);
+                int accountId = jwtUtil.getUserIdFromAccessToken(token);
+                headerAccessor.addNativeHeader("AccountId", String.valueOf(accountId));
+                log.info(">>>>>> AccountId is set to header : {}", accountId);
             } catch (Exception e) {
                 log.warn(">>>>> Authentication Failed in FilterChannelInterceptor : ", e);
             }
         }
-
-        log.info(">>>>> Message : {}", message);
-        log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         return message;
     }
 
-
+    private String removeBrackets(String token) {
+        if (token.startsWith("[") && token.endsWith("]")) {
+            return token.substring(1, token.length() - 1);
+        }
+        return token;
+    }
 }

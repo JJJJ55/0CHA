@@ -30,18 +30,25 @@ interface Chat {
 
 const ChatListPage = (): JSX.Element => {
   const [chatList, setChatList] = useState<Chat[]>([]);
+  const user = localStorage.getItem('user');
+  const parsedUser = user ? JSON.parse(user) : null;
+
+  // parsedUser가 null이 아니면 userId를 출력, 아니면 null
+  console.log(parsedUser ? parsedUser.id : 'No user found');
 
   const getChatList = async () => {
-    await SnsChatList(
-      0,
-      (resp) => {
-        console.log(resp.data);
-        setChatList(resp.data);
-      },
-      (err) => {
-        console.log(err);
-      },
-    );
+    if (parsedUser && parsedUser.id) {
+      await SnsChatList(
+        parseInt(parsedUser.id),
+        (resp) => {
+          console.log(resp.data);
+          setChatList(resp.data);
+        },
+        (err) => {
+          console.log(err);
+        },
+      );
+    }
   };
 
   useEffect(() => {

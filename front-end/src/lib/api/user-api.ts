@@ -1,5 +1,5 @@
 import { AxiosError, AxiosResponse } from 'axios';
-import { localAxios, publicAxios } from '../../util/axios-setting';
+import { localAxios, publicAxios, socialAxios } from '../../util/axios-setting';
 import { request } from './index';
 import {
   AuthCheck,
@@ -13,6 +13,7 @@ import {
 } from '../../util/types/axios-user';
 
 const local = publicAxios();
+const social = socialAxios();
 const jwt = localAxios();
 
 interface UserInfo {
@@ -40,8 +41,22 @@ export const logout = async (success: (response: any) => void, fail: (error: Axi
 
 // AT 재발급 고려중(axios intercept에 적용)
 
-// 소셜로그인
-
+// 카카오 소셜로그인
+export const MoveKaKao = async (path: string) => {
+  await social.get(`/oauth/${path}`);
+};
+// 카카오 소셜로그인
+export const kakao = async (code: string, success: (response: any) => void, fail: (error: AxiosError) => void) => {
+  await social.get(`/oauth/login/kakao?code=${code}`).then(success).catch(fail);
+};
+// 구글 소셜로그인
+export const google = async (code: string, success: (response: any) => void, fail: (error: AxiosError) => void) => {
+  await social.get(`/oauth/login/google?code=${code}`).then(success).catch(fail);
+};
+// 깃헙 소셜로그인
+export const github = async (code: string, success: (response: any) => void, fail: (error: AxiosError) => void) => {
+  await social.get(`/oauth/login/github?code=${code}`).then(success).catch(fail);
+};
 // 소셜로그인 토큰
 
 export const findEmail = async (

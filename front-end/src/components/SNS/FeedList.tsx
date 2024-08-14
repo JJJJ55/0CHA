@@ -178,7 +178,6 @@ const FeedList = (props: FeedListProps): JSX.Element => {
     await SnsFeedListRoutine(
       props.feedId,
       (resp) => {
-        console.log(resp.data, '루틴데이터');
         setRoutine(resp.data);
       },
       (error) => {

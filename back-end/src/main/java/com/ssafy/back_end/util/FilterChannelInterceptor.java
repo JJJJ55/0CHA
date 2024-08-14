@@ -28,28 +28,35 @@ public class FilterChannelInterceptor implements ChannelInterceptor {
         log.info(">>>>>> headerAccessor : {}", headerAccessor);
         assert headerAccessor != null;
         log.info(">>>>> headAccessorHeaders : {}", headerAccessor.getCommand());
+
         if (Objects.equals(headerAccessor.getCommand(), StompCommand.CONNECT)
-                || Objects.equals(headerAccessor.getCommand(), StompCommand.SEND)) { // 문제 발생 예상 지/점
-            String token = removeBrackets(String.valueOf(headerAccessor.getNativeHeader("Authorization")));
-            String refreshToken = removeBrackets(String.valueOf(headerAccessor.getNativeHeader("RefreshToken")));
+                || Objects.equals(headerAccessor.getCommand(), StompCommand.SEND)) {
+
+            // 헤더에서 토큰 추출
+            String token = headerAccessor.getFirstNativeHeader("Authorization");
+            if (token != null && token.startsWith("Bearer ")) {
+                token = token.substring(7);  // "Bearer " 제거
+            }
+            String refreshToken = headerAccessor.getNativeHeader("RefreshToken").get(0);
 
             log.info(">>>>>> Token resolved : {}", token);
+            log.info(">>>>>> RefreshToken resolved : {}", refreshToken);
+            // 여기까지 오케이
             try {
-//                Authentication authentication = jwtTokenProvider.getAuthentication(token);
-                int accountId = jwtUtil.getUserIdFromAccessToken(token);
-                headerAccessor.addNativeHeader("AccountId", String.valueOf(accountId));
-                log.info(">>>>>> AccountId is set to header : {}", accountId);
+                if (token != null) {
+                    int accountId = jwtUtil.getUserIdFromAccessToken(token);
+                    headerAccessor.addNativeHeader("AccountId", String.valueOf(accountId));
+                    log.info(">>>>>> AccountId is set to header : {}", accountId);
+                } else {
+                    log.warn(">>>>> No Token provided");
+                }
             } catch (Exception e) {
                 log.warn(">>>>> Authentication Failed in FilterChannelInterceptor : ", e);
             }
         }
-        return message;
-    }
 
-    private String removeBrackets(String token) {
-        if (token.startsWith("[") && token.endsWith("]")) {
-            return token.substring(1, token.length() - 1);
-        }
-        return token;
+        log.info(">>>>> Message : {}", message);
+        log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        return message;
     }
 }

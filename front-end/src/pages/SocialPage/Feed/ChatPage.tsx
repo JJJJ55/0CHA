@@ -13,6 +13,7 @@ import testImg from '../../../asset/img/testImg.png';
 
 import SockJS from 'sockjs-client';
 import { Client, IMessage } from '@stomp/stompjs';
+import axios from 'axios';
 
 // 스타일드 컴포넌트를 사용해 UI 요소 스타일링
 const s = {
@@ -120,10 +121,11 @@ const ChatPage = (): JSX.Element => {
 
     fetchUserInfo();
   }, [userId, location.state]);
-
+  // HTTP 요청
   const getWs = async () => {
     await WsOn(
       (resp) => {
+        console.log(resp);
         console.log(resp.data);
       },
       (err) => {
@@ -131,13 +133,9 @@ const ChatPage = (): JSX.Element => {
       },
     );
   };
-  getWs();
+
   // WebSocket 연결 설정
   useEffect(() => {
-    // alert('추후 제공 예정입니다.');
-    // navigate(-1);
-    // return;
-    // JWT 토큰 가져오기
     const accessToken = localStorage.getItem('accessToken');
     const refreshToken = localStorage.getItem('refreshToken');
 

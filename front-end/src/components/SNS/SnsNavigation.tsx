@@ -61,9 +61,9 @@ const SnsNavigation = (): JSX.Element => {
         console.error(error);
         if (error.response !== undefined) {
           if (error.response.data === '오늘 운동 안함') {
-            window.alert('오늘운동안함');
-          };
-        };
+            alert('금일 운동을 완료하셔야 작성이 가능합니다.');
+          }
+        }
       },
     );
   };
@@ -73,10 +73,10 @@ const SnsNavigation = (): JSX.Element => {
       handleMovePage('write');
     } else {
       if (snsType === 'market') {
-      handleMovePage('write');
-    } else {
-      isRoutineData();
-    }
+        handleMovePage('write');
+      } else {
+        isRoutineData();
+      }
     }
   };
 

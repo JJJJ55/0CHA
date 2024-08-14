@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router';
 
 export const localAxios = () => {
   const instance: Axios = axios.create({
-    baseURL: process.env.REACT_APP_BASE_URL,
+    baseURL: '/proxy',
     withCredentials: true,
   });
 
@@ -99,7 +99,7 @@ export const localAxios = () => {
 
 export const publicAxios = () => {
   const publicAxios: Axios = axios.create({
-    baseURL: process.env.REACT_APP_BASE_URL,
+    baseURL: '/proxy',
     withCredentials: true,
   });
 
@@ -201,4 +201,16 @@ export const wsAxios = () => {
   instance.defaults.headers.patch['Content-Type'] = 'application/json';
   instance.defaults.headers.put['Content-Type'] = 'application/json';
   return instance;
+};
+
+export const socialAxios = () => {
+  const publicAxios: Axios = axios.create({
+    baseURL: '/social',
+    withCredentials: true,
+  });
+
+  publicAxios.defaults.headers.common['Authorization'] = '';
+  publicAxios.defaults.headers.post['Content-Type'] = 'application/json';
+  publicAxios.defaults.headers.patch['Content-Type'] = 'application/json';
+  return publicAxios;
 };

@@ -44,8 +44,6 @@ interface FitnessRoutineProps {
 }
 
 const FitnessPlanSetModal = (props: FitnessPlanModalProps): JSX.Element => {
-  const attendDay = ['2024-07-30', '2024-07-15', '2024-08-12']; // 운동시작 버튼 누른 날
-  const attendDay2 = ['2024-07-31', '2024-07-16', '2024-08-13']; // 운동 시작버튼 안누른 날(계획)
   const [fitness, setFitness] = useState<FitnessDay[]>([]);
   const [info, setInfo] = useState<FitnessRoutineProps>({
     title: '',

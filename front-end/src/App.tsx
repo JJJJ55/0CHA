@@ -161,8 +161,8 @@ function App() {
                   <Route index element={<Navigate to={'feed'} replace />} />
                   <Route path="feed">
                     <Route index element={<FeedPage />} />
-                    <Route path="write" element={<CreateFeedPage />} />                      
-                    <Route path="update" element={<UpdateFeedPage />} />                      
+                    <Route path="write" element={<CreateFeedPage />} />
+                    <Route path="update" element={<UpdateFeedPage />} />
                   </Route>
                   <Route path="profile">
                     <Route index element={<Navigate to={'id'} replace />} />

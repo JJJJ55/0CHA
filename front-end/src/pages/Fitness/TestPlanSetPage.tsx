@@ -107,6 +107,10 @@ const TestPlanSetPage = (): JSX.Element => {
   // Effect to handle loading a new routine
   useEffect(() => {
     if (historyData?.details) {
+      if (!historyData.complete) {
+        setTitle(historyData.title);
+        setDate(historyData.dueDate);
+      }
       setFitness(historyData.details);
     }
   }, [historyData]);

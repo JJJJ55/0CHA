@@ -33,13 +33,4 @@
         FROM users
         WHERE id = #{id};
     </select>
-
-    <select id="social">
-
-    </select>
-
-    <select id="socalToken">
-
-    </select>
-
 </mapper>

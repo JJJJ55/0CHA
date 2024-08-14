@@ -20,7 +20,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/topic");  // Redis를 사용하는 간단한 브로커 설정
+        config.enableSimpleBroker("/topic", "/queue");  // Redis를 사용하는 간단한 브로커 설정
         config.setApplicationDestinationPrefixes("/app");
     }
 

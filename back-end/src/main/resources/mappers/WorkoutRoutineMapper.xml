@@ -100,7 +100,7 @@
     </select>
 
     <select id="getAllRoutines" parameterType="int" resultMap="RoutineResultMap">
-        SELECT * FROM routines WHERE user_id = #{userId}
+        SELECT * FROM routines WHERE user_id = #{userId} ORDER BY due_date DESC
     </select>
 
     <select id="getAllRoutinesLimit" parameterType="int" resultMap="RoutineResultMap">

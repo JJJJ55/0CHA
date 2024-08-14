@@ -316,22 +316,17 @@ export const SnsItemSell = async (
 //   await jwt.get(`/sns/chat`).then(success).catch(fail);
 // };
 
-export const SnsChatList = async (
-  clientId: number,
-  success: (response: any) => void,
-  fail: (error: AxiosError) => void,
-) => {
-  await jwt.get(`/sns/chat/users?excludeUserId=${clientId}`).then(success).catch(fail);
+export const SnsChatList = async (success: (response: any) => void, fail: (error: AxiosError) => void) => {
+  await jwt.get(`/sns/chat/last-message-list`).then(success).catch(fail);
 };
 
 // 채팅방 들어가기
 export const SnsChatEnter = async (
-  clientId: number,
   receiverId: number,
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
 ) => {
-  await jwt.get(`/sns/chat/createRoom?senderId=${clientId}&receiverId=${receiverId}`);
+  await jwt.get(`/sns/chat/createRoom?receiverId=${receiverId}`).then(success).catch(fail);
 };
 
 // 해당 채팅방 메세지 가져오기

@@ -11,9 +11,7 @@ public interface MainMapper {
     int modifyProfile(@Param("nickname") String nickname, @Param("profileImage") String profileImage,
                       @Param("id") int userId);   //유저 프로필 수정
 
-    String getImagePathsByUserId(@Param("userId") int userId);   //유저 아이디로 프사찾기
-
-    int checkNickname(@Param("nickname") String nickname, @Param("userId") int userId);   //닉네임 중복체크
+    int checkNickname(@Param("nickname") String nickname);   //닉네임 중복체크
 
     int modifyUserInfo(UserInfoDto userInfoDto);   //회원정보 수정
 

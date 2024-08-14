@@ -7,9 +7,7 @@ public interface MainService {
 
     int modifyProfile(String nickname, String profileImage, int userId);   //유저 프로필 수정
 
-    String getImagePathsByUserId(int userId);   //유저 아이디로 프사찾기
-
-    int checkNickname(String nickname, int userId);   //닉네임 중복체크
+    int checkNickname(String nickname);   //닉네임 중복체크
 
     int modifyUserInfo(UserInfoDto userInfoDto);   //회원정보 수정
 

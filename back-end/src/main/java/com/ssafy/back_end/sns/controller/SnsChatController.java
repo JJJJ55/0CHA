@@ -2,7 +2,6 @@ package com.ssafy.back_end.sns.controller;
 
 import com.ssafy.back_end.auth.model.UserDto;
 import com.ssafy.back_end.sns.model.MessageDto;
-import com.ssafy.back_end.sns.model.UserJoinRoomDto;
 import com.ssafy.back_end.sns.service.SnsChatService;
 import com.ssafy.back_end.redis.service.RedisMessagePublisher;
 import com.ssafy.back_end.util.JwtUtil;
@@ -11,7 +10,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -42,18 +40,36 @@ public class SnsChatController {
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
+    // 연결 요청 시 더미 유저 ID 반환
+    // 나중에 토큰을 받고, 토큰이 맞으면 해당 토큰에서 유저 ID를 반환
+    @MessageMapping("/connect")
+    public int connect(@Header("Authorization") String token, SimpMessageHeaderAccessor headerAccessor) {
+        if (token == null || token.isEmpty()) {
+            throw new IllegalArgumentException("Authorization token is missing or empty");
+        }
+        logger.info("token: {}", token);
 
-    @Operation(summary = "채팅한 목록 가져오기")
-    @GetMapping("/last-message-list")
+        // JWT 유틸리티 클래스를 사용하여 토큰에서 사용자 ID 추출
+        int userId = jwtUtil.getUserIdFromAccessToken(token);
+
+        logger.info("User connected with ID: {}", userId);
+
+        return userId;
+    }
+
+    // 특정 유저를 제외한 모든 유저 리스트 반환
+    // 자신을 제외한 채팅 가능한 유저 목록 표시를 위해 사용
+    @Operation(summary = "자신을 제외한 채팅 가능한 유저 목록 - 완")
+    @GetMapping("/users")
     @ResponseBody
-    public List<UserJoinRoomDto> getLastMessageList(HttpServletRequest request) {
-        int myId = (Integer)request.getAttribute("userId");
-        logger.info("Fetching myId: {}", myId);
+    public List<UserDto> getUsers(HttpServletRequest request) {
+        int excludeUserId = (Integer)request.getAttribute("userId");
+        logger.info("Fetching users excluding userId: {}", excludeUserId);
 
-        List<UserJoinRoomDto> lastMessageList = snsChatService.getLastMessageList(myId);
-        logger.info("Retrieved myId {}: {}", myId, lastMessageList);
+        List<UserDto> users = snsChatService.getUsersExcludeMe(excludeUserId);
+        logger.info("Retrieved users excluding userId {}: {}", excludeUserId, users);
 
-        return lastMessageList;
+        return users;
     }
 
     // 채팅방 생성
@@ -85,13 +101,11 @@ public class SnsChatController {
     }
 
     // 메시지 수신 및 발송
-    @MessageMapping("/chat/{joinRoomId}")
-//    @SendTo("/topic/chat/{joinRoomId}")
-    public void sendMessage(HttpServletRequest request, @DestinationVariable String joinRoomId, MessageDto message) {
+    @MessageMapping("/message")
+    public void sendMessage(HttpServletRequest request, MessageDto message) {
         int senderId = (Integer)request.getAttribute("userId");
-        logger.debug("senderId : {}", senderId);
-        logger.debug("joinRoomId : {}", joinRoomId);
-        logger.debug("Received message: {}", message);
+        logger.info("senderId : {}", senderId);
+        logger.info("Received message: {}", message);
 
         // 메시지 저장
         MessageDto savedMessage = snsChatService.saveMessage(
@@ -102,9 +116,13 @@ public class SnsChatController {
 
         logger.info("Saved message: {}", savedMessage);
 
-
         // Redis로 메시지 퍼블리시
-        redisMessagePublisher.publish("/topic/chat/" + joinRoomId, savedMessage);
-        logger.info("Published message to Redis: {}", savedMessage);
+        redisMessagePublisher.publish(savedMessage.getMessage());
+        logger.info("Published message to Redis: {}", savedMessage.getMessage());
+
+        // 채팅방의 채널로 메시지 발송
+        messagingTemplate.convertAndSend("/queue/messages/room/" + message.getRoomId(), savedMessage);
+        logger.info("Sent message to room {}: {}", message.getRoomId(), savedMessage);
     }
+
 }

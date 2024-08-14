@@ -29,6 +29,4 @@ public class ItemDto {
     private String profileImage;
     private List<String> images;
     private int isLike;
-
-    private List<String> removeImagePaths;
 }

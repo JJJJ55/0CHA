@@ -62,8 +62,8 @@ public class SecurityConfig {
                                         "/v3/api-docs/**",
                                         "/swagger-ui.html",
                                         "/swagger-ui/**",
-                                        "/oauth/**",
-                                        "/kakao/**",
+                                        "/api/oauth/**",
+                                        "/api/kakao/**",
                                         "/api/ws/**"
                                 ).permitAll() // 인증 없이 접근 가능한 경로 설정
                                 .anyRequest().authenticated()) // 그 외 모든 요청은 인증 필요
@@ -90,8 +90,8 @@ public class SecurityConfig {
                 "/api/auth/register/**",
                 "/api/auth/modify/**",
                 "/api/redis/**",
-                "/oauth/**",
-                "/kakao/**",
+                "/api/oauth/**",
+                "/api/kakao/**",
                 "/api/ws/**"
         );
     }

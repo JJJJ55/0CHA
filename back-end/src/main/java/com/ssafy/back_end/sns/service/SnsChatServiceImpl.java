@@ -5,6 +5,7 @@ import com.ssafy.back_end.sns.mapper.SnsChatMessageMapper;
 import com.ssafy.back_end.sns.mapper.SnsChatRoomMapper;
 import com.ssafy.back_end.sns.model.MessageDto;
 import com.ssafy.back_end.sns.model.RoomDto;
+import com.ssafy.back_end.sns.model.UserJoinRoomDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -59,4 +60,10 @@ public class SnsChatServiceImpl implements SnsChatService{
                 .filter(user -> user.getId() != excludeUserId)
                 .toList();
     }
+
+    @Override
+    public List<UserJoinRoomDto> getLastMessageList(int myId) {
+        return snsChatMessageMapper.getLastMessageList(myId);
+    }
+
 }

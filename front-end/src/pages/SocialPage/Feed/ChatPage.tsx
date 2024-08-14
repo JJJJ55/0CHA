@@ -65,6 +65,8 @@ const s = {
     color: ${(props) => props.theme.textColor};
     text-align: center;
     margin-top: 20px;
+    font-size: 14px;
+    font-weight: 500;
   `,
 };
 
@@ -86,6 +88,9 @@ const ChatPage = (): JSX.Element => {
 
   // 상태 변수: 채팅방 ID
   const roomIdRef = useRef<number | null>(null);
+
+  // Ref for the container to scroll
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   // 로컬 스토리지에서 현재 사용자 ID 가져오기
   const currentUserId = (() => {
@@ -157,6 +162,7 @@ const ChatPage = (): JSX.Element => {
         (resp) => {
           setMessages(resp.data); // 서버에서 가져온 메시지 기록을 상태에 저장
           setLoading(false); // 로딩 상태 해제
+          scrollToBottom(); // 채팅 내역을 불러온 후 스크롤을 맨 아래로 이동
         },
         (err) => {
           console.log(err);
@@ -181,7 +187,7 @@ const ChatPage = (): JSX.Element => {
       }
 
       // SockJS와 STOMP 클라이언트 초기화
-      const socket = new SockJS('/proxy/ws'); // SockJS 엔드포인트 설정
+      const socket = new SockJS('/proxy/ws'); // SockJS 엔드포인트 설정 + 개발 환경에서는 proxy 더해주기
       const client = new Client({
         webSocketFactory: () => socket, // SockJS를 WebSocket으로 사용
         connectHeaders: {
@@ -232,9 +238,14 @@ const ChatPage = (): JSX.Element => {
   }, [userId]);
 
   // 메시지를 화면에 표시하는 함수
-  const showMessage = (message: { senderId: number; message: string }) => {
+  const showMessage = (message: { senderId: number; message: string; sendAt: string }) => {
     setMessages((prevMessages) => [...prevMessages, message]);
   };
+
+  // 메시지를 추적해 변화가 생기면 스크롤을 맨 아래로
+  useEffect(() => {
+    scrollToBottom(); // 새로운 메시지가 추가되면 스크롤을 맨 아래로 이동
+  }, [messages]);
 
   // 메시지를 전송하는 함수
   const sendMessage = () => {
@@ -252,11 +263,14 @@ const ChatPage = (): JSX.Element => {
         return;
       }
 
+      const sendAt = new Date().toISOString(); // 현재 시간을 ISO 형식으로 가져오기
+
       stompClient.publish({
         destination: `/app/chat/${roomIdRef.current}`, // 메시지를 전송할 목적지
         body: JSON.stringify({
           senderId: currentUserId,
           message: messageContent,
+          sendAt: sendAt, // 현재 시간을 함께 전송
         }),
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -265,6 +279,13 @@ const ChatPage = (): JSX.Element => {
       });
 
       setMessageContent(''); // 전송 후 입력 필드 초기화
+    }
+  };
+
+  // 스크롤을 맨 아래로 이동하는 함수
+  const scrollToBottom = () => {
+    if (containerRef.current) {
+      containerRef.current.scrollTop = containerRef.current.scrollHeight;
     }
   };
 
@@ -288,9 +309,11 @@ const ChatPage = (): JSX.Element => {
         </s.ProfileArea>
       </s.ChatHeader>
 
-      <s.Container>
+      <s.Container ref={containerRef}>
         {loading ? (
-          <s.LoadingMessage>채팅방 로딩중입니다. 잠시만 기다려 주세요.</s.LoadingMessage>
+          <s.LoadingMessage>
+            채팅방 로딩중입니다. <br /> 잠시만 기다려 주세요.
+          </s.LoadingMessage>
         ) : (
           messages.map((msg, index) => (
             <Chat key={index} isMyChat={msg.senderId === currentUserId} content={msg.message} />

@@ -102,10 +102,9 @@ const LoginPage = (): JSX.Element => {
     );
   };
 
-  const handleMoveSocial = (path: string) => {
+  const handleMoveSocial = async (path: string) => {
     // navigate(`${process.env.REACT_APP_SOCIAL_BASE_URL}${path}`);
     // window.location.href = `${process.env.REACT_APP_SOCIAL_BASE_URL}${path}`;
-    // window.location.href = `https://i11b310.p.ssafy.io/oauth/kakao`;
     // await MoveKaKao(path);
     window.location.href = 'https://i11b310.p.ssafy.io/oauth/kakao';
   };

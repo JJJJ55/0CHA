@@ -33,7 +33,7 @@ const s = {
     display: flex;
     justify-content: end;
     align-items: center;
-  `,
+  `
 };
 
 const SnsHeader = (): JSX.Element => {
@@ -65,15 +65,19 @@ const SnsHeader = (): JSX.Element => {
   return (
     <s.Container>
       <s.MenuArea1>
-        <Image
-          width="35px"
-          height="35px"
-          src={test}
-          cursor="pointer"
-          onClick={() => handleMovePage(`../profile/${userId}`)}
-          display="block"
-          margin="0 10px 0 0"
-        />
+        {userProfileImage === null ? (
+            <></>
+          ) : (
+          <Image
+            width="35px"
+            height="35px"
+            src={`https://i11b310.p.ssafy.io/images/${userProfileImage.split('/home/ubuntu/images/')[1]}`}
+            cursor="pointer"
+            onClick={() => handleMovePage(`../profile/${userId}`)}
+            display="block"
+            margin="0 10px 0 0"
+          />
+          )} 
       </s.MenuArea1>
       <s.MenuArea2>
         <IconSvg

@@ -76,7 +76,7 @@ const ChatPage = (): JSX.Element => {
   const [profileImage, setProfileImage] = useState<string | null>(location.state?.profileImage || null);
 
   // 상태 변수: 메시지 목록과 현재 작성 중인 메시지
-  const [messages, setMessages] = useState<{ sender: string; content: string }[]>([]);
+  const [messages, setMessages] = useState<{ senderId: number; message: string }[]>([]);
   const [messageContent, setMessageContent] = useState('');
   const [stompClient, setStompClient] = useState<Client | null>(null);
 
@@ -204,7 +204,7 @@ const ChatPage = (): JSX.Element => {
   }, [userId]);
 
   // 메시지를 화면에 표시하는 함수
-  const showMessage = (message: { sender: string; content: string }) => {
+  const showMessage = (message: { senderId: number; message: string }) => {
     setMessages((prevMessages) => [...prevMessages, message]);
   };
 
@@ -222,8 +222,8 @@ const ChatPage = (): JSX.Element => {
       stompClient.publish({
         destination: `/app/chat/${roomIdRef.current}`, // 메시지를 전송할 목적지
         body: JSON.stringify({
-          sender: currentUserId,
-          content: messageContent,
+          senderId: currentUserId,
+          message: messageContent,
         }),
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -257,7 +257,7 @@ const ChatPage = (): JSX.Element => {
 
       <s.Container>
         {messages.map((msg, index) => (
-          <Chat key={index} isMyChat={msg.sender === String(currentUserId)} content={msg.content} />
+          <Chat key={index} isMyChat={msg.senderId === currentUserId} content={msg.message} />
         ))}
       </s.Container>
 

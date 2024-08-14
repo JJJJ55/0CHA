@@ -10,6 +10,7 @@ import { Outlet, useNavigate } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
 import { navActions, selectNav } from '../../store/nav';
 import { useBottomNavHook } from '../../lib/hook/useBottomNavHook';
+import { pageActions } from '../../store/page';
 
 const s = {
   Container: styled.section`
@@ -57,6 +58,12 @@ const s = {
 
 const SocialPage = (): JSX.Element => {
   useBottomNavHook('sns');
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    return () => {
+      dispatch(pageActions.changeSnsType('feed'));
+    };
+  });
   return (
     <s.Container>
       <Outlet />

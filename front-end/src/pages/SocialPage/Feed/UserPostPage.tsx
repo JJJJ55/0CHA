@@ -144,6 +144,7 @@ const UserPostPage = (): JSX.Element => {
         },
         (error) => {
           console.log(error);
+          navigate('*'); //잘못된 접근입니다. (유저 없을때)
         },
       );
     }
@@ -232,7 +233,7 @@ const UserPostPage = (): JSX.Element => {
 
   return (
     <>
-      <Header text="피드" />
+      <Header text="피드" onBack={() => navigate('../../')} />
       <s.Container>
         <UserProfileInfo
           profileUserId={userData?.id}
@@ -242,6 +243,7 @@ const UserPostPage = (): JSX.Element => {
           marketCnt={userData?.itemCount}
           followerCnt={userData?.followerIdCount}
           followingCnt={userData?.followedIdCount}
+          profileImage={userData?.profileImage}
         />
         <s.TabBar>
           {isFitness === true ? (

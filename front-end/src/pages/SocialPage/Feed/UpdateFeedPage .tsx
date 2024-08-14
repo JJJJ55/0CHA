@@ -29,7 +29,7 @@ const s = {
     font-weight: 600;
     text-shadow: 1px 1px 1px black;
   `,
-  
+
   ImageArea: styled.div`
     position: relative;
     width: 100%;
@@ -38,6 +38,8 @@ const s = {
     align-items: center;
   `,
   FeedImage: styled.div<ImageAreaProps>`
+    width: 100%;
+    margin: 0 auto;
     display: ${(props) => (props.$isRoutine === true ? 'none' : '')};
   `,
   FeedRoutine: styled.div<ImageAreaProps>`
@@ -68,7 +70,7 @@ const s = {
 
 interface ImageAreaProps {
   $isRoutine: boolean;
-};
+}
 
 type routineData = {
   id: number;
@@ -76,8 +78,8 @@ type routineData = {
     {
       exerciseName: string;
       setCount: number;
-    }
-  ]
+    },
+  ];
 };
 
 const UpdateFeedPage = (): JSX.Element => {
@@ -95,17 +97,19 @@ const UpdateFeedPage = (): JSX.Element => {
     if (location.state !== null) {
       setTargetFeedId(location.state.targetFeedId);
       setContentValue(location.state.feedContent.content);
-      setimgurl(`https://i11b310.p.ssafy.io/images/${location.state.feedContent.image.split('/home/ubuntu/images/')[1]}`)
+      setimgurl(
+        `https://i11b310.p.ssafy.io/images/${location.state.feedContent.image.split('/home/ubuntu/images/')[1]}`,
+      );
       setRoutineId(location.state.feedContent.routineId);
-    };
+    }
   }, [targetFeedId]);
 
   // 루틴 확인, 사진 확인 전환
   const [isRoutineMode, setIsRoutineMode] = useState(false);
 
-  const routineButtonOnClick = (() => {
+  const routineButtonOnClick = () => {
     setIsRoutineMode((prev) => !prev);
-  });
+  };
 
   // 파일 업로드하기 (image)
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -125,17 +129,17 @@ const UpdateFeedPage = (): JSX.Element => {
         };
         setChangeImg(newFilesArray[0]);
         reader.readAsDataURL(file);
-      };
-    };
+      }
+    }
   };
 
   useEffect(() => {
-    console.log(image)
+    console.log(image);
   }, [image]);
 
   // 내 루틴 가져오기
   const [routine, setRoutine] = useState<routineData>();
-  
+
   // const getRoutineData = async () => {
   //   await MyRoutine(
   //     (resp) => {
@@ -156,8 +160,8 @@ const UpdateFeedPage = (): JSX.Element => {
         },
         (error) => {
           console.error(error);
-        }
-      )
+        },
+      );
     }
   };
 
@@ -169,21 +173,23 @@ const UpdateFeedPage = (): JSX.Element => {
   const [contentValue, setContentValue] = useState('');
 
   const contentOnChange = (event: React.FormEvent<HTMLTextAreaElement>) => {
-    const { currentTarget: { value }} = event;
+    const {
+      currentTarget: { value },
+    } = event;
     setContentValue(value);
   };
 
   const feedOnSubmit = async (event: React.FormEvent<HTMLButtonElement>) => {
     if (routine !== undefined && targetFeedId !== undefined) {
-    // if (changeImg !== undefined && routine !== undefined && targetFeedId !== undefined) {
+      // if (changeImg !== undefined && routine !== undefined && targetFeedId !== undefined) {
       const formData = new FormData();
-      const feedContent={
+      const feedContent = {
         content: contentValue,
-        routineId: routine.id
+        routineId: routine.id,
       };
-      formData.append('feed', new Blob([JSON.stringify(feedContent)], {type: 'application/json'}));
+      formData.append('feed', new Blob([JSON.stringify(feedContent)], { type: 'application/json' }));
       if (changeImg !== undefined) {
-        formData.append('image', changeImg)
+        formData.append('image', changeImg);
       }
       await SnsFeedModify(
         targetFeedId,
@@ -195,14 +201,11 @@ const UpdateFeedPage = (): JSX.Element => {
         },
         (error) => {
           console.error(error);
-        }
+        },
       );
-    };
+    }
   };
 
-  
-
-  
   return (
     <>
       <s.Container>
@@ -218,14 +221,25 @@ const UpdateFeedPage = (): JSX.Element => {
               <s.RoutineArea>
                 {routine?.details?.map((item) => (
                   <>
-                    <s.Routine>{item.exerciseName} {item.setCount}세트</s.Routine>
+                    <s.Routine>
+                      {item.exerciseName} {item.setCount}세트
+                    </s.Routine>
                   </>
                 ))}
               </s.RoutineArea>
             </s.FeedRoutine>
           </s.ImageArea>
           <s.SelectPicture>
-            <Button width="49%" height="40px" size="14px" bold="500" children="사진 선택" onClick={() => {fileInputRef.current?.click()}}/>
+            <Button
+              width="49%"
+              height="40px"
+              size="14px"
+              bold="500"
+              children="사진 선택"
+              onClick={() => {
+                fileInputRef.current?.click();
+              }}
+            />
             <input
               ref={fileInputRef}
               type="file"
@@ -235,12 +249,33 @@ const UpdateFeedPage = (): JSX.Element => {
               onChange={handleImageUpload}
             />
             {isRoutineMode ? (
-              <Button width="49%" height="40px" size="14px" bold="500" children="사진 확인" onClick={routineButtonOnClick}/>
+              <Button
+                width="49%"
+                height="40px"
+                size="14px"
+                bold="500"
+                children="사진 확인"
+                onClick={routineButtonOnClick}
+              />
             ) : (
-              <Button width="49%" height="40px" size="14px" bold="500" children="루틴 확인" onClick={routineButtonOnClick}/>
+              <Button
+                width="49%"
+                height="40px"
+                size="14px"
+                bold="500"
+                children="루틴 확인"
+                onClick={routineButtonOnClick}
+              />
             )}
           </s.SelectPicture>
-          <TextArea width="90%" height="180px" margin="0 auto" display="block" onChange={contentOnChange} value={contentValue} />
+          <TextArea
+            width="90%"
+            height="180px"
+            margin="0 auto"
+            display="block"
+            onChange={contentOnChange}
+            value={contentValue}
+          />
         </s.MainArea>
         <s.Button>
           <Button

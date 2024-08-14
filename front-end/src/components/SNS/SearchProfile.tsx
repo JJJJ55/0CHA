@@ -30,7 +30,15 @@ const SearchProfile = (props: CommentProps): JSX.Element => {
   const { profileImage, username, onClick } = props;
   return (
     <s.Container onClick={onClick}>
-      <Image width="45px" height="45px" src={profileImage} />
+      {profileImage ? (
+        <Image
+          width="45px"
+          height="45px"
+          src={`https://i11b310.p.ssafy.io/images/${profileImage.split('/home/ubuntu/images/')[1]}`}
+        />
+      ) : (
+        <div></div>
+      )}
       <s.Username>{username}</s.Username>
     </s.Container>
   );

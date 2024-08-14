@@ -17,13 +17,6 @@ const s = {
     width: 100%;
     flex: 1;
   `,
-  title: styled.div`
-    width: 90%;
-    height: fit-content;
-    margin: 10px auto;
-    color: ${(props) => props.theme.textColor2};
-    font-size: 14px;
-  `,
   ListArea: styled.div`
     width: 90%;
     height: 60px;
@@ -58,7 +51,6 @@ const s = {
 };
 
 interface FitnessListProps {
-  text: string;
   add: CreateRoutine[];
   onAdd: Function;
   data: FitnessType[];
@@ -97,7 +89,6 @@ const FitnessList = (props: FitnessListProps): JSX.Element => {
   if (!Array.isArray(props.data)) {
     return (
       <>
-        <s.title>{props.text}</s.title>
         <Text children="목록이 없습니다." width="80%" margin="20px auto" display="block" />
       </>
     );
@@ -120,7 +111,6 @@ const FitnessList = (props: FitnessListProps): JSX.Element => {
 
   return (
     <s.Container>
-      <s.title>{props.text}</s.title>
       {props.data.map((data, index) => (
         <div key={index}>
           <s.ListArea>

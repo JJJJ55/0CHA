@@ -1,16 +1,19 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import Input from '../../../components/Common/Input';
-import Button from '../../../components/Common/Button';
-import Text from '../../../components/Common/Text';
-import { ReactComponent as Logo } from '../../../asset/img/svg/0CHA.svg';
-import test from '../../../asset/img/testImg.png';
 import Image from '../../../components/Common/Image';
-import Feed from '../../../components/SNS/Feed';
 import Header from '../../../components/Common/Header';
-import SnsNavigation from '../../../components/SNS/SnsNavigation';
 import BottomNav from '../../../components/Common/BottomNav';
 import UserProfileInfo from '../../../components/SNS/UserProfileInfo';
+import { useNavigate, useParams } from 'react-router';
+
+import { UserPage } from '../../../lib/api/sns-api';
+import { UserPageFeed } from '../../../lib/api/sns-api';
+import { UserPageItem } from '../../../lib/api/sns-api';
+import FollowingModal from '../../../components/Modal/FollowingModal';
+import { useAppDispatch, useAppSelector } from '../../../lib/hook/useReduxHook';
+import { modalActions, selectModalFollower, selectModalFollowing, selectModalMarket } from '../../../store/modal';
+import FollowerModal from '../../../components/Modal/FollowerModal';
+import ItemModal from '../../../components/Modal/ItemModal';
 
 const s = {
   Container: styled.section`
@@ -49,15 +52,51 @@ const s = {
     margin-top: 3px;
   `,
   ThumbnailArea: styled.div`
+    width: 100%;
     margin: auto;
     display: inline-flex;
     flex-wrap: wrap;
   `,
   Thumbnail: styled.div`
     width: 33%;
+    aspect-ratio: 1;
     padding: 1px;
+    border: 1px #212121 solid;
+    display: flex;
+    align-items: center;
   `,
 };
+
+type userPageData = {
+  id: number;
+  nickname: string;
+  profileImage: string;
+  feedCount: number;
+  itemCount: number;
+  followedIdCount: number;
+  followerIdCount: number;
+};
+
+type userPageFeedData = {
+  id: number;
+  image: string;
+};
+
+type userPageMarketData = {
+  id: number;
+  image: string;
+};
+
+// 복현우
+interface Item {
+  id: number;
+  images: string[];
+  title: string;
+  price: string;
+  isSold: boolean;
+  likeCount: number;
+  isLike: number;
+}
 
 const UserPostPage = (): JSX.Element => {
   const [isFitness, setIsFitness] = useState(true);
@@ -65,16 +104,144 @@ const UserPostPage = (): JSX.Element => {
     setIsFitness(!isFitness);
   };
 
+  const isFollowingModal = useAppSelector(selectModalFollowing);
+  const isFollowerModal = useAppSelector(selectModalFollower);
+  const dispatch = useAppDispatch();
+  const toggleModalFollowing = (): void => {
+    dispatch(modalActions.toggleFollowing());
+  };
+  const toggleModalFollower = (): void => {
+    dispatch(modalActions.toggleFollower());
+  };
+
+  const [userId, setUserId] = useState(0);
+  const [userNickname, setUserNickname] = useState('');
+  const [userProfileImage, setUserProfileImage] = useState('');
+
+  const userStr = localStorage.getItem('user');
+
+  useEffect(() => {
+    if (userStr) {
+      const userTmp = JSON.parse(userStr);
+      setUserId(userTmp.id);
+      setUserNickname(userTmp.nickname);
+      setUserProfileImage(userTmp.profileImage);
+    }
+  }, []);
+
+  const [userData, setUserData] = useState<userPageData>();
+  const [feedData, setFeedData] = useState<userPageFeedData[]>([]);
+  const [marketData, setMarketData] = useState<userPageMarketData[]>([]);
+  const params = useParams();
+  const feedUserId = params.id;
+
+  const getUserPage = async () => {
+    if (feedUserId) {
+      await UserPage(
+        parseInt(feedUserId),
+        (resp) => {
+          setUserData(resp.data);
+        },
+        (error) => {
+          console.log(error);
+        },
+      );
+    }
+  };
+
+  const getUserPageFeed = async () => {
+    if (feedUserId) {
+      await UserPageFeed(
+        parseInt(feedUserId),
+        (resp) => {
+          if (resp.data === '피드 0개입니다') {
+            setFeedData([]);
+          } else {
+            setFeedData(resp.data);
+          }
+        },
+        (error) => {
+          console.log(error);
+        },
+      );
+    }
+  };
+
+  const getUserPageMarket = async () => {
+    if (feedUserId) {
+      await UserPageItem(
+        parseInt(feedUserId),
+        (resp) => {
+          if (resp.data === '중고거래 0개입니다') {
+            setMarketData([]);
+          } else {
+            setMarketData(resp.data);
+            console.log(resp.data, '마켓데이터예요');
+          }
+        },
+        (error) => {
+          console.log(error);
+        },
+      );
+    }
+  };
+
+  useEffect(() => {
+    getUserPage();
+    getUserPageFeed();
+    getUserPageMarket();
+  }, [feedUserId]);
+
+  useEffect(() => {
+    console.log(userData);
+  }, [userData]);
+
+  const navigate = useNavigate();
+
+  const handleThumbnailClick = (feedId: number) => {
+    navigate(`/sns/feed`, { state: { targetFeedId: feedId, targetUserId: feedUserId } });
+    console.log(feedId, 'selected feed id');
+  };
+
+  // 복현우
+  const [selectedItem, setSelectedItem] = useState<number | null>(null); // 선택된 아이템 상태 관리
+  const [showItemModal, setShowItemModal] = useState(false);
+
+  const toggleMarket = (itemId?: number): void => {
+    console.log(itemId);
+    if (itemId !== undefined) {
+      setSelectedItem(itemId); // 선택된 아이템 설정
+      setShowItemModal(true);
+    } else {
+      // itemId가 선택이 안되는 경우
+      setShowItemModal(false);
+    }
+    dispatch(modalActions.toggleMarket());
+  };
+
+  const handleItemDeleted = () => {
+    toggleMarket(); // 모달 닫기
+    setShowItemModal(false);
+  };
+
+  // 아이템 리스트의 특정 아이템 업데이트 함수
+  const handleItemUpdated = (updatedItem: Item) => {
+    console.log(`업데이트!`);
+    console.log(updatedItem);
+  };
+
   return (
     <>
       <Header text="피드" />
       <s.Container>
         <UserProfileInfo
-          isCurrentUser={false}
-          userName={'stranger_00'}
-          postCnt={'9'}
-          followerCnt={'12'}
-          followingCnt={'23'}
+          profileUserId={userData?.id}
+          isCurrentUser={userId === userData?.id}
+          userName={userData?.nickname}
+          postCnt={userData?.feedCount}
+          marketCnt={userData?.itemCount}
+          followerCnt={userData?.followerIdCount}
+          followingCnt={userData?.followedIdCount}
         />
         <s.TabBar>
           {isFitness === true ? (
@@ -87,26 +254,73 @@ const UserPostPage = (): JSX.Element => {
           ) : (
             <s.ActiveText>거래</s.ActiveText>
           )}
+
+          {/* {props.image === null ? (
+            <></>
+          ) : (
+          <Image
+            width="100%"
+            height="100%"
+            src={`https://i11b310.p.ssafy.io/images/${props.image.split('/home/ubuntu/images/')[1]}`}
+            type="rect"
+          /> */}
         </s.TabBar>
         <s.testArea>
           <s.ThumbnailArea>
-            <s.Thumbnail>
-              <Image width="100%" height="auto" src={test} type="rect" cursor="pointer" />
-            </s.Thumbnail>
-            <s.Thumbnail>
-              <Image width="100%" height="auto" src={test} type="rect" cursor="pointer" />
-            </s.Thumbnail>
-            <s.Thumbnail>
-              <Image width="100%" height="auto" src={test} type="rect" cursor="pointer" />
-            </s.Thumbnail>
-            <s.Thumbnail>
-              <Image width="100%" height="auto" src={test} type="rect" cursor="pointer" />
-            </s.Thumbnail>
-            <s.Thumbnail>
-              <Image width="100%" height="auto" src={test} type="rect" cursor="pointer" />
-            </s.Thumbnail>
+            {isFitness === true ? (
+              <>
+                {feedData.map((thumbnail) => (
+                  <s.Thumbnail key={thumbnail.id} onClick={() => handleThumbnailClick(thumbnail.id)}>
+                    {thumbnail.image === null ? (
+                      <div></div>
+                    ) : (
+                      <Image
+                        width="100%"
+                        height="100%"
+                        src={`https://i11b310.p.ssafy.io/images/${thumbnail.image.split('/home/ubuntu/images/')[1]}`}
+                        type="rect"
+                        cursor="pointer"
+                        fit="cover"
+                      />
+                    )}
+                  </s.Thumbnail>
+                ))}
+              </>
+            ) : (
+              <>
+                {marketData.map((thumbnail) => (
+                  <s.Thumbnail
+                    key={thumbnail.id}
+                    onClick={() => toggleMarket(thumbnail.id)} // 클릭 시 해당 아이템을 모달에 설정
+                  >
+                    {thumbnail.image === null ? (
+                      <div></div>
+                    ) : (
+                      <Image
+                        width="100%"
+                        height="100%"
+                        src={`https://i11b310.p.ssafy.io/images/${thumbnail.image.split('/home/ubuntu/images/')[1]}`}
+                        type="rect"
+                        cursor="pointer"
+                        fit="cover"
+                      />
+                    )}
+                  </s.Thumbnail>
+                ))}
+              </>
+            )}
           </s.ThumbnailArea>
         </s.testArea>
+        <FollowingModal open={isFollowingModal} onModal={toggleModalFollowing} userId={userData?.id} />
+        <FollowerModal open={isFollowerModal} onModal={toggleModalFollower} userId={userData?.id} />
+        {/* 아이템 모달 자리 for 복현우 ^^ */}
+        <ItemModal
+          open={showItemModal}
+          onModal={toggleMarket}
+          itemId={selectedItem}
+          onDelete={handleItemDeleted} // 삭제 후 호출될 콜백 함수 전달
+          onItemUpdate={handleItemUpdated} // 아이템 업데이트 후 호출될 콜백 함수 전달
+        />
       </s.Container>
       <BottomNav />
     </>

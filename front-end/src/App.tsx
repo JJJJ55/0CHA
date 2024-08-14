@@ -17,7 +17,6 @@ import MainPage from './pages/Main/MainPage';
 import AIMainPage from './pages/AI/AIMainPage';
 import FitnessListPage from './pages/Fitness/FitnessListPage';
 import FitnessDetailPage from './pages/Fitness/FitnessDetailPage';
-import FitnessPlanSetPage from './pages/Fitness/FitnessPlanSetPage';
 import FitnessRoutineDetatilPage from './pages/Fitness/FitnessRoutineDetailPage';
 import FitnessRoutineListPage from './pages/Fitness/FitnessRoutineListPage';
 import FitnessPlayPage from './pages/Fitness/FitnessPlayPage';
@@ -44,6 +43,10 @@ import NotificationPage from './pages/SocialPage/Feed/NotificationPage';
 import ErrorPage from './pages/ErrorPage';
 import { useAppSelector } from './lib/hook/useReduxHook';
 import { selectIsEmail, selectIsFinish, selectIsPlay, selectIsPw, selectIsScan, selectIsSign } from './store/page';
+import TestPlanSetPage from './pages/Fitness/TestPlanSetPage';
+import UpdateItemPage from './pages/SocialPage/Market/UpdateItemPage';
+import UpdateFeedPage from './pages/SocialPage/Feed/UpdateFeedPage ';
+import UserFeedPage from './pages/SocialPage/Feed/UserFeedPage';
 
 const s = {
   Background: styled.section`
@@ -118,7 +121,7 @@ function App() {
                     <Route index element={<FitnessListPage />} />
                     <Route path="detail" element={<FitnessDetailPage />} />
                   </Route>
-                  <Route path="plan" element={<FitnessPlanSetPage />} />
+                  <Route path="plan" element={<TestPlanSetPage />} />
                   <Route path="history">
                     <Route index element={<FitnessRoutineListPage />} />
                     <Route path="detail" element={<FitnessRoutineDetatilPage />} />
@@ -158,7 +161,8 @@ function App() {
                   <Route index element={<Navigate to={'feed'} replace />} />
                   <Route path="feed">
                     <Route index element={<FeedPage />} />
-                    <Route path="write" element={<CreateFeedPage />} />
+                    <Route path="write" element={<CreateFeedPage />} />                      
+                    <Route path="update" element={<UpdateFeedPage />} />                      
                   </Route>
                   <Route path="profile">
                     <Route index element={<Navigate to={'id'} replace />} />
@@ -167,10 +171,11 @@ function App() {
                   <Route path="market">
                     <Route index element={<MarketPage />} />
                     <Route path="write" element={<UploadItemPage />} />
+                    <Route path="update/:id" element={<UpdateItemPage />} />
                   </Route>
                   <Route path="chat">
                     <Route index element={<ChatListPage />} />
-                    <Route path=":id" element={<ChatPage />} />
+                    <Route path=":userId" element={<ChatPage />} />
                   </Route>
                   <Route path="notification" element={<NotificationPage />} />
                 </Route>

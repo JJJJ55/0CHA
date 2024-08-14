@@ -7,7 +7,7 @@ import PhoneNumberInput from '../../../components/LoginBefore/phoneNumberInput';
 import { findEmail } from '../../../lib/api/user-api';
 import { useLocation, useNavigate } from 'react-router';
 import { useAppDispatch } from '../../../lib/hook/useReduxHook';
-import { pageActions, selectIsEmail } from '../../../store/page';
+import { pageActions } from '../../../store/page';
 
 // 4자리 로직 작성
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import ReactModal from 'react-modal';
 import SearchProfile from '../SNS/SearchProfile';
@@ -8,6 +8,7 @@ import Button from '../Common/Button';
 import IconSvg from '../Common/IconSvg';
 import { ReactComponent as back } from '../../asset/img/svg/back.svg';
 import { useNavigate } from 'react-router';
+import { UserSearch } from '../../lib/api/sns-api';
 
 const s = {
   Container: styled.section`
@@ -37,11 +38,20 @@ interface UserSearchModalProps {
   onModal: Function;
 }
 
+type UserData = {
+  id: number;
+  nickname: string;
+  profileImage: string;
+  feedCount: number;
+  itemCount: number;
+  followedIdCount: number;
+  followerIdCount: number;
+}
+
 const UserSearchModal = (props: UserSearchModalProps): JSX.Element => {
   const [search, setSearch] = useState('');
   const onSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
-    console.log(e.target.value);
   };
   const toggleModal = (): void => {
     props.onModal();
@@ -50,8 +60,42 @@ const UserSearchModal = (props: UserSearchModalProps): JSX.Element => {
   const navigate = useNavigate();
   const handleMovePage = (id: string) => {
     props.onModal();
+    getUserData();
     navigate(`../profile/${id}`);
   };
+
+  const [userData, setUserData] = useState<UserData[]>([])
+
+  const getUserData = async () => {
+    await UserSearch(
+      (resp) => {
+        setUserData(resp.data)
+      },
+      (error) => {
+        console.error(error);
+      }
+    )
+  }
+
+  useEffect(() => {
+    getUserData();
+  }, []);
+
+  const [filter, setFilter] = useState<UserData[]>([])
+
+  useEffect(() => {
+    if (search) {
+      const filterData = userData.filter((user) =>
+        user.nickname.includes(search)
+      )
+      setFilter(filterData)
+    } else {
+      setFilter([])
+    }
+  }, [search])
+
+
+
   return (
     <>
       <ReactModal
@@ -72,17 +116,19 @@ const UserSearchModal = (props: UserSearchModalProps): JSX.Element => {
               margin="0 auto"
               height="40px"
               placeColor="textColor2"
-              placeholder="검색어를 입력하세요."
+              placeholder="검색어 입력"
               name={search}
               value={search}
               onChange={onSearch}
             />
           </s.InputArea>
-
-          <SearchProfile profileImage={test} username="asdf" onClick={() => handleMovePage('id')} />
-          <SearchProfile profileImage={test} username="asdf" onClick={() => handleMovePage('id')} />
-          <SearchProfile profileImage={test} username="asdf" onClick={() => handleMovePage('id')} />
-          <SearchProfile profileImage={test} username="asdf" onClick={() => handleMovePage('id')} />
+          {filter.map((user) => (
+            <SearchProfile
+              profileImage={user.profileImage}
+              username={user.nickname}
+              onClick={() => handleMovePage(`${user.id}`)}
+            />
+          ))}
         </s.Container>
       </ReactModal>
     </>

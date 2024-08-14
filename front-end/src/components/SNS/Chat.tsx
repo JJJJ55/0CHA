@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 
-
 const s = {
   Container: styled.section`
     height: 40px;
@@ -45,31 +44,29 @@ const s = {
   `,
   text: styled.div`
     display: inline-block;
-  `
+  `,
 };
-
 
 interface CommentProps {
   isMyChat: boolean;
   content: string;
 }
 
-
 const Chat = (props: CommentProps): JSX.Element => {
   const { isMyChat, content } = props;
   return (
     <>
-    {isMyChat === true ? (
-      <s.MyChatArea>
-        <s.MyChat>{content}</s.MyChat>
-      </s.MyChatArea>
-    ) : (
-      <s.YourChatArea>
-        <s.YourChat>{content}</s.YourChat>
-      </s.YourChatArea>
-    )}
+      {isMyChat === true ? (
+        <s.MyChatArea>
+          <s.MyChat>{content}</s.MyChat>
+        </s.MyChatArea>
+      ) : (
+        <s.YourChatArea>
+          <s.YourChat>{content}</s.YourChat>
+        </s.YourChatArea>
+      )}
     </>
-  )
+  );
 };
 
 export default Chat;

@@ -6,7 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface SnsItemService {
-    List<ItemDto> getItems(int myId, int userId,String district, String siGunGu, String title, int offset, int limit);   //특정 유저 중고장터 모두 보기
+    List<ItemDto> getItems(int myId, int userId, String district, String siGunGu, String title, int offset, int limit);   //특정 유저 중고장터 모두 보기
 
     ItemDto getItemDetail(int myId, int itemId);   //중고장터 자세히 보기
 
@@ -26,5 +26,5 @@ public interface SnsItemService {
 
     int soldOut(int itemId);   //판매완료
 
-    void validateImages(List<MultipartFile> images);   //이미지 유효성 검사
+    void validateImages(int imageN);   //이미지 유효성 검사
 }

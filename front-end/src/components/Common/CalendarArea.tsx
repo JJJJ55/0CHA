@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import Calendar, { OnClickFunc } from 'react-calendar';
 import moment from 'moment';
 import '../../styles/Calendar.css';
+import { FitnessDay } from '../../util/types/axios-record';
 
 const s = {
   /* 오늘 날짜에 텍스트 삽입 스타일 */
@@ -22,7 +23,9 @@ type CalendarProps = {
   className?: string;
   RoutineFinish?: string[];
   Routine?: string[];
+  pick?: string;
   onChangeDate?: OnClickFunc;
+  FitnessDay?: FitnessDay[];
 };
 
 const CalendarArea = (props: CalendarProps): JSX.Element => {
@@ -42,12 +45,23 @@ const CalendarArea = (props: CalendarProps): JSX.Element => {
       showNeighboringMonth={false}
       minDetail="decade"
       tileClassName={({ date, view }) => {
-        if (props.RoutineFinish?.find((x) => x === moment(date).format('YYYY-MM-DD'))) {
+        if (props.FitnessDay?.find((x) => x.dueDate === moment(date).format('YYYY-MM-DD'))) {
           return 'routineFinish';
         }
-        if (props.Routine?.find((x) => x === moment(date).format('YYYY-MM-DD'))) {
-          return 'routine';
+        // if (props.RoutineFinish?.find((x) => x === moment(date).format('YYYY-MM-DD'))) {
+        //   return 'routineFinish';
+        // }
+        // if (props.Routine?.find((x) => x === moment(date).format('YYYY-MM-DD'))) {
+        //   return 'routine';
+        // }
+        if (props.pick === moment(date).format('YYYY-MM-DD')) {
+          return 'pick';
         }
+        // if (view === 'month') {
+        //   if (date < today) {
+        //     return 'past-date';
+        //   }
+        // }
       }}
       tileContent={({ date, view }) => {
         let html = [];

@@ -129,27 +129,27 @@ const FitnessPlayPage = (): JSX.Element => {
       details: fitness,
     };
     console.log(param);
-    // putUpdateRoutine(
-    //   planTest.id!,
-    //   param,
-    //   (resp) => {
-    //     putFinishRoutine(
-    //       planTest.id!,
-    //       (resp) => {
-    //         dispatch(pageActions.toogleIsFinish(true));
-    //         navigate('/play', {
-    //           state: { data: { date: planTest.dueDate || planTest.dueDate, volume: volume, time: t } },
-    //         });
-    //       },
-    //       (error) => {
-    //         alert('잠시 후 다시 시도해주세요.(운동완료)');
-    //       },
-    //     );
-    //   },
-    //   (error) => {
-    //     alert('잠시 후 다시 시도해주세요.(운동루틴수정)');
-    //   },
-    // );
+    putUpdateRoutine(
+      planTest.id!,
+      param,
+      (resp) => {
+        putFinishRoutine(
+          planTest.id!,
+          (resp) => {
+            dispatch(pageActions.toogleIsFinish(true));
+            navigate('/play', {
+              state: { data: { date: planTest.dueDate || planTest.dueDate, volume: volume, time: t } },
+            });
+          },
+          (error) => {
+            alert('잠시 후 다시 시도해주세요.(운동완료)');
+          },
+        );
+      },
+      (error) => {
+        alert('잠시 후 다시 시도해주세요.(운동루틴수정)');
+      },
+    );
   };
 
   return (

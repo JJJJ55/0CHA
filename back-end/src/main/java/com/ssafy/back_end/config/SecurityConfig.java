@@ -49,7 +49,9 @@ public class SecurityConfig {
                                         "/api/redis/**",
                                         "/v3/api-docs/**",
                                         "/swagger-ui.html",
-                                        "/swagger-ui/**"
+                                        "/swagger-ui/**",
+                                        "/oauth/**",
+                                        "/kakao/**"
                                 ).permitAll() // 인증 없이 접근 가능한 경로 설정
                                 .anyRequest().authenticated()) // 그 외 모든 요청은 인증 필요
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtil, userLoginService), UsernamePasswordAuthenticationFilter.class);
@@ -74,8 +76,9 @@ public class SecurityConfig {
                 "/api/auth/login/refresh",
                 "/api/auth/register/**",
                 "/api/auth/modify/**",
-                "/api/redis/**"
+                "/api/redis/**",
+                "/oauth/**",
+                "/kakao/**"
         );
     }
-
 }

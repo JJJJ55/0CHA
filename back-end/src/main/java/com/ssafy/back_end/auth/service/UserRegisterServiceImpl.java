@@ -89,4 +89,9 @@ public void sendEmail(String email, int authCode) {
         // 필요한 경우, 사용자에게 적절한 에러 메시지를 반환하거나 로그를 남기는 등의 추가 처리를 여기에 추가할 수 있습니다.
     }
 }
+    // 이메일로 UserDto 조회
+    public UserDto findByEmail(String email) {
+        // 이메일로 조회 후 UserDto 반환
+        return userRegisterMapper.findByEmail(email);
+    }
 }

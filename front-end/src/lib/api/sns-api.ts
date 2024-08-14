@@ -334,12 +334,8 @@ export const SnsChatEnter = async (
 //   await jwt.get(`/sns/chat/${chatId}/message`).then(success).catch(fail);
 // };
 
-export const SnsChat = async (
-  currentRoomId: number,
-  success: (response: any) => void,
-  fail: (error: AxiosError) => void,
-) => {
-  await jwt.get(`/sns/chat/history?roomId=${currentRoomId}`).then(success).catch(fail);
+export const SnsChat = async (roomId: number, success: (response: any) => void, fail: (error: AxiosError) => void) => {
+  await jwt.get(`/sns/chat/history?roomId=${roomId}`).then(success).catch(fail);
 };
 
 // 메세지 보내기

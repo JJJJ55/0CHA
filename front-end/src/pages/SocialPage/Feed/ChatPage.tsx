@@ -8,12 +8,11 @@ import IconSvg from '../../../components/Common/IconSvg';
 import Input from '../../../components/Common/Input';
 import Chat from '../../../components/SNS/Chat';
 import { ReactComponent as back } from '../../../asset/img/svg/back.svg';
-import { SnsChatEnter, UserPage } from '../../../lib/api/sns-api';
+import { SnsChatEnter, SnsChat, UserPage } from '../../../lib/api/sns-api';
 import testImg from '../../../asset/img/testImg.png';
 
 import SockJS from 'sockjs-client';
 import { Client, IMessage } from '@stomp/stompjs';
-import axios from 'axios';
 
 // 스타일드 컴포넌트를 사용해 UI 요소 스타일링
 const s = {
@@ -50,7 +49,6 @@ const s = {
     background-color: ${(props) => props.theme.bgColor};
     width: 100%;
     display: flex;
-    display: flex;
     align-items: center;
   `,
   Input: styled.div`
@@ -62,6 +60,11 @@ const s = {
     padding: 0 15px;
     position: fixed;
     bottom: 68px;
+  `,
+  LoadingMessage: styled.div`
+    color: ${(props) => props.theme.textColor};
+    text-align: center;
+    margin-top: 20px;
   `,
 };
 
@@ -79,6 +82,7 @@ const ChatPage = (): JSX.Element => {
   const [messages, setMessages] = useState<{ senderId: number; message: string }[]>([]);
   const [messageContent, setMessageContent] = useState('');
   const [stompClient, setStompClient] = useState<Client | null>(null);
+  const [loading, setLoading] = useState<boolean>(true); // 로딩 상태 추가
 
   // 상태 변수: 채팅방 ID
   const roomIdRef = useRef<number | null>(null);
@@ -145,6 +149,26 @@ const ChatPage = (): JSX.Element => {
     return null;
   };
 
+  // 이전 채팅 내역 가져오기
+  const loadChatHistory = async (roomId: number) => {
+    try {
+      await SnsChat(
+        roomId,
+        (resp) => {
+          setMessages(resp.data); // 서버에서 가져온 메시지 기록을 상태에 저장
+          setLoading(false); // 로딩 상태 해제
+        },
+        (err) => {
+          console.log(err);
+          setLoading(false); // 오류 발생 시에도 로딩 상태 해제
+        },
+      );
+    } catch (error) {
+      console.log('Error loading chat history:', error);
+      setLoading(false); // 오류 발생 시에도 로딩 상태 해제
+    }
+  };
+
   // WebSocket 연결 설정
   useEffect(() => {
     const connectWebSocket = async () => {
@@ -171,19 +195,23 @@ const ChatPage = (): JSX.Element => {
           console.log('Connected: ' + frame);
 
           // enterChatRoom이 완료된 후 roomId를 사용하여 구독
-          await enterChatRoom();
+          const roomId = await enterChatRoom();
 
-          if (roomIdRef.current) {
-            client.subscribe(`/topic/chat/${roomIdRef.current}`, (message: IMessage) => {
+          if (roomId) {
+            await loadChatHistory(roomId); // 채팅방에 들어간 후 채팅 내역 로드
+
+            client.subscribe(`/topic/chat/${roomId}`, (message: IMessage) => {
               console.log('Received message:', message.body);
               showMessage(JSON.parse(message.body));
             });
           } else {
             console.error('Failed to retrieve roomId');
+            setLoading(false); // 오류 발생 시 로딩 상태 해제
           }
         },
         onStompError: (frame) => {
           console.error('STOMP error:', frame.headers['message']);
+          setLoading(false); // 오류 발생 시 로딩 상태 해제
         },
       });
 
@@ -210,7 +238,12 @@ const ChatPage = (): JSX.Element => {
 
   // 메시지를 전송하는 함수
   const sendMessage = () => {
-    if (messageContent && stompClient) {
+    if (!stompClient || !roomIdRef.current) {
+      console.error('WebSocket is not connected or roomId is not set');
+      return;
+    }
+
+    if (messageContent) {
       const accessToken = localStorage.getItem('accessToken');
       const refreshToken = localStorage.getItem('refreshToken');
 
@@ -256,9 +289,13 @@ const ChatPage = (): JSX.Element => {
       </s.ChatHeader>
 
       <s.Container>
-        {messages.map((msg, index) => (
-          <Chat key={index} isMyChat={msg.senderId === currentUserId} content={msg.message} />
-        ))}
+        {loading ? (
+          <s.LoadingMessage>채팅방 로딩중입니다. 잠시만 기다려 주세요.</s.LoadingMessage>
+        ) : (
+          messages.map((msg, index) => (
+            <Chat key={index} isMyChat={msg.senderId === currentUserId} content={msg.message} />
+          ))
+        )}
       </s.Container>
 
       <s.Send>

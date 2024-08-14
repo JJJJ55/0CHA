@@ -34,13 +34,13 @@ const s = {
 interface CommentProps {
   profileImage: string;
   nickname: string;
-  recentChat: string;
+  lastMessage: string;
   userId: number;
-  chatId: number;
+  roomId: number;
 }
 
 const Conversation = (props: CommentProps): JSX.Element => {
-  const { profileImage, nickname, recentChat, chatId, userId } = props;
+  const { profileImage, nickname, lastMessage, roomId, userId } = props;
 
   console.log(userId);
   const navigate = useNavigate();
@@ -52,10 +52,14 @@ const Conversation = (props: CommentProps): JSX.Element => {
   };
   return (
     <s.Container onClick={handleMovePage}>
-      <Image width="45px" height="45px" src={profileImage} />
+      <Image
+        width="45px"
+        height="45px"
+        src={`https://i11b310.p.ssafy.io/images/${profileImage.split('/home/ubuntu/images/')[1]}`}
+      />
       <s.Content>
         <s.Username>{nickname}</s.Username>
-        <s.RecentChat>{recentChat}</s.RecentChat>
+        <s.RecentChat>{lastMessage}</s.RecentChat>
       </s.Content>
     </s.Container>
   );

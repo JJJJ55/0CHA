@@ -68,13 +68,19 @@ dependencies {
     runtimeOnly('io.jsonwebtoken:jjwt-orgjson:0.11.2') { exclude group: 'org.json', module: 'json' }
 
     // 시큐리티 관련 (주석 처리됨)
-//    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
 //    implementation 'com.google.code.gson:gson:2.8.9'
     testImplementation 'org.springframework.security:spring-security-test'
 
     
     //이메일전송
     implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+    // OAuth 2.0 소셜 로그인 관련
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    // Spring WebFlux (WebClient 포함)
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
 
 tasks.named('test') {

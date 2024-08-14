@@ -1,13 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Header from '../../components/Common/Header';
 import Button from '../../components/Common/Button';
 import BottomNav from '../../components/Common/BottomNav';
-import FitnessPlan from '../../components/Fitness/Detail/FitnessPlan';
-import { FitnessPlanData } from '../../util/TestData';
 import FitnessRoutineListDetail from '../../components/Fitness/Detail/FitnessRoutineListDetail';
 import { useLocation, useNavigate } from 'react-router';
 import { getRoutineDetail } from '../../lib/api/fitness-api';
+import { RoutineDetails, RoutineListDetail } from '../../util/types/axios-fitness';
 const s = {
   Container: styled.div`
     height: 100%;
@@ -20,14 +19,30 @@ const s = {
 
 const FitnessRoutineDetatilPage = (): JSX.Element => {
   const navigate = useNavigate();
+  const [routine, setRoutine] = useState<RoutineListDetail>();
+  const [details, setDetails] = useState<RoutineDetails[]>([]);
   const id = useLocation().state?.id;
   const handleClickMove = (): void => {
-    navigate('../../plan');
+    // console.log(routine);
+    navigate('../../plan', { state: { data: routine } });
   };
+
+  useEffect(() => {
+    getRoutineDetail(
+      id,
+      (resp) => {
+        setRoutine(resp.data);
+        setDetails(resp.data.details);
+        console.log(resp.data);
+      },
+      (error) => {},
+    );
+  }, []);
+
   // id로 루틴 상세조회해야하함
   return (
     <s.Container>
-      <Header text={FitnessPlanData.title}>
+      <Header text={routine?.title}>
         <Button
           width="80px"
           height="40px"
@@ -38,7 +53,8 @@ const FitnessRoutineDetatilPage = (): JSX.Element => {
         />
       </Header>
       <s.MainArea>
-        <FitnessRoutineListDetail exercise={FitnessPlanData.exercise} />
+        {/* <FitnessRoutineListDetail exercise={FitnessPlanData.exercise} /> */}
+        <FitnessRoutineListDetail exercise={details} />
       </s.MainArea>
       <BottomNav />
     </s.Container>

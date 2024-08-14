@@ -2,7 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import Header from '../../components/Common/Header';
 import Button from '../../components/Common/Button';
-import BottomNav from '../../components/Common/BottomNav';
+import { useAppDispatch } from '../../lib/hook/useReduxHook';
+import { pageActions } from '../../store/page';
 
 const s = {
   Container: styled.section`
@@ -44,6 +45,10 @@ const s = {
 };
 
 const RecordInBodyScanPage = (): JSX.Element => {
+  const dispatch = useAppDispatch();
+  const handleMovePage = () => {
+    dispatch(pageActions.toogleIsScan(true));
+  };
   return (
     <s.Container>
       <Header text="인바디 스캔" />
@@ -54,7 +59,15 @@ const RecordInBodyScanPage = (): JSX.Element => {
         <s.CameraArea />
         <s.BtnArea>
           <Button width="47%" height="40px" children="갤러리" bold="500" size="14px" type="main" />
-          <Button width="47%" height="40px" children="촬영" bold="500" size="14px" type="main" />
+          <Button
+            width="47%"
+            height="40px"
+            children="촬영"
+            bold="500"
+            size="14px"
+            type="main"
+            onClick={handleMovePage}
+          />
         </s.BtnArea>
       </s.MainArea>
       {/* <BottomNav /> */}

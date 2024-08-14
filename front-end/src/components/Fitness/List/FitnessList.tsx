@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Image from '../../Common/Image';
-import test from '../../../asset/img/testImg.png';
-import Text from '../../Common/Text';
 import IconSvg from '../../Common/IconSvg';
+import basic from '../../../asset/img/testImg.png';
 import { ReactComponent as jjimOn } from '../../../asset/img/svg/jjimOn.svg';
 import { ReactComponent as jjimOff } from '../../../asset/img/svg/jjimOff.svg';
 import { ReactComponent as addOff } from '../../../asset/img/svg/pickOff.svg';
 import { ReactComponent as addOn } from '../../../asset/img/svg/pickOn.svg';
 import { useNavigate } from 'react-router';
 import { CreateRoutine, FitnessType } from '../../../util/types/axios-fitness';
-import { getFitnessListCategory } from '../../../lib/api/fitness-api';
+import Text from '../../Common/Text';
+import { deleteFitnessJjimCancel, postFitnessJjim } from '../../../lib/api/fitness-api';
 
 const s = {
   Container: styled.section`
@@ -71,17 +71,53 @@ const FitnessList = (props: FitnessListProps): JSX.Element => {
     navigate('detail', { state: { id } });
   };
 
-  // const handleClickAdd = (id: number) => {
-  //   setAdd((prevAdd) => (prevAdd.includes(id) ? prevAdd.filter((itemId) => itemId !== id) : [...prevAdd, id]));
-  // };
+  const handleClickJjim = async (id: number) => {
+    await postFitnessJjim(
+      id,
+      (resp) => {
+        alert('찜 성공');
+      },
+      (error) => {
+        alert('잠시후 다시 시도해주세요.');
+      },
+    );
+  };
+  const handleClickNotJjim = async (id: number) => {
+    await deleteFitnessJjimCancel(
+      id,
+      (resp) => {
+        alert('찜 해제');
+      },
+      (error) => {
+        alert('잠시후 다시 시도해주세요.');
+      },
+    );
+  };
 
-  // console.log(add);
+  if (!Array.isArray(props.data)) {
+    return (
+      <>
+        <s.title>{props.text}</s.title>
+        <Text children="목록이 없습니다." width="80%" margin="20px auto" display="block" />
+      </>
+    );
+  }
 
-  // // 데이터가 비어있는지 확인
-  // if (!props.data || props.data.length === 0) {
-  //   return <div>No data available</div>;
-  // } else {
-  // console.log('넘어온 데이터 : ' + props.data[1].category);
+  const basicUrl = 'https://i11b310.p.ssafy.io/images/';
+
+  // 이미지 경로를 파싱하여 basicUrl과 결합하는 함수
+  const getParsedImageUrl = (imagePath: string) => {
+    if (imagePath.length >= 200) {
+      return imagePath;
+    }
+    if (imagePath) {
+      const relativePath = imagePath.split('/home/ubuntu/images/')[1];
+      return basicUrl + relativePath;
+    } else {
+      return basic;
+    }
+  };
+
   return (
     <s.Container>
       <s.title>{props.text}</s.title>
@@ -89,12 +125,31 @@ const FitnessList = (props: FitnessListProps): JSX.Element => {
         <div key={index}>
           <s.ListArea>
             <s.ContentArea onClick={() => handleClickMove(data.id)}>
-              <Image width="60" height="60" type="" src={data.image} />
+              <Image width="60" height="60" type="" src={getParsedImageUrl(data.image)} />
               <s.FitnessTitle>{data.name}</s.FitnessTitle>
             </s.ContentArea>
             <s.IconArea>
-              <IconSvg width="25" height="25" Ico={jjimOff} color="#ccff33" cursor="pointer" />
-              {props.add.some((item) => item.id === data.id) ? (
+              {data.like ? (
+                <IconSvg
+                  width="25"
+                  height="25"
+                  Ico={jjimOn}
+                  color="#ccff33"
+                  cursor="pointer"
+                  onClick={() => handleClickNotJjim(data.id)}
+                />
+              ) : (
+                <IconSvg
+                  width="25"
+                  height="25"
+                  Ico={jjimOff}
+                  color="#ccff33"
+                  cursor="pointer"
+                  onClick={() => handleClickJjim(data.id)}
+                />
+              )}
+
+              {props.add.some((item) => item.exerciseId === data.id) ? (
                 <IconSvg
                   width="25"
                   height="25"

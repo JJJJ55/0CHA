@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
 import { pageActions, selectSnsType } from '../../store/page';
 
+import { MyRoutine } from '../../lib/api/sns-api';
+
 const s = {
   Container: styled.section`
     width: 100%;
@@ -14,6 +16,7 @@ const s = {
     justify-content: space-between;
     align-items: center;
     padding: 0px 15px;
+    background-color: #000000;
   `,
   NavigationSelect: styled.select`
     color: ${(props) => props.theme.textColor};
@@ -47,6 +50,36 @@ const SnsNavigation = (): JSX.Element => {
   useEffect(() => {
     snsType === 'feed' ? navigate('../feed', { replace: true }) : navigate('../market', { replace: true });
   }, [snsType]);
+
+  const isRoutineData = async () => {
+    await MyRoutine(
+      (resp) => {
+        console.log(resp);
+        handleMovePage('write');
+      },
+      (error) => {
+        console.error(error);
+        if (error.response !== undefined) {
+          if (error.response.data === '오늘 운동 안함') {
+            window.alert('오늘운동안함');
+          };
+        };
+      },
+    );
+  };
+
+  const createButtonClick = () => {
+    if (snsType === 'market') {
+      handleMovePage('write');
+    } else {
+      if (snsType === 'market') {
+      handleMovePage('write');
+    } else {
+      isRoutineData();
+    }
+    }
+  };
+
   return (
     <s.Container>
       <s.NavigationSelect value={snsType} onChange={handleChangeSnsType}>
@@ -60,7 +93,7 @@ const SnsNavigation = (): JSX.Element => {
         children="작성"
         bold="500"
         size="12px"
-        onClick={() => handleMovePage('write')}
+        onClick={createButtonClick}
       />
     </s.Container>
   );

@@ -42,7 +42,7 @@ public class SnsItemServiceImpl implements SnsItemService {
     @Override
     @Transactional
     public int writeItem(ItemDto item) {
-        validateImages(item.getImages());
+//        validateImages(item.getImages());
 
         ItemDto itemBuilder = ItemDto.builder()
                 .title(item.getTitle())
@@ -89,7 +89,7 @@ public class SnsItemServiceImpl implements SnsItemService {
     @Override
     @Transactional
     public int updateItem(ItemDto item) {
-        validateImages(item.getImages());
+        validateImages(item.getImages().size());
 
         ItemDto itemBuilder = ItemDto.builder()
                 .title(item.getTitle())
@@ -110,8 +110,42 @@ public class SnsItemServiceImpl implements SnsItemService {
     }
 
     @Override
+    @Transactional
     public int deleteItem(int itemId) {
-        return snsItemMapper.deleteItem(itemId);
+        // 1. DB에서 해당 게시물 이미지 경로를 가져옴
+        List<String> imagePaths = snsItemMapper.getImagePathsByItemId(itemId);
+
+        // 2. 각 이미지 파일을 호스트 디렉토리에서 삭제
+        try {
+            for (String imagePath : imagePaths) {
+                File file = new File(imagePath);
+                if (file.exists()) {
+                    if (file.delete()) {
+                        log.debug("이미지 파일 삭제 성공, {}", imagePath);
+                    } else {
+                        log.warn("이미지 파일 삭제 실패, {}", imagePath);
+                        throw new RuntimeException("이미지 파일 삭제 실패: " + imagePath);
+                    }
+                } else {
+                    log.warn("이미지 파일이 존재하지 않습니다, {}", imagePath);
+                    throw new RuntimeException("이미지 파일이 존재하지 않음: " + imagePath);
+                }
+            }
+
+            // 3. 데이터베이스에서 이미지 및 좋아요 정보 삭제
+            if (snsItemMapper.deleteItemDetail(itemId) > 0) {
+                log.debug("게시물 이미지 및 좋아요 정보 삭제 성공, {}", itemId);
+            } else {
+                log.error("게시물 이미지 및 좋아요 정보 삭제 실패, {}", itemId);
+                throw new RuntimeException("게시물 상세 정보 삭제 실패: " + itemId);
+            }
+
+            return snsItemMapper.deleteItem(itemId);
+
+        } catch (Exception e) {
+            log.error("게시물 삭제 중 오류 발생: {}", e.getMessage());
+            throw e;  // 트랜잭션 롤백을 위해 예외를 다시 던짐
+        }
     }
 
     @Override
@@ -135,11 +169,11 @@ public class SnsItemServiceImpl implements SnsItemService {
     }
 
     @Override
-    public void validateImages(List<MultipartFile> images) {
-        if (images == null || images.isEmpty()) {
+    public void validateImages(int imageN) {
+        if (imageN <= 0) {
             throw new IllegalArgumentException("At least one image is required.");
         }
-        if (images.size() >= 5) {
+        if (imageN >= 5) {
             throw new IllegalArgumentException("A maximum of 5 images are allowed.");
         }
     }

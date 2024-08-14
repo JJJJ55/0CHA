@@ -1,11 +1,18 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import Button from '../Common/Button';
 import Image from '../Common/Image';
 
 import test from '../../asset/img/testImg.png';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
+
+import { IsFollowingUser } from '../../lib/api/sns-api';
+import { UserFollow } from '../../lib/api/sns-api';
+import { UserFollowCancel } from '../../lib/api/sns-api';
+import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
+import { modalActions } from '../../store/modal';
+import ItemModal from '../Modal/ItemModal';
 
 const s = {
   Container: styled.section`
@@ -53,7 +60,7 @@ const s = {
     justify-content: space-between;
     margin: auto;
     width: 100%;
-    max-width: 270px;
+    max-width: 280px;
     min-width: 150px;
     cursor: default;
   `,
@@ -61,6 +68,12 @@ const s = {
     display: flex;
     flex-direction: column;
     align-items: center;
+  `,
+  UserStatPointer: styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
   `,
   UserStatTitle: styled.span`
     color: ${(props) => props.theme.textColor};
@@ -76,19 +89,99 @@ const s = {
 };
 
 interface UserProfileInfoProps {
-  isCurrentUser: boolean;
-  userName: string;
-  postCnt: string;
-  followingCnt: string;
-  followerCnt: string;
+  profileUserId?: number;
+  isCurrentUser?: boolean;
+  userName?: string;
+  postCnt?: number;
+  marketCnt?: number;
+  followingCnt?: number;
+  followerCnt?: number;
 }
 
 const UserProfileInfo = (props: UserProfileInfoProps): JSX.Element => {
-  const { isCurrentUser, userName, postCnt, followingCnt, followerCnt } = props;
+  const { profileUserId, isCurrentUser, userName, postCnt, marketCnt, followingCnt, followerCnt } = props;
   const naviagate = useNavigate();
   const handleMovePage = (path: string): void => {
     naviagate(path);
   };
+
+  const dispatch = useAppDispatch();
+  const handleClickFollowingModal = (): void => {
+    dispatch(modalActions.toggleFollowing());
+  };
+  const handleClickFollowerModal = (): void => {
+    dispatch(modalActions.toggleFollower());
+  };
+
+  const params = useParams()
+  const feedUserId = params.id
+
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [follower, setFollower] = useState(followerCnt)
+
+  useEffect(() => {
+    setFollower(followerCnt)
+  }, [followerCnt])
+
+  const getIsFollowing = async () => {
+    if (feedUserId) {
+      await IsFollowingUser(
+        parseInt(feedUserId),
+        (resp) => {
+          if (resp.data === '팔로우 상태가 아닙니다.') {
+            setIsFollowing(false);
+          } else {
+            setIsFollowing(true);
+          }
+        },
+        (error) => {
+          console.error(error);
+        }
+      )
+    }
+  }
+
+  useEffect(() => {
+    getIsFollowing();
+  }, [isFollowing])
+
+
+  const followClick = async () => {
+    if (feedUserId) {
+      console.log('follow', feedUserId)
+      await UserFollow(
+        parseInt(feedUserId),
+        (resp) => {
+          setIsFollowing(true)
+          if (follower !== undefined) {
+            setFollower(follower+1)
+          }
+        },
+        (error) => {
+          console.error(error);
+        }
+      )
+    }
+  }
+
+  const unfollowClick = async () => {
+    if (feedUserId) {
+      console.log('unfollow', feedUserId)
+      await UserFollowCancel(
+        parseInt(feedUserId),
+        (resp) => {
+          setIsFollowing(false)
+          if (follower !== undefined) {
+            setFollower(follower-1)
+          }
+        },
+        (error) => {
+          console.error(error);
+        }
+      )
+    }
+  };
+
   return (
     <s.Container>
       <s.ProfileTopArea>
@@ -118,26 +211,58 @@ const UserProfileInfo = (props: UserProfileInfoProps): JSX.Element => {
               />
             )}
             {isCurrentUser === true ? (
-              <Button width="48%" height="30px" children="내 정보" size="14px" bold="500" />
+              <Button
+                width="48%"
+                height="30px"
+                children="내 정보"
+                size="14px"
+                bold="500"
+                onClick={() => handleMovePage(`../../../mypage`)}
+              />
             ) : (
-              <Button width="48%" height="30px" children="팔로우" size="14px" bold="500" />
+              <>
+              {isFollowing === true ? (
+                <Button
+                  width="48%"
+                  height="30px"
+                  children="팔로우 취소"
+                  size="14px"
+                  bold="500"
+                  onClick={unfollowClick}
+                />
+              ) : (
+                <Button
+                  width="48%"
+                  height="30px"
+                  children="팔로우"
+                  size="14px"
+                  bold="500"
+                  onClick={followClick}
+                />
+              )}
+              </>
+              
             )}
           </s.ProfileButton>
         </s.ProfileButtonArea>
       </s.ProfileTopArea>
       <s.ProfileBottomArea>
         <s.UserStat>
-          <s.UserStatTitle>게시글</s.UserStatTitle>
+          <s.UserStatTitle>운동</s.UserStatTitle>
           <s.UserStatCnt>{postCnt}</s.UserStatCnt>
         </s.UserStat>
         <s.UserStat>
-          <s.UserStatTitle>팔로우</s.UserStatTitle>
-          <s.UserStatCnt>{followerCnt}</s.UserStatCnt>
+          <s.UserStatTitle>거래</s.UserStatTitle>
+          <s.UserStatCnt>{marketCnt}</s.UserStatCnt>
         </s.UserStat>
-        <s.UserStat>
+        <s.UserStatPointer onClick={handleClickFollowerModal}>
+          <s.UserStatTitle>팔로워</s.UserStatTitle>
+          <s.UserStatCnt>{follower}</s.UserStatCnt>
+        </s.UserStatPointer>
+        <s.UserStatPointer onClick={handleClickFollowingModal}>
           <s.UserStatTitle>팔로잉</s.UserStatTitle>
           <s.UserStatCnt>{followingCnt}</s.UserStatCnt>
-        </s.UserStat>
+        </s.UserStatPointer>
       </s.ProfileBottomArea>
     </s.Container>
   );

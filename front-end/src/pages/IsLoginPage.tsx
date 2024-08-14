@@ -11,8 +11,6 @@ import {
   selectIsScan,
   selectIsSign,
 } from '../store/page';
-// import { useRecoilState, useRecoilValue } from 'recoil';
-// import { isLogin, isAdmin } from '../../lib/recoil/isLoginAtom';
 
 export const PrivateRoute = () => {
   const location = useLocation();
@@ -26,7 +24,7 @@ export const PrivateRoute = () => {
   if (isFinish && isPlay && location.pathname !== '/play') {
     dispatch(pageActions.toogleIsFinish(false));
   }
-  if (isScan && location.pathname !== '/inbody/scan') {
+  if (isScan && location.pathname !== '/record/inbody/scan') {
     dispatch(pageActions.toogleIsScan(false));
   }
   const checkLogin = !!localStorage.getItem('accessToken');
@@ -53,6 +51,7 @@ export const PublicRoute = () => {
   if (isPw && location.pathname !== '/find/password') {
     dispatch(pageActions.toogleIsPw(false));
   }
+  sessionStorage.removeItem('persist:redux-state');
   const checkLogin = !!localStorage.getItem('accessToken');
   // const checkLogin = false;
   if (checkLogin) {

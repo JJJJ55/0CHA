@@ -13,6 +13,7 @@ export const useModalExitHook = (): void => {
       dispatch(modalActions.CloseComment());
       dispatch(modalActions.CloseMarket());
       dispatch(modalActions.CloseUserSearch());
+      dispatch(modalActions.CloseAddList());
     };
 
     handleRouteChange();

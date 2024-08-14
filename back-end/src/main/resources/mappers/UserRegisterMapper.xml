@@ -10,15 +10,15 @@
 
     <update id="userInfo" parameterType="UserDto">
         UPDATE users
-        SET gender    = #{gender},
-            height      = #{height},
+        SET gender = #{gender},
+            height = #{height},
             weight = #{weight},
             district = #{district},
             si_gun_gu = #{siGunGu}
         WHERE id = #{id};
     </update>
 
-    <select id="checkEmail" parameterType="UserDto" resultType="int">
+    <select id="checkEmail" parameterType="string" resultType="int">
         SELECT COUNT(*)
         FROM users
         WHERE email = #{email};
@@ -28,6 +28,12 @@
         SELECT COUNT(*)
         FROM users
         WHERE nickname = #{nickname};
+    </select>
+
+    <select id="findByEmail" parameterType="string" resultType="UserDto">
+        SELECT id, email, password, name, nickname, phone, birth, gender, height, weight, district, si_gun_gu
+        FROM users
+        WHERE email = #{email};
     </select>
 
 </mapper>

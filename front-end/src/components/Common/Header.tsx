@@ -1,8 +1,7 @@
-import React, { MouseEventHandler } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { ReactComponent as back } from '../../asset/img/svg/back.svg';
 import IconSvg from './IconSvg';
-import Button from './Button';
 import { useNavigate } from 'react-router';
 
 const s = {
@@ -18,13 +17,14 @@ const s = {
     /* z-index: 100; */
   `,
   BasicArea: styled.div`
-    width: 200px;
+    width: 70%;
     height: 100%;
     margin: 0 10px;
     display: flex;
     align-items: center;
   `,
   Title: styled.span`
+    width: 100%;
     color: ${(props) => props.theme.textColor};
     font-size: 18px;
     font-weight: bold;

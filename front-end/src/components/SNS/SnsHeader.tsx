@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import IconSvg from '../Common/IconSvg';
@@ -21,6 +21,7 @@ const s = {
     justify-content: space-between;
     align-items: center;
     padding: 0px 15px;
+    background-color: #000000;
   `,
   MenuArea1: styled.div`
     width: 70%;
@@ -44,6 +45,23 @@ const SnsHeader = (): JSX.Element => {
   const handleClickModal = (): void => {
     dispatch(modalActions.toggleUserSearch());
   };
+
+  const [userId, setUserId] = useState(0)
+  const [userNickname, setUserNickname] = useState('')
+  const [userProfileImage, setUserProfileImage] = useState('')
+
+  const userStr = localStorage.getItem("user")
+
+  useEffect(() => {
+    if (userStr) {
+      const userTmp = JSON.parse(userStr)
+      setUserId(userTmp.id)
+      setUserNickname(userTmp.nickname)
+      setUserProfileImage(userTmp.profileImage)
+    }
+  }, [])
+
+
   return (
     <s.Container>
       <s.MenuArea1>
@@ -52,7 +70,7 @@ const SnsHeader = (): JSX.Element => {
           height="35px"
           src={test}
           cursor="pointer"
-          onClick={() => handleMovePage('../profile/id')}
+          onClick={() => handleMovePage(`../profile/${userId}`)}
           display="block"
           margin="0 10px 0 0"
         />

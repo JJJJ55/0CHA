@@ -1,15 +1,14 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Input from '../../components/Common/Input';
 import FitnessListTopNav from '../../components/Fitness/Etc/FitnessListTopNav';
 import FitnessList from '../../components/Fitness/List/FitnessList';
-import { FitnessData } from '../../util/TestData';
-import Button from '../../components/Common/Button';
 import BottomNav from '../../components/Common/BottomNav';
-import { Outlet, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import { getFitnessJjimList, getFitnessList } from '../../lib/api/fitness-api';
 import { CreateRoutine, FitnessType } from '../../util/types/axios-fitness';
-import Text from '../../components/Common/Text';
+import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
+import { fitnessActions, selectFitnessType } from '../../store/fitness';
 
 const s = {
   Container: styled.section`
@@ -26,7 +25,6 @@ const s = {
   MainArea: styled.div`
     height: 100%;
     padding: 120px 0 140px;
-    border: 1px solid red;
     overflow: auto;
   `,
   InputArea: styled.div`
@@ -57,72 +55,111 @@ const s = {
 
 const FitnessListPage = (): JSX.Element => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const category = useAppSelector(selectFitnessType);
   const [jjim, setjjim] = useState<FitnessType[]>([]);
   const [fitness, setFitness] = useState<FitnessType[]>([]);
+  const [filteredJjim, setFilteredJjim] = useState<FitnessType[]>([]);
+  const [filteredFitness, setFilteredFitness] = useState<FitnessType[]>([]);
+  const [add, setAdd] = useState<CreateRoutine[]>([]);
+  const [search, setSearch] = useState<string>('');
+
   useEffect(() => {
     getFitnessList(
       (resp) => {
         setFitness(resp.data);
+        setFilteredFitness(resp.data); // 초기에는 모든 데이터를 보여줌
       },
       (error) => {
+        setFitness([]);
+        setFilteredFitness([]);
         console.log(error);
       },
     );
     getFitnessJjimList(
       (resp) => {
         setjjim(resp.data);
+        setFilteredJjim(resp.data); // 초기에는 모든 데이터를 보여줌
       },
       (error) => {
-        // console.log(error);
+        setjjim([]);
+        setFilteredJjim([]);
         console.log('없음');
       },
     );
   }, []);
-  // 상태가 업데이트된 후에 실행되는 useEffect
-  useEffect(() => {
-    console.log('Fitness 데이터:', fitness);
-  }, [fitness]);
 
-  const [add, setAdd] = useState<CreateRoutine[]>([]);
-  const handleClickAdd = (id: number, name: string) => {
+  useEffect(() => {
+    // 검색어가 변경될 때마다 데이터를 필터링
+    const searchLower = search.toLowerCase();
+    // const filterBySearch = (items: FitnessType[]) =>
+    //   items.filter((item) => item.name.toLowerCase().includes(searchLower));
+
+    const filterBySearch = (items: FitnessType[]) => {
+      if (!Array.isArray(items)) {
+        console.error('Expected an array but got', items);
+        return [];
+      }
+      return items.filter((item) => item.name.toLowerCase().includes(searchLower));
+    };
+    const filterByType = (items: FitnessType[]) => {
+      if (category === 'all') {
+        return filterBySearch(items);
+      }
+      return filterBySearch(items.filter((item) => item.category === category));
+    };
+
+    setFilteredJjim(filterByType(jjim));
+    setFilteredFitness(filterByType(fitness));
+  }, [search, jjim, fitness, category]);
+
+  const handleClickAdd = (exerciseId: number, exerciseName: string) => {
     setAdd((prevAdd) => {
-      const existingItem = prevAdd.find((item) => item.id === id);
+      const existingItem = prevAdd.find((item) => item.exerciseId === exerciseId);
       if (existingItem) {
-        // Remove item if it already exists
-        return prevAdd.filter((item) => item.id !== id);
+        const list = prevAdd.filter((item) => item.exerciseId !== exerciseId);
+        dispatch(fitnessActions.setAddList(list));
+        return list;
       } else {
-        // Add new item
-        return [...prevAdd, { id, name }];
+        const list = [...prevAdd, { exerciseId, exerciseName }];
+        dispatch(fitnessActions.setAddList(list));
+        return list;
       }
     });
   };
+
   const handleClickMove = (): void => {
     if (add.length !== 0) {
       navigate('../plan', { state: { add } });
     } else {
       alert('루틴에 운동을 추가해주세요.');
     }
-    // console.log(add);
   };
 
-  // alert(jjim);
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+  };
+
   return (
     <s.Container>
       <s.HeaderArea>
         <s.InputArea>
-          <Input width="100%" height="40px" placeholder="검색" type="text" name="" value={''} onChange={() => {}} />
+          <Input
+            width="100%"
+            height="40px"
+            placeholder="검색"
+            type="text"
+            name="search"
+            value={search}
+            onChange={handleSearch}
+          />
         </s.InputArea>
         <FitnessListTopNav />
       </s.HeaderArea>
       <s.MainArea>
         <s.FitnessArea>
-          {/* {!jjim || jjim.length === 0 ? (
-            ''
-          ) : (
-            <FitnessList text="즐겨찾기" data={jjim} add={add} onAdd={handleClickAdd} />
-          )} */}
-          <FitnessList text="즐겨찾기" data={jjim} add={add} onAdd={handleClickAdd} />
-          <FitnessList text="전체" data={fitness} add={add} onAdd={handleClickAdd} />
+          <FitnessList text="즐겨찾기" data={filteredJjim} add={add} onAdd={handleClickAdd} />
+          <FitnessList text="전체" data={filteredFitness} add={add} onAdd={handleClickAdd} />
         </s.FitnessArea>
       </s.MainArea>
       <s.Btn onClick={handleClickMove}>새 루틴에 추가하기</s.Btn>

@@ -5,8 +5,10 @@ import { changePw, MyInfo, Profile } from '../../util/types/axios-main';
 const local = publicAxios();
 const jwt = localAxios();
 
-// 상단 루틴가져오기
-
+// 메인페이지 루틴조회
+export const getMainRoutineAll = async (success: (response: any) => void, fail: (error: AxiosError) => void) => {
+  await jwt.get(`/main/all`).then(success).catch(fail);
+};
 // 내 루틴가져오기
 export const getMyRoutine = async (success: (response: any) => void, fail: (error: AxiosError) => void) => {
   await jwt.get(`/main/routines`).then(success).catch(fail);
@@ -24,11 +26,18 @@ export const getMyInfo = async (success: (response: any) => void, fail: (error: 
 
 // 내 프로필 정보 수정
 export const putProfileModify = async (
-  param: Profile,
+  param: FormData,
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
 ) => {
-  await jwt.put(`/main/profile`, param).then(success).catch(fail);
+  await jwt
+    .put(`/main/profile`, param, {
+      headers: {
+        'Content-Type': 'multipart/form-data', // FormData에 맞는 Content-Type 설정
+      },
+    })
+    .then(success)
+    .catch(fail);
 };
 
 // 닉네임 중복검사

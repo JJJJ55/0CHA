@@ -51,7 +51,8 @@ public class SecurityConfig {
                                         "/swagger-ui.html",
                                         "/swagger-ui/**",
                                         "/oauth/**",
-                                        "/kakao/**"
+                                        "/kakao/**",
+                                        "/api/ws/**"
                                 ).permitAll() // 인증 없이 접근 가능한 경로 설정
                                 .anyRequest().authenticated()) // 그 외 모든 요청은 인증 필요
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtil, userLoginService), UsernamePasswordAuthenticationFilter.class);
@@ -78,7 +79,8 @@ public class SecurityConfig {
                 "/api/auth/modify/**",
                 "/api/redis/**",
                 "/oauth/**",
-                "/kakao/**"
+                "/kakao/**",
+                "/api/ws/**"
         );
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.stereotype.Component;
 import org.springframework.messaging.support.ChannelInterceptor;
 
+import java.util.List;
 import java.util.Objects;
 
 @Slf4j
@@ -32,16 +33,17 @@ public class FilterChannelInterceptor implements ChannelInterceptor {
         if (Objects.equals(headerAccessor.getCommand(), StompCommand.CONNECT)
                 || Objects.equals(headerAccessor.getCommand(), StompCommand.SEND)) {
 
-            // 헤더에서 토큰 추출
             String token = headerAccessor.getFirstNativeHeader("Authorization");
             if (token != null && token.startsWith("Bearer ")) {
                 token = token.substring(7);  // "Bearer " 제거
             }
-            String refreshToken = headerAccessor.getNativeHeader("RefreshToken").get(0);
+
+            List<String> refreshTokens = headerAccessor.getNativeHeader("RefreshToken");
+            String refreshToken = (refreshTokens != null && !refreshTokens.isEmpty()) ? refreshTokens.get(0) : null;
 
             log.info(">>>>>> Token resolved : {}", token);
             log.info(">>>>>> RefreshToken resolved : {}", refreshToken);
-            // 여기까지 오케이
+
             try {
                 if (token != null) {
                     int accountId = jwtUtil.getUserIdFromAccessToken(token);
@@ -59,4 +61,6 @@ public class FilterChannelInterceptor implements ChannelInterceptor {
         log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         return message;
     }
+
+
 }

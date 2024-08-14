@@ -38,30 +38,15 @@
 
     <update id="modifyProfile">
         UPDATE users
-        <set>
-            <!-- nickname이 null이 아닐 때만 nickname을 업데이트 -->
-            <if test="nickname != null">
-                nickname = #{nickname},
-            </if>
-            <!-- profileImage가 null이 아닐 때만 profile_image를 업데이트 -->
-            <if test="profileImage != null and profileImage != ''">
-                profile_image = #{profileImage},
-            </if>
-        </set>
-        WHERE id = #{id}
+        SET nickname      = #{nickname},
+            profile_image = #{profileImage}
+        WHERE id = #{id};
     </update>
 
-
-    <select id="getImagePathsByUserId" resultType="string">
-        SELECT profile_image
-        FROM users
-        WHERE id = #{userId};
-    </select>
-
-    <select id="checkNickname" resultType="int">
+    <select id="checkNickname" parameterType="string" resultType="int">
         SELECT COUNT(*)
         FROM users
-        WHERE nickname = #{nickname} AND id != #{userId}
+        WHERE nickname = #{nickname};
     </select>
 
     <update id="modifyUserInfo">

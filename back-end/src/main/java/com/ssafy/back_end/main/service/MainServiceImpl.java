@@ -26,13 +26,8 @@ public class MainServiceImpl implements MainService {
     }
 
     @Override
-    public String getImagePathsByUserId(int userId) {
-        return mainMapper.getImagePathsByUserId(userId);
-    }
-
-    @Override
-    public int checkNickname(String nickname, int userId) {
-        return mainMapper.checkNickname(nickname, userId);
+    public int checkNickname(String nickname) {
+        return mainMapper.checkNickname(nickname);
     }
 
     @Override

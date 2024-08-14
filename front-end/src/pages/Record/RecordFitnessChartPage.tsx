@@ -42,6 +42,7 @@ const RecordFitnessChartPage = (): JSX.Element => {
   const [dates, setDates] = useState<string[]>([]);
   const [totalVolumes, setTotalVolumes] = useState<number[]>([]);
   const [totalTimes, setTotalTimes] = useState<number[]>([]);
+
   useEffect(() => {
     getFitnessData(
       (resp) => {
@@ -54,7 +55,11 @@ const RecordFitnessChartPage = (): JSX.Element => {
         alert('잠시후 다시 시도해주세요.');
       },
     );
+    return () => {
+      dispatch(fitnessActions.changeRmType('스쿼트'));
+    };
   }, []);
+
   useEffect(() => {
     setDates(fitnessData.map((data) => data.date));
     setTotalVolumes(fitnessData.map((data) => data.totalVolume));

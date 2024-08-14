@@ -14,6 +14,7 @@ import { useAppDispatch, useAppSelector } from '../../../lib/hook/useReduxHook';
 import { modalActions, selectModalFollower, selectModalFollowing, selectModalMarket } from '../../../store/modal';
 import FollowerModal from '../../../components/Modal/FollowerModal';
 import ItemModal from '../../../components/Modal/ItemModal';
+import { pageActions } from '../../../store/page';
 
 const s = {
   Container: styled.section`
@@ -200,6 +201,7 @@ const UserPostPage = (): JSX.Element => {
   const navigate = useNavigate();
 
   const handleThumbnailClick = (feedId: number) => {
+    dispatch(pageActions.changeSnsType('feed'));
     navigate(`/sns/feed`, { state: { targetFeedId: feedId, targetUserId: feedUserId } });
     console.log(feedId, 'selected feed id');
   };

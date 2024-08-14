@@ -10,6 +10,7 @@ import {
 
 interface FitnessState {
   type: string;
+  rmType: string;
   plan: axiosCreateRoutine;
   time: number;
   volume: number;
@@ -19,7 +20,8 @@ interface FitnessState {
 }
 
 const initialState: FitnessState = {
-  type: 'all',
+  type: '전체',
+  rmType: '스쿼트',
   plan: {
     id: 0,
     title: '',
@@ -41,6 +43,9 @@ export const fitnessSlice = createSlice({
   reducers: {
     changeFitnessType: (state, action: PayloadAction<string>) => {
       state.type = action.payload;
+    },
+    changeRmType: (state, action: PayloadAction<string>) => {
+      state.rmType = action.payload;
     },
     setPlanData(state, action: PayloadAction<axiosCreateRoutine>) {
       state.plan = action.payload;
@@ -105,6 +110,7 @@ export const fitnessSlice = createSlice({
 
 export const fitnessActions = fitnessSlice.actions;
 export const selectFitnessType = (state: RootState) => state.fitness.type;
+export const selectRmType = (state: RootState) => state.fitness.rmType;
 export const selectPlan = (state: RootState) => state.fitness.plan;
 export const selectRest = (state: RootState) => state.fitness.rest;
 export const selectTime = (state: RootState) => state.fitness.time;

@@ -22,12 +22,15 @@
         WHERE id = #{id}
     </update>
 
-    <select id="social">
-
+    <select id="getUserIdByRefreshToken" resultType="int">
+        SELECT id
+        FROM users
+        WHERE refresh_token = #{refreshToken};
     </select>
 
-    <select id="socalToken">
-
+    <select id="getRefreshTokenByUserId" resultType="string">
+        SELECT refresh_token
+        FROM users
+        WHERE id = #{id};
     </select>
-
 </mapper>

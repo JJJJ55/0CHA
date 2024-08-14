@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.back_end.record.mapper.RecordMapper">
+
+    <resultMap id="inbody" type="com.ssafy.back_end.record.model.RecordInbodyDto">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="height" column="height"/>
+        <result property="weight" column="weight"/>
+        <result property="bodyWater" column="body_water"/>
+        <result property="protein" column="protein"/>
+        <result property="mineral" column="mineral"/>
+        <result property="bodyFat" column="body_fat"/>
+        <result property="muscleMass" column="muscle_mass"/>
+        <result property="muscleBody" column="muscle_body"/>
+        <result property="muscleLeftArm" column="muscle_left_arm"/>
+        <result property="muscleRightArm" column="muscle_right_arm"/>
+        <result property="muscleLeftLeg" column="muscle_left_leg"/>
+        <result property="muscleRightLeg" column="muscle_right_leg"/>
+        <result property="bmi" column="bmi"/>
+        <result property="bodyFatPercent" column="body_fat_percent"/>
+        <result property="measuredAt" column="measured_at"/>
+    </resultMap>
+
+    <select id="getInbody" resultMap="inbody">
+        SELECT *
+        FROM inbody_records
+        WHERE user_id = #{userId}
+        ORDER BY measured_at ASC LIMIT 10;
+    </select>
+
+    <insert id="insertInbody" parameterType="recordInbodyDto">
+        INSERT INTO inbody_records (user_id, height, weight, body_water, protein, mineral, body_fat,
+                                    muscle_mass, muscle_body, muscle_left_arm, muscle_right_arm,
+                                    muscle_left_leg, muscle_right_leg, bmi, body_fat_percent, measured_at)
+        VALUES (#{userId}, #{height}, #{weight}, #{bodyWater}, #{protein}, #{mineral}, #{bodyFat},
+                #{muscleMass}, #{muscleBody}, #{muscleLeftArm}, #{muscleRightArm},
+                #{muscleLeftLeg}, #{muscleRightLeg}, #{bmi}, #{bodyFatPercent}, NOW());
+    </insert>
+
+    <select id="getRecentExerciseRecords" parameterType="int" resultType="com.ssafy.back_end.record.model.RecordDto">
+        SELECT
+            r.completed_at AS date,
+        -- Bench Press 1RM
+        MAX(CASE WHEN e.id = 1 THEN rs.weight * (1 + rs.count / 40.0) ELSE 0 END) AS benchPress,
+        -- Squat 1RM
+        MAX(CASE WHEN e.id = 2 THEN rs.weight * (1 + rs.count / 40.0) ELSE 0 END) AS squart,
+        -- Deadlift 1RM
+        MAX(CASE WHEN e.id = 3 THEN rs.weight * (1 + rs.count / 40.0) ELSE 0 END) AS deadLift,
+        -- Total Volume
+        SUM(rs.weight * rs.count) AS totalVolume,
+        -- Total Time
+        r.sum_time AS totalTime
+        FROM
+            routines r
+            JOIN routine_details rd ON r.id = rd.routine_id
+            JOIN routine_sets rs ON rd.id = rs.routine_detail_id
+            JOIN exercises e ON rs.exercise_id = e.id
+        WHERE
+            r.user_id = #{userId}
+          AND r.completed_at IS NOT NULL  -- 완료된 기록만 포함
+        GROUP BY
+            r.completed_at, r.sum_time
+        ORDER BY
+            r.completed_at DESC
+            LIMIT 5
+    </select>
+
+
+    <select id="getUserRoutines" parameterType="int" resultType="com.ssafy.back_end.record.model.RoutineListDto">
+        SELECT
+            r.id AS routineId,
+            r.title AS routineName,
+            r.due_date AS dueDate,
+            r.is_complete AS isCompleted
+        FROM
+            routines r
+        WHERE
+            r.user_id = #{userId}
+    </select>
+</mapper>

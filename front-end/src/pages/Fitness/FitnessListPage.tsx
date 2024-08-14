@@ -9,6 +9,7 @@ import { getFitnessJjimList, getFitnessList } from '../../lib/api/fitness-api';
 import { CreateRoutine, FitnessType } from '../../util/types/axios-fitness';
 import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
 import { fitnessActions, selectFitnessType } from '../../store/fitness';
+import Text from '../../components/Common/Text';
 
 const s = {
   Container: styled.section`
@@ -51,6 +52,13 @@ const s = {
     left: 0;
     right: 0;
   `,
+  title: styled.div`
+    width: 90%;
+    height: fit-content;
+    margin: 10px auto;
+    color: ${(props) => props.theme.textColor2};
+    font-size: 14px;
+  `,
 };
 
 const FitnessListPage = (): JSX.Element => {
@@ -64,11 +72,36 @@ const FitnessListPage = (): JSX.Element => {
   const [add, setAdd] = useState<CreateRoutine[]>([]);
   const [search, setSearch] = useState<string>('');
 
+  // useEffect(() => {
+  //   getFitnessList(
+  //     (resp) => {
+  //       setFitness(resp.data);
+  //       setFilteredFitness(resp.data); // 초기에는 모든 데이터를 보여줌
+  //     },
+  //     (error) => {
+  //       setFitness([]);
+  //       setFilteredFitness([]);
+  //       console.log(error);
+  //     },
+  //   );
+  //   getFitnessJjimList(
+  //     (resp) => {
+  //       setjjim(resp.data);
+  //       setFilteredJjim(resp.data); // 초기에는 모든 데이터를 보여줌
+  //     },
+  //     (error) => {
+  //       setjjim([]);
+  //       setFilteredJjim([]);
+  //       console.log('없음');
+  //     },
+  //   );
+  // }, []);
   useEffect(() => {
     getFitnessList(
       (resp) => {
-        setFitness(resp.data);
-        setFilteredFitness(resp.data); // 초기에는 모든 데이터를 보여줌
+        const data = Array.isArray(resp.data) ? resp.data : [];
+        setFitness(data);
+        setFilteredFitness(data);
       },
       (error) => {
         setFitness([]);
@@ -78,8 +111,9 @@ const FitnessListPage = (): JSX.Element => {
     );
     getFitnessJjimList(
       (resp) => {
-        setjjim(resp.data);
-        setFilteredJjim(resp.data); // 초기에는 모든 데이터를 보여줌
+        const data = Array.isArray(resp.data) ? resp.data : [];
+        setjjim(data);
+        setFilteredJjim(data);
       },
       (error) => {
         setjjim([]);
@@ -102,11 +136,20 @@ const FitnessListPage = (): JSX.Element => {
       }
       return items.filter((item) => item.name.toLowerCase().includes(searchLower));
     };
+    // const filterByType = (items: FitnessType[]) => {
+    //   if (category === '전체') {
+    //     return filterBySearch(items);
+    //   }
+    //   return filterBySearch(items.filter((item) => item.category === category));
+    // };
     const filterByType = (items: FitnessType[]) => {
-      if (category === 'all') {
-        return filterBySearch(items);
+      if (!Array.isArray(items)) {
+        console.error('Expected an array but got', items);
+        return [];
       }
-      return filterBySearch(items.filter((item) => item.category === category));
+
+      const filteredItems = category === '전체' ? items : items.filter((item) => item.category === category);
+      return filterBySearch(filteredItems);
     };
 
     setFilteredJjim(filterByType(jjim));
@@ -158,8 +201,34 @@ const FitnessListPage = (): JSX.Element => {
       </s.HeaderArea>
       <s.MainArea>
         <s.FitnessArea>
-          <FitnessList text="즐겨찾기" data={filteredJjim} add={add} onAdd={handleClickAdd} />
-          <FitnessList text="전체" data={filteredFitness} add={add} onAdd={handleClickAdd} />
+          <s.title>즐겨찾기</s.title>
+          {filteredJjim.length === 0 ? (
+            <Text
+              children="데이터가 존재하지 않습니다."
+              width="90%"
+              bold="700"
+              color="textColor"
+              size="16px"
+              display="block"
+              margin="20px auto"
+            />
+          ) : (
+            <FitnessList data={filteredJjim} add={add} onAdd={handleClickAdd} />
+          )}
+          <s.title>운동 목록</s.title>
+          {filteredFitness.length === 0 ? (
+            <Text
+              children="데이터가 존재하지 않습니다."
+              width="90%"
+              bold="700"
+              color="textColor"
+              size="16px"
+              display="block"
+              margin="20px auto"
+            />
+          ) : (
+            <FitnessList data={filteredFitness} add={add} onAdd={handleClickAdd} />
+          )}
         </s.FitnessArea>
       </s.MainArea>
       <s.Btn onClick={handleClickMove}>새 루틴에 추가하기</s.Btn>

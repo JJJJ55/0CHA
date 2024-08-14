@@ -88,8 +88,46 @@ public class SnsItemServiceImpl implements SnsItemService {
 
     @Override
     @Transactional
+    public int deleteImagesByImageUrl(List<String> imageUrls) {
+        log.debug("deleteImagesByImageUrl: {}", imageUrls);
+        log.debug("deleteImagesCnt: {}", imageUrls.size());
+
+        int deleteCnt = 0;
+        try {
+            // 호스트에서 파일 삭제 및 정보 디비에서 삭제
+            for (String imageUrl : imageUrls) {
+                File file = new File(imageUrl);
+                if (file.exists()) {
+                    if (file.delete()) {
+                        log.debug("SnsItemService 호스트 이미지 파일 삭제 성공, {}", imageUrl);
+                        snsItemMapper.deleteItemImage(imageUrl);
+                        deleteCnt++;
+                    } else {
+                        log.warn("SnsItemService 호스트 이미지 파일 삭제 실패, {}", imageUrl);
+                        throw new RuntimeException("SnsItemService 호스트 이미지 파일 삭제 실패: " + imageUrl);
+                    }
+                } else {
+                    log.warn("SnsItemService 호스트 이미지 파일이 존재하지 않습니다, {}", imageUrl);
+                    throw new RuntimeException("SnsItemService 호스트 이미지 파일이 존재하지 않음: " + imageUrl);
+                }
+            }
+        } catch (Exception e) {
+            log.error("게시물 수정 중 이미지 호스트 디렉토리에서 삭제 실패: {}", e.getMessage());
+            // 예외 발생 시 트랜잭션 롤백
+            throw e;
+        }
+        return deleteCnt;
+    }
+
+    @Override
+    public List<String> getRemainingImageUrls(int itemId){
+        return snsItemMapper.getRemainingImageUrls(itemId);
+    }
+
+    @Override
+    @Transactional
     public int updateItem(ItemDto item) {
-        validateImages(item.getImages().size());
+//        validateImages(item.getImages().size());
 
         ItemDto itemBuilder = ItemDto.builder()
                 .title(item.getTitle())
@@ -173,7 +211,7 @@ public class SnsItemServiceImpl implements SnsItemService {
         if (imageN <= 0) {
             throw new IllegalArgumentException("At least one image is required.");
         }
-        if (imageN >= 5) {
+        if (imageN > 5) {
             throw new IllegalArgumentException("A maximum of 5 images are allowed.");
         }
     }

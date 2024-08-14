@@ -8,19 +8,15 @@ import CommentModal from '../../../components/Modal/CommentModal';
 import BottomNav from '../../../components/Common/BottomNav';
 import UserSearchModal from '../../../components/Modal/UserSearchModal';
 
-import test from '../../../asset/img/testImg.png';
 import { useAppDispatch, useAppSelector } from '../../../lib/hook/useReduxHook';
 import { modalActions, selectModalComment, selectModalUserSearch } from '../../../store/modal';
 import { useLocation, useNavigate } from 'react-router';
 import { useModalExitHook } from '../../../lib/hook/useModalExitHook';
 
 import FeedList from '../../../components/SNS/FeedList';
-import axios from 'axios';
 import { debounce } from 'lodash';
-import { ScriptTarget } from 'typescript';
 
 import { SnsFeedList } from '../../../lib/api/sns-api';
-import { logDOM } from '@testing-library/react';
 import { SnsCommentList } from '../../../lib/api/sns-api';
 
 const s = {
@@ -75,7 +71,7 @@ const s = {
     width: 100%;
     max-width: 800px;
     z-index: 5;
-  `
+  `,
 };
 
 type feedData = {
@@ -89,7 +85,7 @@ type feedData = {
   nickname: string;
   profileImage: string;
   isLike: number;
-}
+};
 
 type commentData = {
   comment: string;
@@ -99,8 +95,7 @@ type commentData = {
   nickname: string;
   profileImage: string;
   userId: number;
-}
-
+};
 
 const UserFeedPage = (): JSX.Element => {
   const navigate = useNavigate();
@@ -113,7 +108,6 @@ const UserFeedPage = (): JSX.Element => {
   const isUserSearch = useAppSelector(selectModalUserSearch);
   const toggleModalComment = (): void => {
     dispatch(modalActions.toggleComment());
-    
   };
   const toggleModalUserSearch = (): void => {
     dispatch(modalActions.toggleUserSearch());
@@ -128,19 +122,19 @@ const UserFeedPage = (): JSX.Element => {
   const [feedId, setFeedId] = useState<number | null>(null);
   const [commentData, setCommentData] = useState<commentData[]>([]);
 
-  const [userId, setUserId] = useState(0)
-  const [userNickname, setUserNickname] = useState('')
-  const [userProfileImage, setUserProfileImage] = useState('')
+  const [userId, setUserId] = useState(0);
+  const [userNickname, setUserNickname] = useState('');
+  const [userProfileImage, setUserProfileImage] = useState('');
 
-  const userStr = localStorage.getItem("user")
+  const userStr = localStorage.getItem('user');
 
   useEffect(() => {
     if (userStr) {
-      console.log(userStr, '유저정보')
-      const userTmp = JSON.parse(userStr)
-      setUserId(userTmp.id)
-      setUserNickname(userTmp.nickname)
-      setUserProfileImage(userTmp.profileImage)
+      console.log(userStr, '유저정보');
+      const userTmp = JSON.parse(userStr);
+      setUserId(userTmp.id);
+      setUserNickname(userTmp.nickname);
+      setUserProfileImage(userTmp.profileImage);
     }
   }, []);
 
@@ -148,7 +142,7 @@ const UserFeedPage = (): JSX.Element => {
 
   const getFeedData = async (offset: number) => {
     if (loading) return;
-    setLoading(true);    
+    setLoading(true);
     await SnsFeedList(
       0,
       offset,
@@ -156,23 +150,23 @@ const UserFeedPage = (): JSX.Element => {
         const data = resp.data;
         if (data === '피드 0개입니다') {
           setIsMoreData(false);
-          console.log('ismoredatafalse')
+          console.log('ismoredatafalse');
         } else {
           setFeedData((prevData) => [...prevData, ...data]);
-          console.log('setfeed')
+          console.log('setfeed');
         }
-        setLoading(false)
+        setLoading(false);
       },
       (error) => {
-        console.error(error)
+        console.error(error);
       },
-      10
+      10,
     );
   };
 
   const getTargetData = async (offset: number) => {
     if (targetUserId) {
-      console.log('targetuserfeeddata')
+      console.log('targetuserfeeddata');
       await SnsFeedList(
         targetUserId,
         offset,
@@ -180,31 +174,31 @@ const UserFeedPage = (): JSX.Element => {
           const data = resp.data;
           if (data === '피드 0개입니다') {
             setIsMoreData(false);
-            console.log('ismoredatafalse')
+            console.log('ismoredatafalse');
           } else {
             setFeedData(data);
-            console.log('settargetfeed')
-          };
+            console.log('settargetfeed');
+          }
           scrollToTargetFeed();
         },
         (error) => {
-          console.error(error)
+          console.error(error);
         },
-        9999
+        9999,
       );
     }
   };
 
   useEffect(() => {
     getFeedData(offset);
-    console.log('getfeeddata', offset)
+    console.log('getfeeddata', offset);
   }, [offset]);
 
   const handleScroll = debounce(() => {
     if (containerRef.current && targetFeedId === undefined) {
       const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
 
-      if ((scrollTop + clientHeight+1000) >= scrollHeight) {
+      if (scrollTop + clientHeight + 1000 >= scrollHeight) {
         if (!loading && isMoreData) {
           setOffset((prevOffset) => prevOffset + 10);
         }
@@ -216,11 +210,11 @@ const UserFeedPage = (): JSX.Element => {
     const container = containerRef.current;
     if (container) {
       container.addEventListener('scroll', handleScroll);
-    };
+    }
     return () => {
       if (container) {
         container.removeEventListener('scroll', handleScroll);
-      };
+      }
     };
   }, [handleScroll]);
 
@@ -240,7 +234,7 @@ const UserFeedPage = (): JSX.Element => {
       (error) => {
         setCommentData([]);
         console.error(error);
-      }
+      },
     );
   };
 
@@ -254,7 +248,7 @@ const UserFeedPage = (): JSX.Element => {
       setTargetFeedId(location.state.targetFeedId);
       setTargetUserId(location.state.targetUserId);
     }
-  }, [targetUserId])
+  }, [targetUserId]);
 
   // useEffect(() => {
   //   if (targetFeedId) {
@@ -262,23 +256,23 @@ const UserFeedPage = (): JSX.Element => {
   //   }
   // }, [targetFeedId])
 
-  const scrollToTargetFeed = (() => {
+  const scrollToTargetFeed = () => {
     if (targetFeedId && containerRef.current && targetUserId) {
       // getTargetData(0)
       setTimeout(() => {
         const element = document.getElementById(`feed-${targetFeedId}`);
         if (element) {
-          element.scrollIntoView({block: 'center'});
+          element.scrollIntoView({ block: 'center' });
         }
       }, 100);
     }
-  })
+  };
 
   useEffect(() => {
     if (targetFeedId && containerRef.current && targetUserId) {
       getTargetData(0);
     }
-  }, [targetFeedId])
+  }, [targetFeedId]);
   // useEffect(() => {
   //   console.log('useeffect targetfeedid')
   //   if (targetFeedId && containerRef.current && targetUserId) {
@@ -302,7 +296,8 @@ const UserFeedPage = (): JSX.Element => {
       <s.Container ref={containerRef}>
         {feedData.map((data, index) => (
           <div id={`feed-${data.id}`}>
-            <FeedList key={data.id}
+            <FeedList
+              key={data.id}
               feedId={data.id}
               content={data.content}
               image={data.image}
@@ -318,7 +313,7 @@ const UserFeedPage = (): JSX.Element => {
             />
           </div>
         ))}
-        <CommentModal open={isComment} onModal={toggleModalComment} data={commentData} feedId={feedId}/>
+        <CommentModal open={isComment} onModal={toggleModalComment} data={commentData} feedId={feedId} />
         <UserSearchModal open={isUserSearch} onModal={toggleModalUserSearch} />
       </s.Container>
       <BottomNav />

@@ -13,7 +13,7 @@ import {
   getFitnessMomentum,
   postFitnessJjim,
 } from '../../lib/api/fitness-api';
-import basic from '../../asset/img/testImg.png';
+import loading from '../../asset/img/loading.png';
 import { useLocation } from 'react-router';
 import { FitnessMomenthum, FitnessType } from '../../util/types/axios-fitness';
 import Text from '../../components/Common/Text';
@@ -58,7 +58,7 @@ const s = {
     left: 0;
     width: 100%;
     height: 100%;
-    object-fit: scale-down;
+    object-fit: fill;
   `,
   FitnessTextArea: styled.div`
     width: 90%;
@@ -158,7 +158,7 @@ const FitnessDetailPage = (): JSX.Element => {
       const relativePath = imagePath.split('/home/ubuntu/images/')[1];
       return basicUrl + relativePath;
     } else {
-      return basic;
+      return loading;
     }
   };
   return (
@@ -178,7 +178,7 @@ const FitnessDetailPage = (): JSX.Element => {
       </s.HeaderArea>
       <s.ContentArea>
         <s.ImgArea>
-          <s.Img src={fitness ? getParsedImageUrl(fitness.image) : basic} />
+          <s.Img src={fitness ? getParsedImageUrl(fitness.image) : loading} />
         </s.ImgArea>
         <s.FitnessTextArea>{fitness?.description}</s.FitnessTextArea>
         <s.Title>운동이력</s.Title>

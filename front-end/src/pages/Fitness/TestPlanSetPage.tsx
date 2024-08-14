@@ -141,6 +141,10 @@ const TestPlanSetPage = (): JSX.Element => {
   };
 
   const handleSaveRoutine = async () => {
+    if (fitness.length === 0) {
+      alert('운동이 없습니다.');
+      return;
+    }
     const day = new Date();
     const today =
       day.getFullYear() + '-' + ('0' + (1 + day.getMonth())).slice(-2) + '-' + ('0' + day.getDate()).slice(-2);
@@ -167,7 +171,15 @@ const TestPlanSetPage = (): JSX.Element => {
   };
 
   const handlePlay = async () => {
+    if (fitness.length === 0) {
+      alert('운동이 없습니다.');
+      return;
+    }
     for (const exercise of fitness) {
+      if (exercise.sets.length === 0) {
+        alert(`${exercise.exerciseName}의 세트를 설정해주세요.`);
+        return;
+      }
       for (const set of exercise.sets) {
         if (set.count === '' || set.count <= 0) {
           alert(`${exercise.exerciseName}의 세트에 유효한 횟수를 입력해주세요.`);
@@ -199,6 +211,7 @@ const TestPlanSetPage = (): JSX.Element => {
         })),
       };
       console.log(param);
+      dispatch(fitnessActions.saveTime(0));
       dispatch(fitnessActions.setPlanData(param));
       await putNewRoutine(
         param,

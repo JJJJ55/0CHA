@@ -8,6 +8,7 @@ import FitnessPlayBottomNav from '../Etc/FitnessPlayBottomNav';
 import { useAppDispatch, useAppSelector } from '../../../lib/hook/useReduxHook';
 import { fitnessActions, selectSave } from '../../../store/fitness';
 import { RoutineDetails } from '../../../util/types/axios-fitness';
+import { set } from 'lodash';
 
 const s = {
   Container: styled.section`
@@ -140,6 +141,13 @@ const FitnessPlayPlan = (props: FitnessPlanProps): JSX.Element => {
 
   const handleRemoveSet = () => {
     if (sets.length === 0) return;
+
+    const lastSet = sets[sets.length - 1];
+    if (lastSet.complete) {
+      alert('완료된 세트는 삭제할 수 없습니다. 완료를 취소해주세요.');
+      return;
+    }
+
     const updatedSets = sets.slice(0, -1);
     setSets(updatedSets);
     props.onChangeSet(props.index, updatedSets);

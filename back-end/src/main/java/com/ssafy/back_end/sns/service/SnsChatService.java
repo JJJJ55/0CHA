@@ -11,6 +11,5 @@ public interface SnsChatService {
     public MessageDto saveMessage(int senderId, int roomId, String message);
     public int getOrCreateRoom(int senderId, int receiverId);
     public List<UserDto> getUsersExcludeMe(int excludeUserId);
-
     List<UserJoinRoomDto> getLastMessageList(int myId); // 내가 참여한 채팅방의 가장 마지막 메시지 목록
 }

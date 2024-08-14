@@ -1,7 +1,10 @@
 package com.ssafy.back_end.auth.controller;
 
 import com.ssafy.back_end.auth.model.UserDto;
+import com.ssafy.back_end.auth.service.UserModifyService;
 import com.ssafy.back_end.auth.service.UserModifyServiceImpl;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,35 +12,39 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Random;
 
+@Tag (name = "AUTH정보수정")
 @RestController
 @RequestMapping (value = "/api/auth/modify")
 public class UserModifyController {
     static int authCode;
-    private final UserModifyServiceImpl userModifyService;
+    private final UserModifyService userModifyService;
 
     @Autowired
     public UserModifyController(UserModifyServiceImpl userModifyService) {
         this.userModifyService = userModifyService;
     }
 
-    @PostMapping ("/find_email")
+    @Operation (summary = "이메일 찾기")
+    @PostMapping ("/find-email")
     public ResponseEntity<?> findEmail(@RequestBody UserDto userDto) {
         String email = userModifyService.findEmail(userDto);
 
         if (email != null) {
-            return ResponseEntity.ok("이메일은 : " + email + " 입니다.");
+            return ResponseEntity.ok(email);
         }
         else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사용자 정보를 찾을 수 없습니다");
         }
     }
 
-    @PostMapping ("/find_password")
+    @Operation (summary = "비밀번호 찾기&인증발송")
+    @PostMapping ("/find-password")
     public ResponseEntity<?> findPassword(@RequestBody UserDto userDto) {
         int result = userModifyService.findPassword(userDto);
 
         if (result > 0) {
             authCode = getRandomNumber();   //랜덤으로 이메일로 전송해줘야함
+            userModifyService.sendEmail(userDto.getEmail(), authCode);
             return ResponseEntity.ok("이메일로 인증코드가 전송되었습니다.");
         }
         else {
@@ -45,7 +52,8 @@ public class UserModifyController {
         }
     }
 
-    @PostMapping ("/find_password/verify")
+    @Operation (summary = "비밀번호 인증확인")
+    @PostMapping ("/find-password/verify")
     public ResponseEntity<?> verifyPassword(@RequestBody int code) {
         if (code == authCode) {
             authCode = 0;   //인증코드 초기화
@@ -56,7 +64,8 @@ public class UserModifyController {
         }
     }
 
-    @PutMapping ("/reset_password")
+    @Operation (summary = "비밀번호 초기화")
+    @PutMapping ("/reset-password")
     public ResponseEntity<?> resetPassword(@RequestBody UserDto userDto) {
         int result = userModifyService.resetPassword(userDto);
 

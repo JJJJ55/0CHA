@@ -45,6 +45,9 @@ dependencies {
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
+    // JSch 라이브러리
+    implementation 'com.jcraft:jsch:0.1.55'
+
     // Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
@@ -54,6 +57,9 @@ dependencies {
     // Reactor Netty
     implementation "io.projectreactor.netty:reactor-netty:${reactorNettyVersion}"
 
+    // SLF4J
+    implementation 'org.springframework.boot:spring-boot-starter-logging'
+
     // 기타 종속성
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
     implementation 'org.json:json:20230227'
@@ -62,9 +68,19 @@ dependencies {
     runtimeOnly('io.jsonwebtoken:jjwt-orgjson:0.11.2') { exclude group: 'org.json', module: 'json' }
 
     // 시큐리티 관련 (주석 처리됨)
-//    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
 //    implementation 'com.google.code.gson:gson:2.8.9'
     testImplementation 'org.springframework.security:spring-security-test'
+
+    
+    //이메일전송
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+    // OAuth 2.0 소셜 로그인 관련
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    // Spring WebFlux (WebClient 포함)
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
 
 tasks.named('test') {

@@ -19,7 +19,7 @@ interface FitnessState {
 }
 
 const initialState: FitnessState = {
-  type: 'all',
+  type: '전체',
   plan: {
     id: 0,
     title: '',

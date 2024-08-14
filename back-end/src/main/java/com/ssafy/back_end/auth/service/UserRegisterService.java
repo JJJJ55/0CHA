@@ -13,4 +13,5 @@ public interface UserRegisterService {
 
     void sendEmail(String email, int authCode);   //이메일 인증 전송
 
+    UserDto findByEmail(String email);   //이메일로 UserDto 조회
 }

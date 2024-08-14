@@ -160,6 +160,7 @@ const FeedPage = (): JSX.Element => {
         } else {
           setFeedData((prevData) => [...prevData, ...data]);
           console.log('setfeed')
+          console.log(feedData)
         }
         setLoading(false)
       },
@@ -174,6 +175,7 @@ const FeedPage = (): JSX.Element => {
     if (targetUserId) {
       console.log('targetuserfeeddata')
       await SnsFeedList(
+        
         targetUserId,
         offset,
         (resp) => {

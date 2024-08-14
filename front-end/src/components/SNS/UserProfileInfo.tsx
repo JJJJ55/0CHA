@@ -13,6 +13,7 @@ import { UserFollowCancel } from '../../lib/api/sns-api';
 import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
 import { modalActions } from '../../store/modal';
 import ItemModal from '../Modal/ItemModal';
+import { Imag } from '@tensorflow/tfjs';
 
 const s = {
   Container: styled.section`
@@ -96,10 +97,11 @@ interface UserProfileInfoProps {
   marketCnt?: number;
   followingCnt?: number;
   followerCnt?: number;
+  profileImage?: string;
 }
 
 const UserProfileInfo = (props: UserProfileInfoProps): JSX.Element => {
-  const { profileUserId, isCurrentUser, userName, postCnt, marketCnt, followingCnt, followerCnt } = props;
+  const { profileUserId, isCurrentUser, userName, postCnt, marketCnt, followingCnt, followerCnt, profileImage } = props;
   const naviagate = useNavigate();
   const handleMovePage = (path: string): void => {
     naviagate(path);
@@ -186,7 +188,16 @@ const UserProfileInfo = (props: UserProfileInfoProps): JSX.Element => {
     <s.Container>
       <s.ProfileTopArea>
         <s.ProfileImage>
-          <Image width="60px" height="60px" src={test} />
+          {profileImage ? (
+            <Image
+              width="60px"
+              height="60px"
+              src={`https://i11b310.p.ssafy.io/images/${profileImage.split('/home/ubuntu/images/')[1]}`}
+              fit="cover"
+            />
+          ) : (
+            <div></div>
+          )}
         </s.ProfileImage>
         <s.ProfileButtonArea>
           <s.UserName>{userName}</s.UserName>
@@ -207,7 +218,7 @@ const UserProfileInfo = (props: UserProfileInfoProps): JSX.Element => {
                 children="채팅"
                 size="14px"
                 bold="500"
-                onClick={() => handleMovePage('../../chat/id')}
+                onClick={() => handleMovePage(`../../chat/${profileUserId}`)}
               />
             )}
             {isCurrentUser === true ? (

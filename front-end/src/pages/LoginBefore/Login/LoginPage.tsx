@@ -8,7 +8,7 @@ import { ReactComponent as google } from '../../../asset/img/svg/google.svg';
 import { ReactComponent as kakao } from '../../../asset/img/svg/kakao.svg';
 import { ReactComponent as git } from '../../../asset/img/svg/git.svg';
 import { useNavigate } from 'react-router';
-import { login } from '../../../lib/api/user-api';
+import { login, MoveKaKao } from '../../../lib/api/user-api';
 import IconSvg from '../../../components/Common/IconSvg';
 
 const s = {
@@ -102,6 +102,14 @@ const LoginPage = (): JSX.Element => {
     );
   };
 
+  const handleMoveSocial = (path: string) => {
+    // navigate(`${process.env.REACT_APP_SOCIAL_BASE_URL}${path}`);
+    // window.location.href = `${process.env.REACT_APP_SOCIAL_BASE_URL}${path}`;
+    // window.location.href = `https://i11b310.p.ssafy.io/oauth/kakao`;
+    // await MoveKaKao(path);
+    window.location.href = 'https://i11b310.p.ssafy.io/oauth/kakao';
+  };
+
   return (
     <s.Container>
       <s.Title>
@@ -172,9 +180,9 @@ const LoginPage = (): JSX.Element => {
         </s.TextBtnArea>
         <s.SnsText>SNS 로그인</s.SnsText>
         <s.snsArea>
-          <IconSvg width="40" height="40" Ico={kakao} cursor="pointer" />
-          <IconSvg width="40" height="40" Ico={google} cursor="pointer" />
-          <IconSvg width="40" height="40" Ico={git} cursor="pointer" />
+          <IconSvg width="40" height="40" Ico={kakao} cursor="pointer" onClick={() => handleMoveSocial('kakao')} />
+          <IconSvg width="40" height="40" Ico={google} cursor="pointer" onClick={() => handleMoveSocial('kakao')} />
+          <IconSvg width="40" height="40" Ico={git} cursor="pointer" onClick={() => handleMoveSocial('kakao')} />
         </s.snsArea>
       </s.LoginArea>
     </s.Container>

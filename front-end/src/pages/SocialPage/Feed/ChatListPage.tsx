@@ -18,14 +18,21 @@ const s = {
     overflow: auto;
     padding: 57px 25px 68px 25px;
   `,
+  NoChatMessage: styled.div`
+    text-align: center;
+    color: ${(props) => props.theme.textColor};
+    margin-top: 20px;
+    font-size: 14px;
+    font-weight: 600;
+  `,
 };
 
 interface Chat {
-  id: number;
+  userId: number;
   profileImage: string | null;
   nickname: string;
-  recentChat: string;
-  chatId: number;
+  lastMessage: string;
+  roomId: number;
 }
 
 const ChatListPage = (): JSX.Element => {
@@ -39,7 +46,6 @@ const ChatListPage = (): JSX.Element => {
   const getChatList = async () => {
     if (parsedUser && parsedUser.id) {
       await SnsChatList(
-        parseInt(parsedUser.id),
         (resp) => {
           console.log(resp.data);
           setChatList(resp.data);
@@ -54,20 +60,25 @@ const ChatListPage = (): JSX.Element => {
   useEffect(() => {
     getChatList();
   }, []);
+
   return (
     <>
       <Header text="채팅 목록" />
       <s.Container>
-        {chatList.map((chat) => (
-          <Conversation
-            key={chat.id}
-            profileImage={chat.profileImage || test} // profileImage가 null이면 기본 이미지 사용
-            nickname={chat.nickname}
-            recentChat={chat.recentChat || '최근 메시지가 없습니다.'}
-            chatId={chat.chatId || 1}
-            userId={chat.id}
-          />
-        ))}
+        {chatList.length > 0 ? (
+          chatList.map((chat) => (
+            <Conversation
+              key={chat.userId}
+              profileImage={chat.profileImage || test} // profileImage가 null이면 기본 이미지 사용
+              nickname={chat.nickname}
+              lastMessage={chat.lastMessage || '최근 메시지가 없습니다.'}
+              roomId={chat.roomId || 1}
+              userId={chat.userId}
+            />
+          ))
+        ) : (
+          <s.NoChatMessage>현재 진행 중인 채팅이 없습니다.</s.NoChatMessage>
+        )}
       </s.Container>
 
       <BottomNav />

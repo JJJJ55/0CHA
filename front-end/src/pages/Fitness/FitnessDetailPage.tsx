@@ -58,7 +58,7 @@ const s = {
     left: 0;
     width: 100%;
     height: 100%;
-    object-fit: scale-down;
+    object-fit: fill;
   `,
   FitnessTextArea: styled.div`
     width: 90%;

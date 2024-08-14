@@ -13,7 +13,11 @@ public interface SnsItemService {
     int writeItem(ItemDto item);   //중고장터 작성
 
     void saveImageDetail(int itemId, int userId, String imageUrl, String originalName, String saveName);  //게시글 이미지 등록
-    
+
+    int deleteImagesByImageUrl(List<String> imageUrls);
+
+    List<String> getRemainingImageUrls(int itemId);  // 해당 게시물 남은 이미지 url 가져옴
+
     int updateItem(ItemDto item);   //중고장터 수정
 
     int deleteItem(int itemId);   //중고장터 삭제

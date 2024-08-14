@@ -19,7 +19,6 @@
         <result column="send_at" property="sendAt"/>
     </resultMap>
 
-
     <select id="findByRoomId" resultMap="messageResultMap">
         SELECT * FROM messages WHERE room_id = #{roomId}
     </select>
@@ -59,5 +58,4 @@
             )
         ORDER BY send_at DESC  -- 최근 메시지를 기준으로 전체 결과를 내림차순 정렬
     </select>
-
 </mapper>

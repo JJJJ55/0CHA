@@ -75,12 +75,6 @@ dependencies {
 
     //이메일전송
     implementation 'org.springframework.boot:spring-boot-starter-mail'
-
-    // OAuth 2.0 소셜 로그인 관련
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-
-    // Spring WebFlux (WebClient 포함)
-    implementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
 
 tasks.named('test') {

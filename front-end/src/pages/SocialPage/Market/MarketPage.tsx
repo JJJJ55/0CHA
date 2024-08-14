@@ -172,6 +172,7 @@ const MarketPage = (): JSX.Element => {
           setItems(resp.data.items); // 서버에서 받은 데이터를 상태로 설정
           setTotalPages(Math.ceil(resp.data.size / limit)); // 전체 페이지 수 설정
           console.log(resp.data);
+          console.log(resp);
         }
       },
       (error) => {

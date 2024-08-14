@@ -65,5 +65,4 @@ public class SnsChatServiceImpl implements SnsChatService{
     public List<UserJoinRoomDto> getLastMessageList(int myId) {
         return snsChatMessageMapper.getLastMessageList(myId);
     }
-
 }

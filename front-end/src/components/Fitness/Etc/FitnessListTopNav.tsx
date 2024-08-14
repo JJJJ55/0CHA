@@ -38,25 +38,25 @@ const FitnessListTopNav = (): JSX.Element => {
   };
   return (
     <s.Container>
-      <s.SelectArea onClick={() => handleClickIcon('all')} color={getColor('all')}>
+      <s.SelectArea onClick={() => handleClickIcon('전체')} color={getColor('전체')}>
         전체
       </s.SelectArea>
-      <s.SelectArea onClick={() => handleClickIcon('chest')} color={getColor('chest')}>
+      <s.SelectArea onClick={() => handleClickIcon('가슴')} color={getColor('가슴')}>
         가슴
       </s.SelectArea>
-      <s.SelectArea onClick={() => handleClickIcon('back')} color={getColor('back')}>
+      <s.SelectArea onClick={() => handleClickIcon('등')} color={getColor('등')}>
         등
       </s.SelectArea>
-      <s.SelectArea onClick={() => handleClickIcon('leg')} color={getColor('leg')}>
+      <s.SelectArea onClick={() => handleClickIcon('하체')} color={getColor('하체')}>
         하체
       </s.SelectArea>
-      <s.SelectArea onClick={() => handleClickIcon('shoulder')} color={getColor('shoulder')}>
+      <s.SelectArea onClick={() => handleClickIcon('어깨')} color={getColor('어깨')}>
         어깨
       </s.SelectArea>
-      <s.SelectArea onClick={() => handleClickIcon('arm')} color={getColor('arm')}>
+      <s.SelectArea onClick={() => handleClickIcon('팔')} color={getColor('팔')}>
         팔
       </s.SelectArea>
-      <s.SelectArea onClick={() => handleClickIcon('etc')} color={getColor('etc')}>
+      <s.SelectArea onClick={() => handleClickIcon('기타')} color={getColor('기타')}>
         기타
       </s.SelectArea>
     </s.Container>

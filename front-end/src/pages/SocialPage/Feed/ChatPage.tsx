@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { useLocation, useNavigate, useParams } from 'react-router';
 import BottomNav from '../../../components/Common/BottomNav';
@@ -8,7 +8,7 @@ import IconSvg from '../../../components/Common/IconSvg';
 import Input from '../../../components/Common/Input';
 import Chat from '../../../components/SNS/Chat';
 import { ReactComponent as back } from '../../../asset/img/svg/back.svg';
-import { UserPage, WsOn } from '../../../lib/api/sns-api';
+import { SnsChatEnter, SnsChat, UserPage } from '../../../lib/api/sns-api';
 import testImg from '../../../asset/img/testImg.png';
 
 import SockJS from 'sockjs-client';
@@ -49,7 +49,6 @@ const s = {
     background-color: ${(props) => props.theme.bgColor};
     width: 100%;
     display: flex;
-    display: flex;
     align-items: center;
   `,
   Input: styled.div`
@@ -61,6 +60,11 @@ const s = {
     padding: 0 15px;
     position: fixed;
     bottom: 68px;
+  `,
+  LoadingMessage: styled.div`
+    color: ${(props) => props.theme.textColor};
+    text-align: center;
+    margin-top: 20px;
   `,
 };
 
@@ -75,9 +79,13 @@ const ChatPage = (): JSX.Element => {
   const [profileImage, setProfileImage] = useState<string | null>(location.state?.profileImage || null);
 
   // 상태 변수: 메시지 목록과 현재 작성 중인 메시지
-  const [messages, setMessages] = useState<{ sender: string; content: string }[]>([]);
+  const [messages, setMessages] = useState<{ senderId: number; message: string }[]>([]);
   const [messageContent, setMessageContent] = useState('');
   const [stompClient, setStompClient] = useState<Client | null>(null);
+  const [loading, setLoading] = useState<boolean>(true); // 로딩 상태 추가
+
+  // 상태 변수: 채팅방 ID
+  const roomIdRef = useRef<number | null>(null);
 
   // 로컬 스토리지에서 현재 사용자 ID 가져오기
   const currentUserId = (() => {
@@ -92,13 +100,12 @@ const ChatPage = (): JSX.Element => {
   // 사용자 정보 로드 및 초기 설정
   useEffect(() => {
     if (!currentUserId || userId === String(currentUserId)) {
-      // userId가 자신의 id와 같거나 currentUserId가 없으면 이전 페이지로 리디렉션
       navigate(-1);
       return;
     }
 
     const fetchUserInfo = async () => {
-      if (userId && !location.state) {
+      if (userId) {
         try {
           await UserPage(
             parseInt(userId, 10),
@@ -121,84 +128,142 @@ const ChatPage = (): JSX.Element => {
     fetchUserInfo();
   }, [userId, location.state]);
 
-  const getWs = async () => {
-    await WsOn(
-      (resp) => {
-        console.log(resp.data);
-      },
-      (err) => {
-        console.log(err);
-      },
-    );
+  // 채팅방에 들어가는 함수
+  const enterChatRoom = async (): Promise<number | null> => {
+    if (userId) {
+      try {
+        const response = await SnsChatEnter(
+          parseInt(userId, 10),
+          (resp) => {
+            roomIdRef.current = resp.data;
+          },
+          (err) => {
+            console.log(err);
+          },
+        );
+        return roomIdRef.current;
+      } catch (error) {
+        console.log('Error entering chat room:', error);
+      }
+    }
+    return null;
   };
-  getWs();
+
+  // 이전 채팅 내역 가져오기
+  const loadChatHistory = async (roomId: number) => {
+    try {
+      await SnsChat(
+        roomId,
+        (resp) => {
+          setMessages(resp.data); // 서버에서 가져온 메시지 기록을 상태에 저장
+          setLoading(false); // 로딩 상태 해제
+        },
+        (err) => {
+          console.log(err);
+          setLoading(false); // 오류 발생 시에도 로딩 상태 해제
+        },
+      );
+    } catch (error) {
+      console.log('Error loading chat history:', error);
+      setLoading(false); // 오류 발생 시에도 로딩 상태 해제
+    }
+  };
+
   // WebSocket 연결 설정
   useEffect(() => {
-    // alert('추후 제공 예정입니다.');
-    // navigate(-1);
-    // return;
-    // JWT 토큰 가져오기
-    const accessToken = localStorage.getItem('accessToken');
-    const refreshToken = localStorage.getItem('refreshToken');
+    const connectWebSocket = async () => {
+      const accessToken = localStorage.getItem('accessToken');
+      const refreshToken = localStorage.getItem('refreshToken');
 
-    if (!accessToken || !refreshToken) {
-      console.error('No access or refresh token found in localStorage');
-      return;
-    }
-
-    // SockJS와 STOMP 클라이언트 초기화
-    const socket = new SockJS('/proxy/ws'); // SockJS 엔드포인트 설정
-    const client = new Client({
-      webSocketFactory: () => socket, // SockJS를 WebSocket으로 사용
-      connectHeaders: {
-        Authorization: `Bearer ${accessToken}`, // JWT 토큰을 Authorization 헤더에 포함
-        RefreshToken: refreshToken, // RefreshToken을 헤더에 포함
-      },
-      debug: (str: string) => {
-        console.log(str); // 디버그 메시지 출력
-      },
-      onConnect: (frame) => {
-        console.log('Connected: ' + frame);
-
-        // 메시지를 구독하는 예제
-        client.subscribe(`/topic/chat/${userId}`, (message: IMessage) => {
-          console.log('Received message:', message.body);
-          showMessage(JSON.parse(message.body));
-        });
-      },
-      onStompError: (frame) => {
-        console.error('STOMP error:', frame.headers['message']);
-      },
-    });
-
-    // STOMP 클라이언트 활성화
-    client.activate();
-    setStompClient(client);
-
-    // 컴포넌트가 언마운트될 때 WebSocket 연결 해제
-    return () => {
-      if (client) {
-        client.deactivate();
-        console.log('Disconnected');
+      if (!accessToken || !refreshToken) {
+        console.error('No access or refresh token found in localStorage');
+        return;
       }
+
+      // SockJS와 STOMP 클라이언트 초기화
+      const socket = new SockJS('/proxy/ws'); // SockJS 엔드포인트 설정
+      const client = new Client({
+        webSocketFactory: () => socket, // SockJS를 WebSocket으로 사용
+        connectHeaders: {
+          Authorization: `Bearer ${accessToken}`, // JWT 토큰을 Authorization 헤더에 포함
+          RefreshToken: refreshToken, // RefreshToken을 헤더에 포함
+        },
+        debug: (str: string) => {
+          console.log(str); // 디버그 메시지 출력
+        },
+        onConnect: async (frame) => {
+          console.log('Connected: ' + frame);
+
+          // enterChatRoom이 완료된 후 roomId를 사용하여 구독
+          const roomId = await enterChatRoom();
+
+          if (roomId) {
+            await loadChatHistory(roomId); // 채팅방에 들어간 후 채팅 내역 로드
+
+            client.subscribe(`/topic/chat/${roomId}`, (message: IMessage) => {
+              console.log('Received message:', message.body);
+              showMessage(JSON.parse(message.body));
+            });
+          } else {
+            console.error('Failed to retrieve roomId');
+            setLoading(false); // 오류 발생 시 로딩 상태 해제
+          }
+        },
+        onStompError: (frame) => {
+          console.error('STOMP error:', frame.headers['message']);
+          setLoading(false); // 오류 발생 시 로딩 상태 해제
+        },
+      });
+
+      // STOMP 클라이언트 활성화
+      client.activate();
+      setStompClient(client);
+
+      // 컴포넌트가 언마운트될 때 WebSocket 연결 해제
+      return () => {
+        if (client) {
+          client.deactivate();
+          console.log('Disconnected');
+        }
+      };
     };
+
+    connectWebSocket();
   }, [userId]);
 
   // 메시지를 화면에 표시하는 함수
-  const showMessage = (message: { sender: string; content: string }) => {
+  const showMessage = (message: { senderId: number; message: string }) => {
     setMessages((prevMessages) => [...prevMessages, message]);
   };
 
   // 메시지를 전송하는 함수
   const sendMessage = () => {
-    if (messageContent && stompClient) {
+    if (!stompClient || !roomIdRef.current) {
+      console.error('WebSocket is not connected or roomId is not set');
+      return;
+    }
+
+    if (messageContent) {
+      const accessToken = localStorage.getItem('accessToken');
+      const refreshToken = localStorage.getItem('refreshToken');
+
+      if (!accessToken || !refreshToken) {
+        console.error('No access or refresh token found in localStorage');
+        return;
+      }
+
       stompClient.publish({
-        destination: `/app/chat/${userId}`, // 메시지를 전송할 목적지
+        destination: `/app/chat/${roomIdRef.current}`, // 메시지를 전송할 목적지
         body: JSON.stringify({
-          sender: currentUserId,
-          content: messageContent,
+          senderId: currentUserId,
+          message: messageContent,
         }),
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          RefreshToken: refreshToken,
+        },
       });
+
       setMessageContent(''); // 전송 후 입력 필드 초기화
     }
   };
@@ -215,7 +280,6 @@ const ChatPage = (): JSX.Element => {
 
   return (
     <>
-      {/* 채팅 헤더 */}
       <s.ChatHeader>
         <IconSvg width="25" height="25" Ico={back} cursor="pointer" onClick={() => navigate(-1)} />
         <s.ProfileArea onClick={handleMovePage}>
@@ -224,14 +288,16 @@ const ChatPage = (): JSX.Element => {
         </s.ProfileArea>
       </s.ChatHeader>
 
-      {/* 채팅 메시지 목록 */}
       <s.Container>
-        {messages.map((msg, index) => (
-          <Chat key={index} isMyChat={msg.sender === String(currentUserId)} content={msg.content} />
-        ))}
+        {loading ? (
+          <s.LoadingMessage>채팅방 로딩중입니다. 잠시만 기다려 주세요.</s.LoadingMessage>
+        ) : (
+          messages.map((msg, index) => (
+            <Chat key={index} isMyChat={msg.senderId === currentUserId} content={msg.message} />
+          ))
+        )}
       </s.Container>
 
-      {/* 메시지 입력 및 전송 버튼 */}
       <s.Send>
         <s.InputArea>
           <s.Input>
@@ -240,17 +306,17 @@ const ChatPage = (): JSX.Element => {
           <Button
             width="64px"
             height="40px"
-            children="전송"
             size="14px"
             bold="500"
             type="main"
             margin="0 0 0 10px"
             onClick={sendMessage}
-          />
+          >
+            전송
+          </Button>
         </s.InputArea>
       </s.Send>
 
-      {/* 하단 네비게이션 바 */}
       <BottomNav />
     </>
   );

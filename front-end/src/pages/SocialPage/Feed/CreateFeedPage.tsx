@@ -28,15 +28,18 @@ const s = {
     font-weight: 600;
     text-shadow: 1px 1px 1px black;
   `,
-  
+
   ImageArea: styled.div`
     position: relative;
     width: 100%;
     aspect-ratio: 1;
     display: flex;
     align-items: center;
+    border: 3px solid red;
   `,
   FeedImage: styled.div<ImageAreaProps>`
+    width: 100%;
+    margin: 0 auto;
     display: ${(props) => (props.$isRoutine === true ? 'none' : '')};
   `,
   FeedRoutine: styled.div<ImageAreaProps>`
@@ -67,7 +70,7 @@ const s = {
 
 interface ImageAreaProps {
   $isRoutine: boolean;
-};
+}
 
 type routineData = {
   id: number;
@@ -75,8 +78,8 @@ type routineData = {
     {
       exerciseName: string;
       setCount: number;
-    }
-  ]
+    },
+  ];
 };
 
 const CreateFeedPage = (): JSX.Element => {
@@ -88,9 +91,9 @@ const CreateFeedPage = (): JSX.Element => {
   // 루틴 확인, 사진 확인 전환
   const [isRoutineMode, setIsRoutineMode] = useState(false);
 
-  const routineButtonOnClick = (() => {
+  const routineButtonOnClick = () => {
     setIsRoutineMode((prev) => !prev);
-  });
+  };
 
   // 파일 업로드하기 (image)
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -110,17 +113,17 @@ const CreateFeedPage = (): JSX.Element => {
         };
         setChangeImg(newFilesArray[0]);
         reader.readAsDataURL(file);
-      };
-    };
+      }
+    }
   };
 
   useEffect(() => {
-    console.log(image)
+    console.log(image);
   }, [image]);
 
   // 내 루틴 가져오기
   const [routine, setRoutine] = useState<routineData>();
-  
+
   const getRoutineData = async () => {
     await MyRoutine(
       (resp) => {
@@ -128,8 +131,8 @@ const CreateFeedPage = (): JSX.Element => {
       },
       (error) => {
         console.error(error);
-      }
-    )
+      },
+    );
   };
 
   useEffect(() => {
@@ -144,18 +147,20 @@ const CreateFeedPage = (): JSX.Element => {
   const [contentValue, setContentValue] = useState('');
 
   const contentOnChange = (event: React.FormEvent<HTMLTextAreaElement>) => {
-    const { currentTarget: { value }} = event;
+    const {
+      currentTarget: { value },
+    } = event;
     setContentValue(value);
   };
   const feedOnSubmit = async (event: React.FormEvent<HTMLButtonElement>) => {
     if (changeImg !== undefined && routine !== undefined) {
       const formData = new FormData();
-      const feedContent={
+      const feedContent = {
         content: contentValue,
-        routineId: routine.id
+        routineId: routine.id,
       };
-      formData.append('feed', new Blob([JSON.stringify(feedContent)], {type: 'application/json'}));
-      formData.append('image', changeImg)
+      formData.append('feed', new Blob([JSON.stringify(feedContent)], { type: 'application/json' }));
+      formData.append('image', changeImg);
 
       await SnsFeedWrite(
         formData,
@@ -166,11 +171,11 @@ const CreateFeedPage = (): JSX.Element => {
         },
         (error) => {
           console.error(error);
-        }
+        },
       );
-    };
+    }
   };
-  
+
   return (
     <>
       <s.Container>
@@ -186,14 +191,25 @@ const CreateFeedPage = (): JSX.Element => {
               <s.RoutineArea>
                 {routine?.details?.map((item) => (
                   <>
-                    <s.Routine>{item.exerciseName} {item.setCount}세트</s.Routine>
+                    <s.Routine>
+                      {item.exerciseName} {item.setCount}세트
+                    </s.Routine>
                   </>
                 ))}
               </s.RoutineArea>
             </s.FeedRoutine>
           </s.ImageArea>
           <s.SelectPicture>
-            <Button width="49%" height="40px" size="14px" bold="500" children="사진 선택" onClick={() => {fileInputRef.current?.click()}}/>
+            <Button
+              width="49%"
+              height="40px"
+              size="14px"
+              bold="500"
+              children="사진 선택"
+              onClick={() => {
+                fileInputRef.current?.click();
+              }}
+            />
             <input
               ref={fileInputRef}
               type="file"
@@ -203,12 +219,33 @@ const CreateFeedPage = (): JSX.Element => {
               onChange={handleImageUpload}
             />
             {isRoutineMode ? (
-              <Button width="49%" height="40px" size="14px" bold="500" children="사진 확인" onClick={routineButtonOnClick}/>
+              <Button
+                width="49%"
+                height="40px"
+                size="14px"
+                bold="500"
+                children="사진 확인"
+                onClick={routineButtonOnClick}
+              />
             ) : (
-              <Button width="49%" height="40px" size="14px" bold="500" children="루틴 확인" onClick={routineButtonOnClick}/>
+              <Button
+                width="49%"
+                height="40px"
+                size="14px"
+                bold="500"
+                children="루틴 확인"
+                onClick={routineButtonOnClick}
+              />
             )}
           </s.SelectPicture>
-          <TextArea width="90%" height="180px" margin="0 auto" display="block" onChange={contentOnChange} value={contentValue} />
+          <TextArea
+            width="90%"
+            height="180px"
+            margin="0 auto"
+            display="block"
+            onChange={contentOnChange}
+            value={contentValue}
+          />
         </s.MainArea>
         <s.Button>
           <Button

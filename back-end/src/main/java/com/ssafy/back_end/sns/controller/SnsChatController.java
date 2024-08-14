@@ -86,8 +86,8 @@ public class SnsChatController {
 
     // 메시지 수신 및 발송
     @MessageMapping("/chat/{joinRoomId}")
-//    @SendTo("/topic/chat/{joinRoomId}")
-    public void sendMessage(HttpServletRequest request, @DestinationVariable String joinRoomId, MessageDto message) {
+    @SendTo("/topic/chat/{joinRoomId}")
+    public MessageDto sendMessage(HttpServletRequest request, @DestinationVariable String joinRoomId, MessageDto message) {
         int senderId = (Integer)request.getAttribute("userId");
         logger.debug("senderId : {}", senderId);
         logger.debug("joinRoomId : {}", joinRoomId);
@@ -102,9 +102,14 @@ public class SnsChatController {
 
         logger.info("Saved message: {}", savedMessage);
 
+//        // Redis로 메시지 퍼블리시
+//        redisMessagePublisher.publish(savedMessage.getMessage());
+//        logger.info("Published message to Redis: {}", savedMessage.getMessage());
+//
+//        // 채팅방의 채널로 메시지 발송
+//        messagingTemplate.convertAndSend("/queue/messages/room/" + message.getRoomId(), savedMessage);
+//        logger.info("Sent message to room {}: {}", message.getRoomId(), savedMessage);
 
-        // Redis로 메시지 퍼블리시
-        redisMessagePublisher.publish("/topic/chat/" + joinRoomId, savedMessage);
-        logger.info("Published message to Redis: {}", savedMessage);
+        return savedMessage;
     }
 }

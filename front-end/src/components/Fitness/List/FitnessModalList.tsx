@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import Image from '../../Common/Image';
 import IconSvg from '../../Common/IconSvg';
+import basic from '../../../asset/img/AppIcon.png';
 import { ReactComponent as jjimOn } from '../../../asset/img/svg/jjimOn.svg';
 import { ReactComponent as jjimOff } from '../../../asset/img/svg/jjimOff.svg';
 import { ReactComponent as addOff } from '../../../asset/img/svg/pickOff.svg';
@@ -74,35 +75,36 @@ const FitnessModalList = (props: FitnessListProps): JSX.Element => {
     );
   }
 
+  const basicUrl = 'https://i11b310.p.ssafy.io/images/';
+
+  // 이미지 경로를 파싱하여 basicUrl과 결합하는 함수
+  const getParsedImageUrl = (imagePath: string) => {
+    if (imagePath.length >= 200) {
+      return imagePath;
+    }
+    if (imagePath) {
+      const relativePath = imagePath.split('/home/ubuntu/images/')[1];
+      return basicUrl + relativePath;
+    } else {
+      return basic;
+    }
+  };
+
   return (
     <s.Container>
       <s.title>{props.text}</s.title>
       {props.data.map((data, index) => (
         <div key={index}>
-          <s.ListArea>
+          <s.ListArea onClick={() => props.onAdd(data.id, data.name)}>
             <s.ContentArea>
-              <Image width="60" height="60" type="" src={data.image} />
+              <Image width="60" height="60" type="" src={getParsedImageUrl(data.image)} />
               <s.FitnessTitle>{data.name}</s.FitnessTitle>
             </s.ContentArea>
             <s.IconArea>
               {props.add.some((item) => item.exerciseId === data.id) ? (
-                <IconSvg
-                  width="25"
-                  height="25"
-                  Ico={addOn}
-                  color="#ccff33"
-                  cursor="pointer"
-                  onClick={() => props.onAdd(data.id, data.name)}
-                />
+                <IconSvg width="25" height="25" Ico={addOn} color="#ccff33" cursor="pointer" />
               ) : (
-                <IconSvg
-                  width="25"
-                  height="25"
-                  Ico={addOff}
-                  color="#ccff33"
-                  cursor="pointer"
-                  onClick={() => props.onAdd(data.id, data.name)}
-                />
+                <IconSvg width="25" height="25" Ico={addOff} color="#ccff33" cursor="pointer" />
               )}
             </s.IconArea>
           </s.ListArea>

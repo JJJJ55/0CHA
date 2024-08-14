@@ -251,28 +251,32 @@ const HorizontalScroll: React.FC<HorizontalScrollProps> = ({ items }) => {
   return (
     <s.ScrollContainer>
       <s.SectionTitle children="추천 루틴" />
-      <s.ScrollArea ref={scrollWrapperRef}>
-        <s.Item onClick={() => navigate('/fitness/history/detail', { state: { id: items[0].id } })}>
-          <IconSvg Ico={img[0]} height="100%" width="100%" cursor="pointer" />
-          <Text1>{items[0]?.title}</Text1>
-        </s.Item>
-        <s.Item onClick={() => navigate('/fitness/history/detail', { state: { id: items[1].id } })}>
-          <IconSvg Ico={img[1]} height="100%" width="100%" cursor="pointer" />
-          <Text2>{items[1]?.title}</Text2>
-        </s.Item>
-        <s.Item onClick={() => navigate('/fitness/history/detail', { state: { id: items[2].id } })}>
-          <IconSvg Ico={img[2]} height="100%" width="100%" cursor="pointer" />
-          <Text3>{items[2]?.title}</Text3>
-        </s.Item>
-        <s.Item onClick={() => navigate('/fitness/history/detail', { state: { id: items[3].id } })}>
-          <IconSvg Ico={img[3]} height="100%" width="100%" cursor="pointer" />
-          <Text4>{items[3]?.title}</Text4>
-        </s.Item>
-        <s.Item onClick={() => navigate('/fitness/history/detail', { state: { id: items[4].id } })}>
-          <IconSvg Ico={img[4]} height="100%" width="100%" cursor="pointer" />
-          <Text5>{items[4]?.title}</Text5>
-        </s.Item>
-      </s.ScrollArea>
+      {items.length === 0 ? (
+        <Text children="목록이 없습니다." width="100%" margin="20px auto" display="block" />
+      ) : (
+        <s.ScrollArea ref={scrollWrapperRef}>
+          <s.Item onClick={() => navigate('/fitness/history/detail', { state: { id: items[0].id } })}>
+            <IconSvg Ico={img[0]} height="100%" width="100%" cursor="pointer" />
+            <Text1>{items[0]?.title}</Text1>
+          </s.Item>
+          <s.Item onClick={() => navigate('/fitness/history/detail', { state: { id: items[1].id } })}>
+            <IconSvg Ico={img[1]} height="100%" width="100%" cursor="pointer" />
+            <Text2>{items[1]?.title}</Text2>
+          </s.Item>
+          <s.Item onClick={() => navigate('/fitness/history/detail', { state: { id: items[2].id } })}>
+            <IconSvg Ico={img[2]} height="100%" width="100%" cursor="pointer" />
+            <Text3>{items[2]?.title}</Text3>
+          </s.Item>
+          <s.Item onClick={() => navigate('/fitness/history/detail', { state: { id: items[3].id } })}>
+            <IconSvg Ico={img[3]} height="100%" width="100%" cursor="pointer" />
+            <Text4>{items[3]?.title}</Text4>
+          </s.Item>
+          <s.Item onClick={() => navigate('/fitness/history/detail', { state: { id: items[4].id } })}>
+            <IconSvg Ico={img[4]} height="100%" width="100%" cursor="pointer" />
+            <Text5>{items[4]?.title}</Text5>
+          </s.Item>
+        </s.ScrollArea>
+      )}
     </s.ScrollContainer>
   );
 };

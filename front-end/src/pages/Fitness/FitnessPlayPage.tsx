@@ -10,7 +10,7 @@ import {
 } from '../../util/types/axios-fitness';
 import { useAppDispatch, useAppSelector } from '../../lib/hook/useReduxHook';
 import { pageActions } from '../../store/page';
-import { putFinishRoutine, putUpdateRoutine } from '../../lib/api/fitness-api';
+import { delRoutine, putFinishRoutine, putUpdateRoutine } from '../../lib/api/fitness-api';
 import FitnessPlayPlan from '../../components/Fitness/Detail/FitnessPlayPlan';
 import { fitnessActions, selectPlan, selectSave, selectTime, selectVolume } from '../../store/fitness';
 
@@ -30,27 +30,48 @@ const FitnessPlayPage = (): JSX.Element => {
   const plan = useAppSelector(selectPlan);
   let planTest = { ...plan };
   const locationState = useLocation().state;
-  // const historyData = (locationState?.data as RoutineListDetail) || planTest;
   const time = useAppSelector(selectTime);
   const volume = useAppSelector(selectVolume);
-  // console.log(historyData);
 
-  // Fallback to user-provided data if historyData is not available
-  // const data: CreateRoutine[] = locationState?.add || [];
-
-  // Initialize fitness based on historyData or map data to desired structure
-  const [fitness, setFitness] = useState<RoutineDetails[]>(
-    // historyData?.details || data.map((item) => ({ ...item, sequence: 0, sets: [] })),
-    // historyData?.details,
-    planTest.details,
-  );
+  const [fitness, setFitness] = useState<RoutineDetails[]>(planTest.details);
 
   useEffect(() => {
     save();
   }, [fitness]);
 
+  const handleMoveMain = () => {
+    dispatch(fitnessActions.toggleRest(false));
+    navigate('/main');
+  };
+
   // 운동 삭제
-  const handleDeleteExercise = (index: number): void => {
+  const handleDeleteExercise = async (index: number) => {
+    if (fitness.length === 1) {
+      if (window.confirm('이 운동을 삭제하시면 오늘의 운동은 취소됩니다. 삭제하시겠습니까?')) {
+        await delRoutine(
+          planTest.id!,
+          (resp) => {
+            alert('취소되었습니다.');
+            dispatch(pageActions.toogleIsPlay(false));
+            dispatch(fitnessActions.setFinish());
+          },
+          (error) => {
+            alert('잠시 후 다시 시도해주세요.');
+          },
+        );
+        navigate('/main');
+      }
+      return;
+    }
+    const exerciseToDelete = fitness[index];
+
+    // 완료된 세트가 있는지 확인
+    const hasCompletedSet = exerciseToDelete.sets.some((set) => set.complete);
+
+    if (hasCompletedSet) {
+      alert('완료된 세트가 있어 삭제할 수 없습니다.');
+      return;
+    }
     const updatedFitness = fitness.filter((_, idx) => idx !== index);
     setFitness(updatedFitness);
   };
@@ -84,6 +105,22 @@ const FitnessPlayPage = (): JSX.Element => {
   const dispatch = useAppDispatch();
 
   const handleFinish = (t: number) => {
+    for (const exercise of fitness) {
+      if (exercise.sets.length === 0) {
+        alert(`${exercise.exerciseName}의 세트를 설정해주세요.`);
+        return;
+      }
+      for (const set of exercise.sets) {
+        if (set.count === '' || set.count <= 0) {
+          alert(`${exercise.exerciseName}의 세트에 유효한 횟수를 입력해주세요.`);
+          return;
+        }
+        if (set.weight === '' || set.weight < 0) {
+          alert(`${exercise.exerciseName}의 세트에 유효한 무게를 입력해주세요.`);
+          return;
+        }
+      }
+    }
     const param: axiosCreateRoutine = {
       title: planTest.title,
       dueDate: planTest.dueDate,
@@ -117,7 +154,7 @@ const FitnessPlayPage = (): JSX.Element => {
 
   return (
     <s.Container>
-      <Header text="운동" onBack={() => navigate('/main')} />
+      <Header text="운동" onBack={handleMoveMain} />
       <s.MainArea>
         {fitness.map((exercise, index) => (
           <div key={index}>

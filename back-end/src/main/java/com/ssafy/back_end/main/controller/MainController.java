@@ -262,8 +262,8 @@ public class MainController {
 
     @Operation(summary = "알람 토큰 저장")
     @PostMapping("/notifications")
-    public ResponseEntity<?> updateFcmToken(@RequestParam int userId, @RequestParam String fcmToken) {
-        mainService.updateFcmToken(userId, fcmToken);
+    public ResponseEntity<?> updateFcmToken(@RequestBody UserInfoDto userInfoDto) {
+        mainService.updateFcmToken(userInfoDto.getId(),userInfoDto.getFcmToken());
         return ResponseEntity.ok("FCM 토큰 발급완료");
     }
 }

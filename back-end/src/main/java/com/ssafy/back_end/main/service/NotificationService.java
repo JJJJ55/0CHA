@@ -43,6 +43,7 @@ public class NotificationService {
 
         String title = "팔로우";
         String body = userA.getNickname() + " 유저가 당신을 팔로우 했습니다.";
+        System.out.println("### "  + title + " " + body + " " + targetToken);
         fcmService.sendNotification(targetToken, title, body);
     }
 

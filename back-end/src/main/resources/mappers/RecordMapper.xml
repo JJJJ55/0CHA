@@ -42,26 +42,32 @@
     <select id="getRecentExerciseRecords" parameterType="int" resultType="com.ssafy.back_end.record.model.RecordDto">
         SELECT
             r.completed_at AS date,
-        MAX(CASE WHEN e.name = 'benchpress' THEN rs.weight * (1 + (rs.count / 30)) ELSE 0 END) AS benchpress, -- 벤치프레스 1RM 계산
-        MAX(CASE WHEN e.name = 'squat' THEN rs.weight * (1 + (rs.count / 30)) ELSE 0 END) AS squart, -- 스쿼트 1RM 계산
-        MAX(CASE WHEN e.name = 'deadlift' THEN rs.weight * (1 + (rs.count / 30)) ELSE 0 END) AS deadlift, -- 데드리프트 1RM 계산
-        SUM(rs.weight * rs.count) AS totalVolume, -- 총 운동량
-        r.sum_time AS totalTime -- 총 운동 시간
+    SUM(CASE WHEN e.id = 163 THEN rs.weight * (1 + (rs.count / 30)) ELSE 0 END) AS benchpress,
+    SUM(CASE WHEN e.id = 27 THEN rs.weight * (1 + (rs.count / 30)) ELSE 0 END) AS squart,
+    SUM(CASE WHEN e.id = 103 THEN rs.weight * (1 + (rs.count / 30)) ELSE 0 END) AS deadlift,
+    SUM(rs.weight * rs.count) AS totalVolume,
+    r.sum_time AS totalTime
         FROM
             routines r
-            JOIN routine_details rd ON r.id = rd.routine_id
-            JOIN routine_sets rs ON rd.id = rs.routine_detail_id
-            JOIN exercise e ON rd.exercise_id = e.id -- 운동 테이블과 조인
+            JOIN
+            routine_details rd ON r.id = rd.routine_id
+            JOIN
+            routine_sets rs ON rd.id = rs.routine_detail_id
+            JOIN
+            exercises e ON rd.exercise_id = e.id
         WHERE
             r.user_id = #{userId}
-
+          AND r.is_complete = TRUE
+          AND r.completed_at IS NOT NULL
+          AND rs.is_complete = TRUE
+          AND e.id IN (27, 103, 163)
         GROUP BY
             r.completed_at, r.sum_time
         ORDER BY
             r.completed_at DESC
-            LIMIT 5
+            LIMIT 5;
     </select>
-    
+
     <select id="getUserRoutines" parameterType="int" resultType="com.ssafy.back_end.record.model.RoutineListDto">
         SELECT
             r.id AS routineId,
@@ -72,5 +78,8 @@
             routines r
         WHERE
             r.user_id = #{userId}
+        ORDER BY
+            is_like DESC,
+            due_date ASC
     </select>
 </mapper>

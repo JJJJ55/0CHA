@@ -42,8 +42,8 @@ export const logout = async (success: (response: any) => void, fail: (error: Axi
 // AT 재발급 고려중(axios intercept에 적용)
 
 // 카카오 소셜로그인
-export const MoveKaKao = async (path: string) => {
-  await social.get(`/oauth/${path}`);
+export const MoveKaKao = async (path: string, success: (response: any) => void, fail: (error: AxiosError) => void) => {
+  await local.get(`/oauth/${path}`).then(success).catch(fail);
 };
 // 카카오 소셜로그인
 export const kakao = async (code: string, success: (response: any) => void, fail: (error: AxiosError) => void) => {

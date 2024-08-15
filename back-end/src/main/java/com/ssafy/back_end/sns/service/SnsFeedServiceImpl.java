@@ -176,4 +176,9 @@ public class SnsFeedServiceImpl implements SnsFeedService {
             throw new IllegalArgumentException("At least one image is required.");
         }
     }
+
+    @Override
+    public int getUserIdByFeedId(int feedId) {
+        return snsFeedMapper.getUserIdByFeedId(feedId);
+    }
 }

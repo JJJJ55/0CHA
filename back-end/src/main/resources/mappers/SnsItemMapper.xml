@@ -212,4 +212,11 @@
         SET is_sold = 1
         WHERE id = #{id};
     </update>
+
+    <select id="getUserIdByItemId">
+        SELECT user_id
+        FROM items
+        WHERE id = #{itemId};
+    </select>
+
 </mapper>

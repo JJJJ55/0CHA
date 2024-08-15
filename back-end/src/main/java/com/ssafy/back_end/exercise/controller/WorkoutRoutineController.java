@@ -59,10 +59,8 @@ public class WorkoutRoutineController {
 
     @Operation(summary = "특정 루틴의 상세 정보 조회", description = "루틴 ID를 사용하여 특정 루틴의 상세 정보를 조회합니다.")
     @GetMapping("/{routine-id}")
-    public ResponseEntity<?> getRoutineById(HttpServletRequest request, @PathVariable("routine-id") int routineId) {
-        int userId = (Integer) request.getAttribute("userId");
-
-        RoutineDto routine = workoutRoutineService.getRoutineById(routineId, userId);
+    public ResponseEntity<?> getRoutineById(@PathVariable("routine-id") int routineId) {
+        RoutineDto routine = workoutRoutineService.getRoutineById(routineId);
         if (routine != null) {
             return ResponseEntity.ok(routine);
         } else {
@@ -88,7 +86,7 @@ public class WorkoutRoutineController {
         } else {
             routineDto.setId(routineId);
             // 루틴이 존재하는지 확인
-            RoutineDto existingRoutine = workoutRoutineService.getRoutineById(routineId, userId);
+            RoutineDto existingRoutine = workoutRoutineService.getRoutineById(routineId);
             if (existingRoutine == null) {
                 // 존재하지 않는 루틴이면 createdAt 필드를 설정
                 routineDto.setCreatedAt(Timestamp.valueOf(now));

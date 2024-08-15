@@ -23,7 +23,6 @@ const FitnessRoutineDetatilPage = (): JSX.Element => {
   const [details, setDetails] = useState<RoutineDetails[]>([]);
   const id = useLocation().state?.id;
   const handleClickMove = (): void => {
-    // console.log(routine);
     navigate('../../plan', { state: { data: routine } });
   };
 
@@ -33,7 +32,6 @@ const FitnessRoutineDetatilPage = (): JSX.Element => {
       (resp) => {
         setRoutine(resp.data);
         setDetails(resp.data.details);
-        console.log(resp.data);
       },
       (error) => {},
     );

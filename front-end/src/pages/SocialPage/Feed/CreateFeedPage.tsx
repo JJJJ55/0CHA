@@ -117,9 +117,7 @@ const CreateFeedPage = (): JSX.Element => {
     }
   };
 
-  useEffect(() => {
-    console.log(image);
-  }, [image]);
+  useEffect(() => {}, [image]);
 
   // 내 루틴 가져오기
   const [routine, setRoutine] = useState<routineData>();
@@ -139,9 +137,7 @@ const CreateFeedPage = (): JSX.Element => {
     getRoutineData();
   }, []);
 
-  useEffect(() => {
-    console.log(routine);
-  }, [routine]);
+  useEffect(() => {}, [routine]);
 
   // 피드 내용 작성
   const [contentValue, setContentValue] = useState('');
@@ -165,8 +161,6 @@ const CreateFeedPage = (): JSX.Element => {
       await SnsFeedWrite(
         formData,
         (resp) => {
-          console.log(resp.data);
-          console.log('글작성성공');
           handleMovePage();
         },
         (error) => {

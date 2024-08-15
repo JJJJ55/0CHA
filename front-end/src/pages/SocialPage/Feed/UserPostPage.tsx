@@ -144,7 +144,6 @@ const UserPostPage = (): JSX.Element => {
           setUserData(resp.data);
         },
         (error) => {
-          console.log(error);
           navigate('*'); //잘못된 접근입니다. (유저 없을때)
         },
       );
@@ -178,7 +177,6 @@ const UserPostPage = (): JSX.Element => {
             setMarketData([]);
           } else {
             setMarketData(resp.data);
-            console.log(resp.data, '마켓데이터예요');
           }
         },
         (error) => {
@@ -194,16 +192,13 @@ const UserPostPage = (): JSX.Element => {
     getUserPageMarket();
   }, [feedUserId]);
 
-  useEffect(() => {
-    console.log(userData);
-  }, [userData]);
+  useEffect(() => {}, [userData]);
 
   const navigate = useNavigate();
 
   const handleThumbnailClick = (feedId: number) => {
     dispatch(pageActions.changeSnsType('feed'));
     navigate(`/sns/feed`, { state: { targetFeedId: feedId, targetUserId: feedUserId } });
-    console.log(feedId, 'selected feed id');
   };
 
   // 복현우
@@ -211,7 +206,6 @@ const UserPostPage = (): JSX.Element => {
   const [showItemModal, setShowItemModal] = useState(false);
 
   const toggleMarket = (itemId?: number): void => {
-    console.log(itemId);
     if (itemId !== undefined) {
       setSelectedItem(itemId); // 선택된 아이템 설정
       setShowItemModal(true);
@@ -228,10 +222,7 @@ const UserPostPage = (): JSX.Element => {
   };
 
   // 아이템 리스트의 특정 아이템 업데이트 함수
-  const handleItemUpdated = (updatedItem: Item) => {
-    console.log(`업데이트!`);
-    console.log(updatedItem);
-  };
+  const handleItemUpdated = (updatedItem: Item) => {};
 
   return (
     <>

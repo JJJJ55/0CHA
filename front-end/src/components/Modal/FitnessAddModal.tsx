@@ -69,17 +69,6 @@ const FitnessAddModal = (props: FitnessListProps): JSX.Element => {
     navigate('detail', { state: { id } });
   };
 
-  // const handleClickAdd = (id: number) => {
-  //   setAdd((prevAdd) => (prevAdd.includes(id) ? prevAdd.filter((itemId) => itemId !== id) : [...prevAdd, id]));
-  // };
-
-  // console.log(add);
-
-  // // 데이터가 비어있는지 확인
-  // if (!props.data || props.data.length === 0) {
-  //   return <div>No data available</div>;
-  // } else {
-  // console.log('넘어온 데이터 : ' + props.data[1].category);
   return (
     <ReactModal
       // isOpen={props.open}

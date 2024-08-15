@@ -152,8 +152,6 @@ const MarketPage = (): JSX.Element => {
   useModalExitHook();
 
   const getItemList = async () => {
-    console.log('광역 자치단체:', location1);
-    console.log('기초 자치단체:', location2);
     const param = {
       userId: 0,
       page: page,
@@ -171,12 +169,9 @@ const MarketPage = (): JSX.Element => {
         } else {
           setItems(resp.data.items); // 서버에서 받은 데이터를 상태로 설정
           setTotalPages(Math.ceil(resp.data.size / limit)); // 전체 페이지 수 설정
-          console.log(resp.data);
-          console.log(resp);
         }
       },
       (error) => {
-        console.log(error);
         setItems([]);
       },
     );
@@ -184,8 +179,6 @@ const MarketPage = (): JSX.Element => {
 
   // 아이템 리스트의 특정 아이템 업데이트 함수
   const handleItemUpdated = (updatedItem: Item) => {
-    console.log(`업데이트!`);
-    console.log(updatedItem);
     setItems((prevItems) => prevItems.map((item) => (item.id === updatedItem.id ? updatedItem : item)));
   };
 

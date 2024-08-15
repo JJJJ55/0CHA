@@ -30,7 +30,7 @@ export const getFitnessMomentum = async (
   success: (response: any) => void,
   fail: (error: AxiosError) => void,
 ) => {
-  await jwt.get(`/record/exercises/${exerciseId}/records`).then(success).catch(fail);
+  await jwt.get(`/workout/exercises/${exerciseId}/records`).then(success).catch(fail);
 };
 
 // 운동찜

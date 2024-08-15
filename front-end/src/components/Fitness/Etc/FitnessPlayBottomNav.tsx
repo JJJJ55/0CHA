@@ -151,7 +151,7 @@ import styled from 'styled-components';
 import Button from '../../Common/Button';
 import Text from '../../Common/Text';
 import { useAppDispatch, useAppSelector } from '../../../lib/hook/useReduxHook';
-import { fitnessActions, selectRest, selectTime } from '../../../store/fitness';
+import { fitnessActions, selectRest, selectRestStack, selectTime } from '../../../store/fitness';
 
 const s = {
   Container: styled.div`
@@ -188,6 +188,7 @@ const FitnessPlayBottomNav = (props: PlayProps): JSX.Element => {
   const dispatch = useAppDispatch();
   const time = useAppSelector(selectTime);
   const IsRest = useAppSelector(selectRest);
+  const IsRestStack = useAppSelector(selectRestStack);
 
   // 화면에 표시할 시간 상태
   const [displaySeconds, setDisplaySeconds] = useState(0);
@@ -213,6 +214,7 @@ const FitnessPlayBottomNav = (props: PlayProps): JSX.Element => {
       setRestTime(60); // 새로운 쉬는 시간 설정
       intervalIdRef2.current = window.setInterval(() => {
         setRestTime((prevSeconds) => {
+          console.log('쉬는시간');
           if (prevSeconds <= 1) {
             clearInterval(intervalIdRef2.current as number);
             dispatch(fitnessActions.toggleRest(false));
@@ -231,6 +233,12 @@ const FitnessPlayBottomNav = (props: PlayProps): JSX.Element => {
       }
     };
   }, [IsRest, dispatch]);
+
+  useEffect(() => {
+    if (IsRest) {
+      setRestTime(60);
+    }
+  }, [IsRestStack, dispatch]);
 
   // 운동 시간 타이머 시작
   useEffect(() => {

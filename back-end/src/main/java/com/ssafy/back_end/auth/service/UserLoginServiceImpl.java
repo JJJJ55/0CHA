@@ -16,10 +16,7 @@ public class UserLoginServiceImpl implements UserLoginService {
 
     @Override
     public UserDto login(UserDto userDto) {
-        UserDto user = UserDto.builder()
-                .email(userDto.getEmail())
-                .password(userDto.getPassword())
-                .build();
+        UserDto user = UserDto.builder().email(userDto.getEmail()).password(userDto.getPassword()).build();
         return userLoginMapper.login(user);
     }
 
@@ -42,4 +39,18 @@ public class UserLoginServiceImpl implements UserLoginService {
     public String getRefreshTokenByUserId(int userId) {
         return userLoginMapper.getRefreshTokenByUserId(userId);
     }
+
+//    @Override
+//    public String social(UserDto userDto) {
+//
+//    }
+//
+//    @Override
+//    public String socalToken(UserDto userDto) {
+//
+//    }
+
 }
+
+
+

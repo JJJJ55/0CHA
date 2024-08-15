@@ -4,21 +4,21 @@
 <mapper namespace="com.ssafy.back_end.auth.mapper.UserRegisterMapper">
 
     <insert id="register" parameterType="UserDto" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO users (email, password, name, nickname, phone, birth)
-        VALUES (#{email}, #{password}, #{name}, #{nickname}, #{phone}, #{birth});
+        INSERT INTO users (email, password, name, nickname, phone, birth, profile_image)
+        VALUES (#{email}, #{password}, #{name}, #{nickname}, #{phone}, #{birth}, "/home/ubuntu/images/profile/0-0-.png");
     </insert>
 
     <update id="userInfo" parameterType="UserDto">
         UPDATE users
-        SET gender = #{gender},
-            height = #{height},
+        SET gender    = #{gender},
+            height      = #{height},
             weight = #{weight},
             district = #{district},
             si_gun_gu = #{siGunGu}
         WHERE id = #{id};
     </update>
 
-    <select id="checkEmail" parameterType="string" resultType="int">
+    <select id="checkEmail" parameterType="UserDto" resultType="int">
         SELECT COUNT(*)
         FROM users
         WHERE email = #{email};
@@ -35,5 +35,4 @@
         FROM users
         WHERE email = #{email};
     </select>
-
 </mapper>

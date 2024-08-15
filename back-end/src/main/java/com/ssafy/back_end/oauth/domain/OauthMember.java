@@ -1,9 +1,9 @@
 package com.ssafy.back_end.oauth.domain;
 
-import static lombok.AccessLevel.PROTECTED;
-
 import jakarta.persistence.*;
 import lombok.*;
+
+import static lombok.AccessLevel.PROTECTED;
 
 @Entity
 @Builder
@@ -69,14 +69,5 @@ public class OauthMember {
     public int userId() {
         return userId;
     }
-
-    // Getter 및 Setter
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
 }
+

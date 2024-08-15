@@ -4,7 +4,7 @@ import { getAccessToken, getRefreshToken, removeTokens, setAccessToken } from '.
 
 export const localAxios = () => {
   const instance: Axios = axios.create({
-    baseURL: '/proxy',
+    baseURL: process.env.REACT_APP_BASE_URL,
     withCredentials: true,
   });
 
@@ -172,7 +172,7 @@ export const localAxios = () => {
 
 export const publicAxios = () => {
   const publicAxios: Axios = axios.create({
-    baseURL: '/proxy',
+    baseURL: process.env.REACT_APP_BASE_URL,
     withCredentials: true,
   });
 
@@ -184,7 +184,7 @@ export const publicAxios = () => {
 
 export const wsAxios = () => {
   const instance: Axios = axios.create({
-    baseURL: '/proxy',
+    baseURL: process.env.REACT_APP_BASE_URL,
     withCredentials: true,
   });
 

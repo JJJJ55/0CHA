@@ -114,7 +114,7 @@ const LoginPage = (): JSX.Element => {
     //     alert(error);
     //   },
     // );
-    window.location.href = 'https://13.124.57.45/api/oauth/kakao';
+    window.location.href = 'https://i11b310.p.ssafy.io/api/oauth/kakao';
   };
 
   return (
@@ -185,12 +185,12 @@ const LoginPage = (): JSX.Element => {
             cursor="pointer"
           />
         </s.TextBtnArea>
-        <s.SnsText>SNS 로그인</s.SnsText>
+        {/* <s.SnsText>SNS 로그인</s.SnsText>
         <s.snsArea>
           <IconSvg width="40" height="40" Ico={kakao} cursor="pointer" onClick={() => handleMoveSocial('kakao')} />
           <IconSvg width="40" height="40" Ico={google} cursor="pointer" onClick={() => handleMoveSocial('google')} />
           <IconSvg width="40" height="40" Ico={git} cursor="pointer" onClick={() => handleMoveSocial('github')} />
-        </s.snsArea>
+        </s.snsArea> */}
       </s.LoginArea>
     </s.Container>
   );

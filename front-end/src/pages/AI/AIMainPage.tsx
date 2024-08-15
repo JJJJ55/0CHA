@@ -175,10 +175,8 @@ const AIMainPage: React.FC = () => {
 
     try {
       const loadedModel = await tmPose.load(modelURL, metadataURL); // 모델 로드
-      console.log('Model loaded:', loadedModel);
 
       setModel(loadedModel); // 모델 상태 업데이트
-      console.log('Model loaded successfully'); // 성공적으로 로드되었음을 콘솔에 출력
     } catch (error) {
       console.error('Error loading the model:', error); // 모델 로드 실패 시 에러 출력
     }
@@ -248,7 +246,6 @@ const AIMainPage: React.FC = () => {
         return;
       }
       if (!canvasRef.current || !newWebcam || !model) {
-        console.log('Webcam, canvas, or model is not available');
         return;
       }
 
@@ -380,7 +377,6 @@ const AIMainPage: React.FC = () => {
           stop('modelNotSupported');
           return;
         }
-        console.log(`Drawing on canvas with pose ${status}`);
       }
 
       setRequestID(requestAnimationFrame(loop)); // 다음 프레임을 요청
@@ -475,7 +471,6 @@ const AIMainPage: React.FC = () => {
         updateResults('바벨을 배쪽으로 뻗으셨습니다.', false);
       }
     } else {
-      console.log('추후 제공 예정입니다');
     }
     prevStatusRef.current = status; // 현재 상태를 이전 상태로 업데이트
   }, [status]);
@@ -489,7 +484,6 @@ const AIMainPage: React.FC = () => {
   // 세션을 종료하는 함수
   const stop = (reason?: string) => {
     if (webcam) {
-      console.log('웹캠 중지');
       try {
         webcam.stop(); // 웹캠 중지
         setCameraStarted(false);
@@ -503,7 +497,6 @@ const AIMainPage: React.FC = () => {
     }
 
     if (requestID) {
-      console.log('애니메이션 요청 프레임 취소');
       window.cancelAnimationFrame(requestID); // 애니메이션 프레임 요청 취소
     }
 

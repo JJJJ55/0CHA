@@ -83,7 +83,6 @@ const FitnessAddListModal = (props: FitnessPlanModalProps): JSX.Element => {
       (error) => {
         setFitness([]);
         setFilteredFitness([]);
-        console.error(error);
       },
     );
   }, [props.open, addList]);

@@ -15,13 +15,14 @@ interface FitnessState {
   time: number;
   volume: number;
   rest: boolean;
+  restStack: boolean;
   isSave: boolean;
   addList: CreateRoutine[];
 }
 
 const initialState: FitnessState = {
   type: '전체',
-  rmType: '스쿼트',
+  rmType: 'squat',
   plan: {
     id: 0,
     title: '',
@@ -33,6 +34,7 @@ const initialState: FitnessState = {
   time: 0,
   volume: 0,
   rest: false,
+  restStack: false,
   isSave: false,
   addList: [],
 };
@@ -74,6 +76,9 @@ export const fitnessSlice = createSlice({
     toggleRest(state, action: PayloadAction<boolean>) {
       state.rest = action.payload;
     },
+    toggleRestStack(state, action: PayloadAction<boolean>) {
+      state.restStack = action.payload;
+    },
     addVolume(state, action: PayloadAction<number>) {
       state.volume += action.payload;
     },
@@ -113,6 +118,7 @@ export const selectFitnessType = (state: RootState) => state.fitness.type;
 export const selectRmType = (state: RootState) => state.fitness.rmType;
 export const selectPlan = (state: RootState) => state.fitness.plan;
 export const selectRest = (state: RootState) => state.fitness.rest;
+export const selectRestStack = (state: RootState) => state.fitness.restStack;
 export const selectTime = (state: RootState) => state.fitness.time;
 export const selectVolume = (state: RootState) => state.fitness.volume;
 export const selectSave = (state: RootState) => state.fitness.isSave;

@@ -12,7 +12,7 @@ import BottomNav from '../../components/Common/BottomNav';
 import Button from '../../components/Common/Button';
 import { useBottomNavHook } from '../../lib/hook/useBottomNavHook';
 import { useNavigate } from 'react-router';
-import { getMainRoutineAll, getMyInfo, getMyRoutine } from '../../lib/api/main-api';
+import { getMainRoutineAll, getMyInfo, getMyRoutine, postFcmToken } from '../../lib/api/main-api';
 import { MainMyRoutine, User } from '../../util/types/axios-main';
 import { mainPageRoutine } from '../../util/types/axios-fitness';
 import { useAppSelector } from '../../lib/hook/useReduxHook';
@@ -287,6 +287,7 @@ const MainPage = (): JSX.Element => {
   const isPlay = useAppSelector(selectIsPlay);
   const [user, setUser] = useState<User>();
   const [main, setMain] = useState<mainPageRoutine[]>([]);
+  const [token, setToken] = useState<string>('');
   const [mainMyRoutine, setMainMyRoutine] = useState<MainMyRoutine[]>([]);
   useEffect(() => {
     getMyInfo(
@@ -317,9 +318,37 @@ const MainPage = (): JSX.Element => {
         console.log(error);
       },
     );
-    requestPermission();
   }, []);
+
+  useEffect(() => {
+    handleToken();
+  }, [user?.id]);
+
   const basicUrl = 'https://i11b310.p.ssafy.io/images/';
+
+  const handleToken = async () => {
+    const token = await requestPermission();
+
+    if (token && user?.id) {
+      const param = {
+        id: user.id,
+        fcmToken: token,
+      };
+
+      await postFcmToken(
+        param,
+        (resp) => {
+          console.log('토큰 전송 성공:', resp.data);
+        },
+        (error) => {
+          console.log('토큰 전송 실패: 토큰 또는 사용자 ID가 없습니다.');
+        },
+      );
+    } else {
+      console.log(token);
+      console.log(user?.id);
+    }
+  };
 
   // 이미지 경로를 파싱하여 basicUrl과 결합하는 함수
   const getParsedImageUrl = (imagePath?: string) => {

@@ -47,6 +47,7 @@ import TestPlanSetPage from './pages/Fitness/TestPlanSetPage';
 import UpdateItemPage from './pages/SocialPage/Market/UpdateItemPage';
 import UpdateFeedPage from './pages/SocialPage/Feed/UpdateFeedPage ';
 import UserFeedPage from './pages/SocialPage/Feed/UserFeedPage';
+import SocialLoginPage from './pages/SocialLoginPage';
 
 const s = {
   Background: styled.section`
@@ -91,7 +92,8 @@ function App() {
             <Routes>
               <Route element={<PublicRoute />}>
                 <Route path="/" element={<SplashPage />} />
-                <Route path="/oauth/*" element={<Navigate to="/oauth/kakao" replace />} />
+                <Route path="/socialLogin*" element={<SocialLoginPage />} />
+                {/* <Route path="/oauth/*" element={<Navigate to="/oauth/kakao" replace />} /> */}
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/signup">
                   {isSign ? <Route index element={<PlusInfoPage />} /> : <Route index element={<SignUpPage />} />}

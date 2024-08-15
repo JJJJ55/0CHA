@@ -108,14 +108,12 @@ const FitnessPlanSetPage = (): JSX.Element => {
       return exercise;
     });
     setFitness(updatedFitness);
-    console.log('Updated fitness:', updatedFitness); // 디버깅 로그
   };
 
   const handleSaveRoutine = async () => {
     const day = new Date();
     const today =
       day.getFullYear() + '-' + ('0' + (1 + day.getMonth())).slice(-2) + '-' + ('0' + day.getDate()).slice(-2);
-    console.log(today);
     if (date === '') {
       alert('제목과 날짜를 선택해주세요.');
     } else {
@@ -131,7 +129,6 @@ const FitnessPlanSetPage = (): JSX.Element => {
         },
         (error) => {
           alert('저장 중 오류');
-          console.log(error);
         },
       );
     }
@@ -142,21 +139,16 @@ const FitnessPlanSetPage = (): JSX.Element => {
     const day = new Date();
     const today =
       day.getFullYear() + '-' + ('0' + (1 + day.getMonth())).slice(-2) + '-' + ('0' + day.getDate()).slice(-2);
-    console.log(today);
     if (date === '') {
       alert('제목과 날짜를 선택해주세요.');
     } else if (date !== today) {
       alert('운동시작은 당일만 가능합니다.');
     } else {
-      console.log('Current Fitness Data:', fitness); // 콘솔에 현재 데이터를 출력
-
       const param: axiosCreateRoutine = {
         title: title,
         dueDate: date,
         details: fitness,
       };
-
-      console.log(param);
 
       await putNewRoutine(
         param,

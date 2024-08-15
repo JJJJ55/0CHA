@@ -42,7 +42,6 @@ interface CommentProps {
 const Conversation = (props: CommentProps): JSX.Element => {
   const { profileImage, nickname, lastMessage, roomId, userId } = props;
 
-  console.log(userId);
   const navigate = useNavigate();
 
   const handleMovePage = (): void => {

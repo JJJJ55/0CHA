@@ -39,16 +39,26 @@ const s = {
 const RecordFitnessChartPage = (): JSX.Element => {
   const [fitnessData, setFitnessData] = useState<FitnessData[]>([]);
   const [rmData, setRmData] = useState<RmDataType[]>([]);
+  const [squat, setSquat] = useState<RmDataType[]>([]);
+  const [dead, setDead] = useState<RmDataType[]>([]);
+  const [bench, setBench] = useState<RmDataType[]>([]);
   const [separatedData, setSeparatedData] = useState({
     squat: [] as number[],
     dead: [] as number[],
     bench: [] as number[],
   });
+  const [separatedDataDate, setSeparatedDataDate] = useState({
+    squatDate: [] as string[],
+    deadDate: [] as string[],
+    benchDate: [] as string[],
+  });
 
   // 현재 선택된 데이터 유형을 저장하는 상태
   const [compositionChart, setcompositionChart] = useState<string>('squat');
+  const [compositionChartDate, setcompositionChartDate] = useState<string>('squatDate');
   // 선택된 데이터에 따라 차트 데이터 설정
   const chartData1 = separatedData[compositionChart as keyof typeof separatedData];
+  const chartDataDate1 = separatedDataDate[compositionChartDate as keyof typeof separatedDataDate];
 
   const [rmDates, setRmDates] = useState<string[]>([]);
   const [dates, setDates] = useState<string[]>([]);
@@ -57,11 +67,32 @@ const RecordFitnessChartPage = (): JSX.Element => {
 
   useEffect(() => {
     getRm(
+      27,
       (resp) => {
-        setRmData(resp.data);
+        setSquat(resp.data);
       },
       (error) => {
-        setRmData([]);
+        setSquat([]);
+        alert('잠시후 다시 시도해주세요.');
+      },
+    );
+    getRm(
+      103,
+      (resp) => {
+        setDead(resp.data);
+      },
+      (error) => {
+        setDead([]);
+        alert('잠시후 다시 시도해주세요.');
+      },
+    );
+    getRm(
+      163,
+      (resp) => {
+        setBench(resp.data);
+      },
+      (error) => {
+        setBench([]);
         alert('잠시후 다시 시도해주세요.');
       },
     );
@@ -87,20 +118,35 @@ const RecordFitnessChartPage = (): JSX.Element => {
       squat: [] as number[],
       dead: [] as number[],
       bench: [] as number[],
+      squatDate: [] as string[],
+      deadDate: [] as string[],
+      benchDate: [] as string[],
     };
-    let date: string[] = [];
+    const newSeparatedDataDate = {
+      squatDate: [] as string[],
+      deadDate: [] as string[],
+      benchDate: [] as string[],
+    };
 
-    Array.isArray(rmData) &&
-      rmData.forEach((rm) => {
-        if (rm.squart !== undefined) newSeparatedData.squat.push(rm.squart);
-        if (rm.deadlift !== undefined) newSeparatedData.dead.push(rm.deadlift);
-        if (rm.benchpress !== undefined) newSeparatedData.bench.push(rm.benchpress);
-        if (rm.date !== undefined) date.push(rm.date);
+    Array.isArray(squat) &&
+      squat.forEach((rm) => {
+        if (rm.oneRepMax !== undefined) newSeparatedData.squat.push(rm.oneRepMax);
+        if (rm.date !== undefined) newSeparatedDataDate.squatDate.push(rm.date);
+      });
+    Array.isArray(dead) &&
+      dead.forEach((rm) => {
+        if (rm.oneRepMax !== undefined) newSeparatedData.dead.push(rm.oneRepMax);
+        if (rm.date !== undefined) newSeparatedDataDate.deadDate.push(rm.date);
+      });
+    Array.isArray(bench) &&
+      bench.forEach((rm) => {
+        if (rm.oneRepMax !== undefined) newSeparatedData.bench.push(rm.oneRepMax);
+        if (rm.date !== undefined) newSeparatedDataDate.benchDate.push(rm.date);
       });
 
     setSeparatedData(newSeparatedData);
-    setRmDates(date);
-  }, [rmData]);
+    setSeparatedDataDate(newSeparatedDataDate);
+  }, [squat, dead, bench]);
 
   useEffect(() => {
     setDates(fitnessData.map((data) => data.date));
@@ -113,30 +159,45 @@ const RecordFitnessChartPage = (): JSX.Element => {
   const handleButtonClick = (dataType: string) => {
     dispatch(fitnessActions.changeRmType(dataType));
     setcompositionChart(dataType);
+    setcompositionChartDate(dataType + 'Date');
   };
 
   const getColor = (mode: string) => {
     return rmType === mode ? '#ccff33' : undefined;
   };
 
-  console.log(totalTimes);
   return (
     <s.Container>
       <Header text="운동 기록" />
       <s.MainArea>
         <Text children="1RM" width="90%" bold="700" color="textColor" size="16px" display="block" margin="20px auto" />
-        <Chart labels={rmDates} datas={chartData1} />
-        <s.TextBtnArea>
-          <s.Btn onClick={() => handleButtonClick('squat')} color={getColor('squat')}>
-            스쿼트
-          </s.Btn>
-          <s.Btn onClick={() => handleButtonClick('dead')} color={getColor('dead')}>
-            데드리프트
-          </s.Btn>
-          <s.Btn onClick={() => handleButtonClick('bench')} color={getColor('bench')}>
-            벤치프레스
-          </s.Btn>
-        </s.TextBtnArea>
+        {chartData1.length === 0 ? (
+          <Text
+            children="데이터가 존재하지 않습니다."
+            width="90%"
+            bold="700"
+            color="textColor"
+            size="16px"
+            display="block"
+            margin="20px auto"
+          />
+        ) : (
+          <>
+            <Chart labels={chartDataDate1} datas={chartData1} />
+            <s.TextBtnArea>
+              <s.Btn onClick={() => handleButtonClick('squat')} color={getColor('squat')}>
+                스쿼트
+              </s.Btn>
+              <s.Btn onClick={() => handleButtonClick('dead')} color={getColor('dead')}>
+                데드리프트
+              </s.Btn>
+              <s.Btn onClick={() => handleButtonClick('bench')} color={getColor('bench')}>
+                벤치프레스
+              </s.Btn>
+            </s.TextBtnArea>
+          </>
+        )}
+
         <Text
           children="운동량"
           width="90%"

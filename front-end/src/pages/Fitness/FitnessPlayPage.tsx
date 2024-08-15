@@ -86,7 +86,6 @@ const FitnessPlayPage = (): JSX.Element => {
       return exercise;
     });
     setFitness(updatedFitness);
-    console.log('Updated fitness:', updatedFitness); // 디버깅 로그
   };
 
   const save = () => {
@@ -129,7 +128,6 @@ const FitnessPlayPage = (): JSX.Element => {
       sumVolume: volume,
       details: fitness,
     };
-    console.log(param);
     putUpdateRoutine(
       planTest.id!,
       param,

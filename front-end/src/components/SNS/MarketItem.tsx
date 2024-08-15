@@ -107,14 +107,12 @@ const MarketItem = (props: MarketItemProps): JSX.Element => {
   const [likeCount, setLikeCount] = useState(itemLike); // 좋아요 수 상태 추가
 
   const handleLike = async (id: number, event: React.MouseEvent<HTMLDivElement>) => {
-    console.log(like);
     event.stopPropagation(); // 부모 요소로의 이벤트 버블링을 막음
     if (like) {
       // 이미 좋아요인 경우
       await SnsItemLikeCancel(
         id,
         (resp) => {
-          console.log(resp.data);
           setLike(0);
           setLikeCount(likeCount - 1);
         },
@@ -127,7 +125,6 @@ const MarketItem = (props: MarketItemProps): JSX.Element => {
       await SnsItemLike(
         id,
         (resp) => {
-          console.log(resp.data);
           setLike(1);
           setLikeCount(likeCount + 1); // 좋아요 수 업데이트
         },
@@ -139,7 +136,6 @@ const MarketItem = (props: MarketItemProps): JSX.Element => {
   };
 
   useEffect(() => {
-    console.log('isLike prop has changed:', isLike, itemLike);
     setLike(isLike);
     setLikeCount(itemLike);
   }, [isLike, itemLike]);

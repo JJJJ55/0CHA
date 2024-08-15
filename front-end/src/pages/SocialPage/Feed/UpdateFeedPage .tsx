@@ -133,23 +133,10 @@ const UpdateFeedPage = (): JSX.Element => {
     }
   };
 
-  useEffect(() => {
-    console.log(image);
-  }, [image]);
+  useEffect(() => {}, [image]);
 
   // 내 루틴 가져오기
   const [routine, setRoutine] = useState<routineData>();
-
-  // const getRoutineData = async () => {
-  //   await MyRoutine(
-  //     (resp) => {
-  //       setRoutine(resp.data);
-  //     },
-  //     (error) => {
-  //       console.error(error);
-  //     }
-  //   )
-  // };
 
   const getRoutineData = async () => {
     if (targetFeedId) {
@@ -195,8 +182,6 @@ const UpdateFeedPage = (): JSX.Element => {
         targetFeedId,
         formData,
         (resp) => {
-          console.log(resp.data);
-          console.log('글수정성공');
           handleMovePage();
         },
         (error) => {

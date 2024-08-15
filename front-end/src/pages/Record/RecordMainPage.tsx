@@ -66,16 +66,6 @@ const RecordMainPage = (): JSX.Element => {
     } else {
       setIsRoutine({ btnName: '루틴 생성하기', routineId: -1, isFlag: false });
     }
-    // if (attendDay.find((x) => x === routineDate)) {
-    //   alert('운동을 완료한 날입니다.');
-    // } else if (attendDay2.find((x) => x === routineDate)) {
-    //   alert('기존 루틴이 있는 날입니다.');
-    // } else {
-    //   setInfo({ ...info, date: routineDate });
-    //   alert('선택되었습니다.');
-    //   props.onDate(info.date);
-    // }
-    console.log(routineDate);
   };
 
   const handleClickCalendar = (id: number, flag: boolean) => {

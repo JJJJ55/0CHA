@@ -69,7 +69,6 @@ const FitnessRoutineList = (): JSX.Element => {
       await delRoutine(
         id,
         (resp) => {
-          console.log('성공');
           setRoutine((prevRoutine) => prevRoutine.filter((item) => item.id !== id));
         },
         (error) => {
@@ -83,7 +82,6 @@ const FitnessRoutineList = (): JSX.Element => {
     await putRoutineJjim(
       id,
       (resp) => {
-        console.log('성공');
         setRoutine((prevRoutine) => prevRoutine.map((item) => (item.id === id ? { ...item, like: !item.like } : item)));
       },
       (error) => {

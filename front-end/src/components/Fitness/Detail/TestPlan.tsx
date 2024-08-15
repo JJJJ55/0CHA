@@ -119,9 +119,7 @@ const TestPlan = (props: FitnessPlanProps): JSX.Element => {
     setSets(props.exercise.sets);
   }, [props.exercise.sets]);
 
-  useEffect(() => {
-    console.log(`Sets for exercise ${props.index}:`, sets);
-  }, [sets, props.index]);
+  useEffect(() => {}, [sets, props.index]);
 
   const handleAddSet = () => {
     const newSet: ExerciseDetailType = {
@@ -133,7 +131,6 @@ const TestPlan = (props: FitnessPlanProps): JSX.Element => {
     const updatedSets = [...sets, newSet];
     setSets(updatedSets);
     props.onChangeSet(props.index, updatedSets);
-    console.log(`Added set to exercise ${props.index}:`, newSet);
   };
 
   const handleRemoveSet = () => {
@@ -141,7 +138,6 @@ const TestPlan = (props: FitnessPlanProps): JSX.Element => {
     const updatedSets = sets.slice(0, -1);
     setSets(updatedSets);
     props.onChangeSet(props.index, updatedSets);
-    console.log(`Removed last set from exercise ${props.index}`);
   };
 
   const handleInputChange = (index: number, field: keyof ExerciseDetailType, value: number | '') => {
@@ -153,7 +149,6 @@ const TestPlan = (props: FitnessPlanProps): JSX.Element => {
     });
     setSets(updatedSets);
     props.onChangeSet(props.index, updatedSets);
-    console.log(`Updated set ${index} for exercise ${props.index}:`, updatedSets[index]);
   };
 
   const handleCompleteToggle = (index: number) => {
@@ -166,7 +161,6 @@ const TestPlan = (props: FitnessPlanProps): JSX.Element => {
       });
       setSets(updatedSets);
       props.onChangeSet(props.index, updatedSets);
-      console.log(`Toggled completion for set ${index} of exercise ${props.index}`);
     }
   };
 

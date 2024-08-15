@@ -91,6 +91,7 @@ function App() {
             <Routes>
               <Route element={<PublicRoute />}>
                 <Route path="/" element={<SplashPage />} />
+                <Route path="/oauth/*" element={<Navigate to="/oauth/kakao" replace />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/signup">
                   {isSign ? <Route index element={<PlusInfoPage />} /> : <Route index element={<SignUpPage />} />}

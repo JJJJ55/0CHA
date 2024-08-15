@@ -1,8 +1,5 @@
 package com.ssafy.back_end.sns.service;
 
-import com.jcraft.jsch.ChannelSftp;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.Session;
 import com.ssafy.back_end.sns.mapper.SnsItemMapper;
 import com.ssafy.back_end.sns.model.ItemDetailDto;
 import com.ssafy.back_end.sns.model.ItemDto;
@@ -11,11 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -214,6 +208,11 @@ public class SnsItemServiceImpl implements SnsItemService {
         if (imageN > 5) {
             throw new IllegalArgumentException("A maximum of 5 images are allowed.");
         }
+    }
+
+    @Override
+    public int getUserIdByItemId(int itemId) {
+        return snsItemMapper.getUserIdByItemId(itemId);
     }
 
 }

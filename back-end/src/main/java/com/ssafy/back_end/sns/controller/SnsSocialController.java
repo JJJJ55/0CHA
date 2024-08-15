@@ -1,5 +1,6 @@
 package com.ssafy.back_end.sns.controller;
 
+import com.ssafy.back_end.main.service.NotificationService;
 import com.ssafy.back_end.sns.model.UserPageDto;
 import com.ssafy.back_end.sns.model.UserPageListDto;
 import com.ssafy.back_end.sns.service.SnsSocialServiceImpl;
@@ -18,10 +19,12 @@ import java.util.List;
 @RequestMapping(value = "/api/sns/social")
 public class SnsSocialController {
     private final SnsSocialServiceImpl snsSocialService;
+    private final NotificationService notificationService;
 
     @Autowired
-    public SnsSocialController(SnsSocialServiceImpl snsSocialService) {
+    public SnsSocialController(SnsSocialServiceImpl snsSocialService, NotificationService notificationService) {
         this.snsSocialService = snsSocialService;
+        this.notificationService = notificationService;
     }
 
     @Operation(summary = "유저 전체 조회")
@@ -132,6 +135,7 @@ public class SnsSocialController {
         if (isFollowing == 0) {   //팔로우 안되어 있음
             int result = snsSocialService.follow(ID, targetId);
             if (result != 0) {
+                notificationService.sendFollowNotification(ID, targetId);
                 return ResponseEntity.ok("팔로우성공");
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("팔로우 오류");

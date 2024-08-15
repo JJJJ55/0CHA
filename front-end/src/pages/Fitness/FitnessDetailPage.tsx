@@ -62,14 +62,14 @@ const s = {
   `,
   FitnessTextArea: styled.div`
     width: 90%;
-    height: 300px;
+    height: auto;
     display: flex;
     align-items: center;
     line-height: 25px;
     padding: 10px;
     color: ${(props) => props.theme.textColor};
     font-size: 14px;
-    margin: 0 auto;
+    margin: 30px auto;
     overflow: auto;
   `,
   Title: styled.div`

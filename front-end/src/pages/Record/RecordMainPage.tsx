@@ -10,6 +10,8 @@ import { useNavigate } from 'react-router';
 import moment from 'moment';
 import { getFitnessCalendar } from '../../lib/api/record-api';
 import { FitnessDay, IsRoutine } from '../../util/types/axios-record';
+import { useAppDispatch } from '../../lib/hook/useReduxHook';
+import { pageActions } from '../../store/page';
 const s = {
   Continer: styled.section`
     height: 100%;
@@ -33,8 +35,12 @@ const s = {
 
 const RecordMainPage = (): JSX.Element => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [fitness, setFitness] = useState<FitnessDay[]>([]);
   const handleClickMove = (path: string): void => {
+    if (path === '../inbody/scan') {
+      dispatch(pageActions.toogleIsScan(true));
+    }
     navigate(path);
   };
   // const attendDay = ['2024-07-30', '2024-07-15', '2024-08-12']; // 운동시작 버튼 누른 날
@@ -94,7 +100,7 @@ const RecordMainPage = (): JSX.Element => {
 
   return (
     <s.Continer>
-      <Header text="기록" />
+      <Header text="기록" onBack={() => navigate('../../record')} />
       <s.MainArea>
         <CalendarArea
           className="react-calendar__record"

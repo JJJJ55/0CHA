@@ -62,7 +62,7 @@ public class RecordController {
         return ResponseEntity.ok(records);
     }
 
-    @GetMapping("/record/rm/{exerciseId}")
+    @GetMapping("/rm/{exerciseId}")
     public ResponseEntity<?> getOneRepMaxForExercise(@PathVariable int exerciseId, HttpServletRequest request) {
         int userId = (Integer) request.getAttribute("userId");
         List<ExerciseOneRepMaxDto> oneRepMaxList = recordService.getOneRepMaxForExercise(userId, exerciseId);

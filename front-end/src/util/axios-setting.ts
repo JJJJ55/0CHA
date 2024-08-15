@@ -277,13 +277,25 @@ export const wsAxios = () => {
 };
 
 export const socialAxios = () => {
-  const publicAxios: Axios = axios.create({
+  const socialAxios: Axios = axios.create({
     baseURL: process.env.REACT_APP_BASE_URL,
     withCredentials: true,
   });
 
-  publicAxios.defaults.headers.common['Authorization'] = '';
-  publicAxios.defaults.headers.post['Content-Type'] = 'application/json';
-  publicAxios.defaults.headers.patch['Content-Type'] = 'application/json';
-  return publicAxios;
+  socialAxios.defaults.headers.common['Authorization'] = '';
+  socialAxios.defaults.headers.post['Content-Type'] = 'application/json';
+  socialAxios.defaults.headers.patch['Content-Type'] = 'application/json';
+  return socialAxios;
+};
+
+export const inbodyAxios = () => {
+  const inbodyAxios: Axios = axios.create({
+    baseURL: process.env.REACT_APP_NAVER_INVOKE,
+    withCredentials: true,
+  });
+
+  inbodyAxios.defaults.headers.common['X-OCR-SECRET'] = process.env.REACT_APP_NAVER_SECRET_KEY;
+  inbodyAxios.defaults.headers.post['Content-Type'] = 'application/json';
+  inbodyAxios.defaults.headers.patch['Content-Type'] = 'application/json';
+  return inbodyAxios;
 };

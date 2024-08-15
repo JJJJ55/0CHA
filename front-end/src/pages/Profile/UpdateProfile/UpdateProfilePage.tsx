@@ -120,7 +120,6 @@ const UpdateProfilePage = (): JSX.Element => {
   // 닉네임 핸들러
   const handleNicknameChange = (e: ChangeEvent<HTMLInputElement>) => {
     setNickName(e.target.value);
-    console.log(nickname);
     const nicknameRegex = /^[a-zA-Z0-9_]*$/;
     if (!nicknameRegex.test(e.target.value) || e.target.value.length < 5 || e.target.value.length > 10) {
       setNicknameError('닉네임은 5~10자 영문/숫자/_만 사용 가능합니다.');

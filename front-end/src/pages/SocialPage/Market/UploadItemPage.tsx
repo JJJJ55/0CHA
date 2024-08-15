@@ -188,17 +188,10 @@ const UploadItemPage = (): JSX.Element => {
     await SnsItemWrite(
       formData,
       (resp) => {
-        console.log('중고장터 게시글이 작성되었습니다.');
         navigate('/sns');
-        console.log(resp);
       },
       (err) => {
-        console.log('자 문제 발생 ');
-        console.log(formData);
-        console.log(err);
-        formData.forEach((value, key) => {
-          console.log(key, value);
-        });
+        formData.forEach((value, key) => {});
       },
     );
   };

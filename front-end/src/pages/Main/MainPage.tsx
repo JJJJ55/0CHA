@@ -345,8 +345,6 @@ const MainPage = (): JSX.Element => {
         },
       );
     } else {
-      console.log(token);
-      console.log(user?.id);
     }
   };
 

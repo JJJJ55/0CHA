@@ -131,7 +131,6 @@ const ResetPasswordPage = (): JSX.Element => {
   const handleSubmit = async () => {
     // 입력 조건을 모두 충족한 경우
     if (data.pw.length !== 0 && data.pwCheck.length !== 0 && pwError === '' && pwCheckError === '') {
-      console.log('Form submitted:', data);
       const param = {
         email,
         password: data.pw,
@@ -146,7 +145,6 @@ const ResetPasswordPage = (): JSX.Element => {
       );
     } else {
       // 입력 조건을 미충족한 경우
-      console.log('비밀번호를 확인해주세요.');
     }
   };
 

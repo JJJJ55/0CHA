@@ -53,27 +53,27 @@ interface CommentModalProps {
   onModal: Function;
   data?: commentData[];
   feedId: number | null;
-};
+}
 
 const CommentModal = (props: CommentModalProps): JSX.Element => {
   const { open, onModal, data, feedId } = props;
 
   const [commentValue, setCommentValue] = useState('');
   const [comments, setComments] = useState<commentData[]>(data || []);
-  const [userId, setUserId] = useState(0)
-  const [userNickname, setUserNickname] = useState('')
-  const [userProfileImage, setUserProfileImage] = useState('')
+  const [userId, setUserId] = useState(0);
+  const [userNickname, setUserNickname] = useState('');
+  const [userProfileImage, setUserProfileImage] = useState('');
 
-  const userStr = localStorage.getItem("user")
+  const userStr = localStorage.getItem('user');
 
   useEffect(() => {
     if (userStr) {
-      const userTmp = JSON.parse(userStr)
-      setUserId(userTmp.id)
-      setUserNickname(userTmp.nickname)
-      setUserProfileImage(userTmp.profileImage)
+      const userTmp = JSON.parse(userStr);
+      setUserId(userTmp.id);
+      setUserNickname(userTmp.nickname);
+      setUserProfileImage(userTmp.profileImage);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     setComments(data || []);
@@ -84,7 +84,9 @@ const CommentModal = (props: CommentModalProps): JSX.Element => {
   };
 
   const commentOnChange = (event: React.FormEvent<HTMLInputElement>) => {
-    const { currentTarget: { value } } = event;
+    const {
+      currentTarget: { value },
+    } = event;
     setCommentValue(value);
   };
 
@@ -97,10 +99,10 @@ const CommentModal = (props: CommentModalProps): JSX.Element => {
           const newComment: commentData = {
             comment: commentValue,
             // createdAt: new Date().toISOString(),
-            createdAt: "방금",
+            createdAt: '방금',
             feedId: feedId,
             id: 0,
-            nickname: userNickname, 
+            nickname: userNickname,
             profileImage: userProfileImage,
             userId: userId,
           };
@@ -112,14 +114,12 @@ const CommentModal = (props: CommentModalProps): JSX.Element => {
         },
         (error) => {
           console.error(error);
-        }
+        },
       );
     }
   };
 
-  useEffect(() => {
-    console.log(commentValue)
-  }, [commentValue])
+  useEffect(() => {}, [commentValue]);
 
   return (
     <>
@@ -134,7 +134,8 @@ const CommentModal = (props: CommentModalProps): JSX.Element => {
           <s.TopBar onClick={toggleModal}></s.TopBar>
           <s.CommentArea>
             {comments.map((data, index) => (
-              <Comment key={index}
+              <Comment
+                key={index}
                 commentProfileImage={data.profileImage}
                 commentAuthor={data.nickname}
                 commentContent={data.comment}

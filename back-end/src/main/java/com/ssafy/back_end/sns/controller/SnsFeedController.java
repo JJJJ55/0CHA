@@ -2,6 +2,7 @@ package com.ssafy.back_end.sns.controller;
 
 import com.ssafy.back_end.exercise.model.RoutineDto;
 import com.ssafy.back_end.exercise.service.WorkoutRoutineService;
+import com.ssafy.back_end.main.service.NotificationService;
 import com.ssafy.back_end.sns.model.FeedDto;
 import com.ssafy.back_end.sns.model.FeedInteractionDto;
 import com.ssafy.back_end.sns.model.SnsRoutineDto;
@@ -33,11 +34,13 @@ public class SnsFeedController {
     private static final Logger log = LoggerFactory.getLogger(SnsItemController.class);
     private final SnsFeedServiceImpl snsFeedService;
     private final WorkoutRoutineService workoutRoutineService;
+    private final NotificationService notificationService;
 
     @Autowired
-    public SnsFeedController(SnsFeedServiceImpl snsFeedService, WorkoutRoutineService workoutRoutineService) {
+    public SnsFeedController(SnsFeedServiceImpl snsFeedService, WorkoutRoutineService workoutRoutineService, NotificationService notificationService) {
         this.snsFeedService = snsFeedService;
         this.workoutRoutineService = workoutRoutineService;
+        this.notificationService = notificationService;
     }
 
     @Operation(summary = "전체or유저 피드 목록보기-완")
@@ -293,6 +296,7 @@ public class SnsFeedController {
         if (isLike == 0) {   //좋아요 안눌려있음
             int result = snsFeedService.likeFeed(feedId, ID);
             if (result != 0) {
+                notificationService.sendLikeNotification(ID,snsFeedService.getUserIdByFeedId(feedId));
                 return ResponseEntity.ok("좋아요성공");
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("좋아요 오류");
@@ -343,6 +347,7 @@ public class SnsFeedController {
         int result = snsFeedService.writeComment(feedInteractionDto);
 
         if (result != 0) {
+            notificationService.sendCommentNotification(ID, snsFeedService.getUserIdByFeedId(feedId), feedInteractionDto.getComment());
             return ResponseEntity.ok("댓글 작성 성공");
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("댓글 작성 오류");

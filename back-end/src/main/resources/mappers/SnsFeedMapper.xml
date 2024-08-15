@@ -203,4 +203,10 @@
         WHERE id = #{id};
     </delete>
 
+    <select id="getUserIdByFeedId">
+        SELECT user_id
+        FROM feeds
+        WHERE id = #{feedId};
+    </select>
+
 </mapper>

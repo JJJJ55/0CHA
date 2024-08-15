@@ -91,7 +91,7 @@ interface TrainingSettingsModalProps {
 const SettingModal: React.FC<TrainingSettingsModalProps> = ({ onClose, onConfirm }) => {
   const [counter, setCounter] = useState<string>('5'); // 운동 기본횟수 5회
   // 운동 목록
-  const exercises = ['------------', '데드리프트', '스쿼트', '벤치프레스', '테스트모델', ' ------------ '];
+  const exercises = ['------------', '데드리프트', '스쿼트', '벤치프레스', ' ------------ '];
   // 기본 설정 스쿼트
   const [selectedExercise, setSelectedExercise] = useState('스쿼트');
   const listRef = useRef<HTMLDivElement>(null);
@@ -162,11 +162,11 @@ const SettingModal: React.FC<TrainingSettingsModalProps> = ({ onClose, onConfirm
 
   const handleConfirm = () => {
     const count = parseInt(counter, 10);
-    if (!isNaN(count) && count >= 1 && count <= 15) {
+    if (!isNaN(count) && count >= 1 && count <= 10) {
       onConfirm(selectedExercise, count); // 선택된 운동과 횟수를 onConfirm으로 전달
       onClose();
     } else {
-      alert('1에서 15 사이의 숫자를 입력하세요.');
+      alert('1에서 11 사이의 숫자를 입력하세요.');
     }
   };
 
@@ -182,8 +182,8 @@ const SettingModal: React.FC<TrainingSettingsModalProps> = ({ onClose, onConfirm
       const numericValue = parseInt(value, 10);
       if (numericValue < 1) {
         value = '1';
-      } else if (numericValue > 15) {
-        value = '15';
+      } else if (numericValue > 10) {
+        value = '10';
       }
       setCounter(value);
     }
@@ -192,7 +192,7 @@ const SettingModal: React.FC<TrainingSettingsModalProps> = ({ onClose, onConfirm
   const handleIncrement = () => {
     setCounter((prev) => {
       const currentValue = prev === '' ? 1 : parseInt(prev, 10);
-      return String(Math.min(15, currentValue + 1));
+      return String(Math.min(10, currentValue + 1));
     });
   };
 
@@ -241,7 +241,7 @@ const SettingModal: React.FC<TrainingSettingsModalProps> = ({ onClose, onConfirm
         <s.Counter>
           <s.CounterBtn onClick={handleDecrement} disabled={counter === '1'} children="-" />
           <s.CounterInput type="text" value={counter} onChange={handleCounterChange} />
-          <s.CounterBtn onClick={handleIncrement} disabled={counter === '15'} children="+" />
+          <s.CounterBtn onClick={handleIncrement} disabled={counter === '10'} children="+" />
         </s.Counter>
         <s.ConfirmBtn onClick={handleConfirm} children="시작하기" />
       </s.ModalContent>

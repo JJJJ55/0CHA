@@ -29,8 +29,13 @@ public class WorkoutExerciseServiceImpl implements WorkoutExerciseService {
     }
 
     @Override
-    public ExerciseDto getExerciseById(int exerciseId) {
-        return workoutExerciseMapper.getExerciseById(exerciseId);
+    public ExerciseDto getExerciseById(int exerciseId, int userId) {
+        ExerciseDto exercise = workoutExerciseMapper.getExerciseById(exerciseId);
+        if (exercise != null) {
+            boolean isLike = workoutExerciseMapper.isExerciseLiked(exerciseId, userId);
+            exercise.setLike(isLike);
+        }
+        return exercise;
     }
 
     @Override
@@ -50,8 +55,11 @@ public class WorkoutExerciseServiceImpl implements WorkoutExerciseService {
 
     @Override
     public List<ExerciseDto> getFavoriteExercisesByUserId(int userId) {
-        return workoutExerciseMapper.getFavoriteExercisesByUserId(userId);
+        List<ExerciseDto> favoriteExercises = workoutExerciseMapper.getFavoriteExercisesByUserId(userId);
+        favoriteExercises.forEach(exercise -> exercise.setLike(true));
+        return favoriteExercises;
     }
+
 
     @Override
     public int saveExerciseImage(int exerciseId, String imageUrl) {

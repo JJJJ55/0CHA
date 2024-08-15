@@ -57,4 +57,14 @@ public class MainServiceImpl implements MainService {
     public int deleteUser(int id) {
         return mainMapper.deleteUser(id);
     }
+
+    @Override
+    public void updateFcmToken(int id, String fcmToken) {
+        mainMapper.updateFcmToken(id, fcmToken);
+    }
+
+    @Override
+    public String getFcmTokenById(int id) {
+        return mainMapper.getFcmTokenById(id);
+    }
 }

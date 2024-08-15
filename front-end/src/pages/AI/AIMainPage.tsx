@@ -306,7 +306,7 @@ const AIMainPage: React.FC = () => {
             setStatus('stand'); // 선 자세
             context.fillStyle = '#ccff34'; // 색 채우기
             context.fillText('O', centerX, centerY); // 텍스트 중앙에 그리기
-          } else if (prediction[4].probability > 0.9) {
+          } else if (prediction[4].probability > 0.99) {
             setStatus('frontStand'); // 전방으로 서있는 자세(잘못됨)'
             context.fillStyle = '#ffffff';
             context.fillText('X', centerX, centerY);
@@ -314,11 +314,11 @@ const AIMainPage: React.FC = () => {
             setStatus('sit'); // 내려간 상태
             context.fillStyle = '#ccff34'; // 색 채우기
             context.fillText('O', centerX, centerY); // 텍스트 중앙에 그리기
-          } else if (prediction[1].probability > 0.99) {
+          } else if (prediction[1].probability > 0.7) {
             setStatus('squart'); // 굽힘 상태
             context.fillStyle = '#ccff34'; // 색 채우기
             context.fillText('O', centerX, centerY); // 텍스트 중앙에 그리기
-          } else if (prediction[3].probability > 0.99) {
+          } else if (prediction[3].probability > 0.999) {
             setStatus('frontSquart'); // 전방 굽힘 상태(잘못됨)
             context.fillStyle = '#ffffff';
             context.fillText('X', centerX, centerY);
@@ -337,7 +337,7 @@ const AIMainPage: React.FC = () => {
             setStatus('bottom'); // 아래로 내려간 상태
             context.fillStyle = '#ccff34'; // 색 채우기
             context.fillText('O', centerX, centerY); // 텍스트 중앙에 그리기
-          } else if (prediction[1].probability > 0.99) {
+          } else if (prediction[1].probability > 0.9) {
             setStatus('squart'); // 굽힌 상태
             context.fillStyle = '#ccff34'; // 색 채우기
             context.fillText('O', centerX, centerY); // 텍스트 중앙에 그리기
@@ -424,6 +424,9 @@ const AIMainPage: React.FC = () => {
           // 올바르지 않은 자세로 온 경우 1 (앞스쿼트 자세에서 선 자세로)
         } else if (status === 'stand' && prevStatusRef.current === 'frontSquart') {
           updateResults('스쿼트 시 상체가 앞으로 기울었습니다.', false);
+          // 올바르지 않은 자세로 온 경우 추가(앉은 자세에서 곧바로 선 자세로)
+        } else if (status === 'stand' && prevStatusRef.current === 'sit') {
+          updateResults('너무 빠르게 올라왔습니다.', false);
           // 올바르지 않은 자세로 온 경우 2 (스쿼트 혹은 앞스쿼트 자세에서 앞으로 선 자세로)
         } else if (
           status === 'frontStand' &&
@@ -436,6 +439,9 @@ const AIMainPage: React.FC = () => {
       // 올바른 자세로 온 경우 (스쿼트 자세에서 선 자세로)
       if (status === 'stand' && prevStatusRef.current === 'squart') {
         updateResults('올바른 자세입니다.', true);
+        // 올바르지 않은 자세로 온 경우(앉은 자세에서 선 자세로 바로)
+      } else if (status === 'stand' && prevStatusRef.current === 'bottom') {
+        updateResults('너무 빠르게 올라왔습니다.', false);
         // 올바르지 않은 자세로 온 경우 1(허리가 말린 뒤 올라온 경우)
       } else if (status === 'stand' && prevStatusRef.current === 'waistCurl') {
         updateResults('허리가 말려 있습니다.', false);

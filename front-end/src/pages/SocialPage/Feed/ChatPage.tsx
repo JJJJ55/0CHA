@@ -165,12 +165,10 @@ const ChatPage = (): JSX.Element => {
           scrollToBottom(); // 채팅 내역을 불러온 후 스크롤을 맨 아래로 이동
         },
         (err) => {
-          console.log(err);
           setLoading(false); // 오류 발생 시에도 로딩 상태 해제
         },
       );
     } catch (error) {
-      console.log('Error loading chat history:', error);
       setLoading(false); // 오류 발생 시에도 로딩 상태 해제
     }
   };
@@ -182,7 +180,6 @@ const ChatPage = (): JSX.Element => {
       const refreshToken = localStorage.getItem('refreshToken');
 
       if (!accessToken || !refreshToken) {
-        console.error('No access or refresh token found in localStorage');
         return;
       }
 
@@ -198,8 +195,6 @@ const ChatPage = (): JSX.Element => {
           console.log(str); // 디버그 메시지 출력
         },
         onConnect: async (frame) => {
-          console.log('Connected: ' + frame);
-
           // enterChatRoom이 완료된 후 roomId를 사용하여 구독
           const roomId = await enterChatRoom();
 
@@ -207,16 +202,13 @@ const ChatPage = (): JSX.Element => {
             await loadChatHistory(roomId); // 채팅방에 들어간 후 채팅 내역 로드
 
             client.subscribe(`/topic/chat/${roomId}`, (message: IMessage) => {
-              console.log('Received message:', message.body);
               showMessage(JSON.parse(message.body));
             });
           } else {
-            console.error('Failed to retrieve roomId');
             setLoading(false); // 오류 발생 시 로딩 상태 해제
           }
         },
         onStompError: (frame) => {
-          console.error('STOMP error:', frame.headers['message']);
           setLoading(false); // 오류 발생 시 로딩 상태 해제
         },
       });
@@ -229,7 +221,6 @@ const ChatPage = (): JSX.Element => {
       return () => {
         if (client) {
           client.deactivate();
-          console.log('Disconnected');
         }
       };
     };

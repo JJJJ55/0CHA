@@ -39,13 +39,8 @@ export interface FitnessData {
 }
 export interface RmDataType {
   date: string;
-  benchpress: number;
-  squart: number;
-  deadlift: number;
-  totalVolume: number;
-  totalTime: numbe;
+  oneRepMax: number;
 }
-
 // 인바디 OCR 타입
 
 interface Image {

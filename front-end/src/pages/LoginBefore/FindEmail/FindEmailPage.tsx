@@ -81,7 +81,6 @@ interface dataType {
 
 const FindEmailPage = (): JSX.Element => {
   const location = useLocation();
-  console.log(location);
   const [data, setData] = useState<dataType>({
     username: '',
     phonePart2: '',
@@ -158,7 +157,6 @@ const FindEmailPage = (): JSX.Element => {
 
   // 제출 처리
   const handleSubmit = async () => {
-    console.log('Form submitted:', data);
     const param = {
       name: data.username,
       phone: '010' + data.phonePart2 + data.phonePart3,

@@ -40,14 +40,10 @@ const ChatListPage = (): JSX.Element => {
   const user = localStorage.getItem('user');
   const parsedUser = user ? JSON.parse(user) : null;
 
-  // parsedUser가 null이 아니면 userId를 출력, 아니면 null
-  console.log(parsedUser ? parsedUser.id : 'No user found');
-
   const getChatList = async () => {
     if (parsedUser && parsedUser.id) {
       await SnsChatList(
         (resp) => {
-          console.log(resp.data);
           setChatList(resp.data);
         },
         (err) => {

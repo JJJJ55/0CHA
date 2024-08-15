@@ -62,14 +62,15 @@ const s = {
   `,
   FitnessTextArea: styled.div`
     width: 90%;
-    height: 200px;
+    height: 300px;
     display: flex;
     align-items: center;
     line-height: 25px;
-    padding: 20px;
+    padding: 10px;
     color: ${(props) => props.theme.textColor};
     font-size: 14px;
     margin: 0 auto;
+    overflow: auto;
   `,
   Title: styled.div`
     width: 90%;
@@ -86,8 +87,8 @@ const FitnessDetailPage = (): JSX.Element => {
   const [fitness, setFieness] = useState<FitnessType>();
   const [isLike, setIsLike] = useState<boolean>(false);
   const [momenthum, setMomenthum] = useState<FitnessMomenthum[]>([]);
-  let volumes: number[] = [];
-  let dates: string[] = [];
+  const [dates, setDates] = useState<string[]>([]);
+  const [volumes, setVolumes] = useState<number[]>([]);
   const id = useLocation().state?.id;
 
   useEffect(() => {
@@ -114,16 +115,19 @@ const FitnessDetailPage = (): JSX.Element => {
       (resp) => {
         console.log('운동량');
         setMomenthum(resp.data);
-        dates = momenthum.map(({ date }) => date);
-
-        // volume 배열 추출
-        volumes = momenthum.map(({ volume }) => volume);
       },
       (error) => {
         console.log(error);
       },
     );
   }, [id]);
+  useEffect(() => {
+    const dates = momenthum.map((data) => data.date);
+    const volumes = momenthum.map((data) => data.volume);
+    setDates(dates);
+    setVolumes(volumes);
+  }, [momenthum]);
+
   const handleClickJjim = async () => {
     await postFitnessJjim(
       id,

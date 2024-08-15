@@ -41,6 +41,7 @@ const FitnessPlayPage = (): JSX.Element => {
 
   const handleMoveMain = () => {
     dispatch(fitnessActions.toggleRest(false));
+    dispatch(fitnessActions.toggleRestStack(false));
     navigate('/main');
   };
 

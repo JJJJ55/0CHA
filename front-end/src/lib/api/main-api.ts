@@ -1,6 +1,6 @@
 import { AxiosError } from 'axios';
 import { localAxios, publicAxios } from '../../util/axios-setting';
-import { changePw, MyInfo, Profile } from '../../util/types/axios-main';
+import { changePw, fcmToken, MyInfo, Profile } from '../../util/types/axios-main';
 
 const local = publicAxios();
 const jwt = localAxios();
@@ -15,8 +15,12 @@ export const getMyRoutine = async (success: (response: any) => void, fail: (erro
 };
 
 // 알림
-export const getNotification = async (success: (response: any) => void, fail: (error: AxiosError) => void) => {
-  await jwt.get(`/main/notifications`).then(success).catch(fail);
+export const postFcmToken = async (
+  param: fcmToken,
+  success: (response: any) => void,
+  fail: (error: AxiosError) => void,
+) => {
+  await jwt.post(`/main/notifications`, param).then(success).catch(fail);
 };
 
 // 내 정보

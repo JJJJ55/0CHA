@@ -187,10 +187,11 @@ const RecordInBodyScanPage = (): JSX.Element => {
       <Header text="인바디 스캔" />
       <s.MainArea>
         <s.p>
-          결과지 테두리를 <s.SpanBold>사각형</s.SpanBold>에 맞춘 후<br /> 촬영 버튼을 눌러주세요.
+          결과지 테두리를 <s.SpanBold>카메라 끝</s.SpanBold>에 맞춘
+          <br /> 사진을 준비해주세요.
         </s.p>
         <s.CameraArea>
-          {selectedImage ? <img src={selectedImage} alt="선택된 이미지" /> : '이미지를 선택하세요.'}
+          {selectedImage ? <img src={selectedImage} alt="선택된 이미지" /> : '이미지를 업로드하세요.'}
         </s.CameraArea>
         <s.BtnArea>
           {/* 갤러리 버튼 클릭 시 파일 입력 창 열기 */}
@@ -207,7 +208,7 @@ const RecordInBodyScanPage = (): JSX.Element => {
           <Button
             width="47%"
             height="40px"
-            children="촬영"
+            children="스캔"
             bold="500"
             size="14px"
             type="main"

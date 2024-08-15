@@ -93,7 +93,7 @@ function App() {
               <Route element={<PublicRoute />}>
                 <Route path="/" element={<SplashPage />} />
                 <Route path="/socialLogin*" element={<SocialLoginPage />} />
-                {/* <Route path="/oauth/*" element={<Navigate to="/oauth/kakao" replace />} /> */}
+                <Route path="/api/oauth/*" element={<Navigate to="/api/oauth/kakao" replace />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/signup">
                   {isSign ? <Route index element={<PlusInfoPage />} /> : <Route index element={<SignUpPage />} />}

@@ -1,5 +1,6 @@
 package com.ssafy.back_end.record.service;
 
+import com.ssafy.back_end.record.model.ExerciseOneRepMaxDto;
 import com.ssafy.back_end.record.model.RecordDto;
 import com.ssafy.back_end.record.model.RecordInbodyDto;
 import com.ssafy.back_end.record.model.RoutineListDto;
@@ -15,4 +16,5 @@ public interface RecordService {
 
     List<RoutineListDto> getUserRoutines(int userId);
 
+    List<ExerciseOneRepMaxDto> getOneRepMaxForExercise(int userId, int exerciseId);
 }

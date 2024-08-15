@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Image from '../../Common/Image';
 import IconSvg from '../../Common/IconSvg';
@@ -54,6 +54,8 @@ interface FitnessListProps {
   add: CreateRoutine[];
   onAdd: Function;
   data: FitnessType[];
+  jjim: boolean;
+  onJjim: Function;
 }
 
 const FitnessList = (props: FitnessListProps): JSX.Element => {
@@ -67,7 +69,7 @@ const FitnessList = (props: FitnessListProps): JSX.Element => {
     await postFitnessJjim(
       id,
       (resp) => {
-        alert('찜 성공');
+        props.onJjim(!props.jjim);
       },
       (error) => {
         alert('잠시후 다시 시도해주세요.');
@@ -78,7 +80,7 @@ const FitnessList = (props: FitnessListProps): JSX.Element => {
     await deleteFitnessJjimCancel(
       id,
       (resp) => {
-        alert('찜 해제');
+        props.onJjim(!props.jjim);
       },
       (error) => {
         alert('잠시후 다시 시도해주세요.');

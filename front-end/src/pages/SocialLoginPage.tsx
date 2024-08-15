@@ -23,10 +23,10 @@ const s = {
 const SocialLoginPage = (): JSX.Element => {
   const navigate = useNavigate();
 
-  const code = window.location.search;
+  const code = new URL(window.location.href).searchParams.get('code');
   useEffect(() => {
     kakao(
-      code,
+      code!,
       (resp) => {
         localStorage.setItem('accessToken', resp.data.accessToken);
         localStorage.setItem('refreshToken', resp.data.refreshToken);

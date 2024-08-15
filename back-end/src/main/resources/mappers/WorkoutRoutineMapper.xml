@@ -81,7 +81,7 @@
     </delete>
 
     <select id="getRoutineByIdAndUserId" parameterType="map" resultMap="RoutineResultMap">
-        SELECT * FROM routines WHERE id = #{routineId} AND user_id = #{userId}
+        SELECT * FROM routines WHERE id = #{routineId}
     </select>
 
     <select id="getRoutineById" resultMap="RoutineResultMap">
@@ -101,10 +101,19 @@
 
     <select id="getAllRoutines" parameterType="int" resultMap="RoutineResultMap">
         SELECT * FROM routines WHERE user_id = #{userId}
+        ORDER BY
+            is_like DESC,
+            due_date ASC
+            LIMIT 5
     </select>
 
     <select id="getAllRoutinesLimit" parameterType="int" resultMap="RoutineResultMap">
-        SELECT * FROM routines WHERE user_id = #{userId} ORDER BY created_at DESC LIMIT 5
+        SELECT * FROM routines
+        WHERE user_id = #{userId}
+        ORDER BY
+            is_like DESC,
+            due_date ASC
+            LIMIT 5
     </select>
 
     <select id="getAllUsersRoutines" resultMap="RoutineResultMap">

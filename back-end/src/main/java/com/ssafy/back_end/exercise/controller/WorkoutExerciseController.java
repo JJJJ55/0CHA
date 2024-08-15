@@ -37,8 +37,9 @@ public class WorkoutExerciseController {
 
     @Operation(summary = "특정 운동의 상세 정보 조회", description = "특정 운동의 상세 정보를 조회합니다.")
     @GetMapping("/{exercise-id}")
-    public ResponseEntity<?> getExerciseById(@PathVariable("exercise-id") int exerciseId) {
-        ExerciseDto exercise = workoutExerciseService.getExerciseById(exerciseId);
+    public ResponseEntity<?> getExerciseById(@PathVariable("exercise-id") int exerciseId, HttpServletRequest request) {
+        int userId = (Integer) request.getAttribute("userId");
+        ExerciseDto exercise = workoutExerciseService.getExerciseById(exerciseId, userId);
         if (exercise != null) {
             return ResponseEntity.ok(exercise);
         } else {

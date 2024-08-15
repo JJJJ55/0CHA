@@ -12,7 +12,7 @@ public interface WorkoutRoutineService {
 
     List<RoutineDto> getAllRoutinesLimit(int userId);
 
-    RoutineDto getRoutineById(int routineId, int userId);
+    RoutineDto getRoutineById(int routineId);
 
     RoutineDto getRoutine(int routineId);
 

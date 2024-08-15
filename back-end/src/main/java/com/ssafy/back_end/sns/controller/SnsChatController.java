@@ -87,8 +87,8 @@ public class SnsChatController {
     // 메시지 수신 및 발송
     @MessageMapping("/chat/{joinRoomId}")
     @SendTo("/topic/chat/{joinRoomId}")
-    public MessageDto sendMessage(HttpServletRequest request, @DestinationVariable String joinRoomId, MessageDto message) {
-        int senderId = (Integer)request.getAttribute("userId");
+    public MessageDto sendMessage(@Header("AccountId") int senderId, @DestinationVariable String joinRoomId, MessageDto message) {
+
         logger.debug("senderId : {}", senderId);
         logger.debug("joinRoomId : {}", joinRoomId);
         logger.debug("Received message: {}", message);
@@ -96,7 +96,7 @@ public class SnsChatController {
         // 메시지 저장
         MessageDto savedMessage = snsChatService.saveMessage(
                 senderId,
-                message.getRoomId(),
+                Integer.parseInt(joinRoomId),
                 message.getMessage()
         );
 
@@ -109,7 +109,6 @@ public class SnsChatController {
 //        // 채팅방의 채널로 메시지 발송
 //        messagingTemplate.convertAndSend("/queue/messages/room/" + message.getRoomId(), savedMessage);
 //        logger.info("Sent message to room {}: {}", message.getRoomId(), savedMessage);
-
         return savedMessage;
     }
 }

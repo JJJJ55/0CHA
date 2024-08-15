@@ -259,4 +259,11 @@ public class MainController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(summaryRoutines);
     }
+
+    @Operation(summary = "알람 토큰 저장")
+    @PostMapping("/notifications")
+    public ResponseEntity<?> updateFcmToken(@RequestParam int userId, @RequestParam String fcmToken) {
+        mainService.updateFcmToken(userId, fcmToken);
+        return ResponseEntity.ok("FCM 토큰 발급완료");
+    }
 }

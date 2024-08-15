@@ -1,6 +1,7 @@
 package com.ssafy.back_end.sns.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.back_end.main.service.NotificationService;
 import com.ssafy.back_end.sns.model.ItemDto;
 import com.ssafy.back_end.sns.model.ItemListDto;
 import com.ssafy.back_end.sns.service.SnsItemService;
@@ -27,10 +28,12 @@ import java.util.Map;
 public class SnsItemController {
     private static final Logger log = LoggerFactory.getLogger(SnsItemController.class);
     private final SnsItemService snsItemService;
+    private final NotificationService notificationService;
 
     @Autowired
-    public SnsItemController(SnsItemService snsItemService) {
+    public SnsItemController(SnsItemService snsItemService, NotificationService notificationService) {
         this.snsItemService = snsItemService;
+        this.notificationService = notificationService;
     }
 
     @Operation (summary = "전체or유저 중고장터 목록보기-완")
@@ -362,6 +365,7 @@ public class SnsItemController {
         if (isLike == 0) {   //좋아요 안눌려있음
             int result = snsItemService.likeItem(itemId, ID);
             if (result != 0) {
+                notificationService.sendLikeNotification(ID, snsItemService.getUserIdByItemId(itemId));
                 return ResponseEntity.ok("좋아요성공");
             }
             else {

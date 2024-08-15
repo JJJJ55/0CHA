@@ -40,4 +40,6 @@ public interface SnsItemMapper {
     int dislikeItem(@Param ("itemId") int itemId, @Param ("userId") int userId);   //중고장터 좋아요 취소
 
     int soldOut(@Param ("id") int itemId);   //판매완료
+
+    int getUserIdByItemId(@Param ("itemId") int itemId);   //중고장터 아이디로 유저 아이디 얻기
 }

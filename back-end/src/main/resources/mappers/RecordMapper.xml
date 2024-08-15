@@ -39,30 +39,41 @@
                 #{muscleLeftLeg}, #{muscleRightLeg}, #{bmi}, #{bodyFatPercent}, NOW());
     </insert>
 
-    <select id="getRecentExerciseRecords" parameterType="int" resultType="com.ssafy.back_end.record.model.RecordDto">
+    <select id="getOneRepMaxForExercise" resultType="com.ssafy.back_end.record.model.ExerciseOneRepMaxDto">
         SELECT
-            r.completed_at AS date,
-    SUM(CASE WHEN e.id = 163 THEN rs.weight * (1 + (rs.count / 30)) ELSE 0 END) AS benchpress,
-    SUM(CASE WHEN e.id = 27 THEN rs.weight * (1 + (rs.count / 30)) ELSE 0 END) AS squart,
-    SUM(CASE WHEN e.id = 103 THEN rs.weight * (1 + (rs.count / 30)) ELSE 0 END) AS deadlift,
-    SUM(rs.weight * rs.count) AS totalVolume,
-    r.sum_time AS totalTime
+            MAX(rs.weight * (1 + (rs.count / 30))) AS oneRepMax,
+            r.completed_at AS date
         FROM
             routines r
             JOIN
             routine_details rd ON r.id = rd.routine_id
             JOIN
             routine_sets rs ON rd.id = rs.routine_detail_id
-            JOIN
-            exercises e ON rd.exercise_id = e.id
+        WHERE
+            r.user_id = #{userId}
+          AND rd.exercise_id = #{exerciseId}
+          AND r.completed_at IS NOT NULL
+          AND rs.is_complete = TRUE
+        GROUP BY
+            r.completed_at
+        ORDER BY
+            r.completed_at DESC
+            LIMIT 5
+    </select>
+
+
+    <select id="getRecentExerciseRecords" parameterType="int" resultType="com.ssafy.back_end.record.model.RecordDto">
+        SELECT
+            r.completed_at AS date,
+            r.sum_volume AS totalVolume,
+            r.sum_time AS totalTime
+        FROM
+            routines r
         WHERE
             r.user_id = #{userId}
           AND r.is_complete = TRUE
-          AND r.completed_at IS NOT NULL
-          AND rs.is_complete = TRUE
-          AND e.id IN (27, 103, 163)
         GROUP BY
-            r.completed_at, r.sum_time
+            r.completed_at, r.sum_volume, r.sum_time
         ORDER BY
             r.completed_at DESC
             LIMIT 5;

@@ -151,12 +151,9 @@ const FeedList = (props: FeedListProps): JSX.Element => {
   const [isDelete, setIsDelete] = useState(false);
 
   const feedDelOnClick = async (feedId: number) => {
-    console.log(feedId, 'feedId');
-    console.log(props.userId, '로그인유저');
     SnsFeedDel(
       feedId,
       (resp) => {
-        console.log(resp.data);
         setIsDelete(true);
       },
       (error) => {
@@ -193,9 +190,7 @@ const FeedList = (props: FeedListProps): JSX.Element => {
     if (routine !== undefined) {
       await SnsFeedRoutineLoad(
         routine.id,
-        (resp) => {
-          console.log(resp.data);
-        },
+        (resp) => {},
         (error) => {
           console.error(error);
         },
@@ -210,7 +205,6 @@ const FeedList = (props: FeedListProps): JSX.Element => {
       content: props.content,
     };
     navigate(`/sns/feed/update`, { state: { targetFeedId: feedId, feedContent: feedContent } });
-    console.log(feedId, 'modify feedid');
   };
 
   return (

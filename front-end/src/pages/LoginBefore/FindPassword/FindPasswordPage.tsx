@@ -292,7 +292,6 @@ const FindPasswordPage = (): JSX.Element => {
       data.username.length !== 0 &&
       usernameError === ''
     ) {
-      console.log('Form submitted:', data);
       // alert('비밀번호 변경 페이지로 이동합니다.');
       dispatch(pageActions.toogleIsPw(true));
       navigate('/find/password', { state: { email: data.email } });

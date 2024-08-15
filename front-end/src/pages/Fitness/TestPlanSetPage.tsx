@@ -168,7 +168,6 @@ const TestPlanSetPage = (): JSX.Element => {
         },
         (error) => {
           alert('저장 중 오류');
-          console.log(error);
         },
       );
     }
@@ -214,7 +213,6 @@ const TestPlanSetPage = (): JSX.Element => {
           })),
         })),
       };
-      console.log(param);
       dispatch(fitnessActions.saveTime(0));
       dispatch(fitnessActions.setPlanData(param));
       await putNewRoutine(
@@ -227,7 +225,6 @@ const TestPlanSetPage = (): JSX.Element => {
         (error) => {
           alert('잠시 후 다시시도해주세요.');
           navigate('/fitness');
-          console.log(error);
         },
       );
     }

@@ -113,7 +113,6 @@ const FitnessDetailPage = (): JSX.Element => {
     getFitnessMomentum(
       id,
       (resp) => {
-        console.log('운동량');
         setMomenthum(resp.data);
       },
       (error) => {

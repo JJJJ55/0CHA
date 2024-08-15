@@ -130,7 +130,6 @@ const UserFeedPage = (): JSX.Element => {
 
   useEffect(() => {
     if (userStr) {
-      console.log(userStr, '유저정보');
       const userTmp = JSON.parse(userStr);
       setUserId(userTmp.id);
       setUserNickname(userTmp.nickname);
@@ -150,10 +149,8 @@ const UserFeedPage = (): JSX.Element => {
         const data = resp.data;
         if (data === '피드 0개입니다') {
           setIsMoreData(false);
-          console.log('ismoredatafalse');
         } else {
           setFeedData((prevData) => [...prevData, ...data]);
-          console.log('setfeed');
         }
         setLoading(false);
       },
@@ -166,7 +163,6 @@ const UserFeedPage = (): JSX.Element => {
 
   const getTargetData = async (offset: number) => {
     if (targetUserId) {
-      console.log('targetuserfeeddata');
       await SnsFeedList(
         targetUserId,
         offset,
@@ -174,10 +170,8 @@ const UserFeedPage = (): JSX.Element => {
           const data = resp.data;
           if (data === '피드 0개입니다') {
             setIsMoreData(false);
-            console.log('ismoredatafalse');
           } else {
             setFeedData(data);
-            console.log('settargetfeed');
           }
           scrollToTargetFeed();
         },
@@ -191,7 +185,6 @@ const UserFeedPage = (): JSX.Element => {
 
   useEffect(() => {
     getFeedData(offset);
-    console.log('getfeeddata', offset);
   }, [offset]);
 
   const handleScroll = debounce(() => {
@@ -233,7 +226,6 @@ const UserFeedPage = (): JSX.Element => {
       },
       (error) => {
         setCommentData([]);
-        console.error(error);
       },
     );
   };
@@ -243,8 +235,6 @@ const UserFeedPage = (): JSX.Element => {
   const location = useLocation();
   useEffect(() => {
     if (location.state !== null) {
-      console.log(location.state.targetFeedId, 'state');
-      console.log(location.state.targetUserId, 'targetuser');
       setTargetFeedId(location.state.targetFeedId);
       setTargetUserId(location.state.targetUserId);
     }
@@ -273,18 +263,6 @@ const UserFeedPage = (): JSX.Element => {
       getTargetData(0);
     }
   }, [targetFeedId]);
-  // useEffect(() => {
-  //   console.log('useeffect targetfeedid')
-  //   if (targetFeedId && containerRef.current && targetUserId) {
-  //     getTargetData(0)
-  //     setTimeout(() => {
-  //       const element = document.getElementById(`feed-${targetFeedId}`);
-  //       if (element) {
-  //         element.scrollIntoView({block: 'center'});
-  //       }
-  //     }, 100);
-  //   }
-  // }, [targetFeedId])
   useModalExitHook();
 
   return (

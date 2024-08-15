@@ -43,4 +43,6 @@ public interface SnsFeedService {
     int deleteComment(int feedId);   //댓글 삭제
 
     void validateImages(int imageN);   //이미지 유효성 검사
+
+    int getUserIdByFeedId(int feedId);   //피드아이디로 유저아이디 조회
 }

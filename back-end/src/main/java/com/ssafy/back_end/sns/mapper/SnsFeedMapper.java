@@ -51,4 +51,6 @@ public interface SnsFeedMapper {
     int updateComment(FeedInteractionDto feedInteractionDto);   //댓굴 수정
 
     int deleteComment(@Param ("id") int id);   //댓글 삭제
+
+    int getUserIdByFeedId(@Param("feedId") int feedId);   //피드아이디로 유저아이디 조회
 }

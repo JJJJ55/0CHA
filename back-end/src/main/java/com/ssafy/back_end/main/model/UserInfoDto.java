@@ -23,4 +23,6 @@ public class UserInfoDto {
     private double weight;
     private String district;
     private String siGunGu;
+
+    private String fcmToken;
 }

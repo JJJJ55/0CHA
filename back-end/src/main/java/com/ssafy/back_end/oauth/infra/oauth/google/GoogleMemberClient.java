@@ -26,6 +26,7 @@ public class GoogleMemberClient implements OauthMemberClient {
     @Override
     public OauthMember fetch(String authCode) {
         GoogleToken tokenInfo = googleApiClient.fetchToken(tokenRequestParams(authCode)); // (1)
+        System.out.println(authCode + " - " + tokenInfo.toString());
         GoogleMemberResponse googleMemberResponse =
                 googleApiClient.fetchMember("Bearer " + tokenInfo.accessToken());  // (2)
         return googleMemberResponse.toDomain();  // (3)

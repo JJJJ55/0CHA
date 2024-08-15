@@ -22,4 +22,7 @@ public interface MainMapper {
 
     int deleteUser(@Param("id") int id);   //회원탈퇴
 
+    void updateFcmToken(@Param("id") int id, @Param("fcmToken") String fcmToken);   //fcm토큰 저장
+
+    String getFcmTokenById(@Param("id") int id);   //유저 id로 fcm토큰 얻기
 }

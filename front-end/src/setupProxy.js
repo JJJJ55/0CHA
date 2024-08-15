@@ -21,4 +21,14 @@ module.exports = function (app) {
       // },
     }),
   );
+  app.use(
+    '/inbody',
+    createProxyMiddleware({
+      target: `${process.env.REACT_APP_NAVER_INVOKE}`,
+      changeOrigin: true,
+      // pathRewrite: {
+      //   '^/proxy': '/api',
+      // },
+    }),
+  );
 };

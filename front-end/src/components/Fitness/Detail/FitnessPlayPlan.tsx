@@ -6,7 +6,7 @@ import IconSvg from '../../Common/IconSvg';
 import { useLocation } from 'react-router';
 import FitnessPlayBottomNav from '../Etc/FitnessPlayBottomNav';
 import { useAppDispatch, useAppSelector } from '../../../lib/hook/useReduxHook';
-import { fitnessActions, selectSave } from '../../../store/fitness';
+import { fitnessActions, selectRest, selectRestStack, selectSave } from '../../../store/fitness';
 import { RoutineDetails } from '../../../util/types/axios-fitness';
 import { set } from 'lodash';
 
@@ -165,15 +165,19 @@ const FitnessPlayPlan = (props: FitnessPlanProps): JSX.Element => {
     props.onChangeSet(props.index, updatedSets);
     console.log(`Updated set ${index} for exercise ${props.index}:`, updatedSets[index]);
   };
-
+  const isRest = useAppSelector(selectRest);
+  const isRestStack = useAppSelector(selectRestStack);
   const handleCompleteToggle = (index: number) => {
     if (path === '/play') {
       const updatedSets = sets.map((set, idx) => {
         if (idx === index) {
           if (!set.complete) {
             const volume = Number(set.weight) * Number(set.count);
-            dispatch(fitnessActions.toggleRest(true));
             dispatch(fitnessActions.addVolume(volume));
+            if (isRest) {
+              dispatch(fitnessActions.toggleRestStack(!isRestStack));
+            }
+            dispatch(fitnessActions.toggleRest(true));
           } else {
             const volume = Number(set.weight) * Number(set.count);
             dispatch(fitnessActions.disVolume(volume));

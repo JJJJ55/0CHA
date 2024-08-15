@@ -8,7 +8,7 @@ const inbody = inbodyAxios();
 
 // 1rm
 export const getRm = async (success: (response: any) => void, fail: (error: AxiosError) => void) => {
-  await jwt.get(`/record/rm`).then(success).catch(fail);
+  await jwt.get(`/record/exercise-records`).then(success).catch(fail);
 };
 
 // 최근 5개 운동량과 운동시간 가져오기

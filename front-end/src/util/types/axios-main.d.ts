@@ -37,3 +37,9 @@ export interface MainMyRoutine {
   dueDate: string;
   like: boolean;
 }
+
+//서버에 토큰 전달
+export interface fcmToken {
+  id: number;
+  fcmToken?: string;
+}

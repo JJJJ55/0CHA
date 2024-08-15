@@ -135,7 +135,7 @@ const FitnessFinishPage = (): JSX.Element => {
           width="170px"
           height="40px"
           children="업로드"
-          onClick={() => {}}
+          onClick={() => handleClickMove('/sns/feed/write')}
           bold="500"
           size="14px"
           type="main"

@@ -1,5 +1,6 @@
 package com.ssafy.back_end.record.mapper;
 
+import com.ssafy.back_end.record.model.ExerciseOneRepMaxDto;
 import com.ssafy.back_end.record.model.RecordDto;
 import com.ssafy.back_end.record.model.RecordInbodyDto;
 import com.ssafy.back_end.record.model.RoutineListDto;
@@ -18,4 +19,6 @@ public interface RecordMapper {
     List<RecordDto> getRecentExerciseRecords(@Param("userId") int userId);
 
     List<RoutineListDto> getUserRoutines(@Param("userId") int userId);
+
+    List<ExerciseOneRepMaxDto> getOneRepMaxForExercise(int userId, int exerciseId);
 }

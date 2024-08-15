@@ -1,6 +1,7 @@
 package com.ssafy.back_end.record.service;
 
 import com.ssafy.back_end.record.mapper.RecordMapper;
+import com.ssafy.back_end.record.model.ExerciseOneRepMaxDto;
 import com.ssafy.back_end.record.model.RecordDto;
 import com.ssafy.back_end.record.model.RecordInbodyDto;
 import com.ssafy.back_end.record.model.RoutineListDto;
@@ -37,5 +38,10 @@ public class RecordServiceImpl implements RecordService {
     @Override
     public List<RoutineListDto> getUserRoutines(int userId) {
         return recordMapper.getUserRoutines(userId);
+    }
+
+    @Override
+    public List<ExerciseOneRepMaxDto> getOneRepMaxForExercise(int userId, int exerciseId) {
+        return recordMapper.getOneRepMaxForExercise(userId, exerciseId);
     }
 }

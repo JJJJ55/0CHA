@@ -156,7 +156,6 @@ const Comment = (props: CommentProps): JSX.Element => {
       commentId,
       commentValue,
       (resp) => {
-        console.log(resp.data);
         setIsModify(false);
         setContent(commentValue);
       },

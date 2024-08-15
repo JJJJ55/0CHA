@@ -211,14 +211,12 @@ const UpdateItemPage = (): JSX.Element => {
       formData.append('addImages', image);
     });
 
-    console.log(formData.get('item'));
     // 보내는 부분
     if (id) {
       await SnsItemModify(
         parseInt(id, 10),
         formData,
         (resp) => {
-          console.log('중고장터 게시글이 수정되었습니다. ');
           navigate('/sns/market');
         },
         (err) => {

@@ -54,11 +54,9 @@ const SnsNavigation = (): JSX.Element => {
   const isRoutineData = async () => {
     await MyRoutine(
       (resp) => {
-        console.log(resp);
         handleMovePage('write');
       },
       (error) => {
-        console.error(error);
         if (error.response !== undefined) {
           if (error.response.data === '오늘 운동 안함') {
             alert('금일 운동을 완료하셔야 작성이 가능합니다.');

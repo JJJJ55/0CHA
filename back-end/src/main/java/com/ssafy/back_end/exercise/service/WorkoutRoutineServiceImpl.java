@@ -39,10 +39,9 @@ public class WorkoutRoutineServiceImpl implements WorkoutRoutineService {
     }
 
     @Override
-    public RoutineDto getRoutineById(int routineId, int userId) {
+    public RoutineDto getRoutineById(int routineId) {
         Map<String, Object> params = new HashMap<>();
         params.put("routineId", routineId);
-        params.put("userId", userId);
         RoutineDto routine = workoutRoutineMapper.getRoutineByIdAndUserId(params);
         if (routine != null) {
             List<RoutineDetailDto> details = workoutRoutineMapper.getRoutineDetailsByRoutineId(routineId);

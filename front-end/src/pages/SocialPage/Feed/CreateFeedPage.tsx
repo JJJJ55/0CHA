@@ -35,7 +35,6 @@ const s = {
     aspect-ratio: 1;
     display: flex;
     align-items: center;
-    border: 3px solid red;
   `,
   FeedImage: styled.div<ImageAreaProps>`
     width: 100%;

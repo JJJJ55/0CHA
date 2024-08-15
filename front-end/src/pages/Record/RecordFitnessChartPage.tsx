@@ -73,7 +73,6 @@ const RecordFitnessChartPage = (): JSX.Element => {
       },
       (error) => {
         setSquat([]);
-        alert('잠시후 다시 시도해주세요.');
       },
     );
     getRm(
@@ -83,7 +82,6 @@ const RecordFitnessChartPage = (): JSX.Element => {
       },
       (error) => {
         setDead([]);
-        alert('잠시후 다시 시도해주세요.');
       },
     );
     getRm(
@@ -93,7 +91,6 @@ const RecordFitnessChartPage = (): JSX.Element => {
       },
       (error) => {
         setBench([]);
-        alert('잠시후 다시 시도해주세요.');
       },
     );
 

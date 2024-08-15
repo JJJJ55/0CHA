@@ -98,6 +98,7 @@ const s = {
   LabelContainer: styled.div`
     margin-top: 20px;
     color: ${(props) => props.theme.textColor};
+    font-size: 14px;
   `,
   CountContainer: styled.div`
     margin-top: 20px;
@@ -592,12 +593,12 @@ const AIMainPage: React.FC = () => {
           {isFinished && <s.SettingBtn onClick={() => setIsResultModalOpen(true)}>결과 보기</s.SettingBtn>}
 
           {/* 예측 결과를 표시하는 영역 (추후 없앨 부분)*/}
-          <s.LabelContainer>
+          {/* <s.LabelContainer>
             <p>예측 결과를 표시하는 영역(추후 삭제될 부분)</p>
             {predictions.map((pred, index) => (
               <div key={pred.className}>{`${pred.className}: ${Math.round(pred.probability * 100)}%`}</div>
             ))}
-          </s.LabelContainer>
+          </s.LabelContainer> */}
         </s.PageBody>
       </s.AIArea>
       {/* 하단 네비게이션 */}

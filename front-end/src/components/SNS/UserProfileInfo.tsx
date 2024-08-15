@@ -150,7 +150,6 @@ const UserProfileInfo = (props: UserProfileInfoProps): JSX.Element => {
 
   const followClick = async () => {
     if (feedUserId) {
-      console.log('follow', feedUserId);
       await UserFollow(
         parseInt(feedUserId),
         (resp) => {
@@ -168,7 +167,6 @@ const UserProfileInfo = (props: UserProfileInfoProps): JSX.Element => {
 
   const unfollowClick = async () => {
     if (feedUserId) {
-      console.log('unfollow', feedUserId);
       await UserFollowCancel(
         parseInt(feedUserId),
         (resp) => {

@@ -144,7 +144,6 @@ const RecordInBodyScanPage = (): JSX.Element => {
 
   // 페이지 이동 핸들러
   const handleMovePage = async () => {
-    // console.log(selectedImage);
     if (selectedImage === '') {
       alert('이미지를 첨부해주세요.');
     } else {
@@ -153,7 +152,6 @@ const RecordInBodyScanPage = (): JSX.Element => {
       await inbodyTest(
         base64WithoutHeader,
         (resp) => {
-          console.log(resp.data);
           d = resp.data;
         },
         (error) => {
@@ -162,43 +160,6 @@ const RecordInBodyScanPage = (): JSX.Element => {
       );
       dispatch(pageActions.toogleIsScan(true));
       navigate('/record/inbody/scan', { state: { data: d } });
-      // Extracting "체중" (weight) values
-      // const weightField = jsonData.fields.find((field) => field.name === '체중');
-      // const weightValues = () => {
-      //   jsonData.fields.map((data) =>
-      //     data.subFields.map((result) => {
-      //       const number = parseFloat(result.inferText);
-      //       if (!Number.isInteger(number) || result.inferText.includes('.')) {
-      //         console.log(result.inferText);
-      //       }
-      //     }),
-      //   );
-      // };
-      // weightValues();
-
-      // // Displaying the extracted weight values
-      // console.log('Weight Values:', weightValues);
-
-      // // Extracting "골격근량" (skeletal muscle mass) values
-      // const muscleMassField = jsonData.fields.find((field) => field.name === '골격근량');
-      // const muscleMassValues = muscleMassField.subFields.map((subField) => subField.inferText);
-
-      // // Displaying the extracted muscle mass values
-      // console.log('Muscle Mass Values:', muscleMassValues);
-
-      // // Extracting "체지방량" (body fat mass) values
-      // const fatMassField = jsonData.fields.find((field) => field.name === '체지방량');
-      // const fatMassValues = fatMassField.subFields.map((subField) => subField.inferText);
-
-      // // Displaying the extracted fat mass values
-      // console.log('Fat Mass Values:', fatMassValues);
-
-      // // Extracting "BMI" values
-      // const bmiField = jsonData.fields.find((field) => field.name === 'BMI');
-      // const bmiValues = bmiField.subFields.map((subField) => subField.inferText);
-
-      // // Displaying the extracted BMI values
-      // console.log('BMI Values:', bmiValues);
     }
   };
 

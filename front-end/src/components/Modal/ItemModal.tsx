@@ -161,7 +161,6 @@ const ItemModal = (props: MarketModalProps): JSX.Element => {
       await SnsItemDetail(
         itemId,
         (resp) => {
-          console.log(resp.data);
           setItem(resp.data);
           setLike(resp.data.isLike);
           setLikeCount(resp.data.likeCount);
@@ -197,11 +196,9 @@ const ItemModal = (props: MarketModalProps): JSX.Element => {
   const handleLike = async () => {
     if (item) {
       if (like) {
-        console.log('좋아요인 경우 취소해야겠지?');
         await SnsItemLikeCancel(
           item.id,
           (resp) => {
-            console.log(resp.data);
             const updatedItem = { ...item, isLike: 0, likeCount: likeCount - 1 };
             setLike(0);
             setLikeCount(likeCount - 1);
@@ -213,11 +210,9 @@ const ItemModal = (props: MarketModalProps): JSX.Element => {
           },
         );
       } else {
-        console.log('좋아요가 아닌 경우 좋아요해야겠지?');
         await SnsItemLike(
           item.id,
           (resp) => {
-            console.log(resp.data);
             const updatedItem = { ...item, isLike: 1, likeCount: likeCount + 1 };
             setLike(1);
             setLikeCount(likeCount + 1);
@@ -250,7 +245,6 @@ const ItemModal = (props: MarketModalProps): JSX.Element => {
   };
   // 게시글 수정
   const handleUpdate = () => {
-    console.log('수정 페이지로 이동');
     if (item) {
       navigate(`/sns/market/update/${item.id}`, { state: { item } });
     }
@@ -285,7 +279,6 @@ const ItemModal = (props: MarketModalProps): JSX.Element => {
             const updatedItem = { ...item, isSold: newStatus };
             setItem(updatedItem);
             onItemUpdate(updatedItem);
-            console.log(resp);
           },
           (error) => {
             console.log(error);

@@ -152,7 +152,6 @@ const ProfileMainPage = (): JSX.Element => {
   const postLogout = async () => {
     await logout(
       (resp) => {
-        console.log(resp.data);
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
         navigate('/login');

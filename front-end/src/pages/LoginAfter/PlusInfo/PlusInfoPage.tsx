@@ -379,8 +379,6 @@ const PlusInfoPage = (): JSX.Element => {
     location2: '',
   });
 
-  console.log('넘어온 아이디 : ', id);
-
   const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     // 키 - 체중 필드에 대해 제약조건 규정
@@ -399,7 +397,6 @@ const PlusInfoPage = (): JSX.Element => {
   const handleSubmit = async () => {
     // 제출 로직 작성 (API 호출)
     // 입력한 정보만 옮기는 걸로
-    console.log('Form submitted:', data);
     const param = {
       id,
       gender: parseInt(data.gender),

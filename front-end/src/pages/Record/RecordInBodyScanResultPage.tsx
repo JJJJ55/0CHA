@@ -112,7 +112,6 @@
 //   // Ensure data exists and images is not undefined
 //   const extractedData = data ? extractNameAndLastInferText(data.images) : [];
 
-//   console.log(extractedData);
 //   return (
 //     <s.Container>
 //       <Header text="인바디 스캔" />
@@ -434,8 +433,6 @@
 //     return item && item.lastInferText ? parseFloat(item.lastInferText) : defaultValue;
 //   }
 
-//   console.log(inbody);
-
 //   return (
 //     <s.Container>
 //       <Header text="인바디 스캔" />
@@ -738,8 +735,6 @@ const RecordInBodyScanResultPage = (): JSX.Element => {
     const item = data.find((field) => field.name.toLowerCase() === name.toLowerCase());
     return item ? item.inferText : defaultValue;
   }
-
-  console.log(inbody);
 
   return (
     <s.Container>

@@ -16,4 +16,8 @@ public interface MainService {
     int modifyPassword(int id, String curPassword, String newPassword);   //패스워드 변경
 
     int deleteUser(int id);   //회원탈퇴
+
+    void updateFcmToken(int id, String fcmToken);   //fcm토큰 저장
+
+    String getFcmTokenById(int id);   //유저 id로 fcm토큰 얻기
 }

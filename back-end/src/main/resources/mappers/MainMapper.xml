@@ -86,4 +86,16 @@
         WHERE id = #{id};
     </delete>
 
+    <update id="updateFcmToken">
+        UPDATE users
+        SET fcm_token = #{fcmToken}
+        WHERE id = #{id};
+    </update>
+
+    <select id="getFcmTokenById">
+        SELECT fcm_token
+        FROM users
+        WHERE id = #{id};
+    </select>
+
 </mapper>

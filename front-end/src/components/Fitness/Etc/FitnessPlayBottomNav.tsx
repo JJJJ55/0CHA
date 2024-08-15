@@ -123,7 +123,6 @@ const FitnessPlayBottomNav = (props: PlayProps): JSX.Element => {
       .padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 
     // 경과 시간을 alert로 표시
-    alert(`운동 시간: ${timeString}`);
 
     // 운동 종료 콜백 호출
     props.onFinish(secondsRef.current);

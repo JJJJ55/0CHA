@@ -1,5 +1,6 @@
 package com.ssafy.back_end.record.controller;
 
+import com.ssafy.back_end.record.model.ExerciseOneRepMaxDto;
 import com.ssafy.back_end.record.model.RecordDto;
 import com.ssafy.back_end.record.model.RecordInbodyDto;
 import com.ssafy.back_end.record.model.RoutineListDto;
@@ -59,6 +60,13 @@ public class RecordController {
         int userId = (Integer) request.getAttribute("userId");
         List<RecordDto> records = recordService.getRecentExerciseRecords(userId);
         return ResponseEntity.ok(records);
+    }
+
+    @GetMapping("/record/rm/{exerciseId}")
+    public ResponseEntity<?> getOneRepMaxForExercise(@PathVariable int exerciseId, HttpServletRequest request) {
+        int userId = (Integer) request.getAttribute("userId");
+        List<ExerciseOneRepMaxDto> oneRepMaxList = recordService.getOneRepMaxForExercise(userId, exerciseId);
+        return ResponseEntity.ok(oneRepMaxList);
     }
 
     @Operation(summary = "사용자의 루틴 리스트 조회", description = "사용자의 루틴 리스트를 조회합니다.")

@@ -290,7 +290,7 @@ export const socialAxios = () => {
 
 export const inbodyAxios = () => {
   const inbodyAxios: Axios = axios.create({
-    baseURL: process.env.REACT_APP_NAVER_INVOKE,
+    baseURL: '/inbody',
     withCredentials: true,
   });
 

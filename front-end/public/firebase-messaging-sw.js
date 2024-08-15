@@ -17,7 +17,8 @@ self.addEventListener('push', function (e) {
   const notificationOptions = {
     body: notification.body,
     icon: '/mstile-150x150.png',
-    data: data.url,
+    // data: data.url,
+    data: '/main',
   };
 
   e.waitUntil(self.registration.showNotification(notificationTitle, notificationOptions));

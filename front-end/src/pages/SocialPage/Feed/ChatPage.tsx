@@ -187,7 +187,7 @@ const ChatPage = (): JSX.Element => {
       }
 
       // SockJS와 STOMP 클라이언트 초기화
-      const socket = new SockJS('/api/ws'); // SockJS 엔드포인트 설정 + 개발 환경에서는 /proxy/ws 더해주기
+      const socket = new SockJS('/proxy/ws'); // SockJS 엔드포인트 설정 + 개발 환경에서는 /proxy/ws 더해주기
       const client = new Client({
         webSocketFactory: () => socket, // SockJS를 WebSocket으로 사용
         connectHeaders: {

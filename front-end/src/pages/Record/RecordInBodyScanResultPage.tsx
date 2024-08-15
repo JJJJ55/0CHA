@@ -4,7 +4,7 @@ import Header from '../../components/Common/Header';
 import Button from '../../components/Common/Button';
 import Text from '../../components/Common/Text';
 import RecordInbodyInput from '../../components/Record/Inbody/RecordInbodyInput';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import { postInbody } from '../../lib/api/record-api';
 import { Inbody } from '../../util/types/axios-record';
 
@@ -49,6 +49,8 @@ const s = {
 };
 
 const RecordInBodyScanResultPage = (): JSX.Element => {
+  const data = useLocation().state?.data;
+  console.log(data);
   const [inbody, setInbody] = useState<Inbody>({
     height: 0,
     weight: 0,

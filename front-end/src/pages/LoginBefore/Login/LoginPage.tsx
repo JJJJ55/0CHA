@@ -103,10 +103,18 @@ const LoginPage = (): JSX.Element => {
   };
 
   const handleMoveSocial = async (path: string) => {
-    // navigate(`${process.env.REACT_APP_SOCIAL_BASE_URL}${path}`);
-    // window.location.href = `${process.env.REACT_APP_SOCIAL_BASE_URL}${path}`;
-    // await MoveKaKao(path);
-    window.location.href = 'https://i11b310.p.ssafy.io/oauth/kakao';
+    // navigate(`/oauth/${path}`);
+    // window.location.href = `${process.env.REACT_APP_SOCIAL_BASE_URL}/oauth/${path}`;
+    await MoveKaKao(
+      path,
+      (resp) => {
+        window.location.href = resp.request.responseURL;
+      },
+      (error) => {
+        alert(error);
+      },
+    );
+    // window.location.href = 'https://localhost:3000/api/oauth/kakao';
   };
 
   return (

@@ -18,7 +18,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
     private final JwtUtil jwtUtil;
-    private final UserLoginService userLoginService;
+    private final UserLoginService userLoginService; // 기존 인터셉터에서 사용하던 UserLoginService 주입
 
     public JwtAuthenticationFilter(JwtUtil jwtUtil, UserLoginService userLoginService) {
         this.jwtUtil = jwtUtil;
@@ -31,48 +31,59 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String uri = request.getRequestURI();
 
-        // Swagger 및 OAuth2 경로에 대한 요청은 필터링에서 제외
+        // Swagger 경로에 대한 요청은 필터링에서 제외
         if (uri.startsWith("/swagger-ui/") || uri.startsWith("/v3/api-docs/")) {
             chain.doFilter(request, response);
             return;
         }
 
-        String accessToken = jwtUtil.getAccessToken(request);
-        String refreshToken = jwtUtil.getRefreshToken(request);
+        String accessToken = jwtUtil.getAccessToken(request); // 헤더에서 액세스 토큰을 가져옴
+        String refreshToken = jwtUtil.getRefreshToken(request); // 추가된 부분
 
-        try {
-            if (accessToken != null && jwtUtil.validateToken(accessToken, false)) {
-                int userId = jwtUtil.getUserIdFromAccessToken(accessToken);
-
-                String currentRefreshToken = userLoginService.getRefreshTokenByUserId(userId);
-                if (refreshToken != null && refreshToken.equals(currentRefreshToken)) {
-                    JwtAuthenticationToken authentication = new JwtAuthenticationToken(userId, null, null);
-                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                    request.setAttribute("userId", userId);
-                } else {
-                    throw new ExpiredJwtException(null, null, "Refresh token is invalid or expired.");
-                }
-            } else {
-                throw new ExpiredJwtException(null, null, "Access token is expired or invalid.");
-            }
-        } catch (ExpiredJwtException e) {
-            handleJwtException(response, e.getMessage(), e);
-            return;
-        } catch (Exception e) {
-            logger.error("JWT 토큰 처리 중 오류 발생: {}", e.getMessage(), e);
+        if (accessToken == null) {
+            logger.debug("비회원 유저입니다 URI : {}", request.getRequestURI());
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Invalid JWT token");
-            return;
+            return;   // 비회원이면 요청 중단
+        } else {
+            try {
+                if (jwtUtil.validateToken(accessToken, false)) {
+                    int userId = jwtUtil.getUserIdFromAccessToken(accessToken);
+
+                    String currentRefreshToken = userLoginService.getRefreshTokenByUserId(userId);
+                    // 액세스 토큰이 유효한지 확인하고, 리프레시 토큰과 일치하는지 확인
+                    if (refreshToken.equals(currentRefreshToken)) {
+                        JwtAuthenticationToken authentication = new JwtAuthenticationToken(userId, null, null);
+                        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                        request.setAttribute("userId", userId);
+                    }
+                    else {
+                        throw new ExpiredJwtException(null, null, "토큰이 만료되었거나 유효하지 않습니다.");
+                    }
+                } else {
+                    throw new ExpiredJwtException(null, null, "토큰이 만료되었거나 유효하지 않습니다.");
+                }
+            } catch (ExpiredJwtException e) {
+                if (refreshToken != null && jwtUtil.isRefreshTokenExpired(refreshToken)) {
+                    int userId = userLoginService.getUserIdByRefreshToken(refreshToken);
+                    userLoginService.invalidateRefreshToken(userId);
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.getWriter().write("Refresh token is expired, logged out");
+                    return;
+                }
+                logger.debug("만료된 jwt 토큰입니다. uri : {}", request.getRequestURI());
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("Access token is expired");
+                return;
+            } catch (Exception e) {
+                logger.debug("유효하지 않은 jwt 토큰입니다. uri : {}", request.getRequestURI());
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
         }
 
+        // 다음 필터로 요청 전달
         chain.doFilter(request, response);
-    }
-
-    private void handleJwtException(HttpServletResponse response, String message, Exception e) throws IOException {
-        logger.warn("JWT 오류: {}", message, e);
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.getWriter().write(message);
     }
 }

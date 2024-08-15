@@ -70,6 +70,7 @@ public class UserRegisterServiceImpl implements UserRegisterService {
 //
 //        javaMailSender.send(message);
 //    }
+    
 public void sendEmail(String email, int authCode) {
     try {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();

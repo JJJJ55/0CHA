@@ -1,5 +1,7 @@
 package com.ssafy.back_end.oauth.infra.oauth.config;
 
+import com.ssafy.back_end.oauth.infra.oauth.github.client.GithubApiClient;
+import com.ssafy.back_end.oauth.infra.oauth.google.client.GoogleApiClient;
 import com.ssafy.back_end.oauth.infra.oauth.kakao.client.KakaoApiClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +16,13 @@ public class HttpInterfaceConfig {
     public KakaoApiClient kakaoApiClient() {
         return createHttpInterface(KakaoApiClient.class);
     }
+
+    @Bean
+    public GithubApiClient githubApiClient() { return createHttpInterface(GithubApiClient.class); }
+
+    @Bean
+    public GoogleApiClient googleApiClient() { return createHttpInterface(GoogleApiClient.class); }
+
 
     private <T> T createHttpInterface(Class<T> clazz) {
         WebClient webClient = WebClient.create();

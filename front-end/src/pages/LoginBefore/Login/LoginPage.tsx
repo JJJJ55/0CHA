@@ -105,16 +105,16 @@ const LoginPage = (): JSX.Element => {
   const handleMoveSocial = async (path: string) => {
     // navigate(`/oauth/${path}`);
     // window.location.href = `${process.env.REACT_APP_SOCIAL_BASE_URL}/oauth/${path}`;
-    await MoveKaKao(
-      path,
-      (resp) => {
-        window.location.href = resp.request.responseURL;
-      },
-      (error) => {
-        alert(error);
-      },
-    );
-    // window.location.href = 'https://localhost:3000/api/oauth/kakao';
+    // await MoveKaKao(
+    //   path,
+    //   (resp) => {
+    //     window.location.href = resp.request.responseURL;
+    //   },
+    //   (error) => {
+    //     alert(error);
+    //   },
+    // );
+    window.location.href = 'https://13.124.57.45/api/oauth/kakao';
   };
 
   return (
@@ -188,8 +188,8 @@ const LoginPage = (): JSX.Element => {
         <s.SnsText>SNS 로그인</s.SnsText>
         <s.snsArea>
           <IconSvg width="40" height="40" Ico={kakao} cursor="pointer" onClick={() => handleMoveSocial('kakao')} />
-          <IconSvg width="40" height="40" Ico={google} cursor="pointer" onClick={() => handleMoveSocial('kakao')} />
-          <IconSvg width="40" height="40" Ico={git} cursor="pointer" onClick={() => handleMoveSocial('kakao')} />
+          <IconSvg width="40" height="40" Ico={google} cursor="pointer" onClick={() => handleMoveSocial('google')} />
+          <IconSvg width="40" height="40" Ico={git} cursor="pointer" onClick={() => handleMoveSocial('github')} />
         </s.snsArea>
       </s.LoginArea>
     </s.Container>

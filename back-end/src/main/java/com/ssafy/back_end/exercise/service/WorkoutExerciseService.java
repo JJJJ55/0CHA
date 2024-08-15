@@ -8,7 +8,7 @@ import java.util.List;
 public interface WorkoutExerciseService {
     List<ExerciseDto> getAllExercises(int userId);  // userId를 매개변수로 추가
 
-    ExerciseDto getExerciseById(int exerciseId);
+    public ExerciseDto getExerciseById(int exerciseId, int userId);
 
     int favoriteExercise(int exerciseId, int userId);
 
